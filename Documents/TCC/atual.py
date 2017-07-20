@@ -6,66 +6,11 @@ import os
 import math
 import matplotlib.pyplot as plt
 
-def TDMASolve(a, b, c, d):
-	n = len(d)#n em números é linhas
-
-	# Modifica o primeiro coeficiente de cada linha
-	c[0] /= b[0] #Risco de divisão por zero.
-	d[0] /= b[0]
-
-	for i in xrange(1, n):
-		ptemp = b[i] - (a[i] * c[i-1])
-		c[i] /= ptemp
-		d[i] = (d[i] - a[i] * d[i-1])/ptemp
-
-	#Substituição de volta
-	x = [0 for i in xrange(n)]
-	x[-1] = d[-1]
-	for i in range(-2,-n-1,-1):
-		x[i] = d[i] - c[i] * x[i+1]
- 	return x
-
-def gauss(A):
-	n = len(A)
-
-	for i in range(0, n):
-		# Search for maximum in this column
-		maxEl = abs(A[i][i])
-		maxRow = i
-		for k in range(i+1, n):
-			if abs(A[k][i]) > maxEl:
-				maxEl = abs(A[k][i])
-				maxRow = k
-
-		# Swap maximum row with current row (column by column)
-		for k in range(i, n+1):
-			tmp = A[maxRow][k]
-			A[maxRow][k] = A[i][k]
-			A[i][k] = tmp
-
-		# Make all rows below this one 0 in current column
-		for k in range(i+1, n):
-			c = -A[k][i]/float(A[i][i])
-			for j in range(i, n+1):
-				if i == j:
-					A[k][j] = 0
-				else:
-					A[k][j] += c * A[i][j]
-
-	# Solve equation Ax=b for an upper triangular matrix A
-
-	x = [0 for i in range(n)]
-	for i in range(n-1, -1, -1):
-		x[i] = A[i][n]/A[i][i]
-		for k in range(i-1, -1, -1):
-			A[k][n] -= A[k][i] * x[i]
-	return x
-
 def pprint(A):
 	n = len(A)
 	for i in range(0, n):
 		line = ""
-		for j in range(0, n+1):
+		for j in range(0, n):
 			if A[i][j]>=0:
 				line += " "
 			line += ("{:.6}".format(str(A[i][j]))) + "\t"
@@ -210,7 +155,8 @@ def elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L):
 	numele = len(X)-1 #NÚMERO DE ESPAÇOS DO DOMÍNIO
 	numpnts = numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
 	#----------------------MATRIZ GERAL (-K+M)*a = f--------------------------------------------------------------------
-	matriz = np.zeros((numpnts,numpnts+1))
+	matriz = np.zeros((numpnts,numpnts))
+	matrizf = np.zeros(numpnts)
 	for elem in MRE:
 		matriz[elem[0]][elem[0]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#\
 		matriz[elem[1]][elem[0]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# \  MATRIZ		[ 1 -1]
@@ -223,43 +169,41 @@ def elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L):
 	if T_0 != None:
 		# T(0) = T_0 (CONDIÇÃO DE CONTORNO DE DIRICHLET)
 		index = np.where(X==0)[0][0]
-		print X,index
-		matriz[index][numpnts] = T_0 						# VALOR NO PONTO
+		matrizf[index] = T_0 						# VALOR NO PONTO
 		matriz[index][index] = 1 							# ÚNICO COEFICIENTE DA LINHA E COLUNA
 		a = range(numpnts)
 		a.remove(index)
 		for i in a:
-			matriz[i][numpnts] -= matriz[i][index]*matriz[index][numpnts]	# SUBTRAÇÂO DA COMPONENTE DA LINHA
+			matrizf[i] -= matriz[i][index]*matrizf[index]	# SUBTRAÇÂO DA COMPONENTE DA LINHA
 			matriz[index][i] = 0 							#{	ELIMINAÇÃO DA LINHA
 			matriz[i][index] = 0 							#{	ELIMINAÇÃO DA COLUNA
 
 	if T_L != None:
 		# T(L) = T_L (CONDIÇÃO DE CONTORNO DE DIRICHLET)
 		index = np.where(X==L)[0][0]
-		matriz[index][numpnts] = T_L 						# VALOR NO PONTO
+		matrizf[index] = T_L 						# VALOR NO PONTO
 		matriz[index][index] = 1 							# ÚNICO COEFICIENTE DA LINHA E COLUNA
 		a = range(numpnts)
 		a.remove(index)
 		for i in a:
-			matriz[i][numpnts] -= matriz[i][index]*matriz[index][numpnts]	# SUBTRAÇÂO DA COMPONENTE DA LINHA
+			matrizf[i] -= matriz[i][index]*matrizf[index]	# SUBTRAÇÂO DA COMPONENTE DA LINHA
 			matriz[index][i] = 0 							#{	ELIMINAÇÃO DA LINHA
 			matriz[i][index] = 0 							#{	ELIMINAÇÃO DA COLUNA
-		matriz[index][index] = 1 							# ÚNICO COEFICIENTE DA LINHA E COLUNA
 
 	if dT_0 != None:
 		# dT(0)/dx = dT_0 (CONDIÇÃO DE CONTORNO DE NEUMANN)
 		index = np.where(X==0.0)[0][0]
-		matriz[index][numpnts] -= dT_0	# SUBTRAÇÂO DA COMPONENTE DA LINHA
+		matrizf[index] -= dT_0	# SUBTRAÇÂO DA COMPONENTE DA LINHA
 
 	if dT_L != None:
 		# dT(L)/dx = dT_L (CONDIÇÃO DE CONTORNO DE NEUMANN)
 		index = np.where(X==L)[0][0]
-		matriz[index][numpnts] -= dT_L	# SUBTRAÇÂO DA COMPONENTE DA LINHA
+		matrizf[index] -= dT_L	# SUBTRAÇÂO DA COMPONENTE DA LINHA
 
 	if (numpnts <= 9):
 		print "After Boundary Conditions:"
 		pprint(matriz)
-	resp = gauss(matriz)
+	resp = np.linalg.solve(matriz,matrizf)
 
 	for i in range(numpnts):
 		if (numpnts <= 50):
@@ -405,6 +349,7 @@ def main():
 			k = float(k)
 			T_0, T_L, dT_0, dT_L = questionarCC(X)
 		else:
+			k = 1.0
 			T_0 = 0.0
 			T_L = 1.0
 			dT_0 = None
