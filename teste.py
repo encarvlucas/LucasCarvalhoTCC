@@ -111,20 +111,34 @@ axes.set_ylim(-tam*0.1,tam*1.1)
 # MRE 
 x = np.array(np.reshape(xx,(1,n**2))[0])
 y = np.array(np.reshape(yy,(1,n**2))[0])
+
 # Elementos quadrados
-MRE = np.zeros(((n-1)**2,4),dtype=int)
-for i in range(len(MRE)):
-	MRE[i] = (i,i+1,i+n+1,i+n)
-	MRE[i] += i/n
-print "MRE = \n",MRE
+# MRE = np.zeros(((n-1)**2,4),dtype=int)
+# for i in range(len(MRE)):
+# 	MRE[i] = (i,i+1,i+n+1,i+n)
+# 	MRE[i] += i/(n-1)
+
+# Elementos triangulares
+MRE = np.zeros((2*((n-1)**2),3),dtype=int)
+count = 0
+for i in range(len(MRE)/2):
+	MRE[count] = (i,i+n+1,i+n)
+	MRE[count] += i/(n-1)
+	count += 1
+	MRE[count] = (i,i+1,i+n+1)
+	MRE[count] += i/(n-1)
+	count += 1
+print len(MRE),"MRE = \n",MRE
+
 #show element ele_num
-ele_num = 5
-showelex = np.zeros((5,2))
-showeley = np.zeros((5,2))
-for i in range(4):
+ele_num = 23
+tipodeelem = 3 #triangular
+showelex = np.zeros((tipodeelem+1,2))
+showeley = np.zeros((tipodeelem+1,2))
+for i in range(tipodeelem):
 	showelex[i] = x[MRE[ele_num][i]]
 	showeley[i] = y[MRE[ele_num][i]]
-showelex[4] = x[MRE[ele_num][0]]
-showeley[4] = y[MRE[ele_num][0]]
+showelex[tipodeelem] = x[MRE[ele_num][0]]
+showeley[tipodeelem] = y[MRE[ele_num][0]]
 plt.plot(showelex,showeley, "r")
 plt.show()
