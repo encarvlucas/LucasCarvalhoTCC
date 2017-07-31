@@ -21,8 +21,14 @@ import matplotlib.pyplot as plt
 # 	return
 
 tam = 1.0
-n = 5
-blank = np.zeros(n)
+Lx = 10.0
+Ly = 0.5
+# n = 5
+nx = 100
+ny = 120
+# blank = np.zeros(n)
+x_val = np.zeros(nx)
+y_val = np.zeros(ny)
 # vecX = np.zeros(n+1)
 # M = [np.zeros(n+1) for i in range(n+1)]
 
@@ -68,16 +74,20 @@ blank = np.zeros(n)
 # 	A = raw_input("Bla bla bla? (A/B/C)\n").lower() 
 
 # #linear
-for x in range(n):
-	blank[x] = x*(tam/(n-1))
+for x in range(nx):
+	# blank[x] = x*(tam/(n-1))
+	x_val[x] = x*(Lx/(nx-1))
 # y1 = np.array(blank)
-x_val = np.array(blank)
+# x_val = np.array(blank)
+for y in range(ny):
+	# blank[x] = x*(tam/(n-1))
+	y_val[y] = y*(Ly/(ny-1))
 
 # #quadratica
-for x in range(n):
-	blank[x] = ((x*1.0/(n-1))**2)*tam
+# for x in range(n):
+# 	blank[x] = ((x*1.0/(n-1))**2)*tam
 # y2 = np.array(blank)
-y_val = np.array(blank)
+# y_val = np.array(blank)
 
 # #cubica
 # for x in range(n):
@@ -102,6 +112,15 @@ y_val = np.array(blank)
 xx,yy = np.meshgrid(x_val,y_val)
 print "x = \n",xx,"\n","y = \n",yy
 
+#Ex 3.2:
+A = 0.07
+phi = 2.0*np.pi/4.0
+lamb = 24.0/6.0
+k_ex = 2.0*np.pi/lamb
+for i in range(nx):
+	yy[ny-1][i] = A*np.sin(2.0*np.pi*xx[ny-1][i]/lamb-phi)
+print "x = \n",xx,"\n","y = \n",yy
+
 plt.plot(xx, yy, marker=".", color="k", linestyle="none")
 axes = plt.gca()
 axes.set_xlim(-tam*0.1,tam*1.1)
@@ -109,36 +128,36 @@ axes.set_ylim(-tam*0.1,tam*1.1)
 # plt.show()
 
 # MRE 
-x = np.array(np.reshape(xx,(1,n**2))[0])
-y = np.array(np.reshape(yy,(1,n**2))[0])
+x = np.array(np.reshape(xx,(1,nx*ny))[0])
+y = np.array(np.reshape(yy,(1,nx*ny))[0])
 
 # Elementos quadrados
-# MRE = np.zeros(((n-1)**2,4),dtype=int)
+# MRE = np.zeros(((nx-1)*(ny-1),4),dtype=int)
 # for i in range(len(MRE)):
-# 	MRE[i] = (i,i+1,i+n+1,i+n)
-# 	MRE[i] += i/(n-1)
+# 	MRE[i] = (i,i+1,i+nx+1,i+nx)
+# 	MRE[i] += i/(nx-1)
 
 # Elementos triangulares
-MRE = np.zeros((2*((n-1)**2),3),dtype=int)
+MRE = np.zeros((2*((nx-1)*(ny-1)),3),dtype=int)
 count = 0
 for i in range(len(MRE)/2):
-	MRE[count] = (i,i+n+1,i+n)
-	MRE[count] += i/(n-1)
+	MRE[count] = (i,i+nx+1,i+nx)
+	MRE[count] += i/(nx-1)
 	count += 1
-	MRE[count] = (i,i+1,i+n+1)
-	MRE[count] += i/(n-1)
+	MRE[count] = (i,i+1,i+nx+1)
+	MRE[count] += i/(nx-1)
 	count += 1
 print len(MRE),"MRE = \n",MRE
 
 #show element ele_num
-ele_num = 23
-tipodeelem = 3 #triangular
-showelex = np.zeros((tipodeelem+1,2))
-showeley = np.zeros((tipodeelem+1,2))
-for i in range(tipodeelem):
-	showelex[i] = x[MRE[ele_num][i]]
-	showeley[i] = y[MRE[ele_num][i]]
-showelex[tipodeelem] = x[MRE[ele_num][0]]
-showeley[tipodeelem] = y[MRE[ele_num][0]]
-plt.plot(showelex,showeley, "r")
+# ele_num = 3
+# tipodeelem = 3 #triangular
+# showelex = np.zeros((tipodeelem+1,2))
+# showeley = np.zeros((tipodeelem+1,2))
+# for i in range(tipodeelem):
+# 	showelex[i] = x[MRE[ele_num][i]]
+# 	showeley[i] = y[MRE[ele_num][i]]
+# showelex[tipodeelem] = x[MRE[ele_num][0]]
+# showeley[tipodeelem] = y[MRE[ele_num][0]]
+# plt.plot(showelex,showeley, "r")
 plt.show()
