@@ -110,7 +110,7 @@ for y in range(ny):
 # x_val = np.array(blank)
 # y_val = np.copy(x_val)
 xx,yy = np.meshgrid(x_val,y_val)
-print "x = \n",xx,"\n","y = \n",yy
+# print "x = \n",xx,"\n","y = \n",yy
 
 #Ex 3.2:
 A = 0.07
@@ -118,13 +118,13 @@ phi = 2.0*np.pi/4.0
 lamb = 24.0/6.0
 k_ex = 2.0*np.pi/lamb
 for i in range(nx):
-	yy[ny-1][i] = A*np.sin(2.0*np.pi*xx[ny-1][i]/lamb-phi)
+	yy[ny-1][i] += A*np.sin(2.0*np.pi*xx[ny-1][i]/lamb-phi)
 print "x = \n",xx,"\n","y = \n",yy
 
 plt.plot(xx, yy, marker=".", color="k", linestyle="none")
 axes = plt.gca()
-axes.set_xlim(-tam*0.1,tam*1.1)
-axes.set_ylim(-tam*0.1,tam*1.1)
+axes.set_xlim(-Lx*0.1,Lx*1.1)
+axes.set_ylim(-Ly*0.1,Ly*1.1)
 # plt.show()
 
 # MRE 
