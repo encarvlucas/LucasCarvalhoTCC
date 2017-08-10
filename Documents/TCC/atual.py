@@ -159,11 +159,11 @@ def elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L):
 	matrizf = np.zeros(numpnts)
 	for elem in MRE:
 		matriz[elem[0]][elem[0]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#\
-		matriz[elem[1]][elem[0]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# \  MATRIZ		[ 1 -1]
-		matriz[elem[0]][elem[1]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# /    K   =	[-1  1]
+		matriz[elem[1]][elem[0]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# \  MATRIZ	  k [ 1 -1]
+		matriz[elem[0]][elem[1]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# /    K   =  h [-1  1]
 		matriz[elem[1]][elem[1]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#/				
 	print "Before Boundary Conditions:"
-	pprint(matriz)
+	print matriz
 	
 	#----------------------MATRIZ COM CONDIÇÕES DE CONTORNO (-K+M)*a = f - CC--------------------------------
 	if T_0 != None:
@@ -304,6 +304,22 @@ def elementosfinitosquad(L,n,k,T_0,T_L,dT_0,dT_L):
 		aux = 0.1*abs(maior-menor)
 		axes.set_ylim([menor-3*aux,3*aux+maior])
 		plt.grid(True)
+	return
+
+def diferencasfinitas(X,MRE,k,T_0,T_L,dT_0,dT_L):
+	#MATRIZ DE SOLUÇÃO
+	L = max(X)
+	numele = len(X)-1 #NÚMERO DE ESPAÇOS DO DOMÍNIO
+	numpnts = numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
+	#----------------------MATRIZ GERAL (-K+M)*a = f--------------------------------------------------------------------
+	matriz = np.zeros((numpnts,numpnts))
+	matrizf = np.zeros(numpnts)
+	for elem in MRE:
+		matriz[elem[0]][elem[0]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#\
+		matriz[elem[1]][elem[0]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# \  MATRIZ	    [ -2  1  0 ...]
+		matriz[elem[0]][elem[1]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# /        =  k [  1 -2  1 ...]
+		matriz[elem[1]][elem[1]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#/				[  0  1 -2 ...]
+	pprint(matriz)
 	return
 
 def main():
