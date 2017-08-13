@@ -8,7 +8,7 @@ import os
 import math
 import matplotlib.pyplot as plt
 
-def diferencasfinitas(X,MRE,k,Q,T_0,T_L,dT_0,dT_L):
+def diferencasfinitasimplicito(X,MRE,k,Q,T_inicial,T_0,T_L,dT_0,dT_L):
 	#MATRIZ DE SOLUÇÃO
 	L = max(X)
 	numele = len(X)-1 #NÚMERO DE ESPAÇOS DO DOMÍNIO
@@ -60,8 +60,30 @@ def diferencasfinitas(X,MRE,k,Q,T_0,T_L,dT_0,dT_L):
 	aux = 0.1*abs(maior-menor)
 	axes.set_ylim([menor-3*aux,3*aux+maior])
 	plt.grid(True)
+	plt.title("Metodo Implicito")
+	plt.savefig("img/respfinal.jpg")
 	plt.show()
 	return
+
+def diferencasfinitasexplicito(X,MRE,k,Q,T_inicial,Delta_t,T_0,T_L,dT_0,dT_L):
+	L = max(X)
+	numpnts = len(X) #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
+	resp = np.zeros(numpnts)
+	resp[0] = T_0
+	resp[numpnts-1] = T_L
+	for i in range(1,numpnts-1):
+		resp[i] = Delta_t*(Q[i] + (T_inicial[i-1]-2*T_inicial[i]+T_inicial[i+1])/((X[i]-X[i-1])*(X[i+1]-X[i])) + T_inicial[i]/Delta_t) 
+	
+	#----------------------------------------GRÁFICO-----------------------------------------------------------
+	plt.plot(np.array(X), np.array(resp), "r")
+	maior = max(resp)
+	menor = min(resp)
+	axes = plt.gca()
+	axes.set_xlim([0,L])
+	aux = 0.1*abs(maior-menor)
+	axes.set_ylim([menor-3*aux,3*aux+maior])
+	plt.grid(True)
+	return resp
 
 def main():
 	with open("malha.txt", "r") as arq:
@@ -78,10 +100,21 @@ def main():
 	X = np.array(X)
 	MRE = np.array(MRE, int)
 	Q = np.zeros(len(X))
+	T_inicial = np.zeros(len(X))
+	t_intervalos = np.zeros(150) + 0.001
 	print "X: ",X
 	print "MRE: ",MRE
 	print "Q: ",Q
-	diferencasfinitas(X,MRE,1.0,Q,0,1,None,None)
+
+	t_acumulado = 0.0
+	for i in range(len(t_intervalos)):
+		t_acumulado += t_intervalos[i]
+		T_inicial = diferencasfinitasexplicito(X,MRE,1.0,Q,T_inicial,t_intervalos[i],0,1,None,None)
+		plt.title("Metodo Explicito t={}".format(t_acumulado))
+		# plt.savefig("img/explicito_{}.jpg".format(i))
+		# plt.show()
+
+	plt.savefig("img/explicito_t={}s.jpg".format(t_acumulado))
 	return
 
 if __name__ == '__main__':
