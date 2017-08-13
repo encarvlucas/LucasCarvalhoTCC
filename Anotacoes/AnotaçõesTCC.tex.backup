@@ -1,0 +1,75 @@
+\documentclass[a4paper,14pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{cancel}
+\usepackage{mathtools}
+\usepackage{placeins}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+
+%opening
+\title{Anotações}
+\author{Lucas Carvalho de Sousa}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+\newpage
+\section{Equação de Transmissão de Calor}
+
+Temos que a forma simplificada da equação geral de transmissão de calor é:
+
+\begin{equation}
+ \frac{\partial T}{\partial t}-\nabla^2 T=Q
+\end{equation}
+
+\subsection{Equação da Continuidade}
+
+Avaliando um elemento de volume finito, considerando $\rho$ como a densidade do meio, $\vec{v}=(u,v,w)$ o vetor da velocidade 
+nas componentes cartesianas $(x,y,z)$ e $t$ como o tempo no sistema,
+podemos extrair a seguinte equação:\\
+
+%\fontsize{12}{0} 
+ %\fontsize{14}{0}
+\begin{equation}
+ \frac{D\rho}{Dt}+\rho\nabla\ldotp\vec{v}=0
+\end{equation}
+Onde o $D$ representa a derivação material e $\nabla$ o operador divergente. %Podemos então escrever a equação de outra forma:
+\begin{equation}               
+ \frac{D\rho}{Dt} = \frac{\partial\rho}{\partial t} + \frac{\partial\rho }{\partial x} + \frac{\partial\rho }{\partial y} + 
+\frac{\partial\rho }{\partial z}\nonumber\\ 
+\end{equation}
+
+Para um fluido incompressível teremos que a massa específica é constante, e então:
+\begin{equation}
+ \nabla\ldotp\vec{v}=\frac{\partial u}{\partial x} + \frac{\partial v}{\partial y} + 
+\frac{\partial w}{\partial z}=0
+\end{equation}
+%aaação
+%Função de Corrente: \ \ $u\equiv\frac{\partial\psi}{\partial y}\ \ \ $e$\ \ \ v\equiv -\frac{\partial\psi}{\partial x}$\\
+
+%Função Potencial: \ \ $u\equiv -\frac{\partial\phi}{\partial x}\ \ \ $e$\ \ \ v\equiv -\frac{\partial\phi}{\partial y}$\\
+
+\subsection{Equação da Quantidade de Movimento}
+
+\FloatBarrier
+%\section{Bibliografia}
+\begin{thebibliography}{00}
+1) R.J. Biezuner. Métodos Numéricos para Equações Parciais Elípticas. Notas de Aula, 2007.
+\\ \ \\
+2) A.O. Fortuna. Técnicas Computacionais para Dinâmica dos Fluidos: Conceitos Básicos e Aplicações. Edusp, 2000.
+\\ \ \\
+3) R.J. LeVeque. Finite Difference Methods for Ordinary and Partial Differential Equations. Steady-State and Time-Dependant Problems. SIAM, 2007.
+\\ \ \\
+4) J.R. Rodrigues. Introdução à Simulação de Reservatórios Petrolíferos, Programa de Verão, LNCC 2015.
+
+\end{thebibliography}
+
+\end{document}
