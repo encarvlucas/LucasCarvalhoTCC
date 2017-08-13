@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 #-------------------------------------- by: LUCAS CARVALHO DE SOUSA --------------------------------------------------
+#Solução da equação de Laplace  dT - d²T = Q
+#								dt   dx²
 import numpy as np
 import sys
 import os
 import math
 import matplotlib.pyplot as plt
 
-def diferencasfinitas(X,MRE,k,T_0,T_L,dT_0,dT_L):
+def diferencasfinitas(X,MRE,k,Q,T_0,T_L,dT_0,dT_L):
 	#MATRIZ DE SOLUÇÃO
 	L = max(X)
 	numele = len(X)-1 #NÚMERO DE ESPAÇOS DO DOMÍNIO
 	numpnts = numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
 	#----------------------MATRIZ GERAL (-K+M)*a = f--------------------------------------------------------------------
 	matriz = np.zeros((numpnts,numpnts))
-	matrizf = np.zeros(numpnts)
+	matrizf = Q
 	for elem in MRE:
 		matriz[elem[0]][elem[0]] -= k*1.0/(X[elem[0]]-X[elem[1]])**2		#\
 		matriz[elem[1]][elem[0]] -= -k*1.0/(X[elem[0]]-X[elem[1]])**2		# \  MATRIZ	    [ -2  1  0 ...]
@@ -75,9 +77,11 @@ def main():
 			MRE.append(tuple(aux))
 	X = np.array(X)
 	MRE = np.array(MRE, int)
+	Q = np.zeros(len(X))
 	print "X: ",X
 	print "MRE: ",MRE
-	diferencasfinitas(X,MRE,1.0,0,1,None,None)
+	print "Q: ",Q
+	diferencasfinitas(X,MRE,1.0,Q,0,1,None,None)
 	return
 
 if __name__ == '__main__':
