@@ -113,12 +113,14 @@ xx,yy = np.meshgrid(x_val,y_val)
 # print "x = \n",xx,"\n","y = \n",yy
 
 #Ex 3.2:
-A = 0.07
+A = 0.007
 phi = 2.0*np.pi/4.0
 lamb = 24.0/6.0
 k_ex = 2.0*np.pi/lamb
-for i in range(nx):
-	yy[ny-1][i] += A*np.sin(2.0*np.pi*xx[ny-1][i]/lamb-phi)
+for i in range(ny):
+	Amp = i*A/ny
+	for j in range(nx):
+		yy[i][j] += Amp*np.sin(2.0*np.pi*xx[ny-1][j]/lamb-phi)
 print "x = \n",xx,"\n","y = \n",yy
 
 plt.plot(xx, yy, marker=".", color="k", linestyle="none")
