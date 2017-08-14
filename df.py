@@ -8,7 +8,7 @@ import os
 import math
 import matplotlib.pyplot as plt
 
-def diferencasfinitasimplicito(X,MRE,k,Q,T_inicial,T_0,T_L,dT_0,dT_L):
+def diferencasfinitasimplicito(X ,MRE ,k ,Q ,Delta_t ,T_inicial ,T_0 ,T_L ,dT_0 ,dT_L):
 	#MATRIZ DE SOLUÇÃO
 	L = max(X)
 	numele = len(X)-1 #NÚMERO DE ESPAÇOS DO DOMÍNIO
@@ -52,7 +52,7 @@ def diferencasfinitasimplicito(X,MRE,k,Q,T_inicial,T_0,T_L,dT_0,dT_L):
 	print resp
 	return resp
 
-def diferencasfinitasexplicito(X,MRE,k,Q,T_inicial,Delta_t,T_0,T_L,dT_0,dT_L):
+def diferencasfinitasexplicito(X, MRE, k, Q, Delta_t, T_inicial, T_0, T_L, dT_0, dT_L):
 	L = max(X)
 	numpnts = len(X) #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
 	resp = np.zeros(numpnts)
@@ -63,19 +63,19 @@ def diferencasfinitasexplicito(X,MRE,k,Q,T_inicial,Delta_t,T_0,T_L,dT_0,dT_L):
 
 	return resp
 
-def grafico_config(x,y):
+def grafico(x, y, color, title):
 	#----------------------------------------GRÁFICO-----------------------------------------------------------
-	# plt.plot(np.array(x), np.array(y), "r")
+	plt.plot(np.array(x), np.array(y), color=color)
 	maior = max(y)
 	menor = min(y)
 	axes = plt.gca()
 	axes.set_xlim([0,max(x)])
 	aux = 0.1*abs(maior-menor)
-	axes.set_ylim([menor-3*aux,3*aux+maior])
+	axes.set_ylim([menor-3*aux, 3*aux+maior])
 	plt.grid(True)
-	# # plt.title("Metodo Implicito")
-	# # plt.savefig("img/respfinal.jpg")
-	# # plt.show()
+	plt.title(title)
+	# plt.savefig("img/respfinal.jpg")
+	# plt.show()
 	return
 
 def main():
@@ -102,12 +102,10 @@ def main():
 	print "Q: ",Q
 
 	t_acumulado = 0.0
-	grafico_config(X,T_inicial)
 	for i in range(len(t_intervalos)):
 		t_acumulado += t_intervalos[i]
-		T_inicial = diferencasfinitasexplicito(X,MRE,1.0,Q,T_inicial,t_intervalos[i],T_inicial[0],T_inicial[-1],None,None)
-		plt.plot(np.array(X), np.array(T_inicial), color=(1-i*1.0/len(t_intervalos),0,0))
-		plt.title("Metodo Explicito t={}".format(t_acumulado))
+		T_inicial = diferencasfinitasexplicito(X, MRE, 1.0, Q, t_intervalos[i], T_inicial, T_inicial[0], T_inicial[-1], None, None)
+		grafico(X, T_inicial, (1-i*1.0/len(t_intervalos),0,0), "Metodo Explicito t={}".format(t_acumulado))
 		# plt.savefig("img/explicito_{}.jpg".format(i))
 		# plt.show()
 	plt.savefig("img/explicito_t={}s.jpg".format(t_acumulado))
