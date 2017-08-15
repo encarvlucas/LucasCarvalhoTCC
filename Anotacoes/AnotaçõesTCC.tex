@@ -27,7 +27,7 @@
 Temos que a forma simplificada da equação geral de transmissão de calor é:
 
 \begin{equation}
- \frac{\partial T}{\partial t}-\nabla^2 T=Q
+ \frac{\partial T}{\partial t}-k\nabla^2 T=Q
 \end{equation}
 
 \subsection{Discretização}
@@ -36,11 +36,11 @@ A discretização desta equação pode ser realizada por dois métodos:
 \begin{list}{Método}{}
  \item[] Explícito
  \begin{equation}
-  \dfrac{T^{n+1}_i-T^{n}_i}{\Delta t_{n+1}} - \dfrac{T^{n}_{i-1}-2T^{n}_i+T^{n}_{i+1}}{\Delta x_i} = Q^{n}_i 
+  \dfrac{T^{n+1}_i-T^{n}_i}{\Delta t_{n+1}} - \dfrac{k T^{n}_{i-1}-2k T^{n}_i+k T^{n}_{i+1}}{\Delta x_i} = Q^{n}_i 
  \end{equation}
  \item[] Implícito
  \begin{equation}
-  \dfrac{T^{n+1}_i-T^{n}_i}{\Delta t_{n+1}} - \dfrac{T^{n+1}_{i-1}-2T^{n+1}_i+T^{n+1}_{i+1}}{\Delta x_i} = Q^{n+1}_i
+  \dfrac{T^{n+1}_i-T^{n}_i}{\Delta t_{n+1}} - \dfrac{k T^{n+1}_{i-1}-2k T^{n+1}_i+k T^{n+1}_{i+1}}{\Delta x_i} = Q^{n}_i
  \end{equation}
 \end{list}
 
