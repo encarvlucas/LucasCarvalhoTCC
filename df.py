@@ -18,10 +18,10 @@ def diferencasfinitaspermanente(X,MRE,k,Q,T_0,T_L,dT_0,dT_L):
 	matriz = np.zeros((numpnts,numpnts))
 	matrizf = Q
 	for elem in MRE:
-		matriz[elem[0]][elem[0]] -= k*1.0/(X[elem[0]]-X[elem[1]])**2		#\
-		matriz[elem[1]][elem[0]] -= -k*1.0/(X[elem[0]]-X[elem[1]])**2		# \  MATRIZ	    [ -2  1  0 ...]
-		matriz[elem[0]][elem[1]] -= -k*1.0/(X[elem[0]]-X[elem[1]])**2		# /        =  k [  1 -2  1 ...]
-		matriz[elem[1]][elem[1]] -= k*1.0/(X[elem[0]]-X[elem[1]])**2		#/				[  0  1 -2 ...]
+		matriz[elem[0]][elem[0]] = 2*k*1.0/(X[elem[0]]-X[elem[1]])**2		#\
+		matriz[elem[1]][elem[0]] = -k*1.0/(X[elem[0]]-X[elem[1]])**2		# \  MATRIZ	    [ -2  1  0 ...]
+		matriz[elem[0]][elem[1]] = -k*1.0/(X[elem[0]]-X[elem[1]])**2		# /        =  k [  1 -2  1 ...]
+		# matriz[elem[1]][elem[1]] -= k*1.0/(X[elem[0]]-X[elem[1]])**2		#/				[  0  1 -2 ...]
 
 	if T_0 != None:
 		# T(0) = T_0 (CONDIÇÃO DE CONTORNO DE DIRICHLET)
