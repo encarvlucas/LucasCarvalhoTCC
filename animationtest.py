@@ -3,13 +3,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-fig, ax = plt.subplots()
+# fig, ax = plt.subplots()
 # fig.set_tight_layout(True)
 
 # Query the figure's on-screen size and DPI. Note that when saving the figure to
 # a file, we need to provide a DPI for that separately.
-print('fig size: {0} DPI, size in inches {1}'.format(
-    fig.get_dpi(), fig.get_size_inches()))
+# print('fig size: {0} DPI, size in inches {1}'.format(
+#     fig.get_dpi(), fig.get_size_inches()))
 
 # Plot a scatter that persists (isn't redrawn) and the initial line.
 x = np.arange(0, 20, 1)
@@ -29,12 +29,12 @@ def update(i):
     # plt.plot(x,np.sin(x/np.pi))
     plt.plot(x,i)
     # ax.set_xlabel(label)
-    return ax
+    return 
 
 # if __name__ == '__main__':
     # FuncAnimation will call the 'update' function for each frame; here
     # animating over 10 frames, with an interval of 200ms between frames.
-anim = FuncAnimation(fig, update, frames=y, interval=100)
+anim = FuncAnimation(plt.gcf(), update, frames=y, interval=100)
 # if len(sys.argv) > 1 and sys.argv[1] == 'save':
 #     anim.save('line.gif', dpi=80, writer='imagemagick')
 # else:
