@@ -8,6 +8,7 @@ import os
 import math
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredText
+from matplotlib.animation import FuncAnimation
 
 def diferencasfinitaspermanente(X,MRE,k,Q,T_0,T_L,dT_0,dT_L):
 	#MATRIZ DE SOLUÇÃO
@@ -123,9 +124,11 @@ def grafico(x, y, color, title=None):
 
 def main():
 	args = sys.argv[1:]
-	if ("e" not in args) or ("i" not in args):
-		# DEFALT CHOICE		
-		trigger = "ei"
+	if not args:
+		# DEFAULT CHOICE		
+		trigger = "i"
+	else:
+		trigger = args
 
 	with open("malha.txt", "r") as arq:
 		X = []
@@ -150,33 +153,60 @@ def main():
 
 	#Solução Inicial
 	plt.plot(X, T_inicial, color="m", linewidth=3)
+	fig = plt.gcf()
+	ax = plt.gca()
 
-	if "e" in trigger.lower():
+	def plotgif(i):
+		plt.plot(X, np.array(i), color="g")
+		return
+
+	if "e" in trigger:
 		t_intervalos = np.zeros(250) + 0.001
 		t_acumulado = 0.0
 		T_atual = np.copy(T_inicial)
+		frames = []
+
 		for i in range(len(t_intervalos)):
 			t_acumulado += t_intervalos[i]
 			T_atual = diferencasfinitasexplicito(X, MRE, 1.0, Q, t_intervalos[i], T_atual, None, None)
-			grafico(X, T_atual, (1-i*1.0/len(t_intervalos),0,0), "Explicit Method t={}".format(t_acumulado))
+			if "a" in trigger:
+				frames.append(T_atual)
+			else:
+				grafico(X, T_atual, (1-i*1.0/len(t_intervalos),0,0), "Explicit Method t={}".format(t_acumulado))
 			# plt.savefig("img/explicito_{}.jpg".format(i))
 		axes = plt.gca()
+		if "a" in trigger:
+			anim = FuncAnimation(fig, plotgif, frames=frames, interval=50, repeat=False)
+		
 		axes.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
-		# plt.savefig("img/explicito_t={}s.jpg".format(t_acumulado))
+		
+		if ("s" in trigger) and not ("a" in trigger):
+			plt.savefig("img/explicito_t={}s.jpg".format(t_acumulado))
 		plt.show()
 	
-	if "i" in trigger.lower():
+	if "i" in trigger:
 		t_intervalos = np.zeros(10) + 0.025
 		t_acumulado = 0.0
 		T_atual = np.copy(T_inicial)
+		frames = []
+
 		for i in range(len(t_intervalos)):
 			t_acumulado += t_intervalos[i]
 			T_atual = diferencasfinitasimplicito(X, MRE, 1.0, Q, t_intervalos[i], T_atual, None, None)
-			grafico(X, T_atual, (0,0,1-i*1.0/len(t_intervalos)), "Implicit  Method t={}".format(t_acumulado))
+			if "a" in trigger:
+				frames.append(T_atual)
+			else:
+				grafico(X, T_atual, (0,0,1-i*1.0/len(t_intervalos)), "Implicit  Method t={}".format(t_acumulado))
 			# plt.savefig("img/explicito_{}.jpg".format(i))
 		axes = plt.gca()
+		print frames
+		if "a" in trigger:
+			anim = FuncAnimation(fig, plotgif, frames=frames, interval=250, repeat=False)
+
 		axes.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
-		# plt.savefig("img/implicito_t={}s.jpg".format(t_acumulado))
+		
+		if ("s" in trigger) and not ("a" in trigger):
+			plt.savefig("img/implicito_t={}s.jpg".format(t_acumulado))
 		plt.show()
 	return
 
