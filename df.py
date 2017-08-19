@@ -112,7 +112,6 @@ def grafico(x, y, color, title=None):
 	maior = max(y)
 	menor = min(y)
 	axes = plt.gca()
-	axes.set_xlim([min(x),max(x)])
 	aux = 0.1*abs(maior-menor)
 	axes.set_ylim([menor-3*aux, 3*aux+maior])
 	plt.grid(True)
@@ -155,16 +154,13 @@ def main():
 	plt.plot(X, T_inicial, color="m", linewidth=3)
 	fig = plt.gcf()
 	ax = plt.gca()
+	ax.set_xlim([min(X),max(X)])
+	aux = 0.1*abs(max(T_inicial)-min(T_inicial))
+	ax.set_ylim([min(T_inicial)-3*aux, 3*aux+max(T_inicial)])
+	plt.grid(True)
 
 	def plotgif(y):
 		plt.plot(X, np.array(y), color="g")
-		maior = max(y)
-		menor = min(y)
-		axes = plt.gca()
-		axes.set_xlim([min(X),max(X)])
-		aux = 0.1*abs(maior-menor)
-		axes.set_ylim([menor-3*aux, 3*aux+maior])
-		plt.grid(True)
 		return
 
 	if "e" in trigger:
@@ -187,7 +183,7 @@ def main():
 		
 		if "s" in trigger:
 			if "a" in trigger:
-				anim.save("img/explicito__t={}s.gif".format(t_acumulado), dpi=80, writer='imagemagick')
+				anim.save("img/explicito_t={}s.gif".format(t_acumulado), dpi=80, writer='imagemagick')
 				print "Done!"
 			else:
 				plt.save("img/explicito_t={}s.jpg".format(t_acumulado))
@@ -213,7 +209,7 @@ def main():
 		
 		if "s" in trigger:
 			if "a" in trigger:
-				anim.save("img/implicito__t={}s.gif".format(t_acumulado), dpi=80, writer='imagemagick')
+				anim.save("img/implicito_t={}s.gif".format(t_acumulado), dpi=80, writer='imagemagick')
 				print "Done!"
 			else:
 				plt.save("img/implicito_t={}s.jpg".format(t_acumulado))
