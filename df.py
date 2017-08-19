@@ -112,7 +112,7 @@ def grafico(x, y, color, title=None):
 	maior = max(y)
 	menor = min(y)
 	axes = plt.gca()
-	axes.set_xlim([0,max(x)])
+	axes.set_xlim([min(x),max(x)])
 	aux = 0.1*abs(maior-menor)
 	axes.set_ylim([menor-3*aux, 3*aux+maior])
 	plt.grid(True)
@@ -156,12 +156,19 @@ def main():
 	fig = plt.gcf()
 	ax = plt.gca()
 
-	def plotgif(i):
-		plt.plot(X, np.array(i), color="g")
+	def plotgif(y):
+		plt.plot(X, np.array(y), color="g")
+		maior = max(y)
+		menor = min(y)
+		axes = plt.gca()
+		axes.set_xlim([min(X),max(X)])
+		aux = 0.1*abs(maior-menor)
+		axes.set_ylim([menor-3*aux, 3*aux+maior])
+		plt.grid(True)
 		return
 
 	if "e" in trigger:
-		t_intervalos = np.zeros(250) + 0.001
+		t_intervalos = np.zeros(100) + 0.0025
 		t_acumulado = 0.0
 		T_atual = np.copy(T_inicial)
 		frames = []
@@ -173,15 +180,17 @@ def main():
 				frames.append(T_atual)
 			else:
 				grafico(X, T_atual, (1-i*1.0/len(t_intervalos),0,0), "Explicit Method t={}".format(t_acumulado))
-			# plt.savefig("img/explicito_{}.jpg".format(i))
-		axes = plt.gca()
+			# plt.savefig("img/explicito_{}.jpg".format(i)) #FRAME
 		if "a" in trigger:
-			anim = FuncAnimation(fig, plotgif, frames=frames, interval=50, repeat=False)
+			anim = FuncAnimation(fig, plotgif, frames=frames, interval=50, repeat=False, save_count=0)
+		ax.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
 		
-		axes.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
-		
-		if ("s" in trigger) and not ("a" in trigger):
-			plt.savefig("img/explicito_t={}s.jpg".format(t_acumulado))
+		if "s" in trigger:
+			if "a" in trigger:
+				anim.save("img/explicito__t={}s.gif".format(t_acumulado), dpi=80, writer='imagemagick')
+				print "Done!"
+			else:
+				plt.save("img/explicito_t={}s.jpg".format(t_acumulado))
 		plt.show()
 	
 	if "i" in trigger:
@@ -197,16 +206,17 @@ def main():
 				frames.append(T_atual)
 			else:
 				grafico(X, T_atual, (0,0,1-i*1.0/len(t_intervalos)), "Implicit  Method t={}".format(t_acumulado))
-			# plt.savefig("img/explicito_{}.jpg".format(i))
-		axes = plt.gca()
-		print frames
+			# plt.savefig("img/explicito_{}.jpg".format(i)) #FRAME
 		if "a" in trigger:
-			anim = FuncAnimation(fig, plotgif, frames=frames, interval=250, repeat=False)
-
-		axes.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
+			anim = FuncAnimation(fig, plotgif, frames=frames, interval=250, repeat=False, save_count=0)
+		ax.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
 		
-		if ("s" in trigger) and not ("a" in trigger):
-			plt.savefig("img/implicito_t={}s.jpg".format(t_acumulado))
+		if "s" in trigger:
+			if "a" in trigger:
+				anim.save("img/implicito__t={}s.gif".format(t_acumulado), dpi=80, writer='imagemagick')
+				print "Done!"
+			else:
+				plt.save("img/implicito_t={}s.jpg".format(t_acumulado))
 		plt.show()
 	return
 
