@@ -10,14 +10,14 @@ import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.animation import FuncAnimation
 
-def diferencasfinitaspermanente(X,MRE,k,Q,T_0,T_L,dT_0,dT_L):
+def diferencasfinitaspermanente(X, MRE, k, Q, T_0, T_L, dT_0, dT_L):
 	#MATRIZ DE SOLUÇÃO
 	L = max(X)
 	numele = len(X)-1 #NÚMERO DE ESPAÇOS DO DOMÍNIO
 	numpnts = numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
 	#----------------------MATRIZ GERAL (-K+M)*a = f--------------------------------------------------------------------
 	matriz = np.zeros((numpnts,numpnts))
-	matrizf = Q
+	matrizf = np.copy(Q)
 	for elem in MRE:
 		matriz[elem[0]][elem[0]] = 2*k*1.0/(X[elem[0]]-X[elem[1]])**2		#\
 		matriz[elem[1]][elem[0]] = -k*1.0/(X[elem[0]]-X[elem[1]])**2		# \  MATRIZ	    [ -2  1  0 ...]
@@ -51,7 +51,7 @@ def diferencasfinitaspermanente(X,MRE,k,Q,T_0,T_L,dT_0,dT_L):
 	print matriz
 	print matrizf
 	resp = np.linalg.solve(matriz,matrizf)
-	print resp
+	print "Solução:", resp
 	return resp
 
 def diferencasfinitasimplicito(X ,MRE ,k ,Q ,Delta_t ,T_inicial ,dT_0 ,dT_L):
@@ -125,7 +125,7 @@ def main():
 	args = sys.argv[1:]
 	if not args:
 		# DEFAULT CHOICE		
-		trigger = "i"
+		trigger = "ea"
 	else:
 		trigger = args
 
@@ -143,6 +143,7 @@ def main():
 	X = np.array(X)
 	MRE = np.array(MRE, int)
 	Q = np.zeros(len(X))
+	k = 1.0
 	T_inicial = np.zeros(len(X))
 	T_inicial[0] = 0.0
 	T_inicial[-1] = 1.0
@@ -150,34 +151,43 @@ def main():
 	print "MRE: ",MRE
 	print "Q: ",Q
 
+	#Solução Permanente
+	perm = diferencasfinitaspermanente(X, MRE, k, Q, T_inicial[0], T_inicial[-1], None, None)
+	plt.plot(X, perm, "m", linewidth=4)
+
 	#Solução Inicial
-	plt.plot(X, T_inicial, color="m", linewidth=3)
+	plt.plot(X, T_inicial, "c--", linewidth=3)
 	fig = plt.gcf()
 	ax = plt.gca()
 	ax.set_xlim([min(X),max(X)])
 	aux = 0.1*abs(max(T_inicial)-min(T_inicial))
-	ax.set_ylim([min(T_inicial)-3*aux, 3*aux+max(T_inicial)])
+	ax.set_ylim([min(T_inicial)-1*aux, 1*aux+max(T_inicial)])
 	plt.grid(True)
 
 	def plotgif(y):
-		plt.plot(X, np.array(y), color="g")
+		startline.set_ydata(np.array(y)) # Use only one line
+		# plt.plot(X, np.array(y), color="g") # Keep line history
 		return
 
+	#Solução Explicita
 	if "e" in trigger:
-		t_intervalos = np.zeros(100) + 0.0025
+		t_intervalos = np.zeros(100) + 0.005
 		t_acumulado = 0.0
 		T_atual = np.copy(T_inicial)
 		frames = []
 
 		for i in range(len(t_intervalos)):
 			t_acumulado += t_intervalos[i]
-			T_atual = diferencasfinitasexplicito(X, MRE, 1.0, Q, t_intervalos[i], T_atual, None, None)
+			T_atual = diferencasfinitasexplicito(X, MRE, k, Q, t_intervalos[i], T_atual, None, None)
 			if "a" in trigger:
 				frames.append(T_atual)
 			else:
 				grafico(X, T_atual, (1-i*1.0/len(t_intervalos),0,0), "Explicit Method t={}".format(t_acumulado))
 			# plt.savefig("img/explicito_{}.jpg".format(i)) #FRAME
 		if "a" in trigger:
+			aux = 0.1*abs(np.amax(frames))-np.amin(frames)
+			ax.set_ylim([np.amin(frames)-1*aux, 1*aux+np.amax(frames)]) # Novo Máximo para o maior frame
+			startline, = ax.plot(X, frames[0], color="g")
 			anim = FuncAnimation(fig, plotgif, frames=frames, interval=50, repeat=False, save_count=0)
 		ax.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
 		
@@ -189,22 +199,26 @@ def main():
 				plt.save("img/explicito_t={}s.jpg".format(t_acumulado))
 		plt.show()
 	
+	#Solução Implicita
 	if "i" in trigger:
-		t_intervalos = np.zeros(10) + 0.025
+		t_intervalos = np.zeros(20) + 0.025
 		t_acumulado = 0.0
 		T_atual = np.copy(T_inicial)
 		frames = []
 
 		for i in range(len(t_intervalos)):
 			t_acumulado += t_intervalos[i]
-			T_atual = diferencasfinitasimplicito(X, MRE, 1.0, Q, t_intervalos[i], T_atual, None, None)
+			T_atual = diferencasfinitasimplicito(X, MRE, k, Q, t_intervalos[i], T_atual, None, None)
 			if "a" in trigger:
 				frames.append(T_atual)
 			else:
 				grafico(X, T_atual, (0,0,1-i*1.0/len(t_intervalos)), "Implicit  Method t={}".format(t_acumulado))
 			# plt.savefig("img/explicito_{}.jpg".format(i)) #FRAME
 		if "a" in trigger:
-			anim = FuncAnimation(fig, plotgif, frames=frames, interval=250, repeat=False, save_count=0)
+			aux = 0.1*abs(np.amax(frames))-np.amin(frames)
+			ax.set_ylim([np.amin(frames)-1*aux, 1*aux+np.amax(frames)]) # Novo Máximo para o maior frame
+			startline, = ax.plot(X, frames[0], color="g")
+			anim = FuncAnimation(fig, plotgif, frames=frames, interval=150, repeat=False, save_count=0)
 		ax.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
 		
 		if "s" in trigger:
