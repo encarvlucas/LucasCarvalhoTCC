@@ -6,20 +6,6 @@ import os
 import math
 import matplotlib.pyplot as plt
 
-def pprint(A):
-	n = len(A)
-	for i in range(0, n):
-		line = ""
-		for j in range(0, n):
-			if A[i][j]>=0:
-				line += " "
-			line += ("{:.6}".format(str(A[i][j]))) + "\t"
-			if (j == n-1):
-				line += "| "
-		print line
-	print "\n"
-	return
-
 def openmalha(*args):
 	if "default" in args:
 		filenames = ("malhadefault.txt","MREdefault.txt")
@@ -202,7 +188,7 @@ def elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L):
 
 	if (numpnts <= 9):
 		print "After Boundary Conditions:"
-		pprint(matriz)
+		print(matriz)
 	resp = np.linalg.solve(matriz,matrizf)
 
 	for i in range(numpnts):
@@ -210,15 +196,14 @@ def elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L):
 			print "T({0:.2})= {1}".format(X[i],resp[i])
 
 	#----------------------------------------GRÁFICO-----------------------------------------------------------
-	if graficoshow:
-		plt.plot(np.array(X), np.array(resp), "r")
-		maior = max(resp)
-		menor = min(resp)
-		axes = plt.gca()
-		axes.set_xlim([0,L])
-		aux = 0.1*abs(maior-menor)
-		axes.set_ylim([menor-3*aux,3*aux+maior])
-		plt.grid(True)
+	plt.plot(np.array(X), np.array(resp), "r")
+	maior = max(resp)
+	menor = min(resp)
+	axes = plt.gca()
+	axes.set_xlim([0,L])
+	aux = 0.1*abs(maior-menor)
+	axes.set_ylim([menor-3*aux,3*aux+maior])
+	plt.grid(True)
 	return
 
 def elementosfinitosquad(L,n,k,T_0,T_L,dT_0,dT_L):
@@ -284,7 +269,7 @@ def elementosfinitosquad(L,n,k,T_0,T_L,dT_0,dT_L):
 		matriz[numpnts-1][numpnts] -= dT_L
 
 	if (numpnts <= 10):
-		pprint(matriz)
+		print(matriz)
 	
 	resp = gauss(matriz)
 
@@ -295,31 +280,14 @@ def elementosfinitosquad(L,n,k,T_0,T_L,dT_0,dT_L):
 		x[i] = (i*L/(numele*2))
 
 	#----------------------------------------GRÁFICO-----------------------------------------------------------
-	if graficoshow:
-		plt.plot(np.array(x), np.array(resp), "r")
-		maior = max(resp)
-		menor = min(resp)
-		axes = plt.gca()
-		axes.set_xlim([0,L])
-		aux = 0.1*abs(maior-menor)
-		axes.set_ylim([menor-3*aux,3*aux+maior])
-		plt.grid(True)
-	return
-
-def diferencasfinitas(X,MRE,k,T_0,T_L,dT_0,dT_L):
-	#MATRIZ DE SOLUÇÃO
-	L = max(X)
-	numele = len(X)-1 #NÚMERO DE ESPAÇOS DO DOMÍNIO
-	numpnts = numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
-	#----------------------MATRIZ GERAL (-K+M)*a = f--------------------------------------------------------------------
-	matriz = np.zeros((numpnts,numpnts))
-	matrizf = np.zeros(numpnts)
-	for elem in MRE:
-		matriz[elem[0]][elem[0]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#\
-		matriz[elem[1]][elem[0]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# \  MATRIZ	    [ -2  1  0 ...]
-		matriz[elem[0]][elem[1]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# /        =  k [  1 -2  1 ...]
-		matriz[elem[1]][elem[1]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#/				[  0  1 -2 ...]
-	pprint(matriz)
+	plt.plot(np.array(x), np.array(resp), "r")
+	maior = max(resp)
+	menor = min(resp)
+	axes = plt.gca()
+	axes.set_xlim([0,L])
+	aux = 0.1*abs(maior-menor)
+	axes.set_ylim([menor-3*aux,3*aux+maior])
+	plt.grid(True)
 	return
 
 def main():
@@ -335,7 +303,6 @@ def main():
 		printshow = False
 
 	#--------------------------------------------USO DE GRÁFICO?--------------------------------------------------------
-	global graficoshow
 	if any("show" in s.lower() for s in args):
 		graficoshow = True
 	else:
@@ -373,7 +340,7 @@ def main():
 	#------------------------------------------------DEBUGGING-------------------------------------------------------
 	if printshow:
 		print "L = {0}\nn = {1}\nX = ".format(L,n),X
-		print "MRE = ",MRE
+		print "MRE = \n",MRE
 		if T_0 != None:
 			print "T_0 = {}".format(T_0)
 		if T_L != None:
