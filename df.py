@@ -153,10 +153,11 @@ def main():
 
 	#Solução Permanente
 	perm = diferencasfinitaspermanente(X, MRE, k, Q, T_inicial[0], T_inicial[-1], None, None)
-	plt.plot(X, perm, "m", linewidth=4)
+	plt.plot(X, perm, "m", linewidth=4, label="Permanent Solution")
 
 	#Solução Inicial
-	plt.plot(X, T_inicial, "c--", linewidth=3)
+	plt.plot(X, T_inicial, "c--", linewidth=3, label="Initial Conditions")
+	plt.title("Temperature Distribution")
 	fig = plt.gcf()
 	ax = plt.gca()
 	ax.set_xlim([min(X),max(X)])
@@ -177,7 +178,6 @@ def main():
 		frames = []
 
 		for i in range(len(t_intervalos)):
-			t_acumulado += t_intervalos[i]
 			T_atual = diferencasfinitasexplicito(X, MRE, k, Q, t_intervalos[i], T_atual, None, None)
 			if "a" in trigger:
 				frames.append(T_atual)
@@ -187,9 +187,11 @@ def main():
 		if "a" in trigger:
 			aux = 0.1*abs(np.amax(frames))-np.amin(frames)
 			ax.set_ylim([np.amin(frames)-1*aux, 1*aux+np.amax(frames)]) # Novo Máximo para o maior frame
-			startline, = ax.plot(X, frames[0], color="g")
+			startline, = ax.plot(X, frames[0], color="g", label="Explicit Solution")
+			plt.title("After {} seconds".format(np.sum(t_intervalos)))
+			plt.legend(loc="best", fontsize="12")
 			anim = FuncAnimation(fig, plotgif, frames=frames, interval=50, repeat=False, save_count=0)
-		ax.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
+		ax.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=8))
 		
 		if "s" in trigger:
 			if "a" in trigger:
@@ -207,7 +209,6 @@ def main():
 		frames = []
 
 		for i in range(len(t_intervalos)):
-			t_acumulado += t_intervalos[i]
 			T_atual = diferencasfinitasimplicito(X, MRE, k, Q, t_intervalos[i], T_atual, None, None)
 			if "a" in trigger:
 				frames.append(T_atual)
@@ -217,9 +218,11 @@ def main():
 		if "a" in trigger:
 			aux = 0.1*abs(np.amax(frames))-np.amin(frames)
 			ax.set_ylim([np.amin(frames)-1*aux, 1*aux+np.amax(frames)]) # Novo Máximo para o maior frame
-			startline, = ax.plot(X, frames[0], color="g")
+			startline, = ax.plot(X, frames[0], color="g", label="Implicit Solution")
+			ax.set_xlabel("After {} seconds".format(np.sum(t_intervalos)))
+			plt.legend(loc="best", fontsize="12")
 			anim = FuncAnimation(fig, plotgif, frames=frames, interval=150, repeat=False, save_count=0)
-		ax.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=2))
+		ax.add_artist(AnchoredText("Time step: {0}s\nNumber of steps: {1}".format(np.mean(t_intervalos), len(t_intervalos)), loc=8))
 		
 		if "s" in trigger:
 			if "a" in trigger:
@@ -228,6 +231,7 @@ def main():
 			else:
 				plt.save("img/implicito_t={}s.jpg".format(t_acumulado))
 		plt.show()
+	print T_atual
 	return
 
 if __name__ == '__main__':

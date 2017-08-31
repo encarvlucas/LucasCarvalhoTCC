@@ -5,6 +5,8 @@ import sys
 import os
 import math
 import matplotlib.pyplot as plt
+from matplotlib.offsetbox import AnchoredText
+from matplotlib.animation import FuncAnimation
 
 def openmalha(*args):
 	if "default" in args:
@@ -135,46 +137,45 @@ def questionarCC(X):
 				dT_L = float(raw_input("And what's its value?\n"))
 	return T_0, T_L, dT_0, dT_L
 
-def elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L):
+def elementosfinitoslin(X, MRE, k, Q, dt, T, dT_0, dT_L):
 		#MATRIZ DE SOLUÇÃO
 	L = max(X)
 	numele = len(X)-1 #NÚMERO DE ESPAÇOS DO DOMÍNIO
 	numpnts = numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
 	#----------------------MATRIZ GERAL (-K+M)*a = f--------------------------------------------------------------------
 	matriz = np.zeros((numpnts,numpnts))
-	matrizf = np.zeros(numpnts)
+	matrizf = Q + T*1.0/dt
 	for elem in MRE:
-		matriz[elem[0]][elem[0]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#\
-		matriz[elem[1]][elem[0]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# \  MATRIZ	  k [ 1 -1]
-		matriz[elem[0]][elem[1]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])		# /    K   =  h [-1  1]
-		matriz[elem[1]][elem[1]] -= k*1.0/abs(X[elem[0]]-X[elem[1]])		#/				
-	print "Before Boundary Conditions:"
-	print matriz
+		matriz[elem[0]][elem[0]] -= k*1.0/abs(X[elem[0]]-X[elem[1]]) + 1.0/dt			#\  MATRIZ	  [ k/x+1/t  -k/x     0    ...]
+		matriz[elem[1]][elem[0]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])					# \        =  [-k/x    2k/x+1/t  -k/x  ...]
+		matriz[elem[0]][elem[1]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])					# /			  [  0     -k/x   2k/x+1/t ...]
+		matriz[elem[1]][elem[1]] -= k*1.0/abs(X[elem[0]]-X[elem[1]]) 					#/				
+	# print "Before Boundary Conditions:"
+	# print matriz
 	
 	#----------------------MATRIZ COM CONDIÇÕES DE CONTORNO (-K+M)*a = f - CC--------------------------------
-	if T_0 != None:
-		# T(0) = T_0 (CONDIÇÃO DE CONTORNO DE DIRICHLET)
-		index = np.where(X==0)[0][0]
-		matrizf[index] = T_0 						# VALOR NO PONTO
-		matriz[index][index] = 1 							# ÚNICO COEFICIENTE DA LINHA E COLUNA
-		a = range(numpnts)
-		a.remove(index)
-		for i in a:
-			matrizf[i] -= matriz[i][index]*matrizf[index]	# SUBTRAÇÂO DA COMPONENTE DA LINHA
-			matriz[index][i] = 0 							#{	ELIMINAÇÃO DA LINHA
-			matriz[i][index] = 0 							#{	ELIMINAÇÃO DA COLUNA
 
-	if T_L != None:
-		# T(L) = T_L (CONDIÇÃO DE CONTORNO DE DIRICHLET)
-		index = np.where(X==L)[0][0]
-		matrizf[index] = T_L 						# VALOR NO PONTO
-		matriz[index][index] = 1 							# ÚNICO COEFICIENTE DA LINHA E COLUNA
-		a = range(numpnts)
-		a.remove(index)
-		for i in a:
-			matrizf[i] -= matriz[i][index]*matrizf[index]	# SUBTRAÇÂO DA COMPONENTE DA LINHA
-			matriz[index][i] = 0 							#{	ELIMINAÇÃO DA LINHA
-			matriz[i][index] = 0 							#{	ELIMINAÇÃO DA COLUNA
+	# T(0) = T_0 (CONDIÇÃO DE CONTORNO DE DIRICHLET)
+	index = np.where(X==0)[0][0]
+	matrizf[index] = T[index]							# VALOR NO PONTO
+	matriz[index][index] = 1 							# ÚNICO COEFICIENTE DA LINHA E COLUNA
+	a = range(numpnts)
+	a.remove(index)
+	for i in a:
+		matrizf[i] -= matriz[i][index]*matrizf[index]	# SUBTRAÇÂO DA COMPONENTE DA LINHA
+		matriz[index][i] = 0 							#{	ELIMINAÇÃO DA LINHA
+		matriz[i][index] = 0 							#{	ELIMINAÇÃO DA COLUNA
+
+	# T(L) = T_L (CONDIÇÃO DE CONTORNO DE DIRICHLET)
+	index = np.where(X==L)[0][0]
+	matrizf[index] = T[index]							# VALOR NO PONTO
+	matriz[index][index] = 1 							# ÚNICO COEFICIENTE DA LINHA E COLUNA
+	a = range(numpnts)
+	a.remove(index)
+	for i in a:
+		matrizf[i] -= matriz[i][index]*matrizf[index]	# SUBTRAÇÂO DA COMPONENTE DA LINHA
+		matriz[index][i] = 0 							#{	ELIMINAÇÃO DA LINHA
+		matriz[i][index] = 0 							#{	ELIMINAÇÃO DA COLUNA
 
 	if dT_0 != None:
 		# dT(0)/dx = dT_0 (CONDIÇÃO DE CONTORNO DE NEUMANN)
@@ -186,17 +187,17 @@ def elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L):
 		index = np.where(X==L)[0][0]
 		matrizf[index] -= dT_L	# SUBTRAÇÂO DA COMPONENTE DA LINHA
 
-	if (numpnts <= 9):
-		print "After Boundary Conditions:"
-		print(matriz)
+	# if (numpnts <= 9):
+	# 	print "After Boundary Conditions:"
+	# 	print(matriz)
 	resp = np.linalg.solve(matriz,matrizf)
 
-	for i in range(numpnts):
-		if (numpnts <= 50):
-			print "T({0:.2})= {1}".format(X[i],resp[i])
+	# if (numpnts <= 50):
+	# 	for i in range(numpnts):
+	# 		print "T({0:.2})= {1}".format(X[i],resp[i])
 
 	#----------------------------------------GRÁFICO-----------------------------------------------------------
-	plt.plot(np.array(X), np.array(resp), "r")
+	# plt.plot(np.array(X), np.array(resp), "r")
 	maior = max(resp)
 	menor = min(resp)
 	axes = plt.gca()
@@ -204,97 +205,13 @@ def elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L):
 	aux = 0.1*abs(maior-menor)
 	axes.set_ylim([menor-3*aux,3*aux+maior])
 	plt.grid(True)
-	return
-
-def elementosfinitosquad(L,n,k,T_0,T_L,dT_0,dT_L):
-	#MATRIZ DE SOLUÇÃO
-	numele = n #NÚMERO DE ESPAÇOS DO DOMÍNIO
-	numpnts = 2*numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
-	h = float(L)/(2*numele)
-	
-	#----------------------MATRIZ GERAL (-K+M)*a = f---------------------------------------------------
-	matriz = [0]*(numpnts)
-	for i in range(numpnts):
-		matriz[i] = np.zeros(numpnts+1)
-		for j in range(numpnts+1): #+1 DEVIDO AO PONTO INICIAL/FINAL DO DOMÍNIO QUE DEVE SER INCLUÍDO
-			# matriz[i].append(0)
-			if (i == j):
-				if (i%2 == 0):
-					matriz[i][j] = 2*(-7.0/(6.0*h)+h*4.0/15.0)   #i==j = 0; x2
-					if ((i == 0) or (i == numpnts-1)):
-						matriz[i][j] /= 2
-				else:
-					matriz[i][j] = -16.0/(6.0*h)+h*16.0/15.0		#i==j = 1; x1
-			if ((j == i+1) or (j == i-1)):
-				matriz[i][j] = 8.0/(6.0*h)+h*2.0/15.0 			#|i-j| = 1
-			if (((j == i+2) or (j == i-2)) and (j%2 == 0)): # and (j != 0) and (i != 0)):
-				matriz[i][j] = -1.0/(6.0*h)-h*1.0/15.0				#|i-j| = 2
-			if (j == numpnts):
-				if (i%2 == 0):
-					matriz[i][j] = 2*(-h*1.0/3)						#i = 0 ou i = 2
-					if ((i == 0) or (i == numpnts-1)):
-						matriz[i][j] /= 2
-				else:
-					matriz[i][j] = -h*4.0/3						#i = 1
-
-	#----------------------MATRIZ COM CONDIÇÕES DE CONTORNO (-K+M)*a = f - CC--------------------------------
-	if T_0 != None:
-		# T(0) = 0 (CONDIÇÃO DE CONTORNO DE DIRICHLET)
-		matriz[0][numpnts] = T_0
-		matriz[0][0] = 1 										#{
-		matriz[0][1] = 0 										#{
-		matriz[0][2] = 0 										#{ 
-		matriz[1][numpnts] -= matriz[1][0]*matriz[0][numpnts]	#{	ELIMINAÇÃO DA LINHA/COLUNA
-		matriz[1][0] = 0 										#{  
-		matriz[2][numpnts] -= matriz[2][0]*matriz[0][numpnts]	#{
-		matriz[2][0] = 0 										#{
-
-	if T_L != None:
-		# T(L) = 0 (CONDIÇÃO DE CONTORNO DE DIRICHLET)
-		matriz[numpnts-1][numpnts] = T_L
-		matriz[numpnts-1][numpnts-1] = 1						#{
-		matriz[numpnts-1][numpnts-2] = 0						#{
-		matriz[numpnts-1][numpnts-3] = 0						#{ ELIMINAÇÃO DA LINHA/COLUNA
-		matriz[numpnts-2][numpnts] -= matriz[numpnts-2][numpnts-1]*matriz[numpnts-1][numpnts]	#{
-		matriz[numpnts-2][numpnts-1] = 0						#{  
-		matriz[numpnts-3][numpnts] -= matriz[numpnts-3][numpnts-1]*matriz[numpnts-1][numpnts]	#{
-		matriz[numpnts-3][numpnts-1] = 0 
-
-	if dT_0 != None:
-		# dT(0)/dx = 1 (CONDIÇÃO DE CONTORNO DE NEUMANN)
-		matriz[0][numpnts] -= dT_0
-
-	if dT_L != None:
-		# dT(L)/dx = 1 (CONDIÇÃO DE CONTORNO DE NEUMANN)
-		matriz[numpnts-1][numpnts] -= dT_L
-
-	if (numpnts <= 10):
-		print(matriz)
-	
-	resp = gauss(matriz)
-
-	x = [0]*numpnts
-	for i in range(numpnts):
-		if (numpnts <= 50):
-			print "T({0:.2})= {1}".format(i*L/(numele*2),resp[i])
-		x[i] = (i*L/(numele*2))
-
-	#----------------------------------------GRÁFICO-----------------------------------------------------------
-	plt.plot(np.array(x), np.array(resp), "r")
-	maior = max(resp)
-	menor = min(resp)
-	axes = plt.gca()
-	axes.set_xlim([0,L])
-	aux = 0.1*abs(maior-menor)
-	axes.set_ylim([menor-3*aux,3*aux+maior])
-	plt.grid(True)
-	return
+	return resp
 
 def main():
 	args = sys.argv[1:]
 	if not args:
 		print("usage: show(show graphic)\n By: Lucas Carvalho de Sousa")
-	print("Hello! This is a script to solve a diferential equation using the Finite Elements Method, the equation is:\n d²T/dx²=0.")
+	print("Hello! This is a script to solve a diferential equation using the Finite Elements Method, the equation is:\n dT/dt-d²T/dx²=Q.")
 
 	#---------------------------------DEBUGGING - VERIFICAÇÂO DE VARIAVEIS---------------------------------------------
 	if any("print" in s.lower() for s in args):
@@ -308,20 +225,23 @@ def main():
 	else:
 		graficoshow = False
 
-	#-------------------------------------------OBTENÇÃO DOS DADOS------------------------------------------------------
-	if raw_input("Use Default Values? (Y/N)\n").lower() in ("yes","y","ye","sim","si","s"):
+	#-------------------------------------------OBTENÇÃO DOS DADOS------------------------------------------------------	
+	if any("default" in s.lower() for s in args) or (raw_input("Use Default Values? (Y/N)\n").lower() in ("yes","y","ye","sim","si","s")):
 		# L = float (1)		## O TAMANHO DA BARRA
 		# n = 3				## O NÚMERO DE DIVISÕES
 		X, MRE = openmalha("default") ## OBTÉM OS VALORES DE L E n DIRETO DA MALHA
 		L = max(X)			## ASSUMI-SE QUE O REFERENCIAL TEM A ORIGEM EM X=0 e POSIÇÂO MÁXIMA X=L
 		n = len(X)-1		## APROXIMAÇÂO LINEAR
-		T_0 = 0.0		## O VALOR DA CONDIÇÃO DE CONTORNO DE DIRICHLET NA POSIÇÃO x=0
-		T_L = 1.0		## O VALOR DA CONDIÇÃO DE CONTORNO DE DIRICHLET NA POSIÇÃO x=L
-		dT_0 = None	## O VALOR DA CONDIÇÃO DE CONTORNO DE NEUMANN NA POSIÇÃO x=0
-		dT_L = None	## O VALOR DA CONDIÇÃO DE CONTORNO DE NEUMANN NA POSIÇÃO x=L
-		TT_0 = 20.0	## A CONDIÇÃO INICIAL NA BARRA TODA
-		k =  1.0		##COEFICIENTE DE CONDUTIVIDADE TÉRMICA
-		tempos = (0,20,50,100,500,2000)
+		# T_0 = 0.0			## O VALOR DA CONDIÇÃO DE CONTORNO DE DIRICHLET NA POSIÇÃO x=0
+		# T_L = 1.0			## O VALOR DA CONDIÇÃO DE CONTORNO DE DIRICHLET NA POSIÇÃO x=L
+		dT_0 = None			## O VALOR DA CONDIÇÃO DE CONTORNO DE NEUMANN NA POSIÇÃO x=0
+		dT_L = None			## O VALOR DA CONDIÇÃO DE CONTORNO DE NEUMANN NA POSIÇÃO x=L
+		T_0 = np.zeros(n+1)	## A CONDIÇÃO INICIAL NA BARRA TODA
+		T_0[np.where(X==0)[0][0]] = 0 	## CONDIÇÃO INICIAL NA EXTREMIDADE x=0
+		T_0[np.where(X==L)[0][0]] = 1.0	## CONDIÇÃO INICIAL NA EXTREMIDADE x=L
+		k =  1.0			##COEFICIENTE DE CONDUTIVIDADE TÉRMICA
+		Q = np.zeros(n+1)	##GERAÇÂO DE CALOR
+		tempos = np.zeros(10) + 5
 	else:
 		if raw_input("Use stored grid? (Y/N)\n").lower() in ("yes","y","ye","sim","si","s"):
 			X, MRE = openmalha()
@@ -341,17 +261,34 @@ def main():
 	if printshow:
 		print "L = {0}\nn = {1}\nX = ".format(L,n),X
 		print "MRE = \n",MRE
-		if T_0 != None:
-			print "T_0 = {}".format(T_0)
-		if T_L != None:
-			print "T_L = {}".format(T_L)
+		print "T_0 = {}".format(T_0)
+		print tempos, np.sum(tempos[:])
 		if dT_0 != None:
 			print "dT_0 = {}".format(dT_0)
 		if dT_L != None:
 			print "dT_L = {}".format(dT_L)
 	#--------------------------------------------FUNÇÕES DE SOLUÇÃO-----------------------------------------------------
-	# elementosfinitosquad(L,n,k,T_0=T_0,dT_L=dT_L) #SOLUÇÂO MEF QUADRÀTICA -----OBSOLETA------
-	elementosfinitoslin(X,MRE,k,T_0,T_L,dT_0,dT_L)  #SOLUÇÂO MEF LINEAR
+	fig = plt.gcf()
+	ax = plt.gca()
+
+	def plotgif(y):
+		startline.set_ydata(np.array(y)) # Use only one line
+		# plt.plot(X, np.array(y), color="g") # Keep line history
+		return
+
+	T = np.copy(T_0)
+	frames = []
+
+	for t in tempos:
+		T = elementosfinitoslin(X,MRE,k,Q,t,T,dT_0,dT_L)  #SOLUÇÂO MEF LINEAR
+		frames.append(T)
+
+	startline, = ax.plot(X, T_0, "m-")
+	anim = FuncAnimation(fig,plotgif, frames=frames, interval=150, repeat=True, save_count=0)
+
+	if (n+1 <= 50):
+		for i in range(n+1):
+			print "T({0:.2})= {1}".format(X[i],T[i])
 	if graficoshow:
 		plt.show()
 	return
