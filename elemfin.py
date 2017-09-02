@@ -144,12 +144,19 @@ def elementosfinitoslin(X, MRE, k, Q, dt, T, dT_0, dT_L):
 	numpnts = numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
 	#----------------------MATRIZ GERAL (-K+M)*a = f--------------------------------------------------------------------
 	matriz = np.zeros((numpnts,numpnts))
-	matrizf = Q + T*1.0/dt
+	matrizf = np.copy(Q)
+	#
+	#	K = 1 [ 1 -1]		M = h [ 2  1]
+	#		h [-1  1]			6 [ 1  2]
+	#
 	for elem in MRE:
-		matriz[elem[0]][elem[0]] -= k*1.0/abs(X[elem[0]]-X[elem[1]]) + 1.0/dt			#\  MATRIZ	  [ k/x+1/t  -k/x     0    ...]
-		matriz[elem[1]][elem[0]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])					# \        =  [-k/x    2k/x+1/t  -k/x  ...]
-		matriz[elem[0]][elem[1]] -= -k*1.0/abs(X[elem[0]]-X[elem[1]])					# /			  [  0     -k/x   2k/x+1/t ...]
-		matriz[elem[1]][elem[1]] -= k*1.0/abs(X[elem[0]]-X[elem[1]]) 					#/				
+		dx = abs(X[elem[0]]-X[elem[1]])
+		matriz[elem[0]][elem[0]] += -k*1.0/dx + 2.0*dx/6
+		matriz[elem[1]][elem[0]] += k*1.0/dx + 1.0*dx/6
+		matriz[elem[0]][elem[1]] += k*1.0/dx + 1.0*dx/6
+		matriz[elem[1]][elem[1]] += -k*1.0/dx + 2.0*dx/6
+		matrizf[elem[0]] += T[elem[0]]*dx*1.0/2
+		matrizf[elem[1]] += T[elem[1]]*dx*1.0/2			
 	# print "Before Boundary Conditions:"
 	# print matriz
 	
@@ -201,10 +208,8 @@ def elementosfinitoslin(X, MRE, k, Q, dt, T, dT_0, dT_L):
 	maior = max(resp)
 	menor = min(resp)
 	axes = plt.gca()
-	axes.set_xlim([0,L])
 	aux = 0.1*abs(maior-menor)
 	axes.set_ylim([menor-3*aux,3*aux+maior])
-	plt.grid(True)
 	return resp
 
 def main():
@@ -241,7 +246,7 @@ def main():
 		T_0[np.where(X==L)[0][0]] = 1.0	## CONDIÇÃO INICIAL NA EXTREMIDADE x=L
 		k =  1.0			##COEFICIENTE DE CONDUTIVIDADE TÉRMICA
 		Q = np.zeros(n+1)	##GERAÇÂO DE CALOR
-		tempos = np.zeros(10) + 5
+		tempos = np.zeros(5) + 0.005
 	else:
 		if raw_input("Use stored grid? (Y/N)\n").lower() in ("yes","y","ye","sim","si","s"):
 			X, MRE = openmalha()
@@ -270,6 +275,8 @@ def main():
 	#--------------------------------------------FUNÇÕES DE SOLUÇÃO-----------------------------------------------------
 	fig = plt.gcf()
 	ax = plt.gca()
+	plt.grid(True)
+	ax.set_xlim([0,L])
 
 	def plotgif(y):
 		startline.set_ydata(np.array(y)) # Use only one line
