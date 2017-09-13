@@ -144,7 +144,7 @@ def elementosfinitoslin(X, MRE, k, Q, dt, T, dT_0, dT_L):
 	numpnts = numele + 1 #NÚMERO DE PONTOS PARA SEREM CALCULADOS OS VALORES DA FUNÇÃO
 	#----------------------MATRIZ GERAL (-K+M)*a = f--------------------------------------------------------------------
 	matriz = np.zeros((numpnts,numpnts))
-	matrizf = np.copy(Q)
+	matrizQ = np.copy(matriz)
 	#
 	#	K = 1 [ 1 -1]		M = h [ 2  1]
 	#		h [-1  1]			6 [ 1  2]
@@ -161,9 +161,11 @@ def elementosfinitoslin(X, MRE, k, Q, dt, T, dT_0, dT_L):
 		M_passo = M*dx/6
 		for i in [0,1]:
 			for j in [0,1]:
-				matriz[elem[i]][elem[j]] += M[i][j] - dt*K[i][j]
+				matriz[elem[i]][elem[j]] += M_passo[i][j] - dt*K_passo[i][j]
+				matrizQ[elem[i]][elem[j]] += M_passo[i][j]
 	# print "Before Boundary Conditions:"
 	# print matriz
+	matrizf = np.dot(dt*Q+T,matrizQ)
 	
 	#----------------------MATRIZ COM CONDIÇÕES DE CONTORNO (-K+M)*a = f - CC--------------------------------
 
