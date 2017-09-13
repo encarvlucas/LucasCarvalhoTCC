@@ -148,15 +148,20 @@ def elementosfinitoslin(X, MRE, k, Q, dt, T, dT_0, dT_L):
 	#
 	#	K = 1 [ 1 -1]		M = h [ 2  1]
 	#		h [-1  1]			6 [ 1  2]
-	#
+	
+	# ARIBUIÇÃO DA MATRIZ K (sem h)
+	K = np.array([[1,-1],[-1,1]])
+
+	# ARIBUIÇÃO DA MATRIZ M (sem h)
+	M = np.array([[2,1],[1,2]])
+
 	for elem in MRE:
 		dx = abs(X[elem[0]]-X[elem[1]])
-		matriz[elem[0]][elem[0]] += -k*1.0/dx + 2.0*dx/6
-		matriz[elem[1]][elem[0]] += k*1.0/dx + 1.0*dx/6
-		matriz[elem[0]][elem[1]] += k*1.0/dx + 1.0*dx/6
-		matriz[elem[1]][elem[1]] += -k*1.0/dx + 2.0*dx/6
-		matrizf[elem[0]] += T[elem[0]]*dx*1.0/2
-		matrizf[elem[1]] += T[elem[1]]*dx*1.0/2			
+		K_passo = K/dx
+		M_passo = M*dx/6
+		for i in [0,1]:
+			for j in [0,1]:
+				matriz[elem[i]][elem[j]] += M[i][j] - dt*K[i][j]
 	# print "Before Boundary Conditions:"
 	# print matriz
 	
@@ -246,7 +251,7 @@ def main():
 		T_0[np.where(X==L)[0][0]] = 1.0	## CONDIÇÃO INICIAL NA EXTREMIDADE x=L
 		k =  1.0			##COEFICIENTE DE CONDUTIVIDADE TÉRMICA
 		Q = np.zeros(n+1)	##GERAÇÂO DE CALOR
-		tempos = np.zeros(5) + 0.005
+		tempos = np.zeros(5) + 0.5
 	else:
 		if raw_input("Use stored grid? (Y/N)\n").lower() in ("yes","y","ye","sim","si","s"):
 			X, MRE = openmalha()
