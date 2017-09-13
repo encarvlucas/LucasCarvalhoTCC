@@ -253,7 +253,8 @@ def main():
 		T_0[np.where(X==L)[0][0]] = 1.0	## CONDIÇÃO INICIAL NA EXTREMIDADE x=L
 		k =  1.0			##COEFICIENTE DE CONDUTIVIDADE TÉRMICA
 		Q = np.zeros(n+1)	##GERAÇÂO DE CALOR
-		tempos = np.zeros(5) + 0.5
+		tempos = np.zeros(10) + 0.5
+		t_acumulado = 0
 	else:
 		if raw_input("Use stored grid? (Y/N)\n").lower() in ("yes","y","ye","sim","si","s"):
 			X, MRE = openmalha()
@@ -284,10 +285,12 @@ def main():
 	ax = plt.gca()
 	plt.grid(True)
 	ax.set_xlim([0,L])
+	time_text = ax.text(0.02, 0.95, 'time = {:.3f}'.format(t_acumulado), transform=ax.transAxes)
 
 	def plotgif(y):
-		startline.set_ydata(np.array(y)) # Use only one line
-		# plt.plot(X, np.array(y), color="g") # Keep line history
+		# plt.plot(X, np.array(y[0]), color="g") # Keep line history
+		startline.set_ydata(np.array(y[0])) # Use only one line
+		time_text.set_text('time = {:.3f}'.format(y[1]))
 		return
 
 	T = np.copy(T_0)
@@ -295,7 +298,8 @@ def main():
 
 	for t in tempos:
 		T = elementosfinitoslin(X,MRE,k,Q,t,T,dT_0,dT_L)  #SOLUÇÂO MEF LINEAR
-		frames.append(T)
+		t_acumulado += t
+		frames.append([T,t_acumulado])
 
 	startline, = ax.plot(X, T_0, "m-")
 	anim = FuncAnimation(fig,plotgif, frames=frames, interval=150, repeat=True, save_count=0)
