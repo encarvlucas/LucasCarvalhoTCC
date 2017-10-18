@@ -104,21 +104,45 @@ def geracaodemalha():
 		plt.show()
 		return
 
-	drawelement(0)
+	# drawelement(0)
 	# print X, Y, MRE
 	# plt.show()
 	return X, Y, MRE
 
 def main():
-	geracaodemalha()
-	xy,IEN = openmalha()
+	# geracaodemalha()
+	k_condx = 1.0 #\ Condutividade térmica
+	k_condy = 1.0 #/
+	t = 1.0 # Espessura teórica da placa
+	xy,IEN = openmalha() # vetor de coordenadas dos pontos, matriz de organização dos elementos
+	Q = np.zeros(len(xy)) # Geração de calor
+
+	K = np.zeros((len(xy),len(xy)))
+	M = np.copy(K)
+
 	for elem in IEN:
-		x = xy[elem]
-		print x
-		A = ((xy[elem[0]][0]*xy[elem[1]][1] - xy[elem[1]][0]*xy[elem[0]][1]) + 
-			(xy[elem[1]][0]*xy[elem[2]][1] - xy[elem[2]][0]*xy[elem[1]][1]) +
-			(xy[elem[2]][0]*xy[elem[0]][1] - xy[elem[0]][0]*xy[elem[2]][1]))*2
-	print A
+		x = xy[elem,0]
+		y = xy[elem,1]
+		A = ((x[0]*y[1] - x[1]*y[0]) + 
+			 (x[1]*y[2] - x[2]*y[1]) +
+			 (x[2]*y[0] - x[0]*y[2]))/2
+		b = np.array([y[1]-y[2],
+					  y[2]-y[0],
+					  y[0]-y[1]])
+		c = np.array([x[2]-x[1],
+					  x[0]-x[2],
+					  x[1]-x[0]])
+		k = (t/(4*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
+										 [b[0]*b[1], b[1]**2, b[1]*b[2]],
+										 [b[0]**2, b[0]*b[1], b[0]*b[2]]]) 
+					 + k_condy*np.array([[c[0]**2, c[0]*c[1], c[0]*c[2]], 
+										 [c[0]*c[1], c[1]**2, c[1]*c[2]],
+										 [c[0]**2, c[0]*c[1], c[0]*c[2]]])) 
+		m = (A/12)*np.array([[2,1,1],[1,2,1],[1,1,2]])
+		for i in [0,1,2]:
+			for j in [0,1,2]:
+				K[elem[i]][elem[j]] += k[i][j]
+				M[elem[i]][elem[j]] += m[i][j]
 
 if __name__ == '__main__':
 	main()
