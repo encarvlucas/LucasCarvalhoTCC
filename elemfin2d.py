@@ -86,7 +86,7 @@ def geracaodemalha():
 			arq.write("{0};{1}\n".format(xx[i][0],yy[i][0]))
 
 	with open("MRE2d.txt","w") as arq:
-		for i in range(len(xx)):
+		for i in range(len(MRE)):
 			arq.write("{0};{1};{2}\n".format(MRE[i][0],MRE[i][1],MRE[i][2]))
 
 	#------------Checagem---------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ def geracaodemalha():
 	return X, Y, MRE
 
 def main():
-	# geracaodemalha()
+	geracaodemalha()
 	k_condx = 1.0 #\ Condutividade térmica
 	k_condy = 1.0 #/
 	t = 1.0 # Espessura teórica da placa
@@ -134,15 +134,48 @@ def main():
 					  x[1]-x[0]])
 		k = (t/(4*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
 										 [b[0]*b[1], b[1]**2, b[1]*b[2]],
-										 [b[0]**2, b[0]*b[1], b[0]*b[2]]]) 
+										 [b[0]*b[2], b[1]*b[2], b[2]**2]])
 					 + k_condy*np.array([[c[0]**2, c[0]*c[1], c[0]*c[2]], 
 										 [c[0]*c[1], c[1]**2, c[1]*c[2]],
-										 [c[0]**2, c[0]*c[1], c[0]*c[2]]])) 
-		m = (A/12)*np.array([[2,1,1],[1,2,1],[1,1,2]])
+										 [c[0]*c[2], c[1]*c[2], c[2]**2]])) 
+		# print k
+		# m = (A/12)*np.array([[2,1,1],[1,2,1],[1,1,2]])
 		for i in [0,1,2]:
 			for j in [0,1,2]:
 				K[elem[i]][elem[j]] += k[i][j]
-				M[elem[i]][elem[j]] += m[i][j]
+				# M[elem[i]][elem[j]] += m[i][j]
+
+	#---------------------------------Condição de contorno-----------------------------------------------
+	# print np.where(xy[:,0]==0)[0]
+	for j in np.where(xy[:,0]==0)[0]:
+		# print np.where(K[:,j]!=0)[0]
+		for i in np.where(K[:,j]!=0)[0]:
+			Q[j] -= K[i][j]*(xy[j][1])
+			#					/\ - valor da função no ponto
+			K[i][j] = 0
+		Q[j] = 1
+	for j in np.where(xy[:,0]==max(xy[:,0]))[0]:
+		for i in np.where(K[:,j]!=0)[0]:
+			Q[j] -= K[i][j]*((xy[j][1])**2+1)
+			#					/\ - valor da função no ponto
+			K[i][j] = 0
+		Q[j] = 1
+	for j in np.where(xy[:,1]==0)[0]:
+		for i in np.where(K[:,j]!=0)[0]:
+			Q[j] -= K[i][j]*(xy[j][0])
+			#					/\ - valor da função no ponto
+			K[i][j] = 0
+		Q[j] = 1
+	for j in np.where(xy[:,1]==max(xy[:,1]))[0]:
+		for i in np.where(K[:,j]!=0)[0]:
+			Q[j] -= K[i][j]*((xy[j][0])**2+1)
+			#					/\ - valor da função no ponto
+			K[i][j] = 0
+		Q[j] = 1
+	print Q
+	#---------------------------------Solução-------------------------------------------------------------
+	# T = np.linalg.solve(K,Q)
+	# print T
 
 if __name__ == '__main__':
 	main()
