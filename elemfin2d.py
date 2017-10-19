@@ -7,6 +7,8 @@ import math
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.animation import FuncAnimation
+from matplotlib.colors import BoundaryNorm
+from matplotlib.ticker import MaxNLocator
 
 def openmalha(*args):
 	if "default" in args:
@@ -23,13 +25,8 @@ def openmalha(*args):
 			MRE.append(tuple(line.split(";")))
 	return np.array(XY, float), np.array(MRE, int)
 
-def geracaodemalha():
+def geracaodemalha(Lx,nx,Ly,ny):
 	#------------Vetor de posições X-----------------------------------------------------------------------------------
-	Lx = 1.0
-	Ly = 1.0
-	nx = 3
-	ny = 3
-	
 	numpnts_y = ny + 1
 	numpnts_x = nx + 1
 	X = np.zeros(numpnts_x)
@@ -110,7 +107,12 @@ def geracaodemalha():
 	return X, Y, MRE
 
 def main():
-	geracaodemalha()
+	Lx = 1.0
+	Ly = 1.0
+	nx = 3
+	ny = 3
+	geracaodemalha(Lx,nx,Ly,ny)
+
 	k_condx = 1.0 #\ Condutividade térmica
 	k_condy = 1.0 #/
 	t = 1.0 # Espessura teórica da placa
@@ -150,32 +152,44 @@ def main():
 	for j in np.where(xy[:,0]==0)[0]:
 		# print np.where(K[:,j]!=0)[0]
 		for i in np.where(K[:,j]!=0)[0]:
-			Q[j] -= K[i][j]*(xy[j][1])
+			Q[i] -= K[i][j]*(xy[j][1])
 			#					/\ - valor da função no ponto
 			K[i][j] = 0
-		Q[j] = 1
+		K[j][j] = 1
+		Q[j] = xy[j][1]
 	for j in np.where(xy[:,0]==max(xy[:,0]))[0]:
 		for i in np.where(K[:,j]!=0)[0]:
-			Q[j] -= K[i][j]*((xy[j][1])**2+1)
+			Q[i] -= K[i][j]*((xy[j][1])**2+1)
 			#					/\ - valor da função no ponto
 			K[i][j] = 0
-		Q[j] = 1
+		K[j][j] = 1
+		Q[j] = xy[j][1]**2+1
 	for j in np.where(xy[:,1]==0)[0]:
 		for i in np.where(K[:,j]!=0)[0]:
-			Q[j] -= K[i][j]*(xy[j][0])
+			Q[i] -= K[i][j]*(xy[j][0])
 			#					/\ - valor da função no ponto
 			K[i][j] = 0
-		Q[j] = 1
+		K[j][j] = 1
+		Q[j] = xy[j][0]
 	for j in np.where(xy[:,1]==max(xy[:,1]))[0]:
 		for i in np.where(K[:,j]!=0)[0]:
-			Q[j] -= K[i][j]*((xy[j][0])**2+1)
+			Q[i] -= K[i][j]*((xy[j][0])**2+1)
 			#					/\ - valor da função no ponto
 			K[i][j] = 0
-		Q[j] = 1
-	print Q
+		K[j][j] = 1
+		Q[j] = xy[j][0]**2+1
 	#---------------------------------Solução-------------------------------------------------------------
-	# T = np.linalg.solve(K,Q)
-	# print T
+	T = np.linalg.solve(K,Q)
+	# print xy[:,0], "\n", xy[:,1],"\n", T
+	print T[5],T[6],T[9],T[10]
+	
+	# plt.pcolormesh(np.reshape(xy[:,0],(nx+1,ny+1)), np.reshape(xy[:,1],(nx+1,ny+1)),
+	# 					 np.reshape(T,(nx+1,ny+1)), cmap='RdBu', vmin=min(T), vmax=max(T))
+	# axes = plt.gca()
+	# axes.set_xlim([min(xy[:,0])-0.2*abs(np.median(xy[:,0])),max(xy[:,0])+0.2*abs(np.median(xy[:,0]))])
+	# axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
+	# plt.colorbar()
+	# plt.show()
 
 if __name__ == '__main__':
 	main()
