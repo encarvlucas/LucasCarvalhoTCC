@@ -7,8 +7,7 @@ import math
 import matplotlib.pyplot as plt
 from matplotlib.offsetbox import AnchoredText
 from matplotlib.animation import FuncAnimation
-from matplotlib.colors import BoundaryNorm
-from matplotlib.ticker import MaxNLocator
+from mpl_toolkits.mplot3d import Axes3D
 
 def openmalha(*args):
 	if "default" in args:
@@ -109,8 +108,8 @@ def geracaodemalha(Lx,nx,Ly,ny):
 def main():
 	Lx = 1.0
 	Ly = 1.0
-	nx = 3
-	ny = 3
+	nx = 20
+	ny = 20
 	geracaodemalha(Lx,nx,Ly,ny)
 
 	k_condx = 1.0 #\ Condutividade térmica
@@ -134,7 +133,7 @@ def main():
 		c = np.array([x[2]-x[1],
 					  x[0]-x[2],
 					  x[1]-x[0]])
-		k = (t/(4*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
+		k = -(t/(4*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
 										 [b[0]*b[1], b[1]**2, b[1]*b[2]],
 										 [b[0]*b[2], b[1]*b[2], b[2]**2]])
 					 + k_condy*np.array([[c[0]**2, c[0]*c[1], c[0]*c[2]], 
@@ -155,6 +154,7 @@ def main():
 			Q[i] -= K[i][j]*(xy[j][1])
 			#					/\ - valor da função no ponto
 			K[i][j] = 0
+			K[j][i] = 0
 		K[j][j] = 1
 		Q[j] = xy[j][1]
 	for j in np.where(xy[:,0]==max(xy[:,0]))[0]:
@@ -162,6 +162,7 @@ def main():
 			Q[i] -= K[i][j]*((xy[j][1])**2+1)
 			#					/\ - valor da função no ponto
 			K[i][j] = 0
+			K[j][i] = 0
 		K[j][j] = 1
 		Q[j] = xy[j][1]**2+1
 	for j in np.where(xy[:,1]==0)[0]:
@@ -169,6 +170,7 @@ def main():
 			Q[i] -= K[i][j]*(xy[j][0])
 			#					/\ - valor da função no ponto
 			K[i][j] = 0
+			K[j][i] = 0
 		K[j][j] = 1
 		Q[j] = xy[j][0]
 	for j in np.where(xy[:,1]==max(xy[:,1]))[0]:
@@ -176,20 +178,42 @@ def main():
 			Q[i] -= K[i][j]*((xy[j][0])**2+1)
 			#					/\ - valor da função no ponto
 			K[i][j] = 0
+			K[j][i] = 0
 		K[j][j] = 1
 		Q[j] = xy[j][0]**2+1
 	#---------------------------------Solução-------------------------------------------------------------
 	T = np.linalg.solve(K,Q)
+	# print max(T)
 	# print xy[:,0], "\n", xy[:,1],"\n", T
-	print T[5],T[6],T[9],T[10]
+	# print np.reshape(T,(nx+1,ny+1))
+
+	#---------------------------------Plotting-------------------------------------------------------------
+	fig = plt.figure()
+	axes = plt.gca()
+	def plotmesh2D():
+		plt.pcolormesh(np.reshape(xy[:,0],(nx+1,ny+1)), np.reshape(xy[:,1],(nx+1,ny+1)),
+							 np.reshape(T,(nx+1,ny+1)), cmap='jet', vmin=min(T), vmax=max(T))
+		plt.colorbar()
+		return plt.show()
 	
-	# plt.pcolormesh(np.reshape(xy[:,0],(nx+1,ny+1)), np.reshape(xy[:,1],(nx+1,ny+1)),
-	# 					 np.reshape(T,(nx+1,ny+1)), cmap='RdBu', vmin=min(T), vmax=max(T))
-	# axes = plt.gca()
-	# axes.set_xlim([min(xy[:,0])-0.2*abs(np.median(xy[:,0])),max(xy[:,0])+0.2*abs(np.median(xy[:,0]))])
-	# axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
-	# plt.colorbar()
-	# plt.show()
+	def plot3Dsurf(rotate,*save):
+		axes = Axes3D(fig)
+		surf = axes.plot_trisurf(xy[:,0],xy[:,1],T, cmap="jet")
+		axes.view_init(90,270)
+		fig.colorbar(surf, shrink=0.4, aspect=9)
+		if rotate:
+			def update(angle):
+				axes.view_init(50, angle)
+				return
+			anim = FuncAnimation(fig, update, frames=range(0,360), interval=1, save_count=False)
+			if save:
+				anim.save("trisurf.gif", dpi=80, writer='imagemagick')
+		return plt.show()
+
+	axes.set_xlim([min(xy[:,0])-0.2*abs(np.median(xy[:,0])),max(xy[:,0])+0.2*abs(np.median(xy[:,0]))])
+	axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
+	# plotmesh2D()
+	plot3Dsurf(False)
 
 if __name__ == '__main__':
 	main()
