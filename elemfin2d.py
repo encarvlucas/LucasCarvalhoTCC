@@ -105,19 +105,11 @@ def geracaodemalha(Lx,nx,Ly,ny):
 	# plt.show()
 	return X, Y, MRE
 
-def main():
-	Lx = 1.0
-	Ly = 1.0
-	nx = 20
-	ny = 20
-	geracaodemalha(Lx,nx,Ly,ny)
-
-	k_condx = 1.0 #\ Condutividade térmica
-	k_condy = 1.0 #/
-	t = 1.0 # Espessura teórica da placa
-	xy,IEN = openmalha() # vetor de coordenadas dos pontos, matriz de organização dos elementos
+def elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN):
+	numpnts_x = nx + 1
+	numpnts_y = ny + 1
+	#--------------------------Geração das matrizes---------------------------------------
 	Q = np.zeros(len(xy)) # Geração de calor
-
 	K = np.zeros((len(xy),len(xy)))
 	M = np.copy(K)
 
@@ -133,7 +125,7 @@ def main():
 		c = np.array([x[2]-x[1],
 					  x[0]-x[2],
 					  x[1]-x[0]])
-		k = -(t/(4*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
+		k = -(esp/(4*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
 										 [b[0]*b[1], b[1]**2, b[1]*b[2]],
 										 [b[0]*b[2], b[1]*b[2], b[2]**2]])
 					 + k_condy*np.array([[c[0]**2, c[0]*c[1], c[0]*c[2]], 
@@ -181,18 +173,19 @@ def main():
 			K[j][i] = 0
 		K[j][j] = 1
 		Q[j] = xy[j][0]**2+1
+
 	#---------------------------------Solução-------------------------------------------------------------
 	T = np.linalg.solve(K,Q)
 	# print max(T)
 	# print xy[:,0], "\n", xy[:,1],"\n", T
-	# print np.reshape(T,(nx+1,ny+1))
+	# print np.reshape(T,(numpnts_x,numpnts_y))
 
 	#---------------------------------Plotting-------------------------------------------------------------
 	fig = plt.figure()
 	axes = plt.gca()
 	def plotmesh2D():
-		plt.pcolormesh(np.reshape(xy[:,0],(nx+1,ny+1)), np.reshape(xy[:,1],(nx+1,ny+1)),
-							 np.reshape(T,(nx+1,ny+1)), cmap='jet', vmin=min(T), vmax=max(T))
+		plt.pcolormesh(np.reshape(xy[:,0],(numpnts_x,numpnts_y)), np.reshape(xy[:,1],(numpnts_x,numpnts_y)),
+							 np.reshape(T,(numpnts_x,numpnts_y)), cmap='jet', vmin=min(T), vmax=max(T))
 		plt.colorbar()
 		return plt.show()
 	
@@ -213,7 +206,127 @@ def main():
 	axes.set_xlim([min(xy[:,0])-0.2*abs(np.median(xy[:,0])),max(xy[:,0])+0.2*abs(np.median(xy[:,0]))])
 	axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
 	# plotmesh2D()
-	plot3Dsurf(False)
+	# plot3Dsurf(False)
+	return np.reshape(T,(numpnts_x,numpnts_y))
+
+def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
+	numpnts_x = nx + 1
+	numpnts_y = ny + 1
+	#--------------------------------Geração das matrizes---------------------------------------
+	Q = np.zeros(len(xy)) # Geração de calor
+	K = np.zeros((len(xy),len(xy)))
+	M = np.copy(K)
+	T = np.copy(T_0)
+
+	for elem in IEN:
+		x = xy[elem,0]
+		y = xy[elem,1]
+		A = ((x[0]*y[1] - x[1]*y[0]) + 
+			 (x[1]*y[2] - x[2]*y[1]) +
+			 (x[2]*y[0] - x[0]*y[2]))/2
+		b = np.array([y[1]-y[2],
+					  y[2]-y[0],
+					  y[0]-y[1]])
+		c = np.array([x[2]-x[1],
+					  x[0]-x[2],
+					  x[1]-x[0]])
+		k = -(esp/(4*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
+										 [b[0]*b[1], b[1]**2, b[1]*b[2]],
+										 [b[0]*b[2], b[1]*b[2], b[2]**2]])
+					 + k_condy*np.array([[c[0]**2, c[0]*c[1], c[0]*c[2]], 
+										 [c[0]*c[1], c[1]**2, c[1]*c[2]],
+										 [c[0]*c[2], c[1]*c[2], c[2]**2]])) 
+		m = (A/12)*np.array([[2,1,1],[1,2,1],[1,1,2]])
+		for i in [0,1,2]:
+			for j in [0,1,2]:
+				K[elem[i]][elem[j]] += k[i][j]
+				M[elem[i]][elem[j]] += m[i][j]
+
+	f = np.dot(M,Q)
+	K = K + M/dt
+
+	#---------------------------------Condição de contorno-----------------------------------------------
+	# print np.where(xy[:,0]==0)[0]
+	for j in np.where(xy[:,0]==0)[0]:
+		# print np.where(K[:,j]!=0)[0]
+		for i in np.where(K[:,j]!=0)[0]:
+			f[i] -= K[i][j]*(xy[j][1])
+			#					/\ - valor da função no ponto
+			K[i][j] = 0
+			K[j][i] = 0
+		K[j][j] = 1
+		f[j] = xy[j][1]
+	for j in np.where(xy[:,0]==max(xy[:,0]))[0]:
+		for i in np.where(K[:,j]!=0)[0]:
+			f[i] -= K[i][j]*((xy[j][1])**2+1)
+			#					/\ - valor da função no ponto
+			K[i][j] = 0
+			K[j][i] = 0
+		K[j][j] = 1
+		f[j] = xy[j][1]**2+1
+	for j in np.where(xy[:,1]==0)[0]:
+		for i in np.where(K[:,j]!=0)[0]:
+			f[i] -= K[i][j]*(xy[j][0])
+			#					/\ - valor da função no ponto
+			K[i][j] = 0
+			K[j][i] = 0
+		K[j][j] = 1
+		f[j] = xy[j][0]
+	for j in np.where(xy[:,1]==max(xy[:,1]))[0]:
+		for i in np.where(K[:,j]!=0)[0]:
+			f[i] -= K[i][j]*((xy[j][0])**2+1)
+			#					/\ - valor da função no ponto
+			K[i][j] = 0
+			K[j][i] = 0
+		K[j][j] = 1
+		f[j] = xy[j][0]**2+1
+
+	#-----------------------------------Solução no tempo-------------------------------------------
+	frames = [T_0]
+	for t in range(nt):
+		B = f + np.dot(M/dt, T)
+		for aux in np.where(T_0 != 0)[0]:
+			B[aux] = T_0[aux]
+		B[0] = T[0]
+		T = np.linalg.solve(K,B)
+		frames.append(T)
+	return np.reshape(T,(numpnts_x,numpnts_y))
+
+
+def main():
+	# Cadastro dos parâmetros:
+	Lx = 1.0
+	Ly = 1.0
+	nx = 3 # número de divisões no eixo x (número de pontos - 1)
+	ny = 3 # número de divisões no eixo y (número de pontos - 1)
+	geracaodemalha(Lx,nx,Ly,ny)
+
+	k_condx = 1.0 #\ Condutividade térmica
+	k_condy = 1.0 #/
+	esp = 1.0 # Espessura teórica da placa
+	xy,IEN = openmalha() # vetor de coordenadas dos pontos, matriz de organização dos elementos
+
+	dt = 0.001
+	nt = 10
+	T_0 = np.zeros((nx+1)*(ny+1)) # Condição inicial de temperatura
+	for i in range(len(T_0)):
+		if (xy[i,0]==0):
+			T_0[i] = xy[i,1]
+		if (xy[i,1]==0):
+			T_0[i] = xy[i,0]
+		if (xy[i,0]==Lx):
+			T_0[i] = xy[i,1]**2+1
+		if (xy[i,1]==Ly):
+			T_0[i] = xy[i,0]**2+1
+	# print np.rot90(np.reshape(T_0,(nx+1,ny+1)))
+
+	print np.rot90(
+	elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN)
+	)
+	print np.rot90(
+	elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0)
+	)
+	return
 
 if __name__ == '__main__':
 	main()
