@@ -207,7 +207,7 @@ def elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN):
 	axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
 	# plotmesh2D()
 	# plot3Dsurf(False)
-	return np.reshape(T,(numpnts_x,numpnts_y))
+	return T
 
 def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 	numpnts_x = nx + 1
@@ -290,8 +290,39 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 		B[0] = T[0]
 		T = np.linalg.solve(K,B)
 		frames.append(T)
-	return np.reshape(T,(numpnts_x,numpnts_y))
+	return T
 
+def output(VECX,VECY,VECIEN,VECT,ext="VTK"):
+	n = len(VECT)
+	num_IEN = len(VECIEN)
+	data_name = "Temperature"
+
+	if (ext=="CSV"):
+		#-------------------------Saving results to CSV file----------------------------------------------------
+		with open("results/resultado2d.csv","w") as arq:
+			arq.write("{0}, Points:0, Points:1, Points:2\n".format(data_name))
+			for i in range(n):
+				arq.write("{0},{1},{2},{3}\n".format(VECT[i], VECX[i], VECY[i], 0))
+
+	if (ext=="VTK"):
+		#-------------------------Saving results to VTK file----------------------------------------------------
+		with open("results/resultado2d.vtk","w") as arq:
+			#------------------------------------Header---------------------------------------------
+			arq.write("# vtk DataFile Version 3.0\n{0}\n{1}\nDATASET {2}\n".format("Cube example","ASCII","POLYDATA"))
+			#------------------------------------Points coordinates----------------------------------------
+			arq.write("POINTS {0} {1}\n".format(n, "float"))
+			for i in range(n):
+				arq.write("{0} {1} 0.0\n".format(VECX[i], VECY[i]))
+			#---------------------------------------Cells---------------------------------------------------
+			arq.write("POLYGONS {0} {1}\n".format(num_IEN,num_IEN*4))
+			for i in range(num_IEN):
+				arq.write("{0} {1} {2} {3}\n".format(3, VECIEN[i][0], VECIEN[i][1], VECIEN[i][2]))
+			#---------------------------------------Data in each point------------------------------------
+			arq.write("POINT_DATA {0}\nSCALARS {1} float 1\n".format(n, data_name))
+			arq.write("LOOKUP_TABLE {0}\n".format(data_name))
+			for i in range(n):
+				arq.write("{}\n".format(VECT[i]))
+	return
 
 def main():
 	# Cadastro dos parâmetros:
@@ -299,7 +330,7 @@ def main():
 	Ly = 1.0
 	nx = 3 # número de divisões no eixo x (número de pontos - 1)
 	ny = 3 # número de divisões no eixo y (número de pontos - 1)
-	geracaodemalha(Lx,nx,Ly,ny)
+	# geracaodemalha(Lx,nx,Ly,ny)
 
 	k_condx = 1.0 #\ Condutividade térmica
 	k_condy = 1.0 #/
@@ -320,12 +351,14 @@ def main():
 			T_0[i] = xy[i,0]**2+1
 	# print np.rot90(np.reshape(T_0,(nx+1,ny+1)))
 
-	print np.rot90(
-	elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN)
-	)
-	print np.rot90(
-	elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0)
-	)
+
+	resp = elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN)
+	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
+
+	# resp = elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0)
+	# print np.rot90(np.reshape(resp,(nx+1,ny+1)))
+
+	output(xy[:,0],xy[:,1],IEN,resp)
 	return
 
 if __name__ == '__main__':
