@@ -230,66 +230,83 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 		c = np.array([x[2]-x[1],
 					  x[0]-x[2],
 					  x[1]-x[0]])
-		k = -(esp/(4*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
+		k = -(esp/(4.0*A))*(k_condx*np.array([[b[0]**2, b[0]*b[1], b[0]*b[2]], 
 										 [b[0]*b[1], b[1]**2, b[1]*b[2]],
 										 [b[0]*b[2], b[1]*b[2], b[2]**2]])
 					 + k_condy*np.array([[c[0]**2, c[0]*c[1], c[0]*c[2]], 
 										 [c[0]*c[1], c[1]**2, c[1]*c[2]],
 										 [c[0]*c[2], c[1]*c[2], c[2]**2]])) 
-		m = (A/12)*np.array([[2,1,1],[1,2,1],[1,1,2]])
+		m = (A/12.0)*np.array([[2,1,1],[1,2,1],[1,1,2]])
 		for i in [0,1,2]:
 			for j in [0,1,2]:
 				K[elem[i]][elem[j]] += k[i][j]
 				M[elem[i]][elem[j]] += m[i][j]
 
-	f = np.dot(M,Q)
-	K = K + M/dt
+	K = M - K*dt
 
 	#---------------------------------Condição de contorno-----------------------------------------------
-	# print np.where(xy[:,0]==0)[0]
-	for j in np.where(xy[:,0]==0)[0]:
-		# print np.where(K[:,j]!=0)[0]
-		for i in np.where(K[:,j]!=0)[0]:
-			f[i] -= K[i][j]*(xy[j][1])
-			#					/\ - valor da função no ponto
-			K[i][j] = 0
-			K[j][i] = 0
-		K[j][j] = 1
-		f[j] = xy[j][1]
-	for j in np.where(xy[:,0]==max(xy[:,0]))[0]:
-		for i in np.where(K[:,j]!=0)[0]:
-			f[i] -= K[i][j]*((xy[j][1])**2+1)
-			#					/\ - valor da função no ponto
-			K[i][j] = 0
-			K[j][i] = 0
-		K[j][j] = 1
-		f[j] = xy[j][1]**2+1
-	for j in np.where(xy[:,1]==0)[0]:
-		for i in np.where(K[:,j]!=0)[0]:
-			f[i] -= K[i][j]*(xy[j][0])
-			#					/\ - valor da função no ponto
-			K[i][j] = 0
-			K[j][i] = 0
-		K[j][j] = 1
-		f[j] = xy[j][0]
-	for j in np.where(xy[:,1]==max(xy[:,1]))[0]:
-		for i in np.where(K[:,j]!=0)[0]:
-			f[i] -= K[i][j]*((xy[j][0])**2+1)
-			#					/\ - valor da função no ponto
-			K[i][j] = 0
-			K[j][i] = 0
-		K[j][j] = 1
-		f[j] = xy[j][0]**2+1
+	def cc(original_vec):
+		vec = np.copy(original_vec)
+		# print np.where(xy[:,0]==0)[0]
+		for j in np.where(T_0!=0)[0]:
+			# print np.where(T_0!=0)[0]
+			for i in np.where(K[:,j]!=0)[0]:
+				vec[i] -= K[i][j]*(T_0[j])
+				#					/\ - valor da função no ponto
+				K[i][j] = 0
+				K[j][i] = 0
+			K[j][j] = 1
+			vec[j] = T_0[j]
+
+		for i in np.where(K[:,0]!=0)[0]:
+			K[i][0] = 0
+			K[0][i] = 0
+		K[0][0] = 1
+		vec[0] = T_0[0]
+		return vec
 
 	#-----------------------------------Solução no tempo-------------------------------------------
 	frames = [T_0]
 	for t in range(nt):
-		B = f + np.dot(M/dt, T)
-		for aux in np.where(T_0 != 0)[0]:
-			B[aux] = T_0[aux]
-		B[0] = T[0]
+		B = dt*np.dot(M,Q) + np.dot(M, T)
+		B = cc(B)
 		T = np.linalg.solve(K,B)
 		frames.append(T)
+
+
+	#---------------------------------Plotting-------------------------------------------------------------
+	fig = plt.figure()
+	axes = plt.gca()
+	def plotmesh2D():
+		plt.pcolormesh(np.reshape(xy[:,0],(numpnts_x,numpnts_y)), np.reshape(xy[:,1],(numpnts_x,numpnts_y)),
+							 np.reshape(T,(numpnts_x,numpnts_y)), cmap='jet', vmin=min(T), vmax=max(T))
+		plt.colorbar()
+		return plt.show()
+	
+	def plot3Dsurf(gif,*save):
+		axes = Axes3D(fig)
+		axes.set_zlim3d([np.min(frames),np.max(frames)])
+		# axes.view_init(90,270)
+		if gif:
+			surf = axes.plot_trisurf(xy[:,0],xy[:,1],T_0, cmap="jet", vmin=np.min(frames), vmax=np.max(frames))
+			fig.colorbar(surf, shrink=0.4, aspect=9)
+			def update(T_atual):
+				plt.cla()
+				surf = axes.plot_trisurf(xy[:,0],xy[:,1],T_atual, cmap="jet", vmin=np.min(frames), vmax=np.max(frames))
+				axes.set_zlim3d([np.min(frames),np.max(frames)])
+				return
+			anim = FuncAnimation(fig, update, frames=frames[1:], interval=100, save_count=False)
+			if save:
+				anim.save("trisurf.gif", dpi=80, writer='imagemagick')
+		else:
+			surf = axes.plot_trisurf(xy[:,0],xy[:,1],T, cmap="jet", vmin=np.min(frames), vmax=np.max(frames))
+			fig.colorbar(surf, shrink=0.4, aspect=9)
+		return plt.show()
+
+	axes.set_xlim([min(xy[:,0])-0.2*abs(np.median(xy[:,0])),max(xy[:,0])+0.2*abs(np.median(xy[:,0]))])
+	axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
+	# plotmesh2D()
+	plot3Dsurf(True)
 	return T
 
 def output(VECX,VECY,VECIEN,VECT,ext="VTK"):
@@ -337,8 +354,8 @@ def main():
 	esp = 1.0 # Espessura teórica da placa
 	xy,IEN = openmalha() # vetor de coordenadas dos pontos, matriz de organização dos elementos
 
-	dt = 0.001
-	nt = 10
+	dt = 0.005
+	nt = 100
 	T_0 = np.zeros((nx+1)*(ny+1)) # Condição inicial de temperatura
 	for i in range(len(T_0)):
 		if (xy[i,0]==0):
@@ -355,10 +372,10 @@ def main():
 	resp = elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN)
 	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
 
-	# resp = elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0)
-	# print np.rot90(np.reshape(resp,(nx+1,ny+1)))
+	resp = elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0)
+	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
 
-	output(xy[:,0],xy[:,1],IEN,resp)
+	# output(xy[:,0],xy[:,1],IEN,resp)
 	return
 
 if __name__ == '__main__':
