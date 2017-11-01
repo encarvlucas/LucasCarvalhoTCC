@@ -242,7 +242,7 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 				K[elem[i]][elem[j]] += k[i][j]
 				M[elem[i]][elem[j]] += m[i][j]
 
-	K = M - K*dt
+	A = M - K*dt
 
 	#---------------------------------Condição de contorno-----------------------------------------------
 	def cc(original_vec):
@@ -250,27 +250,44 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 		# print np.where(xy[:,0]==0)[0]
 		for j in np.where(T_0!=0)[0]:
 			# print np.where(T_0!=0)[0]
-			for i in np.where(K[:,j]!=0)[0]:
-				vec[i] -= K[i][j]*(T_0[j])
+			for i in np.where(A[:,j]!=0)[0]:
+			# 	vec[i] -= A[i][j]*(T_0[j])
 				#					/\ - valor da função no ponto
-				K[i][j] = 0
-				K[j][i] = 0
-			K[j][j] = 1
+				# A[i][j] = 0
+				A[j][i] = 0
+			A[j][j] = 1
 			vec[j] = T_0[j]
 
-		for i in np.where(K[:,0]!=0)[0]:
-			K[i][0] = 0
-			K[0][i] = 0
-		K[0][0] = 1
+		for i in np.where(A[:,0]!=0)[0]:
+			# A[i][0] = 0
+			A[0][i] = 0
+		A[0][0] = 1
 		vec[0] = T_0[0]
 		return vec
 
+	def cc1(vec):
+		idT = np.append(0,np.where(T_0!=0)[0])
+		for i in idT:
+			vec[i] = T_0[i]
+		return vec	
+
+	def cc2():
+		idT = np.append(0,np.where(T_0!=0)[0])
+		for i in idT:
+			A[i,:] = 0
+			A[i][i] = 1
+			# vec[i] = T_0[i]
+
 	#-----------------------------------Solução no tempo-------------------------------------------
+	#PROCURAR método dos gradientes conjugados
+	#Gmesh
+	#Delauney
+	cc2()
 	frames = [T_0]
 	for t in range(nt):
 		B = dt*np.dot(M,Q) + np.dot(M, T)
-		B = cc(B)
-		T = np.linalg.solve(K,B)
+		B = cc1(B)
+		T = np.linalg.solve(A,B)
 		frames.append(T)
 
 
@@ -307,7 +324,7 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 	axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
 	# plotmesh2D()
 	plot3Dsurf(True)
-	return frames
+	return T
 
 def output(VECX,VECY,VECIEN,VECT,ext="VTK",dt=0):
 	n = len(VECT)
@@ -377,7 +394,7 @@ def main():
 	xy,IEN = openmalha() # vetor de coordenadas dos pontos, matriz de organização dos elementos
 
 	dt = 0.005
-	nt = 10
+	nt = 1000
 	T_0 = np.zeros((nx+1)*(ny+1)) # Condição inicial de temperatura
 	for i in range(len(T_0)):
 		if (xy[i,0]==0):
@@ -393,11 +410,12 @@ def main():
 
 	resp = elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN)
 	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
+	output(xy[:,0],xy[:,1],IEN,resp)
 
 	resp = elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0)
-	print np.rot90(np.reshape(resp[-1],(nx+1,ny+1)))
-
+	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
 	output(xy[:,0],xy[:,1],IEN,resp,dt=dt)
+
 	return
 
 if __name__ == '__main__':
