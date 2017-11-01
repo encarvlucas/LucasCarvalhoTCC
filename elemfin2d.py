@@ -307,9 +307,9 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 	axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
 	# plotmesh2D()
 	plot3Dsurf(True)
-	return T
+	return frames
 
-def output(VECX,VECY,VECIEN,VECT,ext="VTK"):
+def output(VECX,VECY,VECIEN,VECT,ext="VTK",dt=0):
 	n = len(VECT)
 	num_IEN = len(VECIEN)
 	data_name = "Temperature"
@@ -322,23 +322,45 @@ def output(VECX,VECY,VECIEN,VECT,ext="VTK"):
 				arq.write("{0},{1},{2},{3}\n".format(VECT[i], VECX[i], VECY[i], 0))
 
 	if (ext=="VTK"):
-		#-------------------------Saving results to VTK file----------------------------------------------------
-		with open("results/resultado2d.vtk","w") as arq:
-			#------------------------------------Header---------------------------------------------
-			arq.write("# vtk DataFile Version 3.0\n{0}\n{1}\nDATASET {2}\n".format("Cube example","ASCII","POLYDATA"))
-			#------------------------------------Points coordinates----------------------------------------
-			arq.write("POINTS {0} {1}\n".format(n, "float"))
-			for i in range(n):
-				arq.write("{0} {1} 0.0\n".format(VECX[i], VECY[i]))
-			#---------------------------------------Cells---------------------------------------------------
-			arq.write("POLYGONS {0} {1}\n".format(num_IEN,num_IEN*4))
-			for i in range(num_IEN):
-				arq.write("{0} {1} {2} {3}\n".format(3, VECIEN[i][0], VECIEN[i][1], VECIEN[i][2]))
-			#---------------------------------------Data in each point------------------------------------
-			arq.write("POINT_DATA {0}\nSCALARS {1} float 1\n".format(n, data_name))
-			arq.write("LOOKUP_TABLE {0}\n".format(data_name))
-			for i in range(n):
-				arq.write("{}\n".format(VECT[i]))
+		try:
+			n = len(VECT[0])
+			#---------Saving multiple results to VTK files----------------------------------------------------
+			for j in range(len(VECT)):
+				with open("results/resultado2d_{}.vtk".format(j),"w") as arq:
+					#------------------------------------Header---------------------------------------------
+					arq.write("# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("Cube example","ASCII","POLYDATA"))
+					arq.write("FIELD FieldData 1\nTIME 1 1 double\n{}\n".format(dt))
+					#------------------------------------Points coordinates----------------------------------------
+					arq.write("\nPOINTS {0} {1}\n".format(n, "float"))
+					for i in range(n):
+						arq.write("{0} {1} 0.0\n".format(VECX[i], VECY[i]))
+					#---------------------------------------Cells---------------------------------------------------
+					arq.write("\nPOLYGONS {0} {1}\n".format(num_IEN,num_IEN*4))
+					for i in range(num_IEN):
+						arq.write("{0} {1} {2} {3}\n".format(3, VECIEN[i][0], VECIEN[i][1], VECIEN[i][2]))
+					#---------------------------------------Data in each point------------------------------------
+					arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(n, data_name))
+					arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
+					for i in range(n):
+						arq.write("{}\n".format(VECT[j][i]))
+		except TypeError:
+			#-------------------------Saving results to VTK file----------------------------------------------------
+			with open("results/resultado2d.vtk","w") as arq:
+				#------------------------------------Header---------------------------------------------
+				arq.write("# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("Cube example","ASCII","POLYDATA"))
+				#------------------------------------Points coordinates----------------------------------------
+				arq.write("\nPOINTS {0} {1}\n".format(n, "float"))
+				for i in range(n):
+					arq.write("{0} {1} 0.0\n".format(VECX[i], VECY[i]))
+				#---------------------------------------Cells---------------------------------------------------
+				arq.write("\nPOLYGONS {0} {1}\n".format(num_IEN,num_IEN*4))
+				for i in range(num_IEN):
+					arq.write("{0} {1} {2} {3}\n".format(3, VECIEN[i][0], VECIEN[i][1], VECIEN[i][2]))
+				#---------------------------------------Data in each point------------------------------------
+				arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(n, data_name))
+				arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
+				for i in range(n):
+					arq.write("{}\n".format(VECT[i]))
 	return
 
 def main():
@@ -355,7 +377,7 @@ def main():
 	xy,IEN = openmalha() # vetor de coordenadas dos pontos, matriz de organização dos elementos
 
 	dt = 0.005
-	nt = 100
+	nt = 10
 	T_0 = np.zeros((nx+1)*(ny+1)) # Condição inicial de temperatura
 	for i in range(len(T_0)):
 		if (xy[i,0]==0):
@@ -373,9 +395,9 @@ def main():
 	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
 
 	resp = elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0)
-	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
+	print np.rot90(np.reshape(resp[-1],(nx+1,ny+1)))
 
-	# output(xy[:,0],xy[:,1],IEN,resp)
+	output(xy[:,0],xy[:,1],IEN,resp,dt=dt)
 	return
 
 if __name__ == '__main__':
