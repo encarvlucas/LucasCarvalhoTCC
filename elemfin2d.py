@@ -209,7 +209,7 @@ def elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN):
 	# plot3Dsurf(False)
 	return T
 
-def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
+def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0,cc_id):
 	numpnts_x = nx + 1
 	numpnts_y = ny + 1
 	#--------------------------------Geração das matrizes---------------------------------------
@@ -245,38 +245,17 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 	A = M - K*dt
 
 	#---------------------------------Condição de contorno-----------------------------------------------
-	def cc(original_vec):
-		vec = np.copy(original_vec)
-		# print np.where(xy[:,0]==0)[0]
-		for j in np.where(T_0!=0)[0]:
-			# print np.where(T_0!=0)[0]
-			for i in np.where(A[:,j]!=0)[0]:
-			# 	vec[i] -= A[i][j]*(T_0[j])
-				#					/\ - valor da função no ponto
-				# A[i][j] = 0
-				A[j][i] = 0
-			A[j][j] = 1
-			vec[j] = T_0[j]
-
-		for i in np.where(A[:,0]!=0)[0]:
-			# A[i][0] = 0
-			A[0][i] = 0
-		A[0][0] = 1
-		vec[0] = T_0[0]
-		return vec
-
 	def cc1(vec):
-		idT = np.append(0,np.where(T_0!=0)[0])
-		for i in idT:
+		for i in cc_id:
 			vec[i] = T_0[i]
 		return vec	
 
 	def cc2():
-		idT = np.append(0,np.where(T_0!=0)[0])
-		for i in idT:
+		for i in cc_id:
 			A[i,:] = 0
 			A[i][i] = 1
 			# vec[i] = T_0[i]
+		return
 
 	#-----------------------------------Solução no tempo-------------------------------------------
 	#PROCURAR método dos gradientes conjugados
@@ -289,7 +268,6 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 		B = cc1(B)
 		T = np.linalg.solve(A,B)
 		frames.append(T)
-
 
 	#---------------------------------Plotting-------------------------------------------------------------
 	fig = plt.figure()
@@ -323,8 +301,8 @@ def elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0):
 	axes.set_xlim([min(xy[:,0])-0.2*abs(np.median(xy[:,0])),max(xy[:,0])+0.2*abs(np.median(xy[:,0]))])
 	axes.set_ylim([min(xy[:,1])-0.2*abs(np.median(xy[:,1])),max(xy[:,1])+0.2*abs(np.median(xy[:,1]))])
 	# plotmesh2D()
-	plot3Dsurf(True)
-	return T
+	# plot3Dsurf(True)
+	return frames
 
 def output(VECX,VECY,VECIEN,VECT,ext="VTK",dt=0):
 	n = len(VECT)
@@ -394,26 +372,30 @@ def main():
 	xy,IEN = openmalha() # vetor de coordenadas dos pontos, matriz de organização dos elementos
 
 	dt = 0.005
-	nt = 1000
+	nt = 100
 	T_0 = np.zeros((nx+1)*(ny+1)) # Condição inicial de temperatura
+	pontos_cc = []
 	for i in range(len(T_0)):
 		if (xy[i,0]==0):
 			T_0[i] = xy[i,1]
+			pontos_cc.append(i)
 		if (xy[i,1]==0):
 			T_0[i] = xy[i,0]
+			pontos_cc.append(i)
 		if (xy[i,0]==Lx):
 			T_0[i] = xy[i,1]**2+1
+			pontos_cc.append(i)
 		if (xy[i,1]==Ly):
 			T_0[i] = xy[i,0]**2+1
+			pontos_cc.append(i)
 	# print np.rot90(np.reshape(T_0,(nx+1,ny+1)))
 
-
-	resp = elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN)
+	resp = elemfinperm(Lx, Ly, nx, ny, k_condx, k_condy, esp, xy, IEN)
 	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
 	output(xy[:,0],xy[:,1],IEN,resp)
 
-	resp = elemfintrans(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN,dt,nt,T_0)
-	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
+	resp = elemfintrans(Lx, Ly, nx, ny, k_condx, k_condy, esp, xy, IEN, dt, nt, T_0, np.unique(pontos_cc))
+	print np.rot90(np.reshape(resp[-1],(nx+1,ny+1)))
 	output(xy[:,0],xy[:,1],IEN,resp,dt=dt)
 
 	return
