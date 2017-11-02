@@ -391,11 +391,11 @@ def main():
 	# print np.rot90(np.reshape(T_0,(nx+1,ny+1)))
 
 	resp = elemfinperm(Lx, Ly, nx, ny, k_condx, k_condy, esp, xy, IEN)
-	print np.rot90(np.reshape(resp,(nx+1,ny+1)))
+	print "Elementos Finitos Permanente:\n", np.rot90(np.reshape(resp,(nx+1,ny+1)))
 	output(xy[:,0],xy[:,1],IEN,resp)
 
 	resp = elemfintrans(Lx, Ly, nx, ny, k_condx, k_condy, esp, xy, IEN, dt, nt, T_0, np.unique(pontos_cc))
-	print np.rot90(np.reshape(resp[-1],(nx+1,ny+1)))
+	print "Elementos Finitos Transiente:\n", np.rot90(np.reshape(resp[-1],(nx+1,ny+1)))
 	output(xy[:,0],xy[:,1],IEN,resp,dt=dt)
 
 	return
