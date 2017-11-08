@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 #-------------------------------------- by: LUCAS CARVALHO DE SOUSA --------------------------------------------------
+# Esta biblioteca foi criada para o a solução de sistemas diferenciais através do Método de Elementos Finitos
 import numpy as np
 import sys
 import os
@@ -24,7 +25,7 @@ def openmalha(*args):
 			MRE.append(tuple(line.split(";")))
 	return np.array(XY, float), np.array(MRE, int)
 
-def geracaodemalha(Lx,nx,Ly,ny):
+def geracaodemalha(Lx, nx, Ly, ny, x_type="linear", y_type="linear"):
 	#------------Vetor de posições X-----------------------------------------------------------------------------------
 	numpnts_y = ny + 1
 	numpnts_x = nx + 1
@@ -58,14 +59,33 @@ def geracaodemalha(Lx,nx,Ly,ny):
 		# VAL = VAL[::-1] # BUGGED
 		return 
 
-	#---------------------Gerando o IEN---------------------------------------------------------------------------------
-	dimlinear(X,Lx)
-	dimlinear(Y,Ly)
+	#---------------------------------------------Distribuição dos pontos------------------------------------------
+	if (x_type == "linear") or (x_type == "l"):
+		dimlinear(X,Lx)
+	elif (x_type == "quadratica") or (x_type == "q"):
+		dimquadratica(X,Lx)
+	elif (x_type == "cubica") or (x_type == "c"):
+		dimcubica(X,Lx)
+	else:
+		dimexponencial(X,Lx)
+		X = X[::-1]
+
+	if (y_type == "linear") or (y_type == "l"):
+		dimlinear(Y,Ly)
+	elif (y_type == "quadratica") or (y_type == "q"):
+		dimquadratica(Y,Ly)
+	elif (y_type == "cubica") or (y_type == "c"):
+		dimcubica(Y,Ly)
+	else:
+		dimexponencial(Y,Ly)
+		Y = Y[::-1]
+
 	xx,yy = np.meshgrid(X,Y)
 	# plt.plot(xx, yy, marker=".", color="k", linestyle="none",ms=10)
 	xx = np.array(np.reshape(xx,(numpnts_x*numpnts_y,1)))
 	yy = np.array(np.reshape(yy,(numpnts_x*numpnts_y,1)))
-
+	
+	#---------------------Gerando o IEN---------------------------------------------------------------------------------
 	MRE = np.zeros((2*((numpnts_x-1)*(numpnts_y-1)),3),dtype=int)
 	count = 0
 	for i in range(len(MRE)/2):
@@ -85,25 +105,23 @@ def geracaodemalha(Lx,nx,Ly,ny):
 		for i in range(len(MRE)):
 			arq.write("{0};{1};{2}\n".format(MRE[i][0],MRE[i][1],MRE[i][2]))
 
-	#------------Checagem---------------------------------------------------------------------------------------
-	def drawelement(ele_num):
-		plt.plot(xx, yy, marker=".", color="k", linestyle="none",ms=10)
-		tipodeelem = 3 #triangular
-		showelex = np.zeros((tipodeelem+1,2))
-		showeley = np.zeros((tipodeelem+1,2))
-		for i in range(tipodeelem):
-			showelex[i] = xx[MRE[ele_num][i]]
-			showeley[i] = yy[MRE[ele_num][i]]
-		showelex[tipodeelem] = xx[MRE[ele_num][0]]
-		showeley[tipodeelem] = yy[MRE[ele_num][0]]
-		plt.plot(showelex,showeley, "r")
-		plt.show()
-		return
-
-	# drawelement(0)
 	# print X, Y, MRE
-	# plt.show()
 	return X, Y, MRE
+
+#------------Checagem---------------------------------------------------------------------------------------
+def drawelement(xx,yy,MRE,ele_num):
+	plt.plot(xx, yy, marker=".", color="k", linestyle="none",ms=10)
+	tipodeelem = 3 #triangular
+	showelex = np.zeros((tipodeelem+1,2))
+	showeley = np.zeros((tipodeelem+1,2))
+	for i in range(tipodeelem):
+		showelex[i] = xx[MRE[ele_num][i]]
+		showeley[i] = yy[MRE[ele_num][i]]
+	showelex[tipodeelem] = xx[MRE[ele_num][0]]
+	showeley[tipodeelem] = yy[MRE[ele_num][0]]
+	plt.plot(showelex,showeley, "r")
+	plt.show()
+	return
 
 def elemfinperm(Lx,Ly,nx,ny,k_condx,k_condy,esp,xy,IEN):
 	numpnts_x = nx + 1
@@ -357,49 +375,3 @@ def output(VECX,VECY,VECIEN,VECT,ext="VTK",dt=0):
 				for i in range(n):
 					arq.write("{}\n".format(VECT[i]))
 	return
-
-def main():
-	# Cadastro dos parâmetros:
-	Lx = 1.0
-	Ly = 1.0
-	nx = 20 # número de divisões no eixo x (número de pontos - 1)
-	ny = 20 # número de divisões no eixo y (número de pontos - 1)
-	geracaodemalha(Lx,nx,Ly,ny)
-
-	k_condx = 1.0 #\ Condutividade térmica
-	k_condy = 1.0 #/
-	esp = 1.0 # Espessura teórica da placa
-	xy,IEN = openmalha() # vetor de coordenadas dos pontos, matriz de organização dos elementos
-
-	dt = 0.005
-	nt = 100
-	T_0 = np.zeros((nx+1)*(ny+1)) # Condição inicial de temperatura
-	pontos_cc = []
-	print xy
-	for i in range(len(T_0)):
-		if (xy[i,0]==0):
-			T_0[i] = xy[i,1]
-			pontos_cc.append(i)
-		if (xy[i,1]==0):
-			T_0[i] = xy[i,0]
-			pontos_cc.append(i)
-		if (xy[i,0]==Lx):
-			T_0[i] = xy[i,1]**2+1
-			pontos_cc.append(i)
-		if (xy[i,1]==Ly):
-			T_0[i] = xy[i,0]**2+1
-			pontos_cc.append(i)
-	# print np.rot90(np.reshape(T_0,(nx+1,ny+1)))
-
-	resp = elemfinperm(Lx, Ly, nx, ny, k_condx, k_condy, esp, xy, IEN)
-	print "Elementos Finitos Permanente:\n", np.rot90(np.reshape(resp,(nx+1,ny+1)))
-	output(xy[:,0],xy[:,1],IEN,resp)
-
-	resp = elemfintrans(Lx, Ly, nx, ny, k_condx, k_condy, esp, xy, IEN, dt, nt, T_0, np.unique(pontos_cc))
-	print "Elementos Finitos Transiente:\n", np.rot90(np.reshape(resp[-1],(nx+1,ny+1)))
-	output(xy[:,0],xy[:,1],IEN,resp,dt=dt)
-
-	return
-
-if __name__ == '__main__':
-	main()
