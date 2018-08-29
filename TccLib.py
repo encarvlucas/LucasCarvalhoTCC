@@ -94,3 +94,24 @@ class Mesh:
 
     def __init__(self):
         self.x, self.y = import_point_structure()
+
+    def show(self):
+        import matplotlib.pyplot as plt
+
+        plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
+        plt.show()
+        """
+        def drawelement(xx, yy, MRE, ele_num):
+            plt.plot(xx, yy, marker=".", color="k", linestyle="none", ms=10)
+            tipodeelem = 3  # triangular
+            showelex = np.zeros((tipodeelem + 1, 2))
+            showeley = np.zeros((tipodeelem + 1, 2))
+            for i in range(tipodeelem):
+                showelex[i] = xx[MRE[ele_num][i]]
+                showeley[i] = yy[MRE[ele_num][i]]
+            showelex[tipodeelem] = xx[MRE[ele_num][0]]
+            showeley[tipodeelem] = yy[MRE[ele_num][0]]
+            plt.plot(showelex, showeley, "r")
+            plt.show()
+            return
+        """
