@@ -1,6 +1,6 @@
 from TccLib import *
 
-x = Mesh()
+malha = Mesh()
 # geom = pygmsh.built_in.Geometry()
 #
 # # Draw a cross.

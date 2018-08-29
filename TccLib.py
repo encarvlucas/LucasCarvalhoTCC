@@ -32,40 +32,56 @@ def import_point_structure(*args):
     return surface
 
 
-def create_new_surface(*points):
+def create_new_surface(*imported_points, lt_version=False):
     """
     Create new surface
     :return: Element information
     """
-    import pygmsh
-    import meshio
     import numpy as np
     import scipy.spatial as dl
+    if not lt_version:
+        import pygmsh
+        geom = pygmsh.built_in.Geometry()
 
-    geom = pygmsh.built_in.Geometry()
+    x, y = 0, 0
 
-    if points:
+    if imported_points:
         # Custom geometry.
-        points = np.array(points[0])
-        delauney_surfaces = dl.Delaunay(points[:, :2])
-        for tri in delauney_surfaces.simplices:
-            geom.add_polygon([[delauney_surfaces.points[tri[0]][0], delauney_surfaces.points[tri[0]][1], 0.0],
-                              [delauney_surfaces.points[tri[1]][0], delauney_surfaces.points[tri[1]][1], 0.0],
-                              [delauney_surfaces.points[tri[2]][0], delauney_surfaces.points[tri[2]][1], 0.0]])
-    else:
-        # Default surface.
-        geom.add_polygon([
-            [0.0, 0.0, 0.0],
-            [1.0, 0.0, 0.0],
-            [0.5, 0.5, 0.0],
-            [1.0, 1.0, 0.0],
-            [0.0, 1.0, 0.0],
-        ])
+        imported_points = np.array(imported_points[0])
+        delauney_surfaces = dl.Delaunay(imported_points[:, :2])
 
-    # Saving mesh as .vtk exportable file
-    points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
-    meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data)
-    return points, cells, point_data, cell_data, field_data
+        if lt_version:
+            x = delauney_surfaces.points[:, 0:1]
+            y = delauney_surfaces.points[:, 1:2]
+        else:
+            for tri in delauney_surfaces.simplices:
+                geom.add_polygon([[delauney_surfaces.points[tri[0]][0], delauney_surfaces.points[tri[0]][1], 0.0],
+                                  [delauney_surfaces.points[tri[1]][0], delauney_surfaces.points[tri[1]][1], 0.0],
+                                  [delauney_surfaces.points[tri[2]][0], delauney_surfaces.points[tri[2]][1], 0.0]])
+
+    else:
+        if not lt_version:
+
+            # Default surface.
+            geom.add_polygon([
+                [0.0, 0.0, 0.0],
+                [1.0, 0.0, 0.0],
+                [0.5, 0.5, 0.0],
+                [1.0, 1.0, 0.0],
+                [0.0, 1.0, 0.0],
+            ])
+
+    if not lt_version:
+        import meshio
+
+        # Saving mesh as .vtk exportable file
+        points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
+        meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data)
+
+        x = points[:, 0:1]
+        y = points[:, 1:2]
+
+    return x, y
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -74,8 +90,7 @@ class Mesh:
     """
     Mesh element to be used in the calculations
     """
-    import numpy as np
-    x = np.zeros(1)  # TODO: USE SPARCE MATRIX
+    x, y = 0, 0  # TODO: USE SPARCE MATRIX
 
     def __init__(self):
-        self.mesh = import_point_structure()
+        self.x, self.y = import_point_structure()
