@@ -43,7 +43,7 @@ def create_new_surface(*imported_points, lt_version=False):
         import pygmsh
         geom = pygmsh.built_in.Geometry()
 
-    x, y = 0, 0
+    x, y, ien = 0, 0, 0
 
     if imported_points:
         # Custom geometry.
@@ -51,8 +51,9 @@ def create_new_surface(*imported_points, lt_version=False):
         delauney_surfaces = dl.Delaunay(imported_points[:, :2])
 
         if lt_version:
-            x = delauney_surfaces.points[:, 0:1]
-            y = delauney_surfaces.points[:, 1:2]
+            x = delauney_surfaces.points[:, 0]
+            y = delauney_surfaces.points[:, 1]
+            ien = delauney_surfaces.simplices
         else:
             for tri in delauney_surfaces.simplices:
                 geom.add_polygon([[delauney_surfaces.points[tri[0]][0], delauney_surfaces.points[tri[0]][1], 0.0],
@@ -78,10 +79,11 @@ def create_new_surface(*imported_points, lt_version=False):
         points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
         meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data)
 
-        x = points[:, 0:1]
-        y = points[:, 1:2]
+        x = points[:, 0]
+        y = points[:, 1]
+        ien = cells["triangle"]
 
-    return x, y
+    return x, y, ien
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -90,28 +92,34 @@ class Mesh:
     """
     Mesh element to be used in the calculations
     """
-    x, y = 0, 0  # TODO: USE SPARCE MATRIX
+    x, y, ien = 0, 0, 0  # TODO: USE SPARCE MATRIX
 
+    """
+    Class constructor,
+    initializes geometry
+    """
     def __init__(self):
-        self.x, self.y = import_point_structure()
+        self.x, self.y, self.ien = import_point_structure()
 
-    def show(self):
+    """
+    Display mesh geometry on screen using matplotlib
+    """
+    def show(self, rainbow=False):
+        import numpy as np
         import matplotlib.pyplot as plt
 
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
+
+        if rainbow:
+            plt.gca().set_prop_cycle(plt.cycler('color', plt.cm.hsv(np.linspace(0.0, 1.0, len(self.ien)))))
+
+            for triangl in self.ien:
+                plot_coordinates = (self.x[triangl[0]], self.x[triangl[1]], self.x[triangl[2]], self.x[triangl[0]]), \
+                                   (self.y[triangl[0]], self.y[triangl[1]], self.y[triangl[2]], self.y[triangl[0]])
+
+                plt.plot(plot_coordinates[0], plot_coordinates[1])
+
+        else:
+            plt.triplot(self.x, self.y, triangles=self.ien[0])
+
         plt.show()
-        """
-        def drawelement(xx, yy, MRE, ele_num):
-            plt.plot(xx, yy, marker=".", color="k", linestyle="none", ms=10)
-            tipodeelem = 3  # triangular
-            showelex = np.zeros((tipodeelem + 1, 2))
-            showeley = np.zeros((tipodeelem + 1, 2))
-            for i in range(tipodeelem):
-                showelex[i] = xx[MRE[ele_num][i]]
-                showeley[i] = yy[MRE[ele_num][i]]
-            showelex[tipodeelem] = xx[MRE[ele_num][0]]
-            showeley[tipodeelem] = yy[MRE[ele_num][0]]
-            plt.plot(showelex, showeley, "r")
-            plt.show()
-            return
-        """
