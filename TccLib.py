@@ -114,8 +114,9 @@ def solve(mesh, permanent_solution=True):
                     k_matrix[elem[i], elem[j]] += k[i][j]
 
         # --------------------------------- Boundary conditions treatment Dirichlet ------------------------------------
-        for point_index in []:  # TODO: FIND BOUNDARIE POINTS points where there are boundary conditions
-            for i in k_matrix.nonzero():
+        k_matrix = k_matrix.tocsc()
+        for point_index in [0]:  # TODO: FIND BOUNDARY POINTS points where there are boundary conditions
+            for i in k_matrix[:, point_index].indices:
                 q_matrix[i] -= k_matrix[i, point_index] * ((mesh.x[point_index]) ** 2 + 1)
                 #				/\ - valor da função no ponto
                 k_matrix[i, point_index] = 0
