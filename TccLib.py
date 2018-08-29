@@ -8,30 +8,6 @@ __author__ = "Lucas Carvalho de Sousa"
 
 # -- Functions ---------------------------------------------------------------------------------------------------------
 
-def import_point_structure(*args):
-    """
-    Imports points position to create mesh from source file
-    :param args: Name of source file, defaults to points.txt
-    :return:
-    """
-    if not args:
-        filename = "points.txt"
-    else:
-        filename = args[0]
-
-    try:
-        with open(filename, "r") as arq:
-            points = []
-            for line in arq:
-                points.append([float(i) for i in line.split(";")] + [0.0])
-            surface = create_new_surface(points)
-
-    except FileNotFoundError:
-        surface = create_new_surface()
-
-    return surface
-
-
 def create_new_surface(*imported_points, lt_version=False):
     """
     Create new surface
@@ -86,25 +62,181 @@ def create_new_surface(*imported_points, lt_version=False):
     return x, y, ien
 
 
+def solve(mesh, permanent_solution=True):
+    """
+    Solves the mesh defined 2D problem
+    :return: The solution for the permanent problem
+    """
+    import numpy as np
+    from scipy import sparse
+
+    if not (len(mesh.x) and len(mesh.y) and len(mesh.ien)):
+        raise ValueError("The mesh is empty. Try using import_point_structure() before solving.")
+
+    # if not len(mesh.boundary_conditions):
+    #     raise ValueError("There are no boundary conditions defined. "
+    #                      "Try using set_boundary_conditions() before solving.")
+
+    k_coef_x = 1.0  # TODO: DEFINE OUTSIDE FUNCTION
+    k_coef_y = 1.0
+    thickness = 1.0
+
+    if permanent_solution:
+        # --- Defining the Matrices--------------------------------------------------------------------------------
+        q_matrix = sparse.lil_matrix((1, mesh.size))  # Heat generation
+        k_matrix = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix
+
+        for elem in mesh.ien:
+            x = mesh.x[elem]
+            y = mesh.y[elem]
+
+            A = ((x[0] * y[1] - x[1] * y[0]) +
+                 (x[1] * y[2] - x[2] * y[1]) +
+                 (x[2] * y[0] - x[0] * y[2]))
+
+            b = np.array([y[1] - y[2],
+                          y[2] - y[0],
+                          y[0] - y[1]])
+
+            c = np.array([x[2] - x[1],
+                          x[0] - x[2],
+                          x[1] - x[0]])
+
+            k = -(thickness / (4 * A)) * (k_coef_x * np.array([[b[0] ** 2, b[0] * b[1], b[0] * b[2]],
+                                                        [b[0] * b[1], b[1] ** 2, b[1] * b[2]],
+                                                        [b[0] * b[2], b[1] * b[2], b[2] ** 2]]) +
+                                          k_coef_y * np.array([[c[0] ** 2, c[0] * c[1], c[0] * c[2]],
+                                                              [c[0] * c[1], c[1] ** 2, c[1] * c[2]],
+                                                              [c[0] * c[2], c[1] * c[2], c[2] ** 2]]))
+
+            for i in range(3):  # Used so because of the triangular elements
+                for j in range(3):
+                    k_matrix[elem[i], elem[j]] += k[i][j]
+
+        # --------------------------------- Boundary conditions treatment Dirichlet ------------------------------------
+        for point_index in []:  # TODO: FIND BOUNDARIE POINTS points where there are boundary conditions
+            for i in k_matrix.nonzero():
+                q_matrix[i] -= k_matrix[i, point_index] * ((mesh.x[point_index]) ** 2 + 1)
+                #				/\ - valor da função no ponto
+                k_matrix[i, point_index] = 0
+                k_matrix[point_index, i] = 0
+            k_matrix[point_index, point_index] = 1
+            q_matrix[point_index] = mesh.x[point_index] ** 2 + 1
+
+        # --------------------------------- Solver ---------------------------------------------------------------------
+        T = np.linalg.solve(k_matrix, q_matrix)
+
+    # TODO: APPLY TRANSIENT SOLUTION
+    """
+    def elemfintrans(Lx, Ly, nx, ny, k_condx, k_condy, esp, xy, IEN, dt, nt, T_0, cc_id):
+        numpnts_x = nx + 1
+        numpnts_y = ny + 1
+        # --------------------------------Geração das matrizes---------------------------------------
+        Q = np.zeros(len(xy))  # Geração de calor
+        K = np.zeros((len(xy), len(xy)))
+        M = np.copy(K)
+        T = np.copy(T_0)
+
+        for elem in IEN:
+            x = xy[elem, 0]
+            y = xy[elem, 1]
+            A = ((x[0] * y[1] - x[1] * y[0]) +
+                 (x[1] * y[2] - x[2] * y[1]) +
+                 (x[2] * y[0] - x[0] * y[2])) / 2
+            b = np.array([y[1] - y[2],
+                          y[2] - y[0],
+                          y[0] - y[1]])
+            c = np.array([x[2] - x[1],
+                          x[0] - x[2],
+                          x[1] - x[0]])
+            k = -(esp / (4.0 * A)) * (k_condx * np.array([[b[0] ** 2, b[0] * b[1], b[0] * b[2]],
+                                                          [b[0] * b[1], b[1] ** 2, b[1] * b[2]],
+                                                          [b[0] * b[2], b[1] * b[2], b[2] ** 2]])
+                                      + k_condy * np.array([[c[0] ** 2, c[0] * c[1], c[0] * c[2]],
+                                                            [c[0] * c[1], c[1] ** 2, c[1] * c[2]],
+                                                            [c[0] * c[2], c[1] * c[2], c[2] ** 2]]))
+            m = (A / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
+            for i in [0, 1, 2]:
+                for j in [0, 1, 2]:
+                    K[elem[i]][elem[j]] += k[i][j]
+                    M[elem[i]][elem[j]] += m[i][j]
+
+        A = M - K * dt
+
+        # ---------------------------------Condição de contorno-----------------------------------------------
+        def cc1(vec):
+            for i in cc_id:
+                vec[i] = T_0[i]
+            return vec
+
+        def cc2():
+            for i in cc_id:
+                A[i, :] = 0
+                A[i][i] = 1
+                # vec[i] = T_0[i]
+            return
+
+        # -----------------------------------Solução no tempo-------------------------------------------
+        # PROCURAR método dos gradientes conjugados
+        # Gmesh
+        # Delauney
+        cc2()
+        frames = [T_0]
+        for t in range(nt):
+            B = dt * np.dot(M, Q) + np.dot(M, T)
+            B = cc1(B)
+            T = np.linalg.solve(A, B)
+            frames.append(T)
+    """
+
+    return 0
+
+
 # -- Classes -----------------------------------------------------------------------------------------------------------
 
 class Mesh:
     """
     Mesh element to be used in the calculations
     """
-    x, y, ien = 0, 0, 0  # TODO: USE SPARCE MATRIX
+    x, y, ien = [], [], []
+    size = 0
+    boundary_conditions = []
 
-    """
-    Class constructor,
-    initializes geometry
-    """
     def __init__(self):
-        self.x, self.y, self.ien = import_point_structure()
+        """
+        Class constructor,
+        initializes geometry
+        """
+        self.import_point_structure()
+        self.set_boundary_conditions()
 
-    """
-    Display mesh geometry on screen using matplotlib
-    """
+    def import_point_structure(self, *args):
+        """
+        Imports points position to create mesh from source file
+        :param args: Name of source file, defaults to points.txt
+        """
+        if not args:
+            filename = "points.txt"
+        else:
+            filename = args[0]
+
+        try:
+            with open(filename, "r") as arq:
+                points = []
+                for line in arq:
+                    points.append([float(i) for i in line.split(";")] + [0.0])
+                surface = create_new_surface(points)
+
+        except FileNotFoundError:
+            surface = create_new_surface()
+
+        self.x, self.y, self.ien = surface
+        self.size = len(self.x)
+
     def show(self, rainbow=False):
+        """
+        Display mesh geometry on screen using matplotlib
+        """
         import numpy as np
         import matplotlib.pyplot as plt
 
@@ -123,3 +255,10 @@ class Mesh:
             plt.triplot(self.x, self.y, triangles=self.ien[0])
 
         plt.show()
+
+    def set_boundary_conditions(self):
+        """
+        Sets boundary conditions,
+        they are determined as a tuple of (point, Dirichlet_value)
+        """
+        # TODO: SET BOUNDARY CONDITIONS
