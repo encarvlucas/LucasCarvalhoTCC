@@ -8,16 +8,28 @@ __author__ = "Lucas Carvalho de Sousa"
 
 # -- Functions ---------------------------------------------------------------------------------------------------------
 
-def create_new_surface(*imported_points, lt_version=False):
+def check_method_call(*args):
+    """
+    Tests if the arguments are valid
+    :param args: Any argument group that required for the method
+    """
+    for arg in args:
+        try:
+            if len(arg) and all(item for item in arg):
+                return
+        except TypeError:
+            if arg:
+                return
+    raise ValueError("Method called incorrectly, please read the documentation and try changing the arguments.")
+
+
+def create_new_surface(*imported_points, lt_version=True):
     """
     Create new surface
     :return: Element information
     """
     import numpy as np
     import scipy.spatial as dl
-    if not lt_version:
-        import pygmsh
-        geom = pygmsh.built_in.Geometry()
 
     x, y, ien = 0, 0, 0
 
@@ -32,12 +44,17 @@ def create_new_surface(*imported_points, lt_version=False):
             ien = delauney_surfaces.simplices
         else:
             for tri in delauney_surfaces.simplices:
+                import pygmsh
+                geom = pygmsh.built_in.Geometry()
                 geom.add_polygon([[delauney_surfaces.points[tri[0]][0], delauney_surfaces.points[tri[0]][1], 0.0],
                                   [delauney_surfaces.points[tri[1]][0], delauney_surfaces.points[tri[1]][1], 0.0],
                                   [delauney_surfaces.points[tri[2]][0], delauney_surfaces.points[tri[2]][1], 0.0]])
+                x, y, ien = use_meshio(geom)
 
     else:
         if not lt_version:
+            import pygmsh
+            geom = pygmsh.built_in.Geometry()
 
             # Default surface.
             geom.add_polygon([
@@ -48,18 +65,29 @@ def create_new_surface(*imported_points, lt_version=False):
                 [0.0, 1.0, 0.0],
             ])
 
-    if not lt_version:
-        import meshio
-
-        # Saving mesh as .vtk exportable file
-        points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geom)
-        meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data)
-
-        x = points[:, 0]
-        y = points[:, 1]
-        ien = cells["triangle"]
+            x, y, ien = use_meshio(geom)
 
     return x, y, ien
+
+
+def use_meshio(geometry):
+    """
+    Use MeshIO library for creating the mesh point structure from Gmsh
+    :param geometry: A Geometry object from the PyGmsh library
+    :return: x, y, ien - The mesh point structure
+    """
+    import pygmsh
+    import meshio
+
+    # Saving mesh as .vtk exportable file
+    points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geometry)
+    meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data)
+
+    x_ = points[:, 0]
+    y_ = points[:, 1]
+    ien_ = cells["triangle"]
+
+    return x_, y_, ien_
 
 
 def solve(mesh, permanent_solution=True):
@@ -73,9 +101,15 @@ def solve(mesh, permanent_solution=True):
     if not (len(mesh.x) and len(mesh.y) and len(mesh.ien)):
         raise ValueError("The mesh is empty. Try using import_point_structure() before solving.")
 
-    # if not len(mesh.boundary_conditions):
-    #     raise ValueError("There are no boundary conditions defined. "
-    #                      "Try using set_boundary_conditions() before solving.")
+    try:
+        if not (len(mesh.boundary_conditions.point_index_vector) and
+                len(mesh.boundary_conditions.values_vector) and
+                len(mesh.boundary_conditions.type_of_condition_vector)):
+            raise ValueError("There are no boundary conditions defined. "
+                             "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
+    except TypeError:
+        raise ValueError("There are no boundary conditions defined. "
+                         "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
 
     k_coef_x = 1.0  # TODO: DEFINE OUTSIDE FUNCTION
     k_coef_y = 1.0
@@ -203,13 +237,72 @@ class Mesh:
     size = 0
     boundary_conditions = []
 
-    def __init__(self):
+    class BoundaryConditions:
+        """
+        Boundary conditions of the simulation
+        """
+        point_index_vector = []
+        values_vector = []
+        type_of_condition_vector = []
+
+        def set_new_boundary_conditions(self, *vect_argm, point_index=0, values=0, type_of_boundary=0):
+            """
+            Sets the boundary conditions for the mesh
+            :param vect_argm: Vector(s) of boundary conditions
+            :param point_index: Vector of oreder of points
+            :param values: Values of the condition in each point
+            :param type_of_boundary: Type True for Dirichlet and False for Neumann
+            """
+            check_method_call(vect_argm, [point_index, values, type_of_boundary])
+
+            try:
+                if len(vect_argm[0][0]) == 3:
+                    self.point_index_vector = []
+                    self.values_vector = []
+                    self.type_of_condition_vector = []
+
+                    for item in vect_argm[0]:
+                        self.point_index_vector.append(item[0])
+                        self.values_vector.append(item[1])
+                        self.type_of_condition_vector.append(item[2])
+
+            except TypeError:
+                self.point_index_vector = point_index
+                self.values_vector = values
+                self.type_of_condition_vector = type_of_boundary
+
+            except IndexError:
+                raise RuntimeError("Unexpected Error")
+
+    def __init__(self, default_boudary_conditions=True):
         """
         Class constructor,
         initializes geometry
+        :param default_boudary_conditions: Determine if the default conditions are to be applied
         """
         self.import_point_structure()
-        self.set_boundary_conditions()
+
+        self.boundary_conditions = self.BoundaryConditions()
+
+        # Default Boundary coditions declaration
+        if default_boudary_conditions:
+            max_x = max(self.x)
+            max_y = max(self.y)
+            min_x = min(self.x)
+            min_y = min(self.y)
+            vector = []
+
+            for index, coord_x in enumerate(self.x):
+                if (coord_x == max_x) or (self.y[index] == max_y):
+                    # Boundaries are defined to be the upper and right sides with value 100
+                    vector.append([index, 100, True])
+
+            for index, coord_x in enumerate(self.x):
+                if (coord_x == min_x) or (self.y[index] == min_y):
+                    # Boundaries are defined to be the lower and left sides with value 0
+                    vector.append([index, 0, True])
+
+            self.boundary_conditions.set_new_boundary_conditions(vector)
 
     def import_point_structure(self, *args):
         """
@@ -256,10 +349,3 @@ class Mesh:
             plt.triplot(self.x, self.y, triangles=self.ien[0])
 
         plt.show()
-
-    def set_boundary_conditions(self):
-        """
-        Sets boundary conditions,
-        they are determined as a tuple of (point, Dirichlet_value)
-        """
-        # TODO: SET BOUNDARY CONDITIONS
