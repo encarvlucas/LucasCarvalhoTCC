@@ -43,13 +43,13 @@ def create_new_surface(*imported_points, lt_version=True):
             y = delauney_surfaces.points[:, 1]
             ien = delauney_surfaces.simplices
         else:
+            import pygmsh
+            geom = pygmsh.built_in.Geometry()
             for tri in delauney_surfaces.simplices:
-                import pygmsh
-                geom = pygmsh.built_in.Geometry()
                 geom.add_polygon([[delauney_surfaces.points[tri[0]][0], delauney_surfaces.points[tri[0]][1], 0.0],
                                   [delauney_surfaces.points[tri[1]][0], delauney_surfaces.points[tri[1]][1], 0.0],
                                   [delauney_surfaces.points[tri[2]][0], delauney_surfaces.points[tri[2]][1], 0.0]])
-                x, y, ien = use_meshio(geom)
+            x, y, ien = use_meshio(geom)
 
     else:
         if not lt_version:
@@ -97,6 +97,7 @@ def solve(mesh, permanent_solution=True):
     """
     import numpy as np
     from scipy import sparse
+    import scipy.sparse.linalg as linalg
 
     if not (len(mesh.x) and len(mesh.y) and len(mesh.ien)):
         raise ValueError("The mesh is empty. Try using import_point_structure() before solving.")
@@ -111,20 +112,20 @@ def solve(mesh, permanent_solution=True):
         raise ValueError("There are no boundary conditions defined. "
                          "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
 
-    k_coef_x = 1.0  # TODO: DEFINE OUTSIDE FUNCTION
+    k_coef_x = 1.0
     k_coef_y = 1.0
     thickness = 1.0
 
     if permanent_solution:
         # --- Defining the Matrices--------------------------------------------------------------------------------
-        q_matrix = sparse.lil_matrix((1, mesh.size))  # Heat generation
+        q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
         k_matrix = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix
 
         for elem in mesh.ien:
             x = mesh.x[elem]
             y = mesh.y[elem]
 
-            A = ((x[0] * y[1] - x[1] * y[0]) +
+            a = ((x[0] * y[1] - x[1] * y[0]) +
                  (x[1] * y[2] - x[2] * y[1]) +
                  (x[2] * y[0] - x[0] * y[2]))
 
@@ -136,12 +137,12 @@ def solve(mesh, permanent_solution=True):
                           x[0] - x[2],
                           x[1] - x[0]])
 
-            k = -(thickness / (4 * A)) * (k_coef_x * np.array([[b[0] ** 2, b[0] * b[1], b[0] * b[2]],
-                                                        [b[0] * b[1], b[1] ** 2, b[1] * b[2]],
-                                                        [b[0] * b[2], b[1] * b[2], b[2] ** 2]]) +
+            k = -(thickness / (4 * a)) * (k_coef_x * np.array([[b[0] ** 2, b[0] * b[1], b[0] * b[2]],
+                                                               [b[0] * b[1], b[1] ** 2, b[1] * b[2]],
+                                                               [b[0] * b[2], b[1] * b[2], b[2] ** 2]]) +
                                           k_coef_y * np.array([[c[0] ** 2, c[0] * c[1], c[0] * c[2]],
-                                                              [c[0] * c[1], c[1] ** 2, c[1] * c[2]],
-                                                              [c[0] * c[2], c[1] * c[2], c[2] ** 2]]))
+                                                               [c[0] * c[1], c[1] ** 2, c[1] * c[2]],
+                                                               [c[0] * c[2], c[1] * c[2], c[2] ** 2]]))
 
             for i in range(3):  # Used so because of the triangular elements
                 for j in range(3):
@@ -149,17 +150,16 @@ def solve(mesh, permanent_solution=True):
 
         # --------------------------------- Boundary conditions treatment Dirichlet ------------------------------------
         k_matrix = k_matrix.tocsc()
-        for point_index in [0]:  # TODO: FIND BOUNDARY POINTS points where there are boundary conditions
+        for point_index in mesh.boundary_conditions.point_index_vector:
             for i in k_matrix[:, point_index].indices:
-                q_matrix[i] -= k_matrix[i, point_index] * ((mesh.x[point_index]) ** 2 + 1)
-                #				/\ - valor da função no ponto
+                q_matrix[i, 0] -= k_matrix[i, point_index] * ((mesh.x[point_index]) ** 2 + 1)
                 k_matrix[i, point_index] = 0
                 k_matrix[point_index, i] = 0
             k_matrix[point_index, point_index] = 1
-            q_matrix[point_index] = mesh.x[point_index] ** 2 + 1
+            q_matrix[point_index, 0] = mesh.x[point_index] ** 2 + 1
 
         # --------------------------------- Solver ---------------------------------------------------------------------
-        T = np.linalg.solve(k_matrix, q_matrix)
+        return linalg.spsolve(k_matrix, q_matrix)
 
     # TODO: APPLY TRANSIENT SOLUTION
     """
