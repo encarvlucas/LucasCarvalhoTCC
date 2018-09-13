@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------- by: LUCAS CARVALHO DE SOUSA ---------------------------------------------------
 # Esta biblioteca foi criada para o a solução de sistemas diferenciais através do Método de Elementos Finitos
-# This library was created for educational purposes, it is meant to be used for the solution of diferential equation
+# This library was created for educational purposes, it is meant to be used for the solution of differential equation
 # systems
 __author__ = "Lucas Carvalho de Sousa"
 
@@ -278,9 +278,9 @@ class Mesh:
         if rainbow:
             plt.gca().set_prop_cycle(plt.cycler('color', plt.cm.hsv(np.linspace(0.0, 1.0, len(self.ien)))))
 
-            for triangl in self.ien:
-                plot_coordinates = (self.x[triangl[0]], self.x[triangl[1]], self.x[triangl[2]], self.x[triangl[0]]), \
-                                   (self.y[triangl[0]], self.y[triangl[1]], self.y[triangl[2]], self.y[triangl[0]])
+            for element in self.ien:
+                plot_coordinates = (self.x[element[0]], self.x[element[1]], self.x[element[2]], self.x[element[0]]), \
+                                   (self.y[element[0]], self.y[element[1]], self.y[element[2]], self.y[element[0]])
 
                 plt.plot(plot_coordinates[0], plot_coordinates[1])
 
