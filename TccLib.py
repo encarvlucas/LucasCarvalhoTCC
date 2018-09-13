@@ -148,11 +148,13 @@ def solve(mesh, permanent_solution=True):
                 for j in range(3):
                     k_matrix[elem[i], elem[j]] += k[i][j]
 
-        # --------------------------------- Boundary conditions treatment Dirichlet ------------------------------------
+        # --------------------------------- Boundary conditions treatment ----------------------------------------------
         k_matrix = k_matrix.tocsc()
-        for point_index in mesh.boundary_conditions.point_index_vector:
+        for index, point_index in enumerate(mesh.boundary_conditions.point_index_vector):
             for i in k_matrix[:, point_index].indices:
-                q_matrix[i, 0] -= k_matrix[i, point_index] * ((mesh.x[point_index]) ** 2 + 1)
+                if mesh.boundary_conditions.type_of_condition_vector[index]:
+                    # Dirichlet Treatment
+                    q_matrix[i, 0] -= k_matrix[i, point_index] * mesh.boundary_conditions.values_vector[index]
                 k_matrix[i, point_index] = 0
                 k_matrix[point_index, i] = 0
             k_matrix[point_index, point_index] = 1
@@ -160,69 +162,6 @@ def solve(mesh, permanent_solution=True):
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         return linalg.spsolve(k_matrix, q_matrix)
-
-    # TODO: APPLY TRANSIENT SOLUTION
-    """
-    def elemfintrans(Lx, Ly, nx, ny, k_condx, k_condy, esp, xy, IEN, dt, nt, T_0, cc_id):
-        numpnts_x = nx + 1
-        numpnts_y = ny + 1
-        # --------------------------------Geração das matrizes---------------------------------------
-        Q = np.zeros(len(xy))  # Geração de calor
-        K = np.zeros((len(xy), len(xy)))
-        M = np.copy(K)
-        T = np.copy(T_0)
-
-        for elem in IEN:
-            x = xy[elem, 0]
-            y = xy[elem, 1]
-            A = ((x[0] * y[1] - x[1] * y[0]) +
-                 (x[1] * y[2] - x[2] * y[1]) +
-                 (x[2] * y[0] - x[0] * y[2])) / 2
-            b = np.array([y[1] - y[2],
-                          y[2] - y[0],
-                          y[0] - y[1]])
-            c = np.array([x[2] - x[1],
-                          x[0] - x[2],
-                          x[1] - x[0]])
-            k = -(esp / (4.0 * A)) * (k_condx * np.array([[b[0] ** 2, b[0] * b[1], b[0] * b[2]],
-                                                          [b[0] * b[1], b[1] ** 2, b[1] * b[2]],
-                                                          [b[0] * b[2], b[1] * b[2], b[2] ** 2]])
-                                      + k_condy * np.array([[c[0] ** 2, c[0] * c[1], c[0] * c[2]],
-                                                            [c[0] * c[1], c[1] ** 2, c[1] * c[2]],
-                                                            [c[0] * c[2], c[1] * c[2], c[2] ** 2]]))
-            m = (A / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
-            for i in [0, 1, 2]:
-                for j in [0, 1, 2]:
-                    K[elem[i]][elem[j]] += k[i][j]
-                    M[elem[i]][elem[j]] += m[i][j]
-
-        A = M - K * dt
-
-        # ---------------------------------Condição de contorno-----------------------------------------------
-        def cc1(vec):
-            for i in cc_id:
-                vec[i] = T_0[i]
-            return vec
-
-        def cc2():
-            for i in cc_id:
-                A[i, :] = 0
-                A[i][i] = 1
-                # vec[i] = T_0[i]
-            return
-
-        # -----------------------------------Solução no tempo-------------------------------------------
-        # PROCURAR método dos gradientes conjugados
-        # Gmesh
-        # Delauney
-        cc2()
-        frames = [T_0]
-        for t in range(nt):
-            B = dt * np.dot(M, Q) + np.dot(M, T)
-            B = cc1(B)
-            T = np.linalg.solve(A, B)
-            frames.append(T)
-    """
 
     return 0
 
