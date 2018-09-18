@@ -58,12 +58,13 @@ def create_new_surface(*imported_points, lt_version=True):
 
             # Default surface.
             geom.add_polygon([
-                [0.0, 0.0, 0.0],
-                [1.0, 0.0, 0.0],
-                [0.5, 0.5, 0.0],
-                [1.0, 1.0, 0.0],
-                [0.0, 1.0, 0.0],
-            ])
+                              [0.0, 0.0, 0.0],
+                              [1.0, 0.0, 0.0],
+                              [0.5, 0.5, 0.0],
+                              [1.0, 1.0, 0.0],
+                              [0.0, 1.0, 0.0],
+                             ],
+                             lcar=0.05)
 
             x, y, ien = use_meshio(geom)
 
@@ -104,9 +105,10 @@ def solve(mesh, permanent_solution=True):
 
     try:
         for boundary_condition in [mesh.space_boundary_conditions, mesh.time_boundary_conditions]:
-            if not (len(boundary_condition.point_index_vector) and
-                    len(boundary_condition.values_vector) and
-                    len(boundary_condition.type_of_condition_vector)):
+            if (not isinstance(boundary_condition, Mesh.BoundaryConditions) or
+                    not (len(boundary_condition.point_index_vector) and
+                         len(boundary_condition.values_vector) and
+                         len(boundary_condition.type_of_condition_vector))):
                 raise ValueError("There are no boundary conditions defined. "
                                  "Try using mesh.boundary_condition.set_new_boundary_conditions() before solving.")
     except TypeError:
@@ -194,14 +196,14 @@ def solve(mesh, permanent_solution=True):
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         def cc1(vec):
-            for i in mesh.space_boundary_conditions.point_index_vector:
-                vec[i] = mesh.time_boundary_conditions.values_vector[i]
+            for point in mesh.space_boundary_conditions.point_index_vector:
+                vec[point] = mesh.time_boundary_conditions.values_vector[point]
             return vec
 
         def cc2():
-            for i in mesh.space_boundary_conditions.point_index_vector:
-                a_matrix[i, :] = 0
-                a_matrix[i, i] = 1
+            for point in mesh.space_boundary_conditions.point_index_vector:
+                a_matrix[point, :] = 0
+                a_matrix[point, point] = 1
             return
 
         # --------------------------------- Solver ---------------------------------------------------------------------
@@ -215,8 +217,6 @@ def solve(mesh, permanent_solution=True):
             frames.append(t_matrix)
 
         return frames
-
-    return 0
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -253,39 +253,41 @@ class Mesh:
                 check_method_call(point_index)
 
             try:
-                if isinstance(vect_argm[0], list):
+                if isinstance(vect_argm[0], list) or isinstance(values, np.ndarray):
                     array = np.array(vect_argm[0])
 
-                if len(vect_argm[0][0]) == 3:
-                    self.point_index_vector = array[:, 0]
-                    self.values_vector = array[:, 1]
-                    self.type_of_condition_vector = array[:, 2]
-                    return
+                    if len(vect_argm[0][0]) == 3:
+                        self.point_index_vector = array[:, 0]
+                        self.values_vector = array[:, 1]
+                        self.type_of_condition_vector = array[:, 2]
+                        return
 
-                if len(vect_argm[0][0]) == 2:
-                    self.point_index_vector = array[:, 0]
-                    self.values_vector = array[:, 1]
-                    self.type_of_condition_vector = [True] * len(self.point_index_vector)
-                    return
+                    if len(vect_argm[0][0]) == 2:
+                        self.point_index_vector = array[:, 0]
+                        self.values_vector = array[:, 1]
+                        self.type_of_condition_vector = [True] * len(self.point_index_vector)
+                        return
 
             except (TypeError, IndexError):
                 self.point_index_vector = point_index
-                if isinstance(values, list):
+                if isinstance(values, list) or isinstance(values, np.ndarray):
                     if len(values) == len(point_index):
-                        self.values_vector = values
+                        self.values_vector = np.array(values)
                     else:
                         raise ValueError("Incorrect vector sizes, there must be an equal number of points and point "
                                          "types and definitions")
                 else:
-                    self.values_vector = [values] * len(point_index)
-                if isinstance(type_of_boundary, list):
+                    self.values_vector = np.array([values] * len(point_index))
+
+                if isinstance(type_of_boundary, list) or isinstance(type_of_boundary, np.ndarray):
                     if len(type_of_boundary) == len(point_index):
-                        self.type_of_condition_vector = type_of_boundary
+                        self.type_of_condition_vector = np.array(type_of_boundary)
+
                     else:
                         raise ValueError("Incorrect vector sizes, there must be an equal number of points and point "
                                          "types and definitions")
                 else:
-                    self.type_of_condition_vector = [type_of_boundary] * len(point_index)
+                    self.type_of_condition_vector = np.array([type_of_boundary] * len(point_index))
 
     def __init__(self, default_boudary_conditions=True):
         """
@@ -319,25 +321,32 @@ class Mesh:
             self.space_boundary_conditions.set_new_boundary_conditions(vector)
             self.time_boundary_conditions.set_new_boundary_conditions(point_index=range(self.size), values=0)
 
-    def import_point_structure(self, *args):
+    def import_point_structure(self, *args, points=False):
         """
         Imports points position to create mesh from source file
         :param args: Name of source file, defaults to points.txt
+        :param points: Custom set of defined points, in form of list of shape (x, 2)
         """
         if not args:
             filename = "points.txt"
         else:
             filename = args[0]
 
-        try:
-            with open(filename, "r") as arq:
-                points = []
-                for line in arq:
-                    points.append([float(i) for i in line.split(";")] + [0.0])
-                surface = create_new_surface(points)
+        if isinstance(points, list):
+            surface = create_new_surface(points, lt_version=True)
+            self.space_boundary_conditions = self.BoundaryConditions()
+            self.time_boundary_conditions = self.BoundaryConditions()
 
-        except FileNotFoundError:
-            surface = create_new_surface()
+        else:
+            try:
+                with open(filename, "r") as arq:
+                    points = []
+                    for line in arq:
+                        points.append([float(i) for i in line.split(";")] + [0.0])
+                    surface = create_new_surface(points)
+
+            except FileNotFoundError:
+                surface = create_new_surface(lt_version=False)
 
         self.x, self.y, self.ien = surface
         self.size = len(self.x)
