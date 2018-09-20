@@ -79,6 +79,7 @@ def use_meshio(geometry):
     """
     import pygmsh
     import meshio
+    import scipy.spatial as sp
 
     # Saving mesh as .vtk exportable file
     points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geometry)
@@ -86,7 +87,7 @@ def use_meshio(geometry):
 
     x_ = points[:, 0]
     y_ = points[:, 1]
-    ien_ = cells["triangle"]
+    ien_ = sp.Delaunay(points[:, :2]).simplices
 
     return x_, y_, ien_
 
@@ -173,20 +174,21 @@ def solve(mesh, permanent_solution=True):
         k_matrix, m_matrix = get_matrix()  # Stiffness and Mass matrices
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        k_matrix = k_matrix.tocsc()
-        for column_index, point_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            for line_index in k_matrix[:, point_index].indices:
-                if mesh.space_boundary_conditions.type_of_condition_vector[column_index]:
+        # k_matrix = k_matrix.tocsc()
+        for relative_index, column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
+            for line_index in k_matrix.getcol(column_index).indices:
+                if mesh.space_boundary_conditions.type_of_condition_vector[relative_index]:
                     # Dirichlet Treatment
-                    q_matrix[line_index, 0] -= (k_matrix[line_index, point_index] *
-                                                mesh.space_boundary_conditions.values_vector[column_index])
-                k_matrix[line_index, point_index] = 0
-                k_matrix[point_index, line_index] = 0
-            k_matrix[point_index, point_index] = 1
-            q_matrix[point_index, 0] = mesh.space_boundary_conditions.values_vector[column_index]
+                    q_matrix[line_index, 0] -= (k_matrix[line_index, column_index] *
+                                                mesh.space_boundary_conditions.values_vector[relative_index])
+                k_matrix[line_index, column_index] = 0
+                k_matrix[column_index, line_index] = 0
+            k_matrix[column_index, column_index] = 1
+            q_matrix[column_index, 0] = mesh.space_boundary_conditions.values_vector[relative_index]
 
         # --------------------------------- Solver ---------------------------------------------------------------------
-        return linalg.spsolve(k_matrix, q_matrix)
+        import numpy
+        return linalg.spsolve(k_matrix.tocsc(), q_matrix)
 
     else:
         # --- Defining the Matrices-------------------------------------------------------------------------------------
@@ -218,6 +220,63 @@ def solve(mesh, permanent_solution=True):
             frames.append(t_matrix)
 
         return frames
+
+
+def output(vecx, vec_y, vec_ien, vec_result, ext="VTK", dt=0):
+    n = len(vec_result)
+    num_IEN = len(vec_ien)
+    data_name = "Temperature"
+
+    if (ext == "CSV"):
+        # ------------------------- Saving results to CSV file ----------------------------------------------------
+        with open("results/resultado2d.csv", "w") as arq:
+            arq.write("{0}, Points:0, Points:1, Points:2\n".format(data_name))
+            for i in range(n):
+                arq.write("{0},{1},{2},{3}\n".format(vec_result[i], vecx[i], vec_y[i], 0))
+
+    if (ext == "VTK"):
+        try:
+            n = len(vec_result[0])
+            # --------- Saving multiple results to VTK files -----------------------------------------------------------
+            for j in range(len(vec_result)):
+                with open("results/resultado2d_{}.vtk".format(j), "w") as arq:
+                    # ------------------------------------ Header ------------------------------------------------------
+                    arq.write("# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("Cube example", "ASCII",
+                                                                                             "POLYDATA"))
+                    arq.write("FIELD FieldData 1\nTIME 1 1 double\n{}\n".format(dt))
+                    # ------------------------------------ Points coordinates ------------------------------------------
+                    arq.write("\nPOINTS {0} {1}\n".format(n, "float"))
+                    for i in range(n):
+                        arq.write("{0} {1} 0.0\n".format(vecx[i], vec_y[i]))
+                    # --------------------------------------- Cells ----------------------------------------------------
+                    arq.write("\nPOLYGONS {0} {1}\n".format(num_IEN, num_IEN * 4))
+                    for i in range(num_IEN):
+                        arq.write("{0} {1} {2} {3}\n".format(3, vec_ien[i][0], vec_ien[i][1], vec_ien[i][2]))
+                    # ------------------------------------ Data in each point ------------------------------------------
+                    arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(n, data_name))
+                    arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
+                    for i in range(n):
+                        arq.write("{}\n".format(vec_result[j][i]))
+
+        except TypeError:
+            # ------------------------- Saving results to VTK file -----------------------------------------------------
+            with open("results/resultado2d.vtk", "w") as arq:
+                # ------------------------------------ Header ----------------------------------------------------------
+                arq.write(
+                    "# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("Cube example", "ASCII", "POLYDATA"))
+                # ------------------------------------ Points coordinates ----------------------------------------------
+                arq.write("\nPOINTS {0} {1}\n".format(n, "float"))
+                for i in range(n):
+                    arq.write("{0} {1} 0.0\n".format(vecx[i], vec_y[i]))
+                # --------------------------------------- Cells --------------------------------------------------------
+                arq.write("\nPOLYGONS {0} {1}\n".format(num_IEN, num_IEN * 4))
+                for i in range(num_IEN):
+                    arq.write("{0} {1} {2} {3}\n".format(3, vec_ien[i][0], vec_ien[i][1], vec_ien[i][2]))
+                # ----------------------------------- Data in each point------------------------------------------------
+                arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(n, data_name))
+                arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
+                for i in range(n):
+                    arq.write("{}\n".format(vec_result[i]))
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
