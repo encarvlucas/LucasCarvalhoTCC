@@ -133,9 +133,9 @@ def solve(mesh, permanent_solution=True):
             x = mesh.x[elem]
             y = mesh.y[elem]
 
-            a = ((x[0] * y[1] - x[1] * y[0]) +
-                 (x[1] * y[2] - x[2] * y[1]) +
-                 (x[2] * y[0] - x[0] * y[2])) / 2.0
+            area = ((x[0] * y[1] - x[1] * y[0]) +
+                    (x[1] * y[2] - x[2] * y[1]) +
+                    (x[2] * y[0] - x[0] * y[2])) / 2.0
 
             b = np.array([y[1] - y[2],
                           y[2] - y[0],
@@ -145,18 +145,18 @@ def solve(mesh, permanent_solution=True):
                           x[0] - x[2],
                           x[1] - x[0]])
 
-            k = -(thickness / (4.0 * a)) * (k_coef_x * np.array([
-                                                                 [b[0] * b[0], b[0] * b[1], b[0] * b[2]],
-                                                                 [b[0] * b[1], b[1] * b[1], b[1] * b[2]],
-                                                                 [b[0] * b[2], b[1] * b[2], b[2] * b[2]]
-                                                                ]) +
-                                            k_coef_y * np.array([
-                                                                 [c[0] * c[0], c[0] * c[1], c[0] * c[2]],
-                                                                 [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
-                                                                 [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
-                                                                ]))
+            k = -(thickness / (4.0 * area)) * (k_coef_x * np.array([
+                                                                    [b[0] * b[0], b[0] * b[1], b[0] * b[2]],
+                                                                    [b[0] * b[1], b[1] * b[1], b[1] * b[2]],
+                                                                    [b[0] * b[2], b[1] * b[2], b[2] * b[2]]
+                                                                   ]) +
+                                               k_coef_y * np.array([
+                                                                    [c[0] * c[0], c[0] * c[1], c[0] * c[2]],
+                                                                    [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
+                                                                    [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
+                                                                   ]))
             if permanent_solution:
-                m = (a / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
+                m = (area / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
 
             for i in range(3):  # Used so because of the triangular elements
                 for j in range(3):
@@ -174,15 +174,16 @@ def solve(mesh, permanent_solution=True):
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         k_matrix = k_matrix.tocsc()
-        for index, point_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            for i in k_matrix[:, point_index].indices:
-                if mesh.space_boundary_conditions.type_of_condition_vector[index]:
+        for column_index, point_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
+            for line_index in k_matrix[:, point_index].indices:
+                if mesh.space_boundary_conditions.type_of_condition_vector[column_index]:
                     # Dirichlet Treatment
-                    q_matrix[i, 0] -= k_matrix[i, point_index] * mesh.space_boundary_conditions.values_vector[index]
-                k_matrix[i, point_index] = 0
-                k_matrix[point_index, i] = 0
+                    q_matrix[line_index, 0] -= (k_matrix[line_index, point_index] *
+                                                mesh.space_boundary_conditions.values_vector[column_index])
+                k_matrix[line_index, point_index] = 0
+                k_matrix[point_index, line_index] = 0
             k_matrix[point_index, point_index] = 1
-            q_matrix[point_index, 0] = mesh.x[point_index] ** 2 + 1
+            q_matrix[point_index, 0] = mesh.space_boundary_conditions.values_vector[column_index]
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         return linalg.spsolve(k_matrix, q_matrix)
@@ -321,11 +322,12 @@ class Mesh:
             self.space_boundary_conditions.set_new_boundary_conditions(vector)
             self.time_boundary_conditions.set_new_boundary_conditions(point_index=range(self.size), values=0)
 
-    def import_point_structure(self, *args, points=False):
+    def import_point_structure(self, *args, points=False, light_version=True):
         """
         Imports points position to create mesh from source file
         :param args: Name of source file, defaults to points.txt
         :param points: Custom set of defined points, in form of list of shape (x, 2)
+        :param light_version: Defines if script will use Gmsh to obtain elements
         """
         if not args:
             filename = "points.txt"
@@ -333,7 +335,7 @@ class Mesh:
             filename = args[0]
 
         if isinstance(points, list):
-            surface = create_new_surface(points, lt_version=True)
+            surface = create_new_surface(points, lt_version=light_version)
             self.space_boundary_conditions = self.BoundaryConditions()
             self.time_boundary_conditions = self.BoundaryConditions()
 

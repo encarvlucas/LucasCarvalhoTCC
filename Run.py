@@ -3,7 +3,7 @@ import numpy as np
 
 malha = Mesh()
 
-xx, yy = np.meshgrid(np.linspace(0, 10, 10), np.linspace(0, 10, 15))
+xx, yy = np.meshgrid(np.linspace(0, 1, 10), np.linspace(0, 1, 15))
 xx = np.array(np.reshape(xx, (xx.size, 1)))
 yy = np.array(np.reshape(yy, (yy.size, 1)))
 xy = np.hstack((xx, yy))
