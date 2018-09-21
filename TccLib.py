@@ -82,8 +82,9 @@ def use_meshio(geometry):
     import scipy.spatial as sp
 
     # Saving mesh as .vtk exportable file
-    points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geometry)
-    meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data)
+    # points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geometry)
+    # meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data) # TODO: FIX LIBRARY
+    points = meshio.read("untitled.msh").points
 
     x_ = points[:, 0]
     y_ = points[:, 1]
@@ -174,9 +175,8 @@ def solve(mesh, permanent_solution=True):
         k_matrix, m_matrix = get_matrix()  # Stiffness and Mass matrices
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        # k_matrix = k_matrix.tocsc()
         for relative_index, column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            for line_index in k_matrix.getcol(column_index).indices:
+            for line_index in k_matrix.tocsc()[:, column_index].indices:
                 if mesh.space_boundary_conditions.type_of_condition_vector[relative_index]:
                     # Dirichlet Treatment
                     q_matrix[line_index, 0] -= (k_matrix[line_index, column_index] *
@@ -187,7 +187,6 @@ def solve(mesh, permanent_solution=True):
             q_matrix[column_index, 0] = mesh.space_boundary_conditions.values_vector[relative_index]
 
         # --------------------------------- Solver ---------------------------------------------------------------------
-        import numpy
         return linalg.spsolve(k_matrix.tocsc(), q_matrix)
 
     else:
