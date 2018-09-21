@@ -176,15 +176,19 @@ def solve(mesh, permanent_solution=True):
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         for relative_index, column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            for line_index in k_matrix.tocsc()[:, column_index].indices:
-                if mesh.space_boundary_conditions.type_of_condition_vector[relative_index]:
-                    # Dirichlet Treatment
+            if mesh.space_boundary_conditions.type_of_condition_vector[relative_index]:
+                # Dirichlet Treatment
+                for line_index in k_matrix.tocsc()[:, column_index].indices:
                     q_matrix[line_index, 0] -= (k_matrix[line_index, column_index] *
                                                 mesh.space_boundary_conditions.values_vector[relative_index])
-                k_matrix[line_index, column_index] = 0
-                k_matrix[column_index, line_index] = 0
-            k_matrix[column_index, column_index] = 1
-            q_matrix[column_index, 0] = mesh.space_boundary_conditions.values_vector[relative_index]
+                    k_matrix[line_index, column_index] = 0
+                    k_matrix[column_index, line_index] = 0
+
+                k_matrix[column_index, column_index] = 1
+                q_matrix[column_index, 0] = mesh.space_boundary_conditions.values_vector[relative_index]
+            else:
+                # Neumann Treatment
+                q_matrix[column_index, 0] -= mesh.space_boundary_conditions.values_vector[relative_index]
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         return linalg.spsolve(k_matrix.tocsc(), q_matrix)
