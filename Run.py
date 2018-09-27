@@ -1,5 +1,8 @@
 from TccLib import *
 import numpy as np
+from matplotlib import pyplot
+from mpl_toolkits.mplot3d import Axes3D
+
 
 malha = Mesh()
 
@@ -29,17 +32,13 @@ xy_indices = list(od.fromkeys(np.append(xy_indices, list(od.fromkeys(np.append(v
 xy_type = np.hstack((xy_type, np.zeros(len(xy_indices) - len(xy_values))))
 xy_values = np.append(xy_values, np.zeros(len(xy_indices) - len(xy_values)) + 1)
 malha.space_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
-                                                            type_of_boundary=xy_type)
-malha.time_boundary_conditions.set_new_boundary_conditions(point_index=range(malha.size), values=0)
-vect = solve(malha)
+                                                            type_of_boundary=True)
+malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
+                                                           type_of_boundary=True)
+vect = solve(malha, permanent_solution=False)
 
-from matplotlib import pyplot
-from mpl_toolkits.mplot3d import Axes3D
-import numpy as np
-# size = (malha.size, malha.size)
-# pyplot.pcolormesh(malha.x, malha.y, vect, cmap='jet', vmin=min(vect), vmax=max(vect))
-# pyplot.colorbar()
-# pyplot.show()
+if len(vect) != malha.size:
+    vect = vect[-1]
 
 fig = pyplot.gcf()
 axes = Axes3D(fig)

@@ -157,19 +157,16 @@ def solve(mesh, permanent_solution=True):
                                                                     [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
                                                                     [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
                                                                    ]))
-            if permanent_solution:
-                m = (area / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
+            m = (area / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
 
             for i in range(3):  # Used so because of the triangular elements
                 for j in range(3):
                     k_sparse[elem[i], elem[j]] += k[i][j]
-                    if permanent_solution:
-                        m_sparse[elem[i], elem[j]] += m[i][j]
+                    m_sparse[elem[i], elem[j]] += m[i][j]
 
         return k_sparse, m_sparse
 
     if permanent_solution:
-
         # --- Defining the Matrices-------------------------------------------------------------------------------------
         q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
         k_matrix, m_matrix = get_matrix()  # Stiffness and Mass matrices
@@ -200,32 +197,36 @@ def solve(mesh, permanent_solution=True):
 
         a_matrix = m_matrix - k_matrix * dt
 
+        # First frame of the solution (time = 0)
+        initial = sparse.lil_matrix((1, mesh.size))
+        for relative_index, point in enumerate(mesh.time_boundary_conditions.point_index_vector):
+            if mesh.time_boundary_conditions.type_of_condition_vector[point]:
+                initial[0, point] = mesh.space_boundary_conditions.values_vector[relative_index]
+
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        def cc1(vec):
-            for point in mesh.space_boundary_conditions.point_index_vector:
-                vec[point] = mesh.time_boundary_conditions.values_vector[point]
+        def boundary_treatment(vec):
+            for relative_index, point in enumerate(mesh.space_boundary_conditions.point_index_vector):
+                vec[point] = mesh.time_boundary_conditions.values_vector[relative_index]
             return vec
 
-        def cc2():
-            for point in mesh.space_boundary_conditions.point_index_vector:
-                a_matrix[point, :] = 0
-                a_matrix[point, point] = 1
-            return
+        for point in mesh.space_boundary_conditions.point_index_vector:
+            a_matrix[point, :] = 0
+            a_matrix[point, point] = 1
+            # TODO: APPLY NEUMMAN CONDITION TREATMENT
 
         # --------------------------------- Solver ---------------------------------------------------------------------
-        cc2()
-        frames = [mesh.time_boundary_conditions.values_vector]
-        t_matrix = frames[-1]
-        for t in range(int(total_time / dt)):
-            b_matrix = dt * m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix)).transpose()
-            b_matrix = cc1(b_matrix)
+        t_matrix = initial
+        frames = [np.ravel(initial.toarray())]
+        for frame_index in range(int(total_time / dt)):
+            b_matrix = dt * m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1,1)))
+            b_matrix = boundary_treatment(b_matrix)
             t_matrix = linalg.spsolve(a_matrix, b_matrix)
             frames.append(t_matrix)
 
         return frames
 
 
-def output(vecx, vec_y, vec_ien, vec_result, ext="VTK", dt=0):
+def output(vecx, vec_y, vec_ien, vec_result, ext="VTK", dt=0):  # TODO: VERIFY OUTPUT FUNCTION
     n = len(vec_result)
     num_IEN = len(vec_ien)
     data_name = "Temperature"
