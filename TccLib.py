@@ -4,7 +4,8 @@
 # This library was created for educational purposes, it is meant to be used for the solution of differential equation
 # systems
 __author__ = "Lucas Carvalho de Sousa"
-
+__author_email__ = "encarvlucas@gmail.com"
+__website__ = "https://github.com/encarvlucas/LucasCarvalhoTCC"
 
 # -- Functions ---------------------------------------------------------------------------------------------------------
 
@@ -200,7 +201,7 @@ def solve(mesh, permanent_solution=True, dt=0.01, total_time=1.):
         q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
         k_matrix, m_matrix = get_matrices(mesh)  # Stiffness and Mass matrices
 
-        a_matrix = m_matrix - k_matrix * dt
+        a_matrix = m_matrix / dt - k_matrix
 
         # First frame of the solution (time = 0)
         initial = sparse.lil_matrix((1, mesh.size))
@@ -220,13 +221,13 @@ def solve(mesh, permanent_solution=True, dt=0.01, total_time=1.):
                 a_matrix[point, point] = 1.
             else:
                 q_matrix[point, 0] -= mesh.space_boundary_conditions.values_vector[relative_index]
-                # TODO: FIX NEUMMAN SOLUTION (SOLUTION MIGHT BE MULTIPLIED BY A FACTOR)
+                # TODO: ASK GUSTAVO WHY IT WAS 1/dt INSTEAD OF dt
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         t_matrix = initial
         frames = [np.ravel(initial.toarray())]
         for frame_index in range(int(total_time / dt)):
-            b_matrix = dt * m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1,1)))
+            b_matrix = m_matrix.dot(q_matrix) / dt + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1)))
             b_matrix = boundary_treatment(b_matrix)
             t_matrix = linalg.spsolve(a_matrix, b_matrix)
             frames.append(t_matrix)
@@ -392,7 +393,7 @@ class Mesh:
             try:
                 size = len(result_vector[0])
                 # -------- Deleting previous results -------------------------------------------------------------------
-                list(map(os.remove, [file for file in os.listdir() if fnmatch.fnmatch(file, 'results_*.vtk')]))
+                list(map(os.remove, [file for file in os.listdir('.') if fnmatch.fnmatch(file, 'results_*.vtk')]))
 
                 # --------- Saving multiple results to VTK files -------------------------------------------------------
                 for j in range(len(result_vector)):
@@ -438,7 +439,7 @@ class Mesh:
                     for i in range(size):
                         arq.write("{}\n".format(result_vector[i]))
 
-    def show(self, rainbow=False):
+    def show_geometry(self, rainbow=False):
         """
         Display mesh geometry on screen using matplotlib
         """
@@ -471,9 +472,12 @@ class Mesh:
         from mpl_toolkits.mplot3d import Axes3D
 
         check_method_call(solution_vector)
-        if len(solution_vector) != self.size:
-            raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
-                             "{0}".format(self.size))
+        try:
+            if len(solution_vector) != self.size:
+                raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
+                                 "{0}".format(self.size))
+        except TypeError:
+            raise ValueError("Solution must be a vector")
 
         self.output(solution_vector)
 
@@ -490,6 +494,7 @@ class Mesh:
         Display animated version of the 3D solution
         :param frames_vector: Vector which each element contains a vector with the value of the solution for each point
             in the mesh
+        :param dt: Time between each frame
         :return:
         """
         import numpy as np
@@ -518,7 +523,7 @@ class Mesh:
 
         def update(current_frame):
             plt.cla()
-            surf = axes.plot_trisurf(self.x, self.y, current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
+            axes.plot_trisurf(self.x, self.y, current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
             axes.set_zlim3d([_min_value, _max_value])
             return
 

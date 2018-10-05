@@ -3,7 +3,6 @@ import numpy as np
 from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
 
-
 malha = Mesh()
 
 # xx, yy = np.meshgrid(np.linspace(0, 1, 10), np.linspace(0, 1, 15))
@@ -18,7 +17,7 @@ xy = np.array(([0, 0], [1, 0],
                [1, 1], [0, 1]))
 # xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
 malha.import_point_structure(points=list(xy), light_version=False)
-# malha.show(rainbow=True)
+# malha.show_geometry(rainbow=True)
 
 from collections import OrderedDict as od
 vertex_a = np.where(malha.x == np.min(malha.x))[0]
@@ -35,8 +34,8 @@ malha.space_boundary_conditions.set_new_boundary_conditions(point_index=xy_indic
                                                             type_of_boundary=xy_type)
 malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
                                                            type_of_boundary=xy_type)
-vect = solve(malha, permanent_solution=False, dt=0.01, total_time=1.)
-
+vect = solve(malha, permanent_solution=True, dt=1.0, total_time=15.)
+print(np.max(vect))
 # if len(vect) != malha.size:
 #     vect = vect[-1]
 # malha.show_solution(vect[-1])
