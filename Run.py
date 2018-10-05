@@ -37,12 +37,7 @@ malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indice
                                                            type_of_boundary=xy_type)
 vect = solve(malha, permanent_solution=False)
 
-if len(vect) != malha.size:
-    vect = vect[-1]
+# if len(vect) != malha.size:
+#     vect = vect[-1]
 
-fig = pyplot.gcf()
-axes = Axes3D(fig)
-surf = axes.plot_trisurf(malha.x, malha.y, vect, cmap="jet")
-axes.view_init(90, 270)
-fig.colorbar(surf, shrink=0.4, aspect=9)
-pyplot.show()
+malha.show_animated_solution(vect)

@@ -93,6 +93,60 @@ def use_meshio(geometry):
     return x_, y_, ien_
 
 
+def get_matrices(mesh):
+    """
+    Function that generates the algebraic components of the solution method
+    :param mesh: Mesh object to be used to generate the matrices
+    :return:
+    """
+    import numpy as np
+    from scipy import sparse
+
+    # Default parameters:
+    k_coef_x = 1.0
+    k_coef_y = 1.0
+    thickness = 1.0
+
+    # Matrices:
+    k_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix
+    m_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Mass matrix
+
+    for elem in mesh.ien:
+        x = mesh.x[elem]
+        y = mesh.y[elem]
+
+        area = ((x[0] * y[1] - x[1] * y[0]) +
+                (x[1] * y[2] - x[2] * y[1]) +
+                (x[2] * y[0] - x[0] * y[2])) / 2.0
+
+        b = np.array([y[1] - y[2],
+                      y[2] - y[0],
+                      y[0] - y[1]])
+
+        c = np.array([x[2] - x[1],
+                      x[0] - x[2],
+                      x[1] - x[0]])
+
+        k = -(thickness / (4.0 * area)) * (k_coef_x * np.array([
+                                                                [b[0] * b[0], b[0] * b[1], b[0] * b[2]],
+                                                                [b[0] * b[1], b[1] * b[1], b[1] * b[2]],
+                                                                [b[0] * b[2], b[1] * b[2], b[2] * b[2]]
+                                                               ]) +
+                                           k_coef_y * np.array([
+                                                                [c[0] * c[0], c[0] * c[1], c[0] * c[2]],
+                                                                [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
+                                                                [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
+                                                               ]))
+        m = (area / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
+
+        for i in range(3):  # Used so because of the triangular elements
+            for j in range(3):
+                k_sparse[elem[i], elem[j]] += k[i][j]
+                m_sparse[elem[i], elem[j]] += m[i][j]
+
+    return k_sparse, m_sparse
+
+
 def solve(mesh, permanent_solution=True):
     """
     Solves the mesh defined 2D problem
@@ -117,59 +171,13 @@ def solve(mesh, permanent_solution=True):
         raise ValueError("There are no boundary conditions defined. "
                          "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
 
-    k_coef_x = 1.0
-    k_coef_y = 1.0
-    thickness = 1.0
     dt = 0.1
     total_time = 10.0
-
-    def get_matrix():
-        """
-        Function that generates the algebraic components of the solution method
-        :return:
-        """
-        k_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix
-        m_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Mass matrix
-
-        for elem in mesh.ien:
-            x = mesh.x[elem]
-            y = mesh.y[elem]
-
-            area = ((x[0] * y[1] - x[1] * y[0]) +
-                    (x[1] * y[2] - x[2] * y[1]) +
-                    (x[2] * y[0] - x[0] * y[2])) / 2.0
-
-            b = np.array([y[1] - y[2],
-                          y[2] - y[0],
-                          y[0] - y[1]])
-
-            c = np.array([x[2] - x[1],
-                          x[0] - x[2],
-                          x[1] - x[0]])
-
-            k = -(thickness / (4.0 * area)) * (k_coef_x * np.array([
-                                                                    [b[0] * b[0], b[0] * b[1], b[0] * b[2]],
-                                                                    [b[0] * b[1], b[1] * b[1], b[1] * b[2]],
-                                                                    [b[0] * b[2], b[1] * b[2], b[2] * b[2]]
-                                                                   ]) +
-                                               k_coef_y * np.array([
-                                                                    [c[0] * c[0], c[0] * c[1], c[0] * c[2]],
-                                                                    [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
-                                                                    [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
-                                                                   ]))
-            m = (area / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
-
-            for i in range(3):  # Used so because of the triangular elements
-                for j in range(3):
-                    k_sparse[elem[i], elem[j]] += k[i][j]
-                    m_sparse[elem[i], elem[j]] += m[i][j]
-
-        return k_sparse, m_sparse
 
     if permanent_solution:
         # --- Defining the Matrices ------------------------------------------------------------------------------------
         q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
-        k_matrix, m_matrix = get_matrix()  # Stiffness and Mass matrices
+        k_matrix, m_matrix = get_matrices(mesh)  # Stiffness and Mass matrices
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         for relative_index, column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
@@ -178,10 +186,10 @@ def solve(mesh, permanent_solution=True):
                 for line_index in k_matrix.tocsc()[:, column_index].indices:
                     q_matrix[line_index, 0] -= (k_matrix[line_index, column_index] *
                                                 mesh.space_boundary_conditions.values_vector[relative_index])
-                    k_matrix[line_index, column_index] = 0
-                    k_matrix[column_index, line_index] = 0
+                    k_matrix[line_index, column_index] = 0.
+                    k_matrix[column_index, line_index] = 0.
 
-                k_matrix[column_index, column_index] = 1
+                k_matrix[column_index, column_index] = 1.
                 q_matrix[column_index, 0] = mesh.space_boundary_conditions.values_vector[relative_index]
             else:
                 # Neumann Treatment
@@ -193,7 +201,7 @@ def solve(mesh, permanent_solution=True):
     else:
         # --- Defining the Matrices-------------------------------------------------------------------------------------
         q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
-        k_matrix, m_matrix = get_matrix()  # Stiffness and Mass matrices
+        k_matrix, m_matrix = get_matrices(mesh)  # Stiffness and Mass matrices
 
         a_matrix = m_matrix - k_matrix * dt
 
@@ -441,3 +449,58 @@ class Mesh:
             plt.triplot(self.x, self.y, triangles=self.ien[0])
 
         plt.show()
+
+    def show_solution(self, solution_vector):
+        """
+        Display 3D solution of the mesh geometry
+        :param solution_vector: Vector that contains the value of the solution for each point in the mesh
+        :return: Display image
+        """
+        from matplotlib import pyplot
+        from mpl_toolkits.mplot3d import Axes3D
+
+        check_method_call(solution_vector)
+        if len(solution_vector) != self.size:
+            raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: {0}".format(self.size))
+
+        fig = pyplot.gcf()
+        axes = Axes3D(fig)
+        surf = axes.plot_trisurf(self.x, self.y, solution_vector, cmap="jet")
+        axes.view_init(90, 270)
+        fig.colorbar(surf, shrink=0.4, aspect=9)
+        return pyplot.show()
+
+    def show_animated_solution(self, frames_vector):
+        """
+        Display animated version of the 3D solution
+        :param frames_vector: Vector which each element contains a vector with the value of the solution for each point
+            in the mesh
+        :return:
+        """
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
+        from matplotlib.animation import FuncAnimation
+
+        check_method_call(frames_vector)
+        if np.any([len(i) != self.size for i in frames_vector]):
+            raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
+                             "{0}".format(self.size))
+
+        fig = plt.figure()
+        axes = plt.gca()
+        axes = Axes3D(fig)
+        _min_value = np.min(frames_vector)
+        _max_value = np.max(frames_vector)
+        surf = axes.plot_trisurf(self.x, self.y, frames_vector[0], cmap="jet", vmin=_min_value, vmax=_max_value)
+        fig.colorbar(surf, shrink=0.4, aspect=9)
+
+        def update(current_frame):
+            plt.cla()
+            surf = axes.plot_trisurf(self.x, self.y, current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
+            axes.set_zlim3d([_min_value, _max_value])
+            return
+
+        anim = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
+
+        return plt.show()
