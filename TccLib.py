@@ -167,7 +167,7 @@ def solve(mesh, permanent_solution=True):
         return k_sparse, m_sparse
 
     if permanent_solution:
-        # --- Defining the Matrices-------------------------------------------------------------------------------------
+        # --- Defining the Matrices ------------------------------------------------------------------------------------
         q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
         k_matrix, m_matrix = get_matrix()  # Stiffness and Mass matrices
 
@@ -201,18 +201,21 @@ def solve(mesh, permanent_solution=True):
         initial = sparse.lil_matrix((1, mesh.size))
         for relative_index, point in enumerate(mesh.time_boundary_conditions.point_index_vector):
             if mesh.time_boundary_conditions.type_of_condition_vector[point]:
-                initial[0, point] = mesh.space_boundary_conditions.values_vector[relative_index]
+                initial[0, point] = mesh.time_boundary_conditions.values_vector[relative_index]
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         def boundary_treatment(vec):
-            for relative_index, point in enumerate(mesh.space_boundary_conditions.point_index_vector):
-                vec[point] = mesh.time_boundary_conditions.values_vector[relative_index]
+            for _relative_index, _point in enumerate(mesh.space_boundary_conditions.point_index_vector):
+                vec[_point] = mesh.time_boundary_conditions.values_vector[_relative_index]
             return vec
 
-        for point in mesh.space_boundary_conditions.point_index_vector:
-            a_matrix[point, :] = 0
-            a_matrix[point, point] = 1
-            # TODO: APPLY NEUMMAN CONDITION TREATMENT
+        for relative_index, point in enumerate(mesh.space_boundary_conditions.point_index_vector):
+            if mesh.space_boundary_conditions.type_of_condition_vector[relative_index]:
+                a_matrix[point, :] = 0.
+                a_matrix[point, point] = 1.
+            else:
+                q_matrix[point, 0] -= mesh.space_boundary_conditions.values_vector[relative_index]
+                # TODO: FIX NEUMMAN SOLUTION (SOLUTION MIGHT BE MULTIPLIED BY A FACTOR)
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         t_matrix = initial

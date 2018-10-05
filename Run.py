@@ -11,12 +11,12 @@ malha = Mesh()
 # yy = np.array(np.reshape(yy, (yy.size, 1)))
 # xy = np.hstack((xx, yy))
 
-rand = np.random.rand(200)
-rand_2 = np.random.rand(200)
+# rand = np.random.rand(200)
+# rand_2 = np.random.rand(200)
 # xy = list(zip(rand, rand_2)).append([0,0])
 xy = np.array(([0, 0], [1, 0],
                [1, 1], [0, 1]))
-xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
+# xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
 malha.import_point_structure(points=list(xy), light_version=False)
 # malha.show(rainbow=True)
 
@@ -32,9 +32,9 @@ xy_indices = list(od.fromkeys(np.append(xy_indices, list(od.fromkeys(np.append(v
 xy_type = np.hstack((xy_type, np.zeros(len(xy_indices) - len(xy_values))))
 xy_values = np.append(xy_values, np.zeros(len(xy_indices) - len(xy_values)) + 1)
 malha.space_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
-                                                            type_of_boundary=True)
+                                                            type_of_boundary=xy_type)
 malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
-                                                           type_of_boundary=True)
+                                                           type_of_boundary=xy_type)
 vect = solve(malha, permanent_solution=False)
 
 if len(vect) != malha.size:
