@@ -147,7 +147,7 @@ def get_matrices(mesh):
     return k_sparse, m_sparse
 
 
-def solve(mesh, permanent_solution=True):
+def solve(mesh, permanent_solution=True, dt=0.01, total_time=1.):
     """
     Solves the mesh defined 2D problem
     :return: The solution for the permanent problem
@@ -170,9 +170,6 @@ def solve(mesh, permanent_solution=True):
     except TypeError:
         raise ValueError("There are no boundary conditions defined. "
                          "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
-
-    dt = 0.1
-    total_time = 10.0
 
     if permanent_solution:
         # --- Defining the Matrices ------------------------------------------------------------------------------------
@@ -237,63 +234,6 @@ def solve(mesh, permanent_solution=True):
         return frames
 
 
-def output(vecx, vec_y, vec_ien, vec_result, ext="VTK", dt=0):  # TODO: VERIFY OUTPUT FUNCTION
-    n = len(vec_result)
-    num_IEN = len(vec_ien)
-    data_name = "Temperature"
-
-    if (ext == "CSV"):
-        # ------------------------- Saving results to CSV file ----------------------------------------------------
-        with open("results/resultado2d.csv", "w") as arq:
-            arq.write("{0}, Points:0, Points:1, Points:2\n".format(data_name))
-            for i in range(n):
-                arq.write("{0},{1},{2},{3}\n".format(vec_result[i], vecx[i], vec_y[i], 0))
-
-    if (ext == "VTK"):
-        try:
-            n = len(vec_result[0])
-            # --------- Saving multiple results to VTK files -----------------------------------------------------------
-            for j in range(len(vec_result)):
-                with open("results/resultado2d_{}.vtk".format(j), "w") as arq:
-                    # ------------------------------------ Header ------------------------------------------------------
-                    arq.write("# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("Cube example", "ASCII",
-                                                                                             "POLYDATA"))
-                    arq.write("FIELD FieldData 1\nTIME 1 1 double\n{}\n".format(dt))
-                    # ------------------------------------ Points coordinates ------------------------------------------
-                    arq.write("\nPOINTS {0} {1}\n".format(n, "float"))
-                    for i in range(n):
-                        arq.write("{0} {1} 0.0\n".format(vecx[i], vec_y[i]))
-                    # --------------------------------------- Cells ----------------------------------------------------
-                    arq.write("\nPOLYGONS {0} {1}\n".format(num_IEN, num_IEN * 4))
-                    for i in range(num_IEN):
-                        arq.write("{0} {1} {2} {3}\n".format(3, vec_ien[i][0], vec_ien[i][1], vec_ien[i][2]))
-                    # ------------------------------------ Data in each point ------------------------------------------
-                    arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(n, data_name))
-                    arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
-                    for i in range(n):
-                        arq.write("{}\n".format(vec_result[j][i]))
-
-        except TypeError:
-            # ------------------------- Saving results to VTK file -----------------------------------------------------
-            with open("results/resultado2d.vtk", "w") as arq:
-                # ------------------------------------ Header ----------------------------------------------------------
-                arq.write(
-                    "# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("Cube example", "ASCII", "POLYDATA"))
-                # ------------------------------------ Points coordinates ----------------------------------------------
-                arq.write("\nPOINTS {0} {1}\n".format(n, "float"))
-                for i in range(n):
-                    arq.write("{0} {1} 0.0\n".format(vecx[i], vec_y[i]))
-                # --------------------------------------- Cells --------------------------------------------------------
-                arq.write("\nPOLYGONS {0} {1}\n".format(num_IEN, num_IEN * 4))
-                for i in range(num_IEN):
-                    arq.write("{0} {1} {2} {3}\n".format(3, vec_ien[i][0], vec_ien[i][1], vec_ien[i][2]))
-                # ----------------------------------- Data in each point------------------------------------------------
-                arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(n, data_name))
-                arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
-                for i in range(n):
-                    arq.write("{}\n".format(vec_result[i]))
-
-
 # -- Classes -----------------------------------------------------------------------------------------------------------
 
 class Mesh:
@@ -311,7 +251,7 @@ class Mesh:
         values_vector = []
         type_of_condition_vector = []
 
-        def set_new_boundary_conditions(self, *vect_argm, point_index=range(0), values=0, type_of_boundary=True):
+        def set_new_boundary_conditions(self, *vect_argm, point_index=range(0), values=0., type_of_boundary=True):
             """
             Sets the boundary conditions for the mesh
             :param vect_argm: Vector(s) of boundary conditions
@@ -386,15 +326,15 @@ class Mesh:
             for index, coord_x in enumerate(self.x):
                 if (coord_x == max_x) or (self.y[index] == max_y):
                     # Boundaries are defined to be the upper and right sides with value 100
-                    vector.append([index, 100, True])
+                    vector.append([index, 1., True])
 
             for index, coord_x in enumerate(self.x):
                 if (coord_x == min_x) or (self.y[index] == min_y):
                     # Boundaries are defined to be the lower and left sides with value 0
-                    vector.append([index, 0, True])
+                    vector.append([index, 0., True])
 
             self.space_boundary_conditions.set_new_boundary_conditions(vector)
-            self.time_boundary_conditions.set_new_boundary_conditions(point_index=range(self.size), values=0)
+            self.time_boundary_conditions.set_new_boundary_conditions(point_index=range(self.size), values=0.)
 
     def import_point_structure(self, *args, points=False, light_version=True):
         """
@@ -426,6 +366,77 @@ class Mesh:
 
         self.x, self.y, self.ien = surface
         self.size = len(self.x)
+
+    def output(self, result_vector, extension="VTK", dt=0.):
+        """
+        Export result to .vtk or .csv file
+        :param result_vector: The vector of the value in each point
+        :param extension: File extension
+        :param dt: Value of time between frames
+        """
+        import os
+        import fnmatch
+
+        os.chdir("results/")
+        number_elements = len(self.ien)
+        data_name = "Temperature"
+
+        if extension == "CSV":
+            # ------------------------- Saving results to CSV file ----------------------------------------------------
+            with open("results.csv", "w") as arq:
+                arq.write("{0}, Points:0, Points:1, Points:2\n".format(data_name))
+                for i in range(self.size):
+                    arq.write("{0},{1},{2},{3}\n".format(result_vector[i], self.x[i], self.y[i], 0))
+
+        if extension == "VTK":
+            try:
+                size = len(result_vector[0])
+                # -------- Deleting previous results -------------------------------------------------------------------
+                list(map(os.remove, [file for file in os.listdir() if fnmatch.fnmatch(file, 'results_*.vtk')]))
+
+                # --------- Saving multiple results to VTK files -------------------------------------------------------
+                for j in range(len(result_vector)):
+                    with open("results_{}.vtk".format(j), "w") as arq:
+                        # ------------------------------------ Header --------------------------------------------------
+                        arq.write(
+                            "# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("LucasCarvalhoTCC Results",
+                                                                                           "ASCII", "POLYDATA"))
+                        arq.write("FIELD FieldData 1\nTIME 1 1 double\n{}\n".format(dt))
+                        # ------------------------------------ Points coordinates --------------------------------------
+                        arq.write("\nPOINTS {0} {1}\n".format(size, "float"))
+                        for i in range(size):
+                            arq.write("{0} {1} 0.0\n".format(self.x[i], self.y[i]))
+                        # --------------------------------------- Cells ------------------------------------------------
+                        arq.write("\nPOLYGONS {0} {1}\n".format(number_elements, number_elements * 4))
+                        for i in range(number_elements):
+                            arq.write("{0} {1} {2} {3}\n".format(3, self.ien[i][0], self.ien[i][1], self.ien[i][2]))
+                        # ------------------------------------ Data in each point --------------------------------------
+                        arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(size, data_name))
+                        arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
+                        for i in range(size):
+                            arq.write("{}\n".format(result_vector[j][i]))
+
+            except TypeError:
+                size = self.size
+                # ------------------------- Saving results to VTK file -------------------------------------------------
+                with open("results.vtk", "w") as arq:
+                    # ------------------------------------ Header ------------------------------------------------------
+                    arq.write(
+                        "# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("LucasCarvalhoTCC Results",
+                                                                                       "ASCII", "POLYDATA"))
+                    # ------------------------------------ Points coordinates ------------------------------------------
+                    arq.write("\nPOINTS {0} {1}\n".format(size, "float"))
+                    for i in range(size):
+                        arq.write("{0} {1} 0.0\n".format(self.x[i], self.y[i]))
+                    # --------------------------------------- Cells ----------------------------------------------------
+                    arq.write("\nPOLYGONS {0} {1}\n".format(number_elements, number_elements * 4))
+                    for i in range(number_elements):
+                        arq.write("{0} {1} {2} {3}\n".format(3, self.ien[i][0], self.ien[i][1], self.ien[i][2]))
+                    # ----------------------------------- Data in each point--------------------------------------------
+                    arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(size, data_name))
+                    arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
+                    for i in range(size):
+                        arq.write("{}\n".format(result_vector[i]))
 
     def show(self, rainbow=False):
         """
@@ -461,16 +472,20 @@ class Mesh:
 
         check_method_call(solution_vector)
         if len(solution_vector) != self.size:
-            raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: {0}".format(self.size))
+            raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
+                             "{0}".format(self.size))
+
+        self.output(solution_vector)
 
         fig = pyplot.gcf()
         axes = Axes3D(fig)
         surf = axes.plot_trisurf(self.x, self.y, solution_vector, cmap="jet")
         axes.view_init(90, 270)
         fig.colorbar(surf, shrink=0.4, aspect=9)
+
         return pyplot.show()
 
-    def show_animated_solution(self, frames_vector):
+    def show_animated_solution(self, frames_vector, dt=0.):
         """
         Display animated version of the 3D solution
         :param frames_vector: Vector which each element contains a vector with the value of the solution for each point
@@ -483,9 +498,15 @@ class Mesh:
         from matplotlib.animation import FuncAnimation
 
         check_method_call(frames_vector)
-        if np.any([len(i) != self.size for i in frames_vector]):
+        try:
+            if np.any([len(i) != self.size for i in frames_vector]):
+                raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
+                                 "{0}".format(self.size))
+        except TypeError:
             raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
                              "{0}".format(self.size))
+
+        self.output(frames_vector, dt=dt)
 
         fig = plt.figure()
         axes = plt.gca()

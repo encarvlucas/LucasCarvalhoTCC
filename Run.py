@@ -35,9 +35,9 @@ malha.space_boundary_conditions.set_new_boundary_conditions(point_index=xy_indic
                                                             type_of_boundary=xy_type)
 malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
                                                            type_of_boundary=xy_type)
-vect = solve(malha, permanent_solution=False)
+vect = solve(malha, permanent_solution=False, dt=0.01, total_time=1.)
 
 # if len(vect) != malha.size:
 #     vect = vect[-1]
-
-malha.show_animated_solution(vect)
+# malha.show_solution(vect[-1])
+malha.show_animated_solution(vect, dt=0.01)
