@@ -37,7 +37,7 @@ malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indice
 Q = ComplexPointList([32, 39, 64, 67, 68, 70], 2.)
 permanent = True
 vect = solve_poisson(malha, permanent_solution=permanent, dt=1.0, total_time=15., q=Q)
-if not permanent:
-    vect = vect[-1]
-malha.show_solution(vect)
-# malha.show_animated_solution(vect)
+# if not permanent:
+#     vect = vect[-1]
+# malha.show_solution(vect)
+malha.show_animated_solution(vect)

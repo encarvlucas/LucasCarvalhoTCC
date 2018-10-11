@@ -7,8 +7,8 @@ __author__ = "Lucas Carvalho de Sousa"
 __author_email__ = "encarvlucas@gmail.com"
 __website__ = "https://github.com/encarvlucas/LucasCarvalhoTCC"
 
-# -- Functions ---------------------------------------------------------------------------------------------------------
 
+# -- Functions ---------------------------------------------------------------------------------------------------------
 def check_method_call(*args):
     """
     Tests if the arguments are valid
@@ -224,7 +224,7 @@ def solve_poisson(mesh, permanent_solution=True, q=0, dt=0.01, total_time=1.):
         # First frame of the solution (time = 0)
         initial = sparse.lil_matrix((1, mesh.size))
         for _relative_index, point in enumerate(mesh.time_boundary_conditions.point_index_vector):
-            if mesh.time_boundary_conditions.type_of_condition_vector[point]:
+            if mesh.time_boundary_conditions.type_of_condition_vector[_relative_index]:
                 initial[0, point] = mesh.time_boundary_conditions.values_vector[_relative_index]
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
@@ -293,7 +293,7 @@ class Mesh:
                     if len(vect_argm[0][0]) == 3:
                         self.point_index_vector = array[:, 0]
                         self.values_vector = array[:, 1]
-                        self.type_of_condition_vector = array[:, 2]
+                        self.type_of_condition_vector = list(map(bool, array[:, 2]))
                         return
 
                     if len(vect_argm[0][0]) == 2:
@@ -315,7 +315,7 @@ class Mesh:
 
                 if isinstance(type_of_boundary, list) or isinstance(type_of_boundary, np.ndarray):
                     if len(type_of_boundary) == len(point_index):
-                        self.type_of_condition_vector = np.array(type_of_boundary)
+                        self.type_of_condition_vector = list(map(bool, np.array(type_of_boundary)))
 
                     else:
                         raise ValueError("Incorrect vector sizes, there must be an equal number of points and point "
@@ -457,14 +457,21 @@ class Mesh:
                     for i in range(size):
                         arq.write("{}\n".format(result_vector[i]))
 
-    def show_geometry(self, rainbow=False):
+    def show_geometry(self, names=False, rainbow=False):
         """
         Display mesh geometry on screen using matplotlib
+        :param names: Show the index of each point next to it
+        :param rainbow: Color in the edge of each element in a different color
+        :return:
         """
         import numpy as np
         import matplotlib.pyplot as plt
 
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
+
+        if names:
+            for _index in range(self.size):
+                plt.gca().annotate(_index, (self.x[_index], self.y[_index]))
 
         if rainbow:
             plt.gca().set_prop_cycle(plt.cycler('color', plt.cm.hsv(np.linspace(0.0, 1.0, len(self.ien)))))
@@ -529,10 +536,7 @@ class Mesh:
             raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
                              "{0}".format(self.size))
 
-        self.output(frames_vector, dt=dt)
-
-        fig = plt.figure()
-        axes = plt.gca()
+        fig = plt.gcf()
         axes = Axes3D(fig)
         _min_value = np.min(frames_vector)
         _max_value = np.max(frames_vector)
@@ -545,7 +549,11 @@ class Mesh:
             axes.set_zlim3d([_min_value, _max_value])
             return
 
-        anim = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
+        animation = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
+
+        if dt:
+            self.output(frames_vector, dt=dt)
+            animation.save("trisurf.gif", dpi=80, writer='imagemagick')
 
         return plt.show()
 
