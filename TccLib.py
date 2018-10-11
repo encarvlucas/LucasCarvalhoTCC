@@ -120,43 +120,62 @@ def get_matrices(mesh):
                 (x[1] * y[2] - x[2] * y[1]) +
                 (x[2] * y[0] - x[0] * y[2])) / 2.0
 
+        # B = [b_i, b_j, b_k]
         b = np.array([y[1] - y[2],
                       y[2] - y[0],
                       y[0] - y[1]])
 
+        # C = [c_i, c_j, c_k]
         c = np.array([x[2] - x[1],
                       x[0] - x[2],
                       x[1] - x[0]])
 
-        k = -(thickness / (4.0 * area)) * (k_coef_x * np.array([
-                                                                [b[0] * b[0], b[0] * b[1], b[0] * b[2]],
-                                                                [b[0] * b[1], b[1] * b[1], b[1] * b[2]],
-                                                                [b[0] * b[2], b[1] * b[2], b[2] * b[2]]
-                                                               ]) +
-                                           k_coef_y * np.array([
-                                                                [c[0] * c[0], c[0] * c[1], c[0] * c[2]],
-                                                                [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
-                                                                [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
-                                                               ]))
-        m = (area / 12.0) * np.array([[2, 1, 1], [1, 2, 1], [1, 1, 2]])
+        #       [b_i*b_i, b_i*b_j, b_i*b_k],
+        # K_x = [b_j*b_i, b_j*b_j, b_j*b_k],
+        #       [b_k*b_i, b_k*b_j, b_k*b_k]
+        k_x = np.array([
+                        [b[0] * b[0], b[0] * b[1], b[0] * b[2]],
+                        [b[0] * b[1], b[1] * b[1], b[1] * b[2]],
+                        [b[0] * b[2], b[1] * b[2], b[2] * b[2]]
+                       ])
+
+        #       [c_i*c_i, c_i*c_j, c_i*c_k],
+        # K_y = [c_j*c_i, c_j*c_j, c_j*c_k],
+        #       [c_k*c_i, c_k*c_j, c_k*c_k]
+        k_y = np.array([
+                        [c[0] * c[0], c[0] * c[1], c[0] * c[2]],
+                        [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
+                        [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
+                       ])
+
+        #     [2, 1, 1],
+        # M = [1, 2, 1],
+        #     [1, 1, 2]
+        m = (area / 12.0) * np.array([[2, 1, 1],
+                                      [1, 2, 1],
+                                      [1, 1, 2]])
 
         for i in range(3):  # Used so because of the triangular elements
             for j in range(3):
-                k_sparse[elem[i], elem[j]] += k[i][j]
+                k_sparse[elem[i], elem[j]] += (thickness / (4.0 * area)) * ((k_coef_x * k_x[i][j]) +
+                                                                            (k_coef_y * k_y[i][j]))
                 m_sparse[elem[i], elem[j]] += m[i][j]
 
     return k_sparse, m_sparse
 
 
-def solve(mesh, permanent_solution=True, dt=0.01, total_time=1.):
+def solve_poisson(mesh, permanent_solution=True, q=0, dt=0.01, total_time=1.):
     """
-    Solves the mesh defined 2D problem
-    :return: The solution for the permanent problem
+    Solves the mesh defined 2D Poisson equation problem:
+        DT = -∇(k.∇T) + Q   ->   (M + K)*T_i^n = M*T_i^n-1 + M*Q_i
+        dt                       dt              dt
+    :return: The solution for the desired variable
     """
     import numpy as np
     from scipy import sparse
     import scipy.sparse.linalg as linalg
 
+    # ------------------ Contingency -----------------------------------------------------------------------------------
     if not (len(mesh.x) and len(mesh.y) and len(mesh.ien)):
         raise ValueError("The mesh is empty. Try using import_point_structure() before solving.")
 
@@ -172,62 +191,61 @@ def solve(mesh, permanent_solution=True, dt=0.01, total_time=1.):
         raise ValueError("There are no boundary conditions defined. "
                          "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
 
+    # --- Defining the Matrices ----------------------------------------------------------------------------------------
+    k_matrix, m_matrix = get_matrices(mesh)  # Stiffness and Mass matrices
+    q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
+    if isinstance(q, ComplexPointList):
+        for _relative_index, _q in enumerate(q.indexes):
+            q_matrix[_q] = -q.values[_relative_index]
+
     if permanent_solution:
-        # --- Defining the Matrices ------------------------------------------------------------------------------------
-        q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
-        k_matrix, m_matrix = get_matrices(mesh)  # Stiffness and Mass matrices
-
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        for relative_index, column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            if mesh.space_boundary_conditions.type_of_condition_vector[relative_index]:
+        for _relative_index, _column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
+            if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
                 # Dirichlet Treatment
-                for line_index in k_matrix.tocsc()[:, column_index].indices:
-                    q_matrix[line_index, 0] -= (k_matrix[line_index, column_index] *
-                                                mesh.space_boundary_conditions.values_vector[relative_index])
-                    k_matrix[line_index, column_index] = 0.
-                    k_matrix[column_index, line_index] = 0.
+                for line_index in k_matrix.tocsc()[:, _column_index].indices:
+                    q_matrix[line_index, 0] -= (k_matrix[line_index, _column_index] *
+                                                mesh.space_boundary_conditions.values_vector[_relative_index])
+                    k_matrix[line_index, _column_index] = 0.
+                    k_matrix[_column_index, line_index] = 0.
 
-                k_matrix[column_index, column_index] = 1.
-                q_matrix[column_index, 0] = mesh.space_boundary_conditions.values_vector[relative_index]
+                k_matrix[_column_index, _column_index] = 1.
+                q_matrix[_column_index, 0] = mesh.space_boundary_conditions.values_vector[_relative_index]
             else:
                 # Neumann Treatment
-                q_matrix[column_index, 0] -= mesh.space_boundary_conditions.values_vector[relative_index]
+                q_matrix[_column_index, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
 
         # --------------------------------- Solver ---------------------------------------------------------------------
-        return linalg.spsolve(k_matrix.tocsc(), q_matrix)
+        return linalg.spsolve(-k_matrix.tocsc(), m_matrix.dot(q_matrix))
 
     else:
-        # --- Defining the Matrices-------------------------------------------------------------------------------------
-        q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
-        k_matrix, m_matrix = get_matrices(mesh)  # Stiffness and Mass matrices
-
-        a_matrix = m_matrix / dt - k_matrix
+        a_matrix = m_matrix / dt + k_matrix
 
         # First frame of the solution (time = 0)
         initial = sparse.lil_matrix((1, mesh.size))
-        for relative_index, point in enumerate(mesh.time_boundary_conditions.point_index_vector):
+        for _relative_index, point in enumerate(mesh.time_boundary_conditions.point_index_vector):
             if mesh.time_boundary_conditions.type_of_condition_vector[point]:
-                initial[0, point] = mesh.time_boundary_conditions.values_vector[relative_index]
+                initial[0, point] = mesh.time_boundary_conditions.values_vector[_relative_index]
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         def boundary_treatment(vec):
-            for _relative_index, _point in enumerate(mesh.space_boundary_conditions.point_index_vector):
-                vec[_point] = mesh.time_boundary_conditions.values_vector[_relative_index]
+            for _rel_index, _point in enumerate(mesh.space_boundary_conditions.point_index_vector):
+                if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
+                    vec[_point] = mesh.space_boundary_conditions.values_vector[_rel_index]
             return vec
 
-        for relative_index, point in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            if mesh.space_boundary_conditions.type_of_condition_vector[relative_index]:
+        for _relative_index, point in enumerate(mesh.space_boundary_conditions.point_index_vector):
+            if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
                 a_matrix[point, :] = 0.
                 a_matrix[point, point] = 1.
             else:
-                q_matrix[point, 0] -= mesh.space_boundary_conditions.values_vector[relative_index]
-                # TODO: ASK GUSTAVO WHY IT WAS 1/dt INSTEAD OF dt
+                q_matrix[point, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         t_matrix = initial
         frames = [np.ravel(initial.toarray())]
-        for frame_index in range(int(total_time / dt)):
-            b_matrix = m_matrix.dot(q_matrix) / dt + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1)))
+        for _frame_index in range(int(total_time / dt)):
+            b_matrix = -m_matrix.dot(q_matrix) / dt + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1)))
             b_matrix = boundary_treatment(b_matrix)
             t_matrix = linalg.spsolve(a_matrix, b_matrix)
             frames.append(t_matrix)
@@ -530,3 +548,31 @@ class Mesh:
         anim = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
 
         return plt.show()
+
+
+class ComplexPointList:
+    """
+    Class that defines a list of points with an index value and a property value each.
+    """
+    indexes = []
+    values = []
+
+    def __init__(self, _indexes, _values):
+        """
+        Class constructor that generates one list for each property
+        :param _indexes: The point index in the ordered list of the mesh point coordinates
+        :param _values: The value of the desired property in each point.
+        """
+        check_method_call(_indexes)
+
+        self.indexes = _indexes
+
+        try:
+            if isinstance(list(_values), list):
+                self.values = _values
+            else:
+                raise TypeError
+
+        except TypeError:
+            for i in range(len(_indexes)):
+                self.values.append(_values)
