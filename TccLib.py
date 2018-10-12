@@ -219,6 +219,7 @@ def solve_poisson(mesh, permanent_solution=True, q=0, dt=0.01, total_time=1.):
         return linalg.spsolve(-k_matrix.tocsc(), m_matrix.dot(q_matrix))
 
     else:
+        #      A = M/dt + K
         a_matrix = m_matrix / dt + k_matrix
 
         # First frame of the solution (time = 0)
@@ -245,8 +246,11 @@ def solve_poisson(mesh, permanent_solution=True, q=0, dt=0.01, total_time=1.):
         t_matrix = initial
         frames = [np.ravel(initial.toarray())]
         for _frame_index in range(int(total_time / dt)):
-            b_matrix = -m_matrix.dot(q_matrix) / dt + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1)))
+            #      b = -M * Q_i + M/dt * T_i^n-1
+            b_matrix = -m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1))) / dt
+            # b     += C.C. Neumman TODO: CHECK NEUMMAN IMPLEMENTATION
             b_matrix = boundary_treatment(b_matrix)
+            #  A * x = b   ->   x = solve(A, b)
             t_matrix = linalg.spsolve(a_matrix, b_matrix)
             frames.append(t_matrix)
 
@@ -396,7 +400,11 @@ class Mesh:
         import os
         import fnmatch
 
-        os.chdir("results/")
+        try:
+            os.chdir("./results/")
+        except FileNotFoundError:
+            pass
+
         number_elements = len(self.ien)
         data_name = "Temperature"
 
@@ -542,11 +550,18 @@ class Mesh:
         _max_value = np.max(frames_vector)
         surf = axes.plot_trisurf(self.x, self.y, frames_vector[0], cmap="jet", vmin=_min_value, vmax=_max_value)
         fig.colorbar(surf, shrink=0.4, aspect=9)
+        frame_index = 0
 
-        def update(current_frame):
+        def update(_current_frame):
             plt.cla()
-            axes.plot_trisurf(self.x, self.y, current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
+            axes.plot_trisurf(self.x, self.y, _current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
             axes.set_zlim3d([_min_value, _max_value])
+            if dt:
+                # global frame_index
+                axes.text2D(0., 0.9, "Frame: {0}\nTime: {1}".format(frame_index, frame_index * dt),
+                            transform=axes.transAxes)
+                # frame_index += 1
+                # TODO: ADD TIME INFORMATION TO FRAME
             return
 
         animation = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
