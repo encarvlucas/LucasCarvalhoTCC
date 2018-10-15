@@ -13,10 +13,10 @@ malha = Mesh()
 # rand = np.random.rand(200)
 # rand_2 = np.random.rand(200)
 # xy = list(zip(rand, rand_2)).append([0,0])
-xy = np.array(([0, 0], [1, 0],
-               [1, 1], [0, 1]))
+# xy = np.array(([0, 0], [1, 0],
+#                [1, 1], [0, 1]))
 # xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
-malha.import_point_structure(points=list(xy), light_version=False)
+malha.import_point_structure(import_mesh_file="untitled")
 # malha.show_geometry(rainbow=True)
 
 from collections import OrderedDict as od
@@ -36,7 +36,9 @@ malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indice
                                                            type_of_boundary=xy_type)
 Q = ComplexPointList([32, 39, 64, 67, 68, 70], 5.)
 permanent = False
-vect = solve_poisson(malha, permanent_solution=permanent, dt=.05, total_time=1., q=Q)
-# malha.show_solution(vect)
-# malha.show_solution(vect[-1])
-malha.show_animated_solution(vect, dt=.05)
+vect = solve_poisson(malha, permanent_solution=permanent, q=Q)
+if permanent:
+    malha.show_solution(vect)
+else:
+    # malha.show_solution(vect[-1])
+    malha.show_animated_solution(vect)

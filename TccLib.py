@@ -50,7 +50,7 @@ def create_new_surface(*imported_points, lt_version=True):
                 geom.add_polygon([[delauney_surfaces.points[tri[0]][0], delauney_surfaces.points[tri[0]][1], 0.0],
                                   [delauney_surfaces.points[tri[1]][0], delauney_surfaces.points[tri[1]][1], 0.0],
                                   [delauney_surfaces.points[tri[2]][0], delauney_surfaces.points[tri[2]][1], 0.0]])
-            x, y, ien = use_meshio(geom)
+            x, y, ien = use_meshio(None, geom)
 
     else:
         if not lt_version:
@@ -67,17 +67,19 @@ def create_new_surface(*imported_points, lt_version=True):
                              ],
                              lcar=0.05)
 
-            x, y, ien = use_meshio(geom)
+            x, y, ien = use_meshio(None, geom)
 
     return x, y, ien
 
 
-def use_meshio(geometry):
+def use_meshio(filename, geometry):
     """
-    Use MeshIO library for creating the mesh point structure from Gmsh
+    Use MeshIO library for creating or importing the mesh point structure from Gmsh.
+    :param filename: Name of ".msh" file to be imported.
     :param geometry: A Geometry object from the PyGmsh library
-    :return: x, y, ien - The mesh point structure
+    :return: x, y, ien - The mesh point structure.
     """
+    import fnmatch
     import pygmsh
     import meshio
     import scipy.spatial as sp
@@ -85,13 +87,38 @@ def use_meshio(geometry):
     # Saving mesh as .vtk exportable file
     # points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geometry)
     # meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data) # TODO: FIX LIBRARY
-    points = meshio.read("untitled.msh").points
+
+    if fnmatch.fnmatch(filename, "*.msh"):
+        points = meshio.read(filename).points
+    else:
+        points = meshio.read(filename + ".msh").points
 
     x_ = points[:, 0]
     y_ = points[:, 1]
     ien_ = sp.Delaunay(points[:, :2]).simplices
 
     return x_, y_, ien_
+
+
+def get_dt(mesh):
+    """
+    Calculates optimal dt based on mesh.
+    :param mesh: Mesh object that contains element and point informations.
+    :return: Optimal dt.
+    """
+    import numpy as np
+    import itertools as it
+
+    def _h(elem):
+        _a = ((mesh.x[elem[0]] * mesh.y[elem[1]] - mesh.x[elem[1]] * mesh.y[elem[0]]) +
+              (mesh.x[elem[1]] * mesh.y[elem[2]] - mesh.x[elem[2]] * mesh.y[elem[1]]) +
+              (mesh.x[elem[2]] * mesh.y[elem[0]] - mesh.x[elem[0]] * mesh.y[elem[2]])) / 2.0
+        _aux = np.array(list(it.combinations(elem, 2)))
+        _l = min(list(map(lambda p_1, p_2: np.sqrt((mesh.x[p_1] - mesh.x[p_2]) ** 2 + (mesh.y[p_1] - mesh.y[p_2]) ** 2),
+                          _aux[:, 0], _aux[:, 1])))
+        return _a / _l
+
+    return min(list(map(lambda x: _h(x), mesh.ien)))
 
 
 def get_matrices(mesh):
@@ -104,12 +131,11 @@ def get_matrices(mesh):
     from scipy import sparse
 
     # Default parameters:
-    k_coef_x = 1.0
-    k_coef_y = 1.0
     thickness = 1.0
 
     # Matrices:
-    k_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix
+    gx_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix (x component)
+    gy_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix (y component)
     m_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Mass matrix
 
     for elem in mesh.ien:
@@ -157,19 +183,25 @@ def get_matrices(mesh):
 
         for i in range(3):  # Used so because of the triangular elements
             for j in range(3):
-                k_sparse[elem[i], elem[j]] += (thickness / (4.0 * area)) * ((k_coef_x * k_x[i][j]) +
-                                                                            (k_coef_y * k_y[i][j]))
+                gx_sparse[elem[i], elem[j]] += (thickness / (4.0 * area)) * k_x[i][j]
+                gy_sparse[elem[i], elem[j]] += (thickness / (4.0 * area)) * k_y[i][j]
                 m_sparse[elem[i], elem[j]] += m[i][j]
 
-    return k_sparse, m_sparse
+    return gx_sparse, gy_sparse, m_sparse
 
 
-def solve_poisson(mesh, permanent_solution=True, q=0, dt=0.01, total_time=1.):
+def solve_poisson(mesh, permanent_solution=True, k_coef_x=1.0, k_coef_y=1.0, q=0, total_time=1.):
     """
     Solves the mesh defined 2D Poisson equation problem:
         DT = -∇(k.∇T) + Q   ->   (M + K)*T_i^n = M*T_i^n-1 + M*Q_i
         dt                       dt              dt
-    :return: The solution for the desired variable
+    :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
+    :param permanent_solution: Parameter that defines if the solution will be calculated for the transient (True) or
+                                permanent (False) problem.
+    :param k_coef_x: Thermal conductivity coefficient for x axis.
+    :param k_coef_y: Thermal conductivity coefficient for y axis.
+    :param q: Heat generation for each point.
+    :return: Temperature value for each point in the mesh.
     """
     import numpy as np
     from scipy import sparse
@@ -192,7 +224,8 @@ def solve_poisson(mesh, permanent_solution=True, q=0, dt=0.01, total_time=1.):
                          "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
-    k_matrix, m_matrix = get_matrices(mesh)  # Stiffness and Mass matrices
+    gx_matrix, gy_matrix, m_matrix = get_matrices(mesh)  # Stiffness (G_x, G_y) and Mass matrices (M)
+    k_matrix = (k_coef_x * gx_matrix) + (k_coef_y * gy_matrix)  # K_xy = k_coef_x.G_x + k_coef_y.G_y
     q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
     if isinstance(q, ComplexPointList):
         for _relative_index, _q in enumerate(q.indexes):
@@ -219,6 +252,9 @@ def solve_poisson(mesh, permanent_solution=True, q=0, dt=0.01, total_time=1.):
         return linalg.spsolve(-k_matrix.tocsc(), m_matrix.dot(q_matrix))
 
     else:
+        # Optimal dt based on size of elements
+        dt = get_dt(mesh)
+
         #      A = M/dt + K
         a_matrix = m_matrix / dt + k_matrix
 
@@ -255,6 +291,21 @@ def solve_poisson(mesh, permanent_solution=True, q=0, dt=0.01, total_time=1.):
             frames.append(t_matrix)
 
         return frames
+
+
+def solve_poiseuille(mesh):
+    """
+    Solves the mesh defined 2D Poiseuille equation problem:
+    :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
+    :return: Velocity vectors and pressure values for each point in the mesh.
+    """
+    import numpy as np
+    from scipy import sparse
+    import scipy.sparse.linalg as linalg
+    # TODO: CONTINUE SOLUTION
+
+    # --- Defining the Matrices ----------------------------------------------------------------------------------------
+    gx_matrix, gy_matrix, m_matrix = get_matrices(mesh)
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -359,12 +410,13 @@ class Mesh:
             self.space_boundary_conditions.set_new_boundary_conditions(vector)
             self.time_boundary_conditions.set_new_boundary_conditions(point_index=range(self.size), values=0.)
 
-    def import_point_structure(self, *args, points=False, light_version=True):
+    def import_point_structure(self, *args, points=False, light_version=True, import_mesh_file=""):
         """
-        Imports points position to create mesh from source file
-        :param args: Name of source file, defaults to points.txt
-        :param points: Custom set of defined points, in form of list of shape (x, 2)
-        :param light_version: Defines if script will use Gmsh to obtain elements
+        Imports points position to create mesh from source file.
+        :param args: Name of source file, defaults to "points.txt".
+        :param points: Custom set of defined points, in form of list of shape (x, 2).
+        :param light_version: Defines if script will use Gmsh to obtain elements.
+        :param import_mesh_file: Use public library meshio to import already generated ".msh" file.
         """
         if not args:
             filename = "points.txt"
@@ -378,13 +430,18 @@ class Mesh:
 
         else:
             try:
-                with open(filename, "r") as arq:
-                    points = []
-                    for line in arq:
-                        points.append([float(i) for i in line.split(";")] + [0.0])
-                    surface = create_new_surface(points)
+                if import_mesh_file:
+                    surface = use_meshio(import_mesh_file, None)
+
+                else:
+                    with open(filename, "r") as arq:
+                        points = []
+                        for line in arq:
+                            points.append([float(i) for i in line.split(";")] + [0.0])
+                        surface = create_new_surface(points, lt_version=light_version)
 
             except FileNotFoundError:
+                print("File not found, generating new default mesh.")
                 surface = create_new_surface(lt_version=False)
 
         self.x, self.y, self.ien = surface
@@ -497,9 +554,9 @@ class Mesh:
 
     def show_solution(self, solution_vector):
         """
-        Display 3D solution of the mesh geometry
-        :param solution_vector: Vector that contains the value of the solution for each point in the mesh
-        :return: Display image
+        Display 3D solution of the mesh geometry.
+        :param solution_vector: Vector that contains the value of the solution for each point in the mesh.
+        :return: Display image.
         """
         from matplotlib import pyplot
         from mpl_toolkits.mplot3d import Axes3D
@@ -524,11 +581,11 @@ class Mesh:
 
     def show_animated_solution(self, frames_vector, dt=0.):
         """
-        Display animated version of the 3D solution
+        Display animated version of the 3D solution.
         :param frames_vector: Vector which each element contains a vector with the value of the solution for each point
-            in the mesh
-        :param dt: Time between each frame
-        :return:
+                              in the mesh.
+        :param dt: Time between each frame, if not specified the animation won't be saved.
+        :return: Display image.
         """
         import numpy as np
         import matplotlib.pyplot as plt
