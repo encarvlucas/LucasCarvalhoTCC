@@ -233,6 +233,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
     """
     from scipy import sparse
     import scipy.sparse.linalg as linalg
+    import numpy as np
 
     k_coef_x = k_coef or k_coef_x
     k_coef_y = k_coef or k_coef_y
@@ -282,24 +283,22 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
             if mesh.time_boundary_conditions.type_of_condition_vector[_relative_index]:
                 t_matrix[0, point] = mesh.time_boundary_conditions.values_vector[_relative_index]
 
-        #      b = M * Q_i + M/dt * T_i^n-1
-        b_matrix = sparse.lil_matrix(m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1))) /
-                                     dt)
-
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        apply_space_boundary_conditions(mesh, a_matrix, b_matrix)
+        # TODO: REFACTOR BOUNDARY CONDITION APPLY TO ALLOW DIRICHLET SOLUTION
+        for _relative_index, point in enumerate(mesh.space_boundary_conditions.point_index_vector):
+            if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
+                a_matrix[point, :] = 0.
+                a_matrix[point, point] = 1.
+            else:
+                q_matrix[point, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
 
-        # --------------------------------- Solve Loop -----------------------------------------------------------------
-        #  A * x = b   ->   x = solve(A, b)
-        t_matrix = linalg.spsolve(a_matrix, b_matrix)
-
-        frames = [t_matrix]
+        frames = [np.ravel(t_matrix.toarray())]
         for _frame_index in range(int(total_time / dt)):
             #      b = M * Q_i + M/dt * T_i^n-1
             b_matrix = m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1))) / dt
 
             # --------------------------------- Boundary conditions treatment ------------------------------------------
-            #     b += C.C. Dirichlet TODO: CHECK NEUMMAN IMPLEMENTATION
+            #     b += C.C. Dirichlet/Neumann
             apply_space_boundary_conditions(mesh, None, b_matrix)
             #  A * x = b   ->   x = solve(A, b)
             t_matrix = linalg.spsolve(a_matrix, b_matrix)

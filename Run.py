@@ -31,9 +31,9 @@ xy_indices = list(od.fromkeys(np.append(xy_indices, list(od.fromkeys(np.append(v
 xy_type = np.hstack((xy_type, np.zeros(len(xy_indices) - len(xy_values))))
 xy_values = np.append(xy_values, np.zeros(len(xy_indices) - len(xy_values)) + 1)
 malha.space_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
-                                                            type_of_boundary=xy_type)
+                                                            type_of_boundary=True)
 malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
-                                                           type_of_boundary=xy_type)
+                                                           type_of_boundary=True)
 Q = ComplexPointList([32, 39, 64, 67, 68, 70], 50.)
 permanent = False
 vect = solve_poisson(malha, permanent_solution=permanent)
