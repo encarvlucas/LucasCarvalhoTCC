@@ -34,8 +34,8 @@ malha.space_boundary_conditions.set_new_boundary_conditions(point_index=xy_indic
                                                             type_of_boundary=xy_type)
 malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
                                                            type_of_boundary=xy_type)
-Q = ComplexPointList([32, 39, 64, 67, 68, 70], 5.)
-permanent = True
+Q = ComplexPointList([32, 39, 64, 67, 68, 70], 50.)
+permanent = False
 vect = solve_poisson(malha, permanent_solution=permanent)
 if permanent:
     malha.show_solution(vect)

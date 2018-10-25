@@ -190,7 +190,7 @@ def get_matrices(mesh):
     return gx_sparse, gy_sparse, m_sparse
 
 
-def space_boundary_conditions_treatment(mesh, matrix_a, vector_b):
+def apply_space_boundary_conditions(mesh, matrix_a, vector_b):
     """
     Performs the evaluation of boundary conditions and applies the changes to the main matrix and vector.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -200,20 +200,23 @@ def space_boundary_conditions_treatment(mesh, matrix_a, vector_b):
     for _relative_index, _column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
         if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
             # Dirichlet Treatment
-            for _line_index in matrix_a.tocsc()[:, _column_index].indices:
-                vector_b[_line_index, 0] -= (matrix_a[_line_index, _column_index] *
-                                             mesh.space_boundary_conditions.values_vector[_relative_index])
-                matrix_a[_line_index, _column_index] = 0.
-                matrix_a[_column_index, _line_index] = 0.
+            if matrix_a is not None:
+                # Skip applying matrix a values for loops
+                for _line_index in matrix_a.tocsc()[:, _column_index].indices:
+                    vector_b[_line_index, 0] -= (matrix_a[_line_index, _column_index] *
+                                                 mesh.space_boundary_conditions.values_vector[_relative_index])
+                    matrix_a[_line_index, _column_index] = 0.
+                    matrix_a[_column_index, _line_index] = 0.
 
-            matrix_a[_column_index, _column_index] = 1.
+                matrix_a[_column_index, _column_index] = 1.
+
             vector_b[_column_index, 0] = mesh.space_boundary_conditions.values_vector[_relative_index]
         else:
             # Neumann Treatment
-            vector_b[_column_index, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
+            vector_b[_column_index, 0] += mesh.space_boundary_conditions.values_vector[_relative_index]
 
 
-def solve_poisson(mesh, permanent_solution=True, k_coef_x=1.0, k_coef_y=1.0, q=0, total_time=1.):
+def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q=0, total_time=1.):
     # TODO: REMOVE TOTAL TIME, CALCULATE BY DIFFERENCE BETWEEN FRAMES
     """
     Solves the mesh defined 2D Poisson equation problem:
@@ -222,14 +225,17 @@ def solve_poisson(mesh, permanent_solution=True, k_coef_x=1.0, k_coef_y=1.0, q=0
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
     :param permanent_solution: Parameter that defines if the solution will be calculated for the transient (True) or
                                 permanent (False) problem.
+    :param k_coef: Thermal conductivity coefficient both axis.
     :param k_coef_x: Thermal conductivity coefficient for x axis.
     :param k_coef_y: Thermal conductivity coefficient for y axis.
     :param q: Heat generation for each point.
     :return: Temperature value for each point in the mesh.
     """
-    import numpy as np
     from scipy import sparse
     import scipy.sparse.linalg as linalg
+
+    k_coef_x = k_coef or k_coef_x
+    k_coef_y = k_coef or k_coef_y
 
     # ------------------ Contingency -----------------------------------------------------------------------------------
     if not (len(mesh.x) and len(mesh.y) and len(mesh.ien)):
@@ -253,14 +259,15 @@ def solve_poisson(mesh, permanent_solution=True, k_coef_x=1.0, k_coef_y=1.0, q=0
     q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
     if isinstance(q, ComplexPointList):
         for _relative_index, _q in enumerate(q.indexes):
-            q_matrix[_q] = -q.values[_relative_index]
+            q_matrix[_q] = q.values[_relative_index]
 
     if permanent_solution:
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        space_boundary_conditions_treatment(mesh, k_matrix, q_matrix)
+        b_matrix = sparse.lil_matrix(m_matrix.dot(q_matrix))
+        apply_space_boundary_conditions(mesh, k_matrix, b_matrix)
 
         # --------------------------------- Solver ---------------------------------------------------------------------
-        return linalg.spsolve(-k_matrix.tocsc(), m_matrix.dot(q_matrix))
+        return linalg.spsolve(k_matrix.tocsc(), b_matrix)
 
     else:
         # Optimal dt based on size of elements
@@ -270,33 +277,30 @@ def solve_poisson(mesh, permanent_solution=True, k_coef_x=1.0, k_coef_y=1.0, q=0
         a_matrix = m_matrix / dt + k_matrix
 
         # First frame of the solution (time = 0)
-        initial = sparse.lil_matrix((1, mesh.size))
+        t_matrix = sparse.lil_matrix((1, mesh.size))
         for _relative_index, point in enumerate(mesh.time_boundary_conditions.point_index_vector):
             if mesh.time_boundary_conditions.type_of_condition_vector[_relative_index]:
-                initial[0, point] = mesh.time_boundary_conditions.values_vector[_relative_index]
+                t_matrix[0, point] = mesh.time_boundary_conditions.values_vector[_relative_index]
+
+        #      b = M * Q_i + M/dt * T_i^n-1
+        b_matrix = sparse.lil_matrix(m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1))) /
+                                     dt)
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        def boundary_treatment(vec):
-            for _rel_index, _point in enumerate(mesh.space_boundary_conditions.point_index_vector):
-                if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
-                    vec[_point] = mesh.space_boundary_conditions.values_vector[_rel_index]
-            return vec
+        apply_space_boundary_conditions(mesh, a_matrix, b_matrix)
 
-        for _relative_index, point in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
-                a_matrix[point, :] = 0.
-                a_matrix[point, point] = 1.
-            else:
-                q_matrix[point, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
+        # --------------------------------- Solve Loop -----------------------------------------------------------------
+        #  A * x = b   ->   x = solve(A, b)
+        t_matrix = linalg.spsolve(a_matrix, b_matrix)
 
-        # --------------------------------- Solver ---------------------------------------------------------------------
-        t_matrix = initial
-        frames = [np.ravel(initial.toarray())]
+        frames = [t_matrix]
         for _frame_index in range(int(total_time / dt)):
-            #      b = -M * Q_i + M/dt * T_i^n-1
-            b_matrix = -m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1))) / dt
-            # b     += C.C. Neumman TODO: CHECK NEUMMAN IMPLEMENTATION
-            b_matrix = boundary_treatment(b_matrix)
+            #      b = M * Q_i + M/dt * T_i^n-1
+            b_matrix = m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1))) / dt
+
+            # --------------------------------- Boundary conditions treatment ------------------------------------------
+            #     b += C.C. Dirichlet TODO: CHECK NEUMMAN IMPLEMENTATION
+            apply_space_boundary_conditions(mesh, None, b_matrix)
             #  A * x = b   ->   x = solve(A, b)
             t_matrix = linalg.spsolve(a_matrix, b_matrix)
             frames.append(t_matrix)
@@ -322,7 +326,7 @@ def solve_poiseuille(mesh):
     temp = []
 
     # --------------------------------- Boundary conditions treatment --------------------------------------------------
-    space_boundary_conditions_treatment(mesh, k_matrix, temp)
+    apply_space_boundary_conditions(mesh, k_matrix, temp)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for i in range(10):
