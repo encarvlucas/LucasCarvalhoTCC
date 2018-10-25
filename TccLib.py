@@ -190,7 +190,31 @@ def get_matrices(mesh):
     return gx_sparse, gy_sparse, m_sparse
 
 
+def space_boundary_conditions_treatment(mesh, matrix_a, vector_b):
+    """
+    Performs the evaluation of boundary conditions and applies the changes to the main matrix and vector.
+    :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
+    :param matrix_a: The coefficients matrix A in the linear solution method [A*x = b].
+    :param vector_b: The results vector b in the linear solution method [A*x = b].
+    """
+    for _relative_index, _column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
+        if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
+            # Dirichlet Treatment
+            for _line_index in matrix_a.tocsc()[:, _column_index].indices:
+                vector_b[_line_index, 0] -= (matrix_a[_line_index, _column_index] *
+                                             mesh.space_boundary_conditions.values_vector[_relative_index])
+                matrix_a[_line_index, _column_index] = 0.
+                matrix_a[_column_index, _line_index] = 0.
+
+            matrix_a[_column_index, _column_index] = 1.
+            vector_b[_column_index, 0] = mesh.space_boundary_conditions.values_vector[_relative_index]
+        else:
+            # Neumann Treatment
+            vector_b[_column_index, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
+
+
 def solve_poisson(mesh, permanent_solution=True, k_coef_x=1.0, k_coef_y=1.0, q=0, total_time=1.):
+    # TODO: REMOVE TOTAL TIME, CALCULATE BY DIFFERENCE BETWEEN FRAMES
     """
     Solves the mesh defined 2D Poisson equation problem:
         DT = -∇(k.∇T) + Q   ->   (M + K)*T_i^n = M*T_i^n-1 + M*Q_i
@@ -233,20 +257,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef_x=1.0, k_coef_y=1.0, q=0
 
     if permanent_solution:
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        for _relative_index, _column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
-                # Dirichlet Treatment
-                for line_index in k_matrix.tocsc()[:, _column_index].indices:
-                    q_matrix[line_index, 0] -= (k_matrix[line_index, _column_index] *
-                                                mesh.space_boundary_conditions.values_vector[_relative_index])
-                    k_matrix[line_index, _column_index] = 0.
-                    k_matrix[_column_index, line_index] = 0.
-
-                k_matrix[_column_index, _column_index] = 1.
-                q_matrix[_column_index, 0] = mesh.space_boundary_conditions.values_vector[_relative_index]
-            else:
-                # Neumann Treatment
-                q_matrix[_column_index, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
+        space_boundary_conditions_treatment(mesh, k_matrix, q_matrix)
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         return linalg.spsolve(-k_matrix.tocsc(), m_matrix.dot(q_matrix))
@@ -306,6 +317,21 @@ def solve_poiseuille(mesh):
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
     gx_matrix, gy_matrix, m_matrix = get_matrices(mesh)
+
+    k_matrix = (gx_matrix + gy_matrix)  # K_xy = G_x + G_y
+    temp = []
+
+    # --------------------------------- Boundary conditions treatment --------------------------------------------------
+    space_boundary_conditions_treatment(mesh, k_matrix, temp)
+
+    # --------------------------------- Solve Loop ---------------------------------------------------------------------
+    for i in range(10):
+        omega = linalg.spsolve(k_matrix.tocsc(), temp)
+
+        phi = linalg.spsolve(k_matrix.tocsc(), m_matrix.dot(omega))
+
+        v_x = gy_matrix.dot(phi)
+        v_y = -gx_matrix.dot(phi)
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -442,7 +468,8 @@ class Mesh:
 
             except FileNotFoundError:
                 print("File not found, generating new default mesh.")
-                surface = create_new_surface(lt_version=False)
+                # surface = create_new_surface(lt_version=False)  # TODO: FIX LIBRARY
+                surface = use_meshio("results/untitled", None)
 
         self.x, self.y, self.ien = surface
         self.size = len(self.x)

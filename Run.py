@@ -16,8 +16,8 @@ malha = Mesh()
 # xy = np.array(([0, 0], [1, 0],
 #                [1, 1], [0, 1]))
 # xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
-malha.import_point_structure(import_mesh_file="untitled")
-# malha.show_geometry(rainbow=True)
+malha.import_point_structure(import_mesh_file="results/untitled")
+# malha.show_geometry(names=True)
 
 from collections import OrderedDict as od
 vertex_a = np.where(malha.x == np.min(malha.x))[0]
@@ -35,8 +35,8 @@ malha.space_boundary_conditions.set_new_boundary_conditions(point_index=xy_indic
 malha.time_boundary_conditions.set_new_boundary_conditions(point_index=xy_indices, values=xy_values,
                                                            type_of_boundary=xy_type)
 Q = ComplexPointList([32, 39, 64, 67, 68, 70], 5.)
-permanent = False
-vect = solve_poisson(malha, permanent_solution=permanent, q=Q)
+permanent = True
+vect = solve_poisson(malha, permanent_solution=permanent)
 if permanent:
     malha.show_solution(vect)
 else:
