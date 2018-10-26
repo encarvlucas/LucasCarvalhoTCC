@@ -279,27 +279,29 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
         # First frame of the solution (time = 0)
         t_matrix = sparse.lil_matrix((1, mesh.size))
-        for _relative_index, point in enumerate(mesh.time_boundary_conditions.point_index_vector):
+        for _relative_index, _point in enumerate(mesh.time_boundary_conditions.point_index_vector):
             if mesh.time_boundary_conditions.type_of_condition_vector[_relative_index]:
-                t_matrix[0, point] = mesh.time_boundary_conditions.values_vector[_relative_index]
+                t_matrix[0, _point] = mesh.time_boundary_conditions.values_vector[_relative_index]
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         # TODO: REFACTOR BOUNDARY CONDITION APPLY TO ALLOW DIRICHLET SOLUTION
-        for _relative_index, point in enumerate(mesh.space_boundary_conditions.point_index_vector):
+        for _relative_index, _point in enumerate(mesh.space_boundary_conditions.point_index_vector):
             if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
-                a_matrix[point, :] = 0.
-                a_matrix[point, point] = 1.
+                for _column_index in a_matrix.tocsr()[_point, :].indices:
+                    a_matrix[_point, _column_index] = 0.
+                a_matrix[_point, _point] = 1.
             else:
-                q_matrix[point, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
+                q_matrix[_point, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
 
         frames = [np.ravel(t_matrix.toarray())]
         for _frame_index in range(int(total_time / dt)):
             #      b = M * Q_i + M/dt * T_i^n-1
-            b_matrix = m_matrix.dot(q_matrix) + sparse.lil_matrix(m_matrix.dot(t_matrix.reshape(-1, 1))) / dt
+            b_matrix = sparse.lil_matrix(m_matrix.dot(q_matrix) + m_matrix.dot(t_matrix.reshape(-1, 1)) / dt)
 
             # --------------------------------- Boundary conditions treatment ------------------------------------------
             #     b += C.C. Dirichlet/Neumann
             apply_space_boundary_conditions(mesh, None, b_matrix)
+
             #  A * x = b   ->   x = solve(A, b)
             t_matrix = linalg.spsolve(a_matrix, b_matrix)
             frames.append(t_matrix)
