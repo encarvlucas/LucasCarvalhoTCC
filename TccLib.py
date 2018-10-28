@@ -9,6 +9,31 @@ __website__ = "https://github.com/encarvlucas/LucasCarvalhoTCC"
 
 
 # -- Functions ---------------------------------------------------------------------------------------------------------
+def border_temperature_boundary_conditions(mesh):
+    """
+    Function that returns three vectors for the standard boundary condition for the Poisson temperature problem.
+    :param mesh: Mesh object to be used to obtain the points information.
+    """
+    import numpy as np
+    from collections import OrderedDict as oD
+
+    # Acquiring borders
+    vertex_a = np.where(mesh.x == np.min(mesh.x))[0]
+    vertex_b = np.where(mesh.y == np.min(mesh.y))[0]
+    vertex_c = np.where(mesh.x == np.max(mesh.x))[0]
+    vertex_d = np.where(mesh.y == np.max(mesh.y))[0]
+
+    # Defining indices, types and values
+    indices = list(oD.fromkeys(np.append(vertex_a, vertex_b)))
+    values = np.zeros(len(indices))
+    types = np.zeros(len(values)) + 1
+    indices = list(oD.fromkeys(np.append(indices, list(oD.fromkeys(np.append(vertex_c, vertex_d))))))
+    types = np.hstack((types, np.zeros(len(indices) - len(values))))
+    values = np.append(values, np.zeros(len(indices) - len(values)) + 1)
+
+    return indices, values, types
+
+
 def check_method_call(*args):
     """
     Tests if the arguments are valid
@@ -216,6 +241,17 @@ def apply_space_boundary_conditions(mesh, matrix_a, vector_b):
             vector_b[_column_index, 0] += mesh.space_boundary_conditions.values_vector[_relative_index]
 
 
+def apply_initial_boundary_conditions(mesh, vector_v):
+    """
+    Performs the evaluation of boundary conditions and applies initial values to the vector.
+    :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
+    :param vector_v: The vector v of initial values for the transient solution.
+    """
+    for _relative_index, _point in enumerate(mesh.time_boundary_conditions.point_index_vector):
+        if mesh.time_boundary_conditions.type_of_condition_vector[_relative_index]:
+            vector_v[0, _point] = mesh.time_boundary_conditions.values_vector[_relative_index]
+
+
 def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q=0, total_time=1.):
     # TODO: REMOVE TOTAL TIME, CALCULATE BY DIFFERENCE BETWEEN FRAMES
     """
@@ -264,11 +300,11 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
     if permanent_solution:
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        b_matrix = sparse.lil_matrix(m_matrix.dot(q_matrix))
-        apply_space_boundary_conditions(mesh, k_matrix, b_matrix)
+        b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix))
+        apply_space_boundary_conditions(mesh, k_matrix, b_vector)
 
         # --------------------------------- Solver ---------------------------------------------------------------------
-        return linalg.spsolve(k_matrix.tocsc(), b_matrix)
+        return linalg.spsolve(k_matrix.tocsc(), b_vector)
 
     else:
         # Optimal dt based on size of elements
@@ -278,10 +314,8 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         a_matrix = m_matrix / dt + k_matrix
 
         # First frame of the solution (time = 0)
-        t_matrix = sparse.lil_matrix((1, mesh.size))
-        for _relative_index, _point in enumerate(mesh.time_boundary_conditions.point_index_vector):
-            if mesh.time_boundary_conditions.type_of_condition_vector[_relative_index]:
-                t_matrix[0, _point] = mesh.time_boundary_conditions.values_vector[_relative_index]
+        t_vector = sparse.lil_matrix((1, mesh.size))
+        apply_initial_boundary_conditions(mesh, t_vector)
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         # TODO: REFACTOR BOUNDARY CONDITION APPLY TO ALLOW DIRICHLET SOLUTION
@@ -291,25 +325,25 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
                     a_matrix[_point, _column_index] = 0.
                 a_matrix[_point, _point] = 1.
             else:
-                q_matrix[_point, 0] -= mesh.space_boundary_conditions.values_vector[_relative_index]
+                q_matrix[_point, 0] += mesh.space_boundary_conditions.values_vector[_relative_index]
 
-        frames = [np.ravel(t_matrix.toarray())]
+        frames = [np.ravel(t_vector.toarray())]
         for _frame_index in range(int(total_time / dt)):
             #      b = M * Q_i + M/dt * T_i^n-1
-            b_matrix = sparse.lil_matrix(m_matrix.dot(q_matrix) + m_matrix.dot(t_matrix.reshape(-1, 1)) / dt)
+            b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix) + m_matrix.dot(t_vector.reshape(-1, 1)) / dt)
 
             # --------------------------------- Boundary conditions treatment ------------------------------------------
             #     b += C.C. Dirichlet/Neumann
-            apply_space_boundary_conditions(mesh, None, b_matrix)
+            apply_space_boundary_conditions(mesh, None, b_vector)
 
             #  A * x = b   ->   x = solve(A, b)
-            t_matrix = linalg.spsolve(a_matrix, b_matrix)
-            frames.append(t_matrix)
+            t_vector = linalg.spsolve(a_matrix, b_vector)
+            frames.append(t_vector)
 
         return frames
 
 
-def solve_poiseuille(mesh):
+def solve_poiseuille(mesh, nu_coef=1.0):
     """
     Solves the mesh defined 2D Poiseuille equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -320,23 +354,30 @@ def solve_poiseuille(mesh):
     import scipy.sparse.linalg as linalg
     # TODO: CONTINUE SOLUTION
 
+    dt = get_dt(mesh)
+
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
     gx_matrix, gy_matrix, m_matrix = get_matrices(mesh)
 
     k_matrix = (gx_matrix + gy_matrix)  # K_xy = G_x + G_y
-    temp = []
+
+    velocity_vector = sparse.csc_matrix((2, mesh.size))
+    omega_vector = sparse.lil_matrix((0, mesh.size))
 
     # --------------------------------- Boundary conditions treatment --------------------------------------------------
-    apply_space_boundary_conditions(mesh, k_matrix, temp)
+    apply_initial_boundary_conditions(mesh, velocity_vector)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for i in range(10):
-        omega = linalg.spsolve(k_matrix.tocsc(), temp)
+        a_matrix = (m_matrix / dt + nu_coef * k_matrix)
+        b_vector = -velocity_vector.dot(gx_matrix.dot(omega_vector)) + (m_matrix / dt).dot(omega_vector)
 
-        phi = linalg.spsolve(k_matrix.tocsc(), m_matrix.dot(omega))
+        omega_vector = linalg.spsolve(a_matrix, b_vector)
 
-        v_x = gy_matrix.dot(phi)
-        v_y = -gx_matrix.dot(phi)
+        phi_vector = linalg.spsolve(k_matrix.tocsc(), m_matrix.dot(omega_vector))
+
+        velocity_vector[0, :] = gy_matrix.dot(phi_vector)
+        velocity_vector[1, :] = -gx_matrix.dot(phi_vector)
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -346,6 +387,7 @@ class Mesh:
     Mesh element to be used in the calculations
     """
     x, y, ien = [], [], []
+    name = "default"
     size = 0
 
     class BoundaryConditions:
@@ -366,7 +408,6 @@ class Mesh:
             """
             import numpy as np
 
-            # TODO: INCREASE CHECKS
             if vect_argm:
                 check_method_call(vect_argm)
             else:
@@ -409,19 +450,27 @@ class Mesh:
                 else:
                     self.type_of_condition_vector = np.array([type_of_boundary] * len(point_index))
 
-    def __init__(self, default_boudary_conditions=True):
+    def __init__(self, name="untitled", default_boundary_conditions=True):
         """
-        Class constructor,
-        initializes geometry
-        :param default_boudary_conditions: Determine if the default conditions are to be applied
+        Class constructor, initializes geometry.
+        :param name: Mesh's main name.
+        :param default_boundary_conditions: Determine if the default conditions are to be applied
         """
-        self.import_point_structure()
+        import os
+        self.import_point_structure(import_mesh_file=self.name)
+
+        try:
+            os.chdir("./results/{0}/".format(self.name))
+        except FileNotFoundError:
+            os.mkdir("./results/{0}".format(self.name))
+            os.chdir("./results/{0}/".format(self.name))
+        # TODO: COPY ORIGINAL .msh FILE TO NEW DIRECTORY
 
         self.space_boundary_conditions = self.BoundaryConditions()
         self.time_boundary_conditions = self.BoundaryConditions()
 
         # Default Boundary coditions declaration
-        if default_boudary_conditions:
+        if default_boundary_conditions:
             max_x = max(self.x)
             max_y = max(self.y)
             min_x = min(self.x)
@@ -462,7 +511,7 @@ class Mesh:
         else:
             try:
                 if import_mesh_file:
-                    surface = use_meshio(import_mesh_file, None)
+                    surface = use_meshio("results/{0}".format(import_mesh_file), None)
 
                 else:
                     with open(filename, "r") as arq:
@@ -479,27 +528,27 @@ class Mesh:
         self.x, self.y, self.ien = surface
         self.size = len(self.x)
 
-    def output(self, result_vector, extension="VTK", dt=0.):
+    def output(self, result_vector, extension="VTK", dt=0., data_name = "Temperature"):
         """
         Export result to .vtk or .csv file
         :param result_vector: The vector of the value in each point
         :param extension: File extension
         :param dt: Value of time between frames
+        :param data_name: Data name for display.
         """
         import os
         import fnmatch
 
         try:
-            os.chdir("./results/")
+            os.chdir("./paraview_results/")
         except FileNotFoundError:
             pass
 
         number_elements = len(self.ien)
-        data_name = "Temperature"
 
         if extension == "CSV":
             # ------------------------- Saving results to CSV file ----------------------------------------------------
-            with open("results.csv", "w") as arq:
+            with open("{0}_results.csv".format(self.name), "w") as arq:
                 arq.write("{0}, Points:0, Points:1, Points:2\n".format(data_name))
                 for i in range(self.size):
                     arq.write("{0},{1},{2},{3}\n".format(result_vector[i], self.x[i], self.y[i], 0))
@@ -512,7 +561,7 @@ class Mesh:
 
                 # --------- Saving multiple results to VTK files -------------------------------------------------------
                 for j in range(len(result_vector)):
-                    with open("results_{}.vtk".format(j), "w") as arq:
+                    with open("{0}_results_{1}.vtk".format(self.name, j), "w") as arq:
                         # ------------------------------------ Header --------------------------------------------------
                         arq.write(
                             "# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("LucasCarvalhoTCC Results",
@@ -535,7 +584,7 @@ class Mesh:
             except TypeError:
                 size = self.size
                 # ------------------------- Saving results to VTK file -------------------------------------------------
-                with open("results.vtk", "w") as arq:
+                with open("{0}_results.vtk".format(self.name), "w") as arq:
                     # ------------------------------------ Header ------------------------------------------------------
                     arq.write(
                         "# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("LucasCarvalhoTCC Results",
@@ -554,11 +603,12 @@ class Mesh:
                     for i in range(size):
                         arq.write("{}\n".format(result_vector[i]))
 
-    def show_geometry(self, names=False, rainbow=False):
+    def show_geometry(self, names=False, rainbow=False, save=True):
         """
-        Display mesh geometry on screen using matplotlib
-        :param names: Show the index of each point next to it
-        :param rainbow: Color in the edge of each element in a different color
+        Display mesh geometry on screen using matplotlib.
+        :param names: Show the index of each point next to it.
+        :param rainbow: Color in the edge of each element in a different color.
+        :param save: Save generated image.
         :return:
         """
         import numpy as np
@@ -581,6 +631,9 @@ class Mesh:
 
         else:
             plt.triplot(self.x, self.y, triangles=self.ien[0])
+
+        if save:
+            plt.savefig("{0}_mesh".format(self.name))
 
         plt.show()
 
@@ -608,6 +661,8 @@ class Mesh:
         surf = axes.plot_trisurf(self.x, self.y, solution_vector, cmap="jet")
         axes.view_init(90, 270)
         fig.colorbar(surf, shrink=0.4, aspect=9)
+
+        pyplot.savefig("{0}_permanent_results".format(self.name))
 
         return pyplot.show()
 
@@ -657,7 +712,7 @@ class Mesh:
 
         if dt:
             self.output(frames_vector, dt=dt)
-            animation.save("trisurf.gif", dpi=80, writer='imagemagick')
+            animation.save("{0}_transient_results.gif".format(self.name), dpi=80, writer='imagemagick')
 
         return plt.show()
 
