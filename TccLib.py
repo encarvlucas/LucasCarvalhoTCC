@@ -49,6 +49,23 @@ def check_method_call(*args):
     raise ValueError("Method called incorrectly, please read the documentation and try changing the arguments.")
 
 
+def adjust_figure_size(param_x, param_y):
+    """
+    Ajusts figure size to better represent the image.
+    :param param_x: List of x coordinates.
+    :param param_y: List of y coordinates.
+    """
+    import matplotlib.pyplot as plt
+
+    def max_amplitude(_list):
+        return max(_list) - min(_list)
+
+    default_size = (6.4, 4.8)
+
+    fig = plt.gcf()
+    fig.set_size_inches((default_size[0] * max_amplitude(param_x) / max_amplitude(param_y), 4.8))
+
+
 def create_new_surface(*imported_points, lt_version=True):
     """
     Create new surface
@@ -159,8 +176,10 @@ def get_matrices(mesh):
     thickness = 1.0
 
     # Matrices:
-    gx_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix (x component)
-    gy_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix (y component)
+    kx_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix (x component)
+    ky_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Stiffness matrix (y component)
+    gx_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Convection matrix (x component)
+    gy_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Convection matrix (y component)
     m_sparse = sparse.lil_matrix((mesh.size, mesh.size))  # Mass matrix
 
     for elem in mesh.ien:
@@ -181,23 +200,41 @@ def get_matrices(mesh):
                       x[0] - x[2],
                       x[1] - x[0]])
 
-        #       [b_i*b_i, b_i*b_j, b_i*b_k],
-        # K_x = [b_j*b_i, b_j*b_j, b_j*b_k],
-        #       [b_k*b_i, b_k*b_j, b_k*b_k]
-        k_x = np.array([
-                        [b[0] * b[0], b[0] * b[1], b[0] * b[2]],
-                        [b[0] * b[1], b[1] * b[1], b[1] * b[2]],
-                        [b[0] * b[2], b[1] * b[2], b[2] * b[2]]
-                       ])
+        #          [b_i*b_i, b_i*b_j, b_i*b_k],
+        # K_x =  1 [b_j*b_i, b_j*b_j, b_j*b_k],
+        #       4A [b_k*b_i, b_k*b_j, b_k*b_k]
+        k_x = (thickness / (4.0 * area)) * np.array([
+                                                     [b[0] * b[0], b[0] * b[1], b[0] * b[2]],
+                                                     [b[0] * b[1], b[1] * b[1], b[1] * b[2]],
+                                                     [b[0] * b[2], b[1] * b[2], b[2] * b[2]]
+                                                    ])
 
-        #       [c_i*c_i, c_i*c_j, c_i*c_k],
-        # K_y = [c_j*c_i, c_j*c_j, c_j*c_k],
-        #       [c_k*c_i, c_k*c_j, c_k*c_k]
-        k_y = np.array([
-                        [c[0] * c[0], c[0] * c[1], c[0] * c[2]],
-                        [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
-                        [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
-                       ])
+        #          [c_i*c_i, c_i*c_j, c_i*c_k],
+        # K_y =  1 [c_j*c_i, c_j*c_j, c_j*c_k],
+        #       4A [c_k*c_i, c_k*c_j, c_k*c_k]
+        k_y = (thickness / (4.0 * area)) * np.array([
+                                                     [c[0] * c[0], c[0] * c[1], c[0] * c[2]],
+                                                     [c[0] * c[1], c[1] * c[1], c[1] * c[2]],
+                                                     [c[0] * c[2], c[1] * c[2], c[2] * c[2]]
+                                                    ])
+
+        #         [b_i, b_j, b_k],
+        # G_x = 1 [b_i, b_j, b_k],
+        #       6 [b_i, b_j, b_k]
+        g_x = (1./6.) * np.array([
+                                  [b[0], b[1], b[2]],
+                                  [b[0], b[1], b[2]],
+                                  [b[0], b[1], b[2]]
+                                 ])
+
+        #         [c_i, c_j, c_k],
+        # G_y = 1 [c_i, c_j, c_k],
+        #       6 [c_i, c_j, c_k]
+        g_y = (1./6.) * np.array([
+                                  [c[0], c[1], c[2]],
+                                  [c[0], c[1], c[2]],
+                                  [c[0], c[1], c[2]]
+                                 ])
 
         #     [2, 1, 1],
         # M = [1, 2, 1],
@@ -208,11 +245,13 @@ def get_matrices(mesh):
 
         for i in range(3):  # Used so because of the triangular elements
             for j in range(3):
-                gx_sparse[elem[i], elem[j]] += (thickness / (4.0 * area)) * k_x[i][j]
-                gy_sparse[elem[i], elem[j]] += (thickness / (4.0 * area)) * k_y[i][j]
+                kx_sparse[elem[i], elem[j]] += k_x[i][j]
+                ky_sparse[elem[i], elem[j]] += k_y[i][j]
                 m_sparse[elem[i], elem[j]] += m[i][j]
+                gx_sparse[elem[i], elem[j]] += g_x[i][j]
+                gy_sparse[elem[i], elem[j]] += g_y[i][j]
 
-    return gx_sparse, gy_sparse, m_sparse
+    return kx_sparse, ky_sparse, m_sparse, gx_sparse, gy_sparse
 
 
 def apply_space_boundary_conditions(mesh, matrix_a, vector_b):
@@ -291,8 +330,8 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
                          "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
-    gx_matrix, gy_matrix, m_matrix = get_matrices(mesh)  # Stiffness (G_x, G_y) and Mass matrices (M)
-    k_matrix = (k_coef_x * gx_matrix) + (k_coef_y * gy_matrix)  # K_xy = k_coef_x.G_x + k_coef_y.G_y
+    kx_matrix, ky_matrix, m_matrix, *_ = get_matrices(mesh)  # Stiffness (G_x, G_y) and Mass matrices (M)
+    k_matrix = (k_coef_x * kx_matrix) + (k_coef_y * ky_matrix)  # K_xy = k_coef_x.G_x + k_coef_y.G_y
     q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
     if isinstance(q, ComplexPointList):
         for _relative_index, _q in enumerate(q.indexes):
@@ -357,27 +396,35 @@ def solve_poiseuille(mesh, nu_coef=1.0):
     dt = get_dt(mesh)
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
-    gx_matrix, gy_matrix, m_matrix = get_matrices(mesh)
+    kx_matrix, ky_matrix, m_matrix, gx_matrix, gy_matrix, = get_matrices(mesh)
 
-    k_matrix = (gx_matrix + gy_matrix)  # K_xy = G_x + G_y
+    k_matrix = (kx_matrix + ky_matrix)  # K_xy = K_x + K_y
 
-    velocity_vector = sparse.csc_matrix((2, mesh.size))
+    velocity_x_vector = sparse.csc_matrix((0, mesh.size))
+    velocity_y_vector = sparse.csc_matrix((0, mesh.size))
     omega_vector = sparse.lil_matrix((0, mesh.size))
 
     # --------------------------------- Boundary conditions treatment --------------------------------------------------
-    apply_initial_boundary_conditions(mesh, velocity_vector)
+    apply_initial_boundary_conditions(mesh, omega_vector)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for i in range(10):
-        a_matrix = (m_matrix / dt + nu_coef * k_matrix)
-        b_vector = -velocity_vector.dot(gx_matrix.dot(omega_vector)) + (m_matrix / dt).dot(omega_vector)
+        omega_vector = linalg.spsolve(m_matrix.tocsc(), (gx_matrix.dot(velocity_y_vector) -
+                                                         gy_matrix.dot(velocity_x_vector)))
 
-        omega_vector = linalg.spsolve(a_matrix, b_vector)
+        a_matrix = (m_matrix / dt + nu_coef * k_matrix +
+                    velocity_x_vector.dot(gx_matrix) + velocity_y_vector.dot(gy_matrix))
 
-        phi_vector = linalg.spsolve(k_matrix.tocsc(), m_matrix.dot(omega_vector))
+        b_vector = (m_matrix / dt).dot(omega_vector)
 
-        velocity_vector[0, :] = gy_matrix.dot(phi_vector)
-        velocity_vector[1, :] = -gx_matrix.dot(phi_vector)
+        apply_space_boundary_conditions(mesh, a_matrix, b_vector)
+
+        omega_vector = linalg.spsolve(a_matrix.tocsc(), b_vector)
+
+        psi_vector = linalg.spsolve(k_matrix.tocsc(), m_matrix.dot(omega_vector))
+
+        velocity_x_vector = linalg.spsolve(m_matrix.tocsc(), gy_matrix.dot(psi_vector))
+        velocity_y_vector = linalg.spsolve(m_matrix.tocsc(), -gx_matrix.dot(psi_vector))
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -457,6 +504,7 @@ class Mesh:
         :param default_boundary_conditions: Determine if the default conditions are to be applied
         """
         import os
+        self.name = name
         self.import_point_structure(import_mesh_file=self.name)
 
         try:
@@ -603,7 +651,7 @@ class Mesh:
                     for i in range(size):
                         arq.write("{}\n".format(result_vector[i]))
 
-    def show_geometry(self, names=False, rainbow=False, save=True):
+    def show_geometry(self, names=False, rainbow=False, save=False):
         """
         Display mesh geometry on screen using matplotlib.
         :param names: Show the index of each point next to it.
@@ -615,6 +663,7 @@ class Mesh:
         import matplotlib.pyplot as plt
 
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
+        adjust_figure_size(self.x, self.y)
 
         if names:
             for _index in range(self.size):
@@ -637,7 +686,7 @@ class Mesh:
 
         plt.show()
 
-    def show_solution(self, solution_vector):
+    def show_3d_solution(self, solution_vector):
         """
         Display 3D solution of the mesh geometry.
         :param solution_vector: Vector that contains the value of the solution for each point in the mesh.
@@ -666,7 +715,7 @@ class Mesh:
 
         return pyplot.show()
 
-    def show_animated_solution(self, frames_vector, dt=0.):
+    def show_animated_3d_solution(self, frames_vector, dt=0.):
         """
         Display animated version of the 3D solution.
         :param frames_vector: Vector which each element contains a vector with the value of the solution for each point
