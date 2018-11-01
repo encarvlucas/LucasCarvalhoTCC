@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # -------------------------------------- by: LUCAS CARVALHO DE SOUSA ---------------------------------------------------
-# Esta biblioteca foi criada para o a solução de sistemas diferenciais através do Método de Elementos Finitos
+# Esta biblioteca foi criada para o uso academico para a solucao de sistemas diferenciais atraves do Metodo de Elementos
+#  Finitos
 # This library was created for educational purposes, it is meant to be used for the solution of differential equation
 # systems
 __author__ = "Lucas Carvalho de Sousa"
@@ -254,41 +255,43 @@ def get_matrices(mesh):
     return kx_sparse, ky_sparse, m_sparse, gx_sparse, gy_sparse
 
 
-def apply_space_boundary_conditions(mesh, matrix_a, vector_b):
+def apply_boundary_conditions(mesh, boundary_name, matrix_a, vector_b):
     """
     Performs the evaluation of boundary conditions and applies the changes to the main matrix and vector.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
+    :param boundary_name: The boundary name as defined for each problem.
     :param matrix_a: The coefficients matrix A in the linear solution method [A*x = b].
     :param vector_b: The results vector b in the linear solution method [A*x = b].
     """
-    for _relative_index, _column_index in enumerate(mesh.space_boundary_conditions.point_index_vector):
-        if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
+    for _relative_index, _column_index in enumerate(mesh.boundary_conditions[boundary_name].point_index_vector):
+        if mesh.boundary_conditions[boundary_name].type_of_condition_vector[_relative_index]:
             # Dirichlet Treatment
             if matrix_a is not None:
                 # Skip applying matrix a values for loops
                 for _line_index in matrix_a.tocsc()[:, _column_index].indices:
                     vector_b[_line_index, 0] -= (matrix_a[_line_index, _column_index] *
-                                                 mesh.space_boundary_conditions.values_vector[_relative_index])
+                                                 mesh.boundary_conditions[boundary_name].values_vector[_relative_index])
                     matrix_a[_line_index, _column_index] = 0.
                     matrix_a[_column_index, _line_index] = 0.
 
                 matrix_a[_column_index, _column_index] = 1.
 
-            vector_b[_column_index, 0] = mesh.space_boundary_conditions.values_vector[_relative_index]
+            vector_b[_column_index, 0] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
         else:
             # Neumann Treatment
-            vector_b[_column_index, 0] += mesh.space_boundary_conditions.values_vector[_relative_index]
+            vector_b[_column_index, 0] += mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
 
 
-def apply_initial_boundary_conditions(mesh, vector_v):
+def apply_initial_boundary_conditions(mesh, boundary_name, vector_v):
     """
     Performs the evaluation of boundary conditions and applies initial values to the vector.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
     :param vector_v: The vector v of initial values for the transient solution.
+    :param boundary_name: The boundary name as defined for each problem.
     """
-    for _relative_index, _point in enumerate(mesh.time_boundary_conditions.point_index_vector):
-        if mesh.time_boundary_conditions.type_of_condition_vector[_relative_index]:
-            vector_v[0, _point] = mesh.time_boundary_conditions.values_vector[_relative_index]
+    for _relative_index, _point in enumerate(mesh.boundary_conditions[boundary_name].point_index_vector):
+        if mesh.boundary_conditions[boundary_name].type_of_condition_vector[_relative_index]:
+            vector_v[0, _point] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
 
 
 def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q=0, total_time=1.):
@@ -318,16 +321,16 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         raise ValueError("The mesh is empty. Try using import_point_structure() before solving.")
 
     try:
-        for boundary_condition in [mesh.space_boundary_conditions, mesh.time_boundary_conditions]:
+        for boundary_condition in [mesh.boundary_conditions["space"], mesh.boundary_conditions["time"]]:
             if (not isinstance(boundary_condition, Mesh.BoundaryConditions) or
                     not (len(boundary_condition.point_index_vector) and
                          len(boundary_condition.values_vector) and
                          len(boundary_condition.type_of_condition_vector))):
                 raise ValueError("There are no boundary conditions defined. "
-                                 "Try using mesh.boundary_condition.set_new_boundary_conditions() before solving.")
-    except TypeError:
-        raise ValueError("There are no boundary conditions defined. "
-                         "Try using mesh.boundary_conditions.set_new_boundary_conditions() before solving.")
+                                 "Try using mesh.new_boundary_condition() before solving.")
+    except (TypeError, KeyError):
+        raise ValueError("Incorrect or no boundary conditions are defined. "
+                         "Try using mesh.new_boundary_condition() before solving.")
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
     kx_matrix, ky_matrix, m_matrix, *_ = get_matrices(mesh)  # Stiffness (G_x, G_y) and Mass matrices (M)
@@ -340,7 +343,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
     if permanent_solution:
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix))
-        apply_space_boundary_conditions(mesh, k_matrix, b_vector)
+        apply_boundary_conditions(mesh, "space", k_matrix, b_vector)
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         return linalg.spsolve(k_matrix.tocsc(), b_vector)
@@ -354,17 +357,17 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
         # First frame of the solution (time = 0)
         t_vector = sparse.lil_matrix((1, mesh.size))
-        apply_initial_boundary_conditions(mesh, t_vector)
+        apply_initial_boundary_conditions(mesh, "time", t_vector)
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         # TODO: REFACTOR BOUNDARY CONDITION APPLY TO ALLOW DIRICHLET SOLUTION
-        for _relative_index, _point in enumerate(mesh.space_boundary_conditions.point_index_vector):
-            if mesh.space_boundary_conditions.type_of_condition_vector[_relative_index]:
+        for _relative_index, _point in enumerate(mesh.boundary_conditions["space"].point_index_vector):
+            if mesh.boundary_conditions["space"].type_of_condition_vector[_relative_index]:
                 for _column_index in a_matrix.tocsr()[_point, :].indices:
                     a_matrix[_point, _column_index] = 0.
                 a_matrix[_point, _point] = 1.
             else:
-                q_matrix[_point, 0] += mesh.space_boundary_conditions.values_vector[_relative_index]
+                q_matrix[_point, 0] += mesh.boundary_conditions["space"].values_vector[_relative_index]
 
         frames = [np.ravel(t_vector.toarray())]
         for _frame_index in range(int(total_time / dt)):
@@ -373,7 +376,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
             # --------------------------------- Boundary conditions treatment ------------------------------------------
             #     b += C.C. Dirichlet/Neumann
-            apply_space_boundary_conditions(mesh, None, b_vector)
+            apply_boundary_conditions(mesh, "space", None, b_vector)
 
             #  A * x = b   ->   x = solve(A, b)
             t_vector = linalg.spsolve(a_matrix, b_vector)
@@ -417,7 +420,7 @@ def solve_poiseuille(mesh, nu_coef=1.0):
 
         b_vector = (m_matrix / dt).dot(omega_vector)
 
-        apply_space_boundary_conditions(mesh, a_matrix, b_vector)
+        apply_boundary_conditions(mesh, a_matrix, b_vector)
 
         omega_vector = linalg.spsolve(a_matrix.tocsc(), b_vector)
 
@@ -445,13 +448,13 @@ class Mesh:
         values_vector = []
         type_of_condition_vector = []
 
-        def set_new_boundary_conditions(self, *vect_argm, point_index=range(0), values=0., type_of_boundary=True):
+        def set_new_boundary_condition(self, *vect_argm, point_index=range(0), values=0., type_of_boundary=True):
             """
-            Sets the boundary conditions for the mesh
-            :param vect_argm: Vector(s) of boundary conditions
-            :param point_index: Vector of oreder of points
-            :param values: Values of the condition in each point
-            :param type_of_boundary: Type True for Dirichlet and False for Neumann
+            Sets the boundary condition for the mesh.
+            :param vect_argm: Vector(s) of boundary conditions.
+            :param point_index: Vector of order of points.
+            :param values: Value or vector of values of the condition in each point.
+            :param type_of_boundary: Value or vector of values, defined: True for Dirichlet and False for Neumann.
             """
             import numpy as np
 
@@ -506,6 +509,7 @@ class Mesh:
         import os
         self.name = name
         self.import_point_structure(import_mesh_file=self.name)
+        self.boundary_conditions = {}
 
         try:
             os.chdir("./results/{0}/".format(self.name))
@@ -513,30 +517,6 @@ class Mesh:
             os.mkdir("./results/{0}".format(self.name))
             os.chdir("./results/{0}/".format(self.name))
         # TODO: COPY ORIGINAL .msh FILE TO NEW DIRECTORY
-
-        self.space_boundary_conditions = self.BoundaryConditions()
-        self.time_boundary_conditions = self.BoundaryConditions()
-
-        # Default Boundary coditions declaration
-        if default_boundary_conditions:
-            max_x = max(self.x)
-            max_y = max(self.y)
-            min_x = min(self.x)
-            min_y = min(self.y)
-            vector = []
-
-            for index, coord_x in enumerate(self.x):
-                if (coord_x == max_x) or (self.y[index] == max_y):
-                    # Boundaries are defined to be the upper and right sides with value 100
-                    vector.append([index, 1., True])
-
-            for index, coord_x in enumerate(self.x):
-                if (coord_x == min_x) or (self.y[index] == min_y):
-                    # Boundaries are defined to be the lower and left sides with value 0
-                    vector.append([index, 0., True])
-
-            self.space_boundary_conditions.set_new_boundary_conditions(vector)
-            self.time_boundary_conditions.set_new_boundary_conditions(point_index=range(self.size), values=0.)
 
     def import_point_structure(self, *args, points=False, light_version=True, import_mesh_file=""):
         """
@@ -553,8 +533,6 @@ class Mesh:
 
         if isinstance(points, list):
             surface = create_new_surface(points, lt_version=light_version)
-            self.space_boundary_conditions = self.BoundaryConditions()
-            self.time_boundary_conditions = self.BoundaryConditions()
 
         else:
             try:
@@ -575,6 +553,18 @@ class Mesh:
 
         self.x, self.y, self.ien = surface
         self.size = len(self.x)
+
+    def new_boundary_condition(self, name, point_index=range(0), values=0., type_of_boundary=True):
+        """
+        Creates a new entry in the boundary conditions dictionary.
+        :param name: Name of the property that has these boundary conditions.
+        :param point_index: Vector of order of points.
+        :param values: Value or vector of values of the condition in each point.
+        :param type_of_boundary: Value or vector of values, defined: True for Dirichlet and False for Neumann.
+        """
+        self.boundary_conditions[name] = self.BoundaryConditions()
+        self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
+                                                                  type_of_boundary=type_of_boundary)
 
     def output(self, result_vector, extension="VTK", dt=0., data_name = "Temperature"):
         """
