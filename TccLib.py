@@ -19,6 +19,9 @@ def border_temperature_boundary_conditions(mesh):
     from collections import OrderedDict as oD
 
     # Acquiring borders
+    #     _d
+    #  a |_| c
+    #     b
     vertex_a = np.where(mesh.x == np.min(mesh.x))[0]
     vertex_b = np.where(mesh.y == np.min(mesh.y))[0]
     vertex_c = np.where(mesh.x == np.max(mesh.x))[0]
@@ -33,6 +36,45 @@ def border_temperature_boundary_conditions(mesh):
     values = np.append(values, np.zeros(len(indices) - len(values)) + 1)
 
     return indices, values, types
+
+
+def hagen_poiseuille_boundary_conditions(mesh):
+    """
+    Function that returns three vectors for the standard boundary condition for the Poisson temperature problem.
+    :param mesh: Mesh object to be used to obtain the points information.
+    """
+    import numpy as np
+    from collections import OrderedDict as oD
+
+    # Acquiring borders
+    #     _d
+    #  a |_| c
+    #     b
+    vertex_a = np.where(mesh.x == np.min(mesh.x))[0]
+    vertex_b = np.where(mesh.y == np.min(mesh.y))[0]
+    vertex_c = np.where(mesh.x == np.max(mesh.x))[0]
+    vertex_d = np.where(mesh.y == np.max(mesh.y))[0]
+
+    # Defining psi
+    indices = np.append(vertex_a, vertex_c)
+    values = list(map(lambda x: mesh.y[x], indices))
+    indices = np.array(list(oD.fromkeys(np.append(indices, vertex_b))))
+    values = np.append(values, np.zeros(len(indices) - len(values)))
+    indices = np.array(list(oD.fromkeys(np.append(indices, vertex_d))))
+    values = np.append(values, np.zeros(len(indices) - len(values)) + 1.0)
+    vector = [{"name": "psi", "indices": np.copy(indices),"values": np.copy(values), "type": True}]
+
+    # Defining velocity (x axis component)
+    indices = np.copy(vertex_a)
+    values = np.zeros(len(indices)) + 1.0
+    indices = np.array(list(oD.fromkeys(np.append(indices, np.append(vertex_b, vertex_d)))))
+    values = np.append(values, np.zeros(len(indices) - len(values)))
+    vector.append({"name": "vel_x", "indices": np.copy(indices), "values": np.copy(values), "type": True})
+
+    # Defining velocity (y axis component)
+    vector.append({"name": "vel_y", "indices": np.copy(indices), "values": np.copy(values * 0.), "type": True})
+
+    return vector
 
 
 def check_method_call(*args):
@@ -50,9 +92,9 @@ def check_method_call(*args):
     raise ValueError("Method called incorrectly, please read the documentation and try changing the arguments.")
 
 
-def adjust_figure_size(param_x, param_y):
+def style_plot(param_x, param_y):
     """
-    Ajusts figure size to better represent the image.
+    Alter the plot styling.
     :param param_x: List of x coordinates.
     :param param_y: List of y coordinates.
     """
@@ -65,6 +107,7 @@ def adjust_figure_size(param_x, param_y):
 
     fig = plt.gcf()
     fig.set_size_inches((default_size[0] * max_amplitude(param_x) / max_amplitude(param_y), 4.8))
+    fig.subplots_adjust(left=0.1 - 0.01 * max_amplitude(param_x) / max_amplitude(param_y), right=0.95)
 
 
 def create_new_surface(*imported_points, lt_version=True):
@@ -291,7 +334,7 @@ def apply_initial_boundary_conditions(mesh, boundary_name, vector_v):
     """
     for _relative_index, _point in enumerate(mesh.boundary_conditions[boundary_name].point_index_vector):
         if mesh.boundary_conditions[boundary_name].type_of_condition_vector[_relative_index]:
-            vector_v[0, _point] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
+            vector_v[_point] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
 
 
 def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q=0, total_time=1.):
@@ -334,6 +377,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
     kx_matrix, ky_matrix, m_matrix, *_ = get_matrices(mesh)  # Stiffness (G_x, G_y) and Mass matrices (M)
+    del _
     k_matrix = (k_coef_x * kx_matrix) + (k_coef_y * ky_matrix)  # K_xy = k_coef_x.G_x + k_coef_y.G_y
     q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
     if isinstance(q, ComplexPointList):
@@ -356,7 +400,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         a_matrix = m_matrix / dt + k_matrix
 
         # First frame of the solution (time = 0)
-        t_vector = sparse.lil_matrix((1, mesh.size))
+        t_vector = sparse.lil_matrix((mesh.size, 1))
         apply_initial_boundary_conditions(mesh, "time", t_vector)
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
@@ -399,35 +443,58 @@ def solve_poiseuille(mesh, nu_coef=1.0):
     dt = get_dt(mesh)
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
-    kx_matrix, ky_matrix, m_matrix, gx_matrix, gy_matrix, = get_matrices(mesh)
+    #    K_x,       K_y,        M,       G_x,       G_y
+    k_matrix, ky_matrix, m_matrix, gx_matrix, gy_matrix, = get_matrices(mesh)
 
-    k_matrix = (kx_matrix + ky_matrix)  # K_xy = K_x + K_y
+    k_matrix = (k_matrix + ky_matrix)  # K_xy = K_x + K_y
 
-    velocity_x_vector = sparse.csc_matrix((0, mesh.size))
-    velocity_y_vector = sparse.csc_matrix((0, mesh.size))
-    omega_vector = sparse.lil_matrix((0, mesh.size))
+    velocity_x_vector = sparse.csc_matrix((mesh.size, 1))
+    velocity_y_vector = sparse.csc_matrix((mesh.size, 1))
 
-    # --------------------------------- Boundary conditions treatment --------------------------------------------------
-    apply_initial_boundary_conditions(mesh, omega_vector)
+    # --------------------------------- Set initial boundary conditions ------------------------------------------------
+    apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
+    apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
-    for i in range(10):
+    for i in range(5):
+        # ------------------------ Acquire omega boundary condition ----------------------------------------------------
+        #      M * w = (G_x * v_y) - (G_y * v_x)
         omega_vector = linalg.spsolve(m_matrix.tocsc(), (gx_matrix.dot(velocity_y_vector) -
                                                          gy_matrix.dot(velocity_x_vector)))
+        mesh.new_boundary_condition("omega", point_index=range(mesh.size), values=omega_vector, type_of_boundary=True)
 
-        a_matrix = (m_matrix / dt + nu_coef * k_matrix +
-                    velocity_x_vector.dot(gx_matrix) + velocity_y_vector.dot(gy_matrix))
+        # ------------------------ Solve omega -------------------------------------------------------------------------
+        #      A = M/dt + nu.K + (v * G) !DIMENSIONS DON'T FIT!
+        # TODO: ASK WHY IMPLICIT SOLUTION'S DIMENSIONS DON'T FIT
+        a_matrix = (m_matrix / dt + nu_coef * k_matrix)
 
-        b_vector = (m_matrix / dt).dot(omega_vector)
+        #      b = M/dt - v * G
+        b_vector = (sparse.csr_matrix((m_matrix / dt).dot(omega_vector)).T -
+                    gx_matrix.dot(velocity_x_vector) + gy_matrix.dot(velocity_y_vector))
+        # Applying b.c.
+        apply_boundary_conditions(mesh, "omega", a_matrix, b_vector)
 
-        apply_boundary_conditions(mesh, a_matrix, b_vector)
+        #      A * x = b   ->   x = solve(A, b)
+        omega_vector = sparse.lil_matrix(linalg.spsolve(a_matrix.tocsc(), b_vector)).T
 
-        omega_vector = linalg.spsolve(a_matrix.tocsc(), b_vector)
+        # ------------------------ Solve psi ---------------------------------------------------------------------------
+        #          A = K
+        a_matrix = sparse.lil_matrix(k_matrix, copy=True)
 
-        psi_vector = linalg.spsolve(k_matrix.tocsc(), m_matrix.dot(omega_vector))
+        #      b = M
+        b_vector = sparse.lil_matrix(m_matrix, copy=True)
 
-        velocity_x_vector = linalg.spsolve(m_matrix.tocsc(), gy_matrix.dot(psi_vector))
-        velocity_y_vector = linalg.spsolve(m_matrix.tocsc(), -gx_matrix.dot(psi_vector))
+        # Applying b.c.
+        apply_boundary_conditions(mesh, "psi", a_matrix, b_vector)
+
+        #      A * x = b   ->   x = solve(A, b)
+        psi_vector = sparse.lil_matrix(linalg.spsolve(k_matrix.tocsr(), m_matrix.dot(omega_vector))).T
+
+        # ------------------------ Solve velocities --------------------------------------------------------------------
+        velocity_x_vector = sparse.lil_matrix(linalg.spsolve(m_matrix.tocsc(), gy_matrix.dot(psi_vector))).T
+        velocity_y_vector = sparse.lil_matrix(linalg.spsolve(m_matrix.tocsc(), -gx_matrix.dot(psi_vector))).T
+
+    return velocity_x_vector.todense(), velocity_y_vector.todense()
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -500,15 +567,19 @@ class Mesh:
                 else:
                     self.type_of_condition_vector = np.array([type_of_boundary] * len(point_index))
 
-    def __init__(self, name="untitled", default_boundary_conditions=True):
+    def __init__(self, name="untitled", points=None):
         """
         Class constructor, initializes geometry.
         :param name: Mesh's main name.
-        :param default_boundary_conditions: Determine if the default conditions are to be applied
         """
         import os
         self.name = name
-        self.import_point_structure(import_mesh_file=self.name)
+
+        if isinstance(points, list):
+            self.import_point_structure(points=points)
+        else:
+            self.import_point_structure(import_mesh_file=self.name)
+
         self.boundary_conditions = {}
 
         try:
@@ -518,7 +589,7 @@ class Mesh:
             os.chdir("./results/{0}/".format(self.name))
         # TODO: COPY ORIGINAL .msh FILE TO NEW DIRECTORY
 
-    def import_point_structure(self, *args, points=False, light_version=True, import_mesh_file=""):
+    def import_point_structure(self, *args, points=None, light_version=True, import_mesh_file=""):
         """
         Imports points position to create mesh from source file.
         :param args: Name of source file, defaults to "points.txt".
@@ -566,7 +637,7 @@ class Mesh:
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
-    def output(self, result_vector, extension="VTK", dt=0., data_name = "Temperature"):
+    def output(self, result_vector, extension="VTK", dt=0., data_name="Temperature"):
         """
         Export result to .vtk or .csv file
         :param result_vector: The vector of the value in each point
@@ -653,7 +724,7 @@ class Mesh:
         import matplotlib.pyplot as plt
 
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
-        adjust_figure_size(self.x, self.y)
+        style_plot(self.x, self.y)
 
         if names:
             for _index in range(self.size):
@@ -682,7 +753,7 @@ class Mesh:
         :param solution_vector: Vector that contains the value of the solution for each point in the mesh.
         :return: Display image.
         """
-        from matplotlib import pyplot
+        import matplotlib.pyplot as plt
         from mpl_toolkits.mplot3d import Axes3D
 
         check_method_call(solution_vector)
@@ -695,15 +766,15 @@ class Mesh:
 
         self.output(solution_vector)
 
-        fig = pyplot.gcf()
+        fig = plt.gcf()
         axes = Axes3D(fig)
         surf = axes.plot_trisurf(self.x, self.y, solution_vector, cmap="jet")
         axes.view_init(90, 270)
         fig.colorbar(surf, shrink=0.4, aspect=9)
 
-        pyplot.savefig("{0}_permanent_results".format(self.name))
+        plt.savefig("{0}_permanent_results".format(self.name))
 
-        return pyplot.show()
+        return plt.show()
 
     def show_animated_3d_solution(self, frames_vector, dt=0.):
         """
@@ -752,6 +823,32 @@ class Mesh:
         if dt:
             self.output(frames_vector, dt=dt)
             animation.save("{0}_transient_results.gif".format(self.name), dpi=80, writer='imagemagick')
+
+        return plt.show()
+
+    def show_velocity_solution(self, velocity_x, velocity_y):
+        """
+
+        :param velocity_x:
+        :param velocity_y:
+        :return:
+        """
+        import matplotlib.pyplot as plt
+
+        check_method_call(velocity_x, velocity_y)
+        try:
+            if len(velocity_x) != self.size or len(velocity_y) != self.size:
+                raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
+                                 "{0}".format(self.size))
+        except TypeError:
+            raise ValueError("Solution must be a vector")
+
+        # self.output(solution_vector)
+
+        fig, axes = plt.subplots()
+        q = axes.quiver(self.x, self.y, velocity_x, velocity_y)
+
+        # plt.savefig("{0}_permanent_results".format(self.name))
 
         return plt.show()
 
