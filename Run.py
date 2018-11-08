@@ -35,6 +35,7 @@ poiseuille = True
 if poiseuille:
     vel_x, vel_y = solve_poiseuille(malha)
     malha.show_velocity_solution(vel_x, vel_y)
+    malha.output(result_vector=[vel_x, vel_y], data_names=["Velocity_X", "Velocity_Y"])
 
 else:
     Q = ComplexPointList([32, 39, 64, 67, 68, 70], 50.)

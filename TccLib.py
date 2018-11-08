@@ -391,10 +391,13 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
     if permanent_solution:
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
+        #      A = K
+        #      b = M / dt
         b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix))
         apply_boundary_conditions(mesh, "space", k_matrix, b_vector)
 
         # --------------------------------- Solver ---------------------------------------------------------------------
+        #    A.x = b   ->   x = solve(A, b)
         return linalg.spsolve(k_matrix.tocsc(), b_vector)
 
     else:
@@ -409,7 +412,6 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         apply_initial_boundary_conditions(mesh, "time", t_vector)
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
-        # TODO: REFACTOR BOUNDARY CONDITION APPLY TO ALLOW DIRICHLET SOLUTION
         for _relative_index, _point in enumerate(mesh.boundary_conditions["space"].point_index_vector):
             if mesh.boundary_conditions["space"].type_of_condition_vector[_relative_index]:
                 for _column_index in a_matrix.tocsr()[_point, :].indices:
@@ -461,7 +463,7 @@ def solve_poiseuille(mesh, nu_coef=1.0):
     apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
-    for i in range(1):
+    for i in range(5):
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
         omega_vector = linalg.spsolve(m_matrix.tocsc(), (gx_matrix.dot(velocity_y_vector) -
@@ -470,11 +472,12 @@ def solve_poiseuille(mesh, nu_coef=1.0):
 
         # ------------------------ Solve omega -------------------------------------------------------------------------
         #      A = M/dt + nu*K + (v.G)  -> v.G = G_x.(diagonal(v_x)) + G_y.(diagonal(v_y))
-        a_matrix = (m_matrix / dt + nu_coef * k_matrix +
-                    (velocity_x_vector * gx_matrix + velocity_y_vector * gy_matrix))
+        a_matrix = sparse.lil_matrix(m_matrix / dt + nu_coef * k_matrix +
+                                     (np.ravel(velocity_x_vector.todense()) * gx_matrix +
+                                      np.ravel(velocity_y_vector.todense()) * gy_matrix))
 
         #      b = (M/dt).(omega^n-1)
-        b_vector = sparse.csr_matrix((m_matrix / dt).dot(omega_vector))
+        b_vector = sparse.csr_matrix((m_matrix / dt).dot(omega_vector)).T
 
         # Applying b.c.
         apply_boundary_conditions(mesh, "omega", a_matrix, b_vector)
@@ -486,14 +489,16 @@ def solve_poiseuille(mesh, nu_coef=1.0):
         #      A = K
         a_matrix = sparse.lil_matrix(k_matrix, copy=True)
 
-        #      b = M
-        b_vector = sparse.lil_matrix(m_matrix, copy=True)
+        #      b = M.w
+        b_vector = sparse.lil_matrix(m_matrix.dot(omega_vector), copy=True)
 
         # Applying b.c.
         apply_boundary_conditions(mesh, "psi", a_matrix, b_vector)
 
         #    A.x = b   ->   x = solve(A, b)
-        psi_vector = sparse.lil_matrix(linalg.spsolve(k_matrix.tocsr(), m_matrix.dot(omega_vector))).T
+        psi_vector = sparse.lil_matrix(linalg.spsolve(a_matrix.tocsr(), b_vector)).T
+
+        # return np.ravel(psi_vector.todense()), np.ravel(omega_vector.todense())
 
         # ------------------------ Solve velocities --------------------------------------------------------------------
         #           M.v_x = G_y.psi
@@ -505,14 +510,7 @@ def solve_poiseuille(mesh, nu_coef=1.0):
         apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
-        def func(x):
-            velocity_x_vector[x] = mesh.x[x]
-        list(map(lambda x: func(x), range(mesh.size)))
-
-        temp = gx_matrix.dot(velocity_x_vector)
-        print(temp)
-
-    return np.ravel(velocity_x_vector.todense()), np.ravel(temp.todense())
+    return np.ravel(velocity_x_vector.todense()), np.ravel(velocity_y_vector.todense())
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -890,7 +888,7 @@ class Mesh:
         self.output(result_dictionary={"Velocity_X": velocity_x, "Velocity_Y": velocity_y})
 
         fig, axes = plt.subplots()
-        q = axes.quiver(self.x, self.y, velocity_x, velocity_y)
+        axes.quiver(self.x, self.y, velocity_x, velocity_y)
 
         # plt.savefig("{0}_permanent_results".format(self.name))
 
