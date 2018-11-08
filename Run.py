@@ -17,7 +17,7 @@ malha = Mesh("Poiseuille", points=list(xy))
 # xy = np.array(([0, 0], [1, 0],
 #                [1, 1], [0, 1]))
 # xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
-malha.show_geometry(names=True)
+# malha.show_geometry(names=True)
 
 # xy_indices, xy_values, xy_types = border_temperature_boundary_conditions(malha)
 

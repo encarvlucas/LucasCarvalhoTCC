@@ -341,7 +341,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
     # TODO: REMOVE TOTAL TIME, CALCULATE BY DIFFERENCE BETWEEN FRAMES
     """
     Solves the mesh defined 2D Poisson equation problem:
-        DT = -∇(k.∇T) + Q   ->   (M + K)*T_i^n = M*T_i^n-1 + M*Q_i
+        DT = -∇(k*∇T) + Q   ->   (M + K).T_i^n =  M.T_i^n-1 + M.Q_i
         dt                       dt              dt
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
     :param permanent_solution: Parameter that defines if the solution will be calculated for the transient (True) or
@@ -376,10 +376,15 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
                          "Try using mesh.new_boundary_condition() before solving.")
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
-    kx_matrix, ky_matrix, m_matrix, *_ = get_matrices(mesh)  # Stiffness (G_x, G_y) and Mass matrices (M)
+    # Stiffness (K_x, K_y) and Mass matrices (M)
+    kx_matrix, ky_matrix, m_matrix, *_ = get_matrices(mesh)
     del _
-    k_matrix = (k_coef_x * kx_matrix) + (k_coef_y * ky_matrix)  # K_xy = k_coef_x.G_x + k_coef_y.G_y
-    q_matrix = sparse.lil_matrix((mesh.size, 1))  # Heat generation
+
+    # K_xy = k_coef_x*G_x + k_coef_y*G_y
+    k_matrix = (k_coef_x * kx_matrix) + (k_coef_y * ky_matrix)
+
+    # Heat generation
+    q_matrix = sparse.lil_matrix((mesh.size, 1))
     if isinstance(q, ComplexPointList):
         for _relative_index, _q in enumerate(q.indexes):
             q_matrix[_q] = q.values[_relative_index]
@@ -415,14 +420,14 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
         frames = [np.ravel(t_vector.toarray())]
         for _frame_index in range(int(total_time / dt)):
-            #      b = M * Q_i + M/dt * T_i^n-1
+            #      b = M.Q_i + (M/dt).(T_i^n-1)
             b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix) + m_matrix.dot(t_vector.reshape(-1, 1)) / dt)
 
             # --------------------------------- Boundary conditions treatment ------------------------------------------
             #     b += C.C. Dirichlet/Neumann
             apply_boundary_conditions(mesh, "space", None, b_vector)
 
-            #  A * x = b   ->   x = solve(A, b)
+            #    A.x = b   ->   x = solve(A, b)
             t_vector = linalg.spsolve(a_matrix, b_vector)
             frames.append(t_vector)
 
@@ -456,29 +461,29 @@ def solve_poiseuille(mesh, nu_coef=1.0):
     apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
-    for i in range(5):
+    for i in range(1):
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
-        #      M * w = (G_x * v_y) - (G_y * v_x)
+        #        M.w = (G_x.v_y) - (G_y.v_x)
         omega_vector = linalg.spsolve(m_matrix.tocsc(), (gx_matrix.dot(velocity_y_vector) -
                                                          gy_matrix.dot(velocity_x_vector)))
         mesh.new_boundary_condition("omega", point_index=range(mesh.size), values=omega_vector, type_of_boundary=True)
 
         # ------------------------ Solve omega -------------------------------------------------------------------------
-        #      A = M/dt + nu.K + (v * G) !DIMENSIONS DON'T FIT!
-        # TODO: ASK WHY IMPLICIT SOLUTION'S DIMENSIONS DON'T FIT
-        a_matrix = (m_matrix / dt + nu_coef * k_matrix)
+        #      A = M/dt + nu*K + (v.G)  -> v.G = G_x.(diagonal(v_x)) + G_y.(diagonal(v_y))
+        a_matrix = (m_matrix / dt + nu_coef * k_matrix +
+                    (velocity_x_vector * gx_matrix + velocity_y_vector * gy_matrix))
 
-        #      b = M/dt - v * G
-        b_vector = (sparse.csr_matrix((m_matrix / dt).dot(omega_vector)).T -
-                    gx_matrix.dot(velocity_x_vector) + gy_matrix.dot(velocity_y_vector))
+        #      b = (M/dt).(omega^n-1)
+        b_vector = sparse.csr_matrix((m_matrix / dt).dot(omega_vector))
+
         # Applying b.c.
         apply_boundary_conditions(mesh, "omega", a_matrix, b_vector)
 
-        #      A * x = b   ->   x = solve(A, b)
+        #        A.x = b   ->   x = solve(A, b)
         omega_vector = sparse.lil_matrix(linalg.spsolve(a_matrix.tocsc(), b_vector)).T
 
         # ------------------------ Solve psi ---------------------------------------------------------------------------
-        #          A = K
+        #      A = K
         a_matrix = sparse.lil_matrix(k_matrix, copy=True)
 
         #      b = M
@@ -487,14 +492,27 @@ def solve_poiseuille(mesh, nu_coef=1.0):
         # Applying b.c.
         apply_boundary_conditions(mesh, "psi", a_matrix, b_vector)
 
-        #      A * x = b   ->   x = solve(A, b)
+        #    A.x = b   ->   x = solve(A, b)
         psi_vector = sparse.lil_matrix(linalg.spsolve(k_matrix.tocsr(), m_matrix.dot(omega_vector))).T
 
         # ------------------------ Solve velocities --------------------------------------------------------------------
+        #           M.v_x = G_y.psi
         velocity_x_vector = sparse.lil_matrix(linalg.spsolve(m_matrix.tocsc(), gy_matrix.dot(psi_vector))).T
+        #           M.v_y = -G_x.psi
         velocity_y_vector = sparse.lil_matrix(linalg.spsolve(m_matrix.tocsc(), -gx_matrix.dot(psi_vector))).T
 
-    return velocity_x_vector.todense(), velocity_y_vector.todense()
+        # Applying b.c.
+        apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
+        apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
+
+        def func(x):
+            velocity_x_vector[x] = mesh.x[x]
+        list(map(lambda x: func(x), range(mesh.size)))
+
+        temp = gx_matrix.dot(velocity_x_vector)
+        print(temp)
+
+    return np.ravel(velocity_x_vector.todense()), np.ravel(temp.todense())
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
@@ -637,16 +655,38 @@ class Mesh:
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
-    def output(self, result_vector, extension="VTK", dt=0., data_name="Temperature"):
+    def output(self, result_vector=None, extension="VTK", dt=0., data_names="Temperature", result_dictionary=None):
         """
         Export result to .vtk or .csv file
         :param result_vector: The vector of the value in each point
         :param extension: File extension
         :param dt: Value of time between frames
-        :param data_name: Data name for display.
+        :param data_names: Data name for display.
+        :param result_dictionary: A dictionary that contains the names for each data and its values.
         """
         import os
         import fnmatch
+
+        # ------------------ Contingency -------------------------------------------------------------------------------
+        if not result_dictionary:
+            result_dictionary = {}
+            if isinstance(data_names, list):
+                for index, data_name in enumerate(data_names):
+                    result_dictionary[data_name] = result_vector[index]
+            else:
+                result_dictionary[data_names] = result_vector
+
+        number_frames = 0
+        for _name, _vector in result_dictionary.items():
+            if " " in _name:
+                raise AttributeError("There can't be any spaces in the property names!")
+
+            if dt:
+                if len(_vector[0]) != self.size:
+                    raise ValueError("Incorrect size for result _vector.")
+                number_frames = len(_vector)
+            elif len(_vector) != self.size:
+                raise ValueError("Incorrect size for result vector.")
 
         try:
             os.chdir("./paraview_results/")
@@ -656,61 +696,65 @@ class Mesh:
         number_elements = len(self.ien)
 
         if extension == "CSV":
-            # ------------------------- Saving results to CSV file ----------------------------------------------------
+            # ------------------------- Saving results to CSV file -----------------------------------------------------
+            # TODO: FIX WITH NEW DICTIONARY APPLICATION
             with open("{0}_results.csv".format(self.name), "w") as arq:
-                arq.write("{0}, Points:0, Points:1, Points:2\n".format(data_name))
+                arq.write("Points:0, Points:1, Points:2, {0}\n".format(data_names))
                 for i in range(self.size):
-                    arq.write("{0},{1},{2},{3}\n".format(result_vector[i], self.x[i], self.y[i], 0))
+                    arq.write("{0},{1},{2},{3}\n".format(self.x[i], self.y[i], 0, result_vector[i]))
+            return
 
         if extension == "VTK":
-            try:
-                size = len(result_vector[0])
+            size = self.size
+
+            def write_scalars(file, property_name, vector):
+                file.write("\nSCALARS {0} float 1\n".format(property_name))
+                file.write("\nLOOKUP_TABLE {0}\n".format(property_name))
+                for _i in range(size):
+                    file.write("{}\n".format(vector[_i]))
+
+            def write_header_and_cells(file):
+                # ------------------------------------ Header ----------------------------------------------------------
+                file.write("# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("LucasCarvalhoTCC Results",
+                                                                                          "ASCII", "POLYDATA"))
+                if dt:
+                    file.write("FIELD FieldData 1\nTIME 1 1 double\n{}\n".format(dt))
+                # ------------------------------------ Points coordinates ----------------------------------------------
+                file.write("\nPOINTS {0} {1}\n".format(size, "float"))
+                for _i in range(size):
+                    file.write("{0} {1} 0.0\n".format(self.x[_i], self.y[_i]))
+                # --------------------------------------- Cells --------------------------------------------------------
+                file.write("\nPOLYGONS {0} {1}\n".format(number_elements, number_elements * 4))
+                for _i in range(number_elements):
+                    file.write("{0} {1} {2} {3}\n".format(3, self.ien[_i][0], self.ien[_i][1], self.ien[_i][2]))
+
+            if dt:
                 # -------- Deleting previous results -------------------------------------------------------------------
                 list(map(os.remove, [file for file in os.listdir('.') if fnmatch.fnmatch(file, 'results_*.vtk')]))
 
                 # --------- Saving multiple results to VTK files -------------------------------------------------------
-                for j in range(len(result_vector)):
+                for j in range(number_frames):
                     with open("{0}_results_{1}.vtk".format(self.name, j), "w") as arq:
-                        # ------------------------------------ Header --------------------------------------------------
-                        arq.write(
-                            "# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("LucasCarvalhoTCC Results",
-                                                                                           "ASCII", "POLYDATA"))
-                        arq.write("FIELD FieldData 1\nTIME 1 1 double\n{}\n".format(dt))
-                        # ------------------------------------ Points coordinates --------------------------------------
-                        arq.write("\nPOINTS {0} {1}\n".format(size, "float"))
-                        for i in range(size):
-                            arq.write("{0} {1} 0.0\n".format(self.x[i], self.y[i]))
-                        # --------------------------------------- Cells ------------------------------------------------
-                        arq.write("\nPOLYGONS {0} {1}\n".format(number_elements, number_elements * 4))
-                        for i in range(number_elements):
-                            arq.write("{0} {1} {2} {3}\n".format(3, self.ien[i][0], self.ien[i][1], self.ien[i][2]))
-                        # ------------------------------------ Data in each point --------------------------------------
-                        arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(size, data_name))
-                        arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
-                        for i in range(size):
-                            arq.write("{}\n".format(result_vector[j][i]))
+                        # --------------------------------- Header and cells -------------------------------------------
+                        write_header_and_cells(arq)
 
-            except TypeError:
-                size = self.size
+                        # ------------------------------------ Data in each point --------------------------------------
+                        arq.write("\nPOINT_DATA {0}\n".format(size))
+                        [write_scalars(arq, name, vector[j]) for name, vector in result_dictionary.items()]
+
+            else:
                 # ------------------------- Saving results to VTK file -------------------------------------------------
                 with open("{0}_results.vtk".format(self.name), "w") as arq:
-                    # ------------------------------------ Header ------------------------------------------------------
-                    arq.write(
-                        "# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("LucasCarvalhoTCC Results",
-                                                                                       "ASCII", "POLYDATA"))
-                    # ------------------------------------ Points coordinates ------------------------------------------
-                    arq.write("\nPOINTS {0} {1}\n".format(size, "float"))
-                    for i in range(size):
-                        arq.write("{0} {1} 0.0\n".format(self.x[i], self.y[i]))
-                    # --------------------------------------- Cells ----------------------------------------------------
-                    arq.write("\nPOLYGONS {0} {1}\n".format(number_elements, number_elements * 4))
-                    for i in range(number_elements):
-                        arq.write("{0} {1} {2} {3}\n".format(3, self.ien[i][0], self.ien[i][1], self.ien[i][2]))
+                    # --------------------------------- Header and cells -----------------------------------------------
+                    write_header_and_cells(arq)
+
                     # ----------------------------------- Data in each point--------------------------------------------
-                    arq.write("\nPOINT_DATA {0}\n\nSCALARS {1} float 1\n".format(size, data_name))
-                    arq.write("\nLOOKUP_TABLE {0}\n".format(data_name))
-                    for i in range(size):
-                        arq.write("{}\n".format(result_vector[i]))
+                    arq.write("\nPOINT_DATA {0}\n".format(size))
+                    [write_scalars(arq, name, vector) for name, vector in result_dictionary.items()]
+
+            return
+
+        raise NameError("Format not available. Try VTK or CSV.")
 
     def show_geometry(self, names=False, rainbow=False, save=False):
         """
@@ -764,7 +808,7 @@ class Mesh:
         except TypeError:
             raise ValueError("Solution must be a vector")
 
-        self.output(solution_vector)
+        self.output(result_dictionary={"Temperature": solution_vector})
 
         fig = plt.gcf()
         axes = Axes3D(fig)
@@ -821,7 +865,7 @@ class Mesh:
         animation = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
 
         if dt:
-            self.output(frames_vector, dt=dt)
+            self.output(result_dictionary={"Temperature": frames_vector}, dt=dt)
             animation.save("{0}_transient_results.gif".format(self.name), dpi=80, writer='imagemagick')
 
         return plt.show()
@@ -843,7 +887,7 @@ class Mesh:
         except TypeError:
             raise ValueError("Solution must be a vector")
 
-        # self.output(solution_vector)
+        self.output(result_dictionary={"Velocity_X": velocity_x, "Velocity_Y": velocity_y})
 
         fig, axes = plt.subplots()
         q = axes.quiver(self.x, self.y, velocity_x, velocity_y)
