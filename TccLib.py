@@ -10,6 +10,7 @@ __website__ = "https://github.com/encarvlucas/LucasCarvalhoTCC"
 
 
 # -- Functions ---------------------------------------------------------------------------------------------------------
+
 def border_temperature_boundary_conditions(mesh):
     """
     Function that returns three vectors for the standard boundary condition for the Poisson temperature problem.
@@ -207,6 +208,16 @@ def get_dt(mesh):
     return min(list(map(lambda x: _h(x), mesh.ien)))
 
 
+def sparse_to_vector(vector):
+    """
+    Converts one dimensional sparse matrix to a vector array to allow more features.
+    :param vector: Vector as a sparse matrix (x,1) or (1,x).
+    :return: Vector as an one dimensional array (x,).
+    """
+    import numpy as np
+    return np.ravel(vector.toarray())
+
+
 def get_matrices(mesh):
     """
     Function that generates the algebraic components of the solution method
@@ -350,11 +361,11 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
     :param k_coef_x: Thermal conductivity coefficient for x axis.
     :param k_coef_y: Thermal conductivity coefficient for y axis.
     :param q: Heat generation for each point.
+    :param total_time: Length of time the calculation takes place (only necessary for transient solutions)
     :return: Temperature value for each point in the mesh.
     """
     from scipy import sparse
     import scipy.sparse.linalg as linalg
-    import numpy as np
 
     k_coef_x = k_coef or k_coef_x
     k_coef_y = k_coef or k_coef_y
@@ -420,7 +431,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
             else:
                 q_matrix[_point, 0] += mesh.boundary_conditions["space"].values_vector[_relative_index]
 
-        frames = [np.ravel(t_vector.toarray())]
+        frames = [sparse_to_vector(t_vector)]
         for _frame_index in range(int(total_time / dt)):
             #      b = M.Q_i + (M/dt).(T_i^n-1)
             b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix) + m_matrix.dot(t_vector.reshape(-1, 1)) / dt)
@@ -442,7 +453,6 @@ def solve_poiseuille(mesh, nu_coef=1.0):
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
     :return: Velocity vectors and pressure values for each point in the mesh.
     """
-    import numpy as np
     from scipy import sparse
     import scipy.sparse.linalg as linalg
     # TODO: CONTINUE SOLUTION
@@ -455,15 +465,22 @@ def solve_poiseuille(mesh, nu_coef=1.0):
 
     k_matrix = (k_matrix + ky_matrix)  # K_xy = K_x + K_y
 
-    velocity_x_vector = sparse.csc_matrix((mesh.size, 1))
-    velocity_y_vector = sparse.csc_matrix((mesh.size, 1))
+    velocity_x_vector = sparse.lil_matrix((mesh.size, 1))
+    velocity_y_vector = sparse.lil_matrix((mesh.size, 1))
 
     # --------------------------------- Set initial boundary conditions ------------------------------------------------
     apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
     apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
+    # Wipe previous result set
+    mesh.remove_previous_results(True)
+    mesh.output_results(result_dictionary={"Velocity_X": sparse_to_vector(velocity_x_vector),
+                                           "Velocity_Y": sparse_to_vector(velocity_y_vector)},
+                        dt=dt, frame_num=0)
+
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
-    for i in range(5):
+    for frame_num in range(1, 3):
+        print("Performing loop {0}".format(frame_num))
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
         omega_vector = linalg.spsolve(m_matrix.tocsc(), (gx_matrix.dot(velocity_y_vector) -
@@ -473,11 +490,11 @@ def solve_poiseuille(mesh, nu_coef=1.0):
         # ------------------------ Solve omega -------------------------------------------------------------------------
         #      A = M/dt + nu*K + (v.G)  -> v.G = G_x.(diagonal(v_x)) + G_y.(diagonal(v_y))
         a_matrix = sparse.lil_matrix(m_matrix / dt + nu_coef * k_matrix +
-                                     (np.ravel(velocity_x_vector.todense()) * gx_matrix +
-                                      np.ravel(velocity_y_vector.todense()) * gy_matrix))
+                                     (sparse_to_vector(velocity_x_vector) * gx_matrix +
+                                      sparse_to_vector(velocity_y_vector) * gy_matrix))
 
         #      b = (M/dt).(omega^n-1)
-        b_vector = sparse.csr_matrix((m_matrix / dt).dot(omega_vector)).T
+        b_vector = sparse.lil_matrix((m_matrix / dt).dot(omega_vector)).T
 
         # Applying b.c.
         apply_boundary_conditions(mesh, "omega", a_matrix, b_vector)
@@ -498,8 +515,6 @@ def solve_poiseuille(mesh, nu_coef=1.0):
         #    A.x = b   ->   x = solve(A, b)
         psi_vector = sparse.lil_matrix(linalg.spsolve(a_matrix.tocsr(), b_vector)).T
 
-        # return np.ravel(psi_vector.todense()), np.ravel(omega_vector.todense())
-
         # ------------------------ Solve velocities --------------------------------------------------------------------
         #           M.v_x = G_y.psi
         velocity_x_vector = sparse.lil_matrix(linalg.spsolve(m_matrix.tocsc(), gy_matrix.dot(psi_vector))).T
@@ -510,10 +525,86 @@ def solve_poiseuille(mesh, nu_coef=1.0):
         apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
-    return np.ravel(velocity_x_vector.todense()), np.ravel(velocity_y_vector.todense())
+        # Saving frames
+        mesh.output_results(result_dictionary={"Velocity_X": sparse_to_vector(velocity_x_vector),
+                                               "Velocity_Y": sparse_to_vector(velocity_y_vector)},
+                            dt=dt, frame_num=frame_num)
+
+    return sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)
 
 
 # -- Classes -----------------------------------------------------------------------------------------------------------
+
+class Particle:
+    """
+    Defines a moving particle.
+    """
+    def __init__(self, name, position=(0., 0.)):
+        self.name = name
+        self.pos_x = position[0]
+        self.pos_y = position[1]
+
+
+class BoundaryConditions:
+    """
+    Boundary conditions of the simulation.
+    """
+    point_index_vector = []
+    values_vector = []
+    type_of_condition_vector = []
+
+    def set_new_boundary_condition(self, *vect_argm, point_index=range(0), values=0., type_of_boundary=True):
+        """
+        Sets the boundary condition for the mesh.
+        :param vect_argm: Vector(s) of boundary conditions.
+        :param point_index: Vector of order of points.
+        :param values: Value or vector of values of the condition in each point.
+        :param type_of_boundary: Value or vector of values, defined: True for Dirichlet and False for Neumann.
+        """
+        import numpy as np
+
+        if vect_argm:
+            check_method_call(vect_argm)
+        else:
+            check_method_call(point_index)
+
+        try:
+            if isinstance(vect_argm[0], list) or isinstance(values, np.ndarray):
+                array = np.array(vect_argm[0])
+
+                if len(vect_argm[0][0]) == 3:
+                    self.point_index_vector = array[:, 0]
+                    self.values_vector = array[:, 1]
+                    self.type_of_condition_vector = list(map(bool, array[:, 2]))
+                    return
+
+                if len(vect_argm[0][0]) == 2:
+                    self.point_index_vector = array[:, 0]
+                    self.values_vector = array[:, 1]
+                    self.type_of_condition_vector = [True] * len(self.point_index_vector)
+                    return
+
+        except (TypeError, IndexError):
+            self.point_index_vector = point_index
+            if isinstance(values, list) or isinstance(values, np.ndarray):
+                if len(values) == len(point_index):
+                    self.values_vector = np.array(values)
+                else:
+                    raise ValueError("Incorrect vector sizes, there must be an equal number of points and point "
+                                     "types and definitions")
+            else:
+                self.values_vector = np.array([values] * len(point_index))
+
+            if isinstance(type_of_boundary, list) or isinstance(type_of_boundary, np.ndarray):
+                if len(type_of_boundary) == len(point_index):
+                    self.type_of_condition_vector = list(map(bool, np.array(type_of_boundary)))
+
+                else:
+                    raise ValueError("Incorrect vector sizes, there must be an equal number of points and point "
+                                     "types and definitions")
+            else:
+                self.type_of_condition_vector = np.array([type_of_boundary] * len(point_index))
+
 
 class Mesh:
     """
@@ -522,66 +613,6 @@ class Mesh:
     x, y, ien = [], [], []
     name = "default"
     size = 0
-
-    class BoundaryConditions:
-        """
-        Boundary conditions of the simulation
-        """
-        point_index_vector = []
-        values_vector = []
-        type_of_condition_vector = []
-
-        def set_new_boundary_condition(self, *vect_argm, point_index=range(0), values=0., type_of_boundary=True):
-            """
-            Sets the boundary condition for the mesh.
-            :param vect_argm: Vector(s) of boundary conditions.
-            :param point_index: Vector of order of points.
-            :param values: Value or vector of values of the condition in each point.
-            :param type_of_boundary: Value or vector of values, defined: True for Dirichlet and False for Neumann.
-            """
-            import numpy as np
-
-            if vect_argm:
-                check_method_call(vect_argm)
-            else:
-                check_method_call(point_index)
-
-            try:
-                if isinstance(vect_argm[0], list) or isinstance(values, np.ndarray):
-                    array = np.array(vect_argm[0])
-
-                    if len(vect_argm[0][0]) == 3:
-                        self.point_index_vector = array[:, 0]
-                        self.values_vector = array[:, 1]
-                        self.type_of_condition_vector = list(map(bool, array[:, 2]))
-                        return
-
-                    if len(vect_argm[0][0]) == 2:
-                        self.point_index_vector = array[:, 0]
-                        self.values_vector = array[:, 1]
-                        self.type_of_condition_vector = [True] * len(self.point_index_vector)
-                        return
-
-            except (TypeError, IndexError):
-                self.point_index_vector = point_index
-                if isinstance(values, list) or isinstance(values, np.ndarray):
-                    if len(values) == len(point_index):
-                        self.values_vector = np.array(values)
-                    else:
-                        raise ValueError("Incorrect vector sizes, there must be an equal number of points and point "
-                                         "types and definitions")
-                else:
-                    self.values_vector = np.array([values] * len(point_index))
-
-                if isinstance(type_of_boundary, list) or isinstance(type_of_boundary, np.ndarray):
-                    if len(type_of_boundary) == len(point_index):
-                        self.type_of_condition_vector = list(map(bool, np.array(type_of_boundary)))
-
-                    else:
-                        raise ValueError("Incorrect vector sizes, there must be an equal number of points and point "
-                                         "types and definitions")
-                else:
-                    self.type_of_condition_vector = np.array([type_of_boundary] * len(point_index))
 
     def __init__(self, name="untitled", points=None):
         """
@@ -649,16 +680,40 @@ class Mesh:
         :param values: Value or vector of values of the condition in each point.
         :param type_of_boundary: Value or vector of values, defined: True for Dirichlet and False for Neumann.
         """
-        self.boundary_conditions[name] = self.BoundaryConditions()
+        self.boundary_conditions[name] = BoundaryConditions()
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
-    def output(self, result_vector=None, extension="VTK", dt=0., data_names="Temperature", result_dictionary=None):
+    def remove_previous_results(self, return_to_previous_directory=False):
+        """
+        Removes previous results to prevent incorrect data analysis.
+        :param return_to_previous_directory: Returns to previous directory.
+        """
+        import os
+        import fnmatch
+
+        # ---------------- Deleting previous results -------------------------------------------------------------------
+        try:
+            os.chdir("./paraview_results/")
+        except FileNotFoundError:
+            if not fnmatch.fnmatch(os.getcwd(), "*/paraview_results"):
+                os.mkdir("paraview_results/")
+                os.chdir("./paraview_results/")
+
+        list(map(os.remove,
+                 [file for file in os.listdir(".") if fnmatch.fnmatch(file, "{0}_results_*.vtk".format(self.name))]))
+
+        if return_to_previous_directory:
+            os.chdir("..")
+
+    def output_results(self, result_vector=None, extension="VTK", dt=0., frame_num=None, data_names="Temperature",
+                       result_dictionary=None):
         """
         Export result to .vtk or .csv file
         :param result_vector: The vector of the value in each point
         :param extension: File extension
         :param dt: Value of time between frames
+        :param frame_num: Save one frame at a time (the number of that frame).
         :param data_names: Data name for display.
         :param result_dictionary: A dictionary that contains the names for each data and its values.
         """
@@ -679,17 +734,20 @@ class Mesh:
             if " " in _name:
                 raise AttributeError("There can't be any spaces in the property names!")
 
-            if dt:
+            if dt and frame_num is None:
                 if len(_vector[0]) != self.size:
                     raise ValueError("Incorrect size for result _vector.")
                 number_frames = len(_vector)
             elif len(_vector) != self.size:
                 raise ValueError("Incorrect size for result vector.")
 
+        # ----------------------- Change to result directory -----------------------------------------------------------
         try:
             os.chdir("./paraview_results/")
         except FileNotFoundError:
-            pass
+            if not fnmatch.fnmatch(os.getcwd(), "*/paraview_results"):
+                os.mkdir("paraview_results/")
+                os.chdir("./paraview_results/")
 
         number_elements = len(self.ien)
 
@@ -700,7 +758,7 @@ class Mesh:
                 arq.write("Points:0, Points:1, Points:2, {0}\n".format(data_names))
                 for i in range(self.size):
                     arq.write("{0},{1},{2},{3}\n".format(self.x[i], self.y[i], 0, result_vector[i]))
-            return
+            return os.chdir("..")
 
         if extension == "VTK":
             size = self.size
@@ -727,18 +785,27 @@ class Mesh:
                     file.write("{0} {1} {2} {3}\n".format(3, self.ien[_i][0], self.ien[_i][1], self.ien[_i][2]))
 
             if dt:
-                # -------- Deleting previous results -------------------------------------------------------------------
-                list(map(os.remove, [file for file in os.listdir('.') if fnmatch.fnmatch(file, 'results_*.vtk')]))
-
-                # --------- Saving multiple results to VTK files -------------------------------------------------------
-                for j in range(number_frames):
-                    with open("{0}_results_{1}.vtk".format(self.name, j), "w") as arq:
+                if frame_num is not None:
+                    # ----- Saving a single result (frame) to VTK file -------------------------------------------------
+                    with open("{0}_results_{1}.vtk".format(self.name, frame_num), "w") as arq:
                         # --------------------------------- Header and cells -------------------------------------------
                         write_header_and_cells(arq)
 
                         # ------------------------------------ Data in each point --------------------------------------
                         arq.write("\nPOINT_DATA {0}\n".format(size))
-                        [write_scalars(arq, name, vector[j]) for name, vector in result_dictionary.items()]
+                        [write_scalars(arq, name, vector) for name, vector in result_dictionary.items()]
+
+                else:
+                    self.remove_previous_results()
+                    # ----- Saving multiple results to VTK files -------------------------------------------------------
+                    for j in range(number_frames):
+                        with open("{0}_results_{1}.vtk".format(self.name, j), "w") as arq:
+                            # ----------------------------- Header and cells -------------------------------------------
+                            write_header_and_cells(arq)
+
+                            # -------------------------------- Data in each point --------------------------------------
+                            arq.write("\nPOINT_DATA {0}\n".format(size))
+                            [write_scalars(arq, name, vector[j]) for name, vector in result_dictionary.items()]
 
             else:
                 # ------------------------- Saving results to VTK file -------------------------------------------------
@@ -750,7 +817,7 @@ class Mesh:
                     arq.write("\nPOINT_DATA {0}\n".format(size))
                     [write_scalars(arq, name, vector) for name, vector in result_dictionary.items()]
 
-            return
+            return os.chdir("..")
 
         raise NameError("Format not available. Try VTK or CSV.")
 
@@ -806,7 +873,7 @@ class Mesh:
         except TypeError:
             raise ValueError("Solution must be a vector")
 
-        self.output(result_dictionary={"Temperature": solution_vector})
+        self.output_results(result_dictionary={"Temperature": solution_vector})
 
         fig = plt.gcf()
         axes = Axes3D(fig)
@@ -863,7 +930,7 @@ class Mesh:
         animation = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
 
         if dt:
-            self.output(result_dictionary={"Temperature": frames_vector}, dt=dt)
+            self.output_results(result_dictionary={"Temperature": frames_vector}, dt=dt)
             animation.save("{0}_transient_results.gif".format(self.name), dpi=80, writer='imagemagick')
 
         return plt.show()
@@ -885,7 +952,7 @@ class Mesh:
         except TypeError:
             raise ValueError("Solution must be a vector")
 
-        self.output(result_dictionary={"Velocity_X": velocity_x, "Velocity_Y": velocity_y})
+        self.output_results(result_dictionary={"Velocity_X": velocity_x, "Velocity_Y": velocity_y})
 
         fig, axes = plt.subplots()
         axes.quiver(self.x, self.y, velocity_x, velocity_y)
