@@ -4,7 +4,7 @@ from matplotlib import pyplot
 from mpl_toolkits.mplot3d import Axes3D
 
 
-xx, yy = np.meshgrid(np.linspace(0, 5, 20), np.linspace(0, 1, 10))
+xx, yy = np.meshgrid(np.linspace(0, 5, 10), np.linspace(0, 1, 20))
 xx = np.array(np.reshape(xx, (xx.size, 1)))
 yy = np.array(np.reshape(yy, (yy.size, 1)))
 xy = np.hstack((xx, yy))
@@ -19,13 +19,6 @@ malha = Mesh("Poiseuille", points=list(xy))
 # xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
 # malha.show_geometry(names=True)
 
-# xy_indices, xy_values, xy_types = border_temperature_boundary_conditions(malha)
-
-# malha.new_boundary_condition("space", point_index=xy_indices, values=xy_values,
-#                              type_of_boundary=True)
-# malha.new_boundary_condition("time", point_index=xy_indices, values=xy_values,
-#                              type_of_boundary=True)
-
 list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_vect["indices"], values=_vect["values"],
                                                     type_of_boundary=_vect["type"]),
          hagen_poiseuille_boundary_conditions(malha)))
@@ -33,7 +26,7 @@ list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_
 poiseuille = True
 
 if poiseuille:
-    vel_x, vel_y = solve_poiseuille(malha)
+    vel_x, vel_y = solve_poiseuille(malha, total_time=50., dt=10.)
     # malha.show_velocity_solution(vel_x, vel_y)
 
 else:

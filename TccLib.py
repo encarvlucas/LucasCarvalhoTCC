@@ -348,8 +348,7 @@ def apply_initial_boundary_conditions(mesh, boundary_name, vector_v):
             vector_v[_point] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
 
 
-def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q=0, total_time=1.):
-    # TODO: REMOVE TOTAL TIME, CALCULATE BY DIFFERENCE BETWEEN FRAMES
+def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q=None, dt=None, total_time=1.):
     """
     Solves the mesh defined 2D Poisson equation problem:
         DT = -∇(k*∇T) + Q   ->   (M + K).T_i^n =  M.T_i^n-1 + M.Q_i
@@ -361,7 +360,8 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
     :param k_coef_x: Thermal conductivity coefficient for x axis.
     :param k_coef_y: Thermal conductivity coefficient for y axis.
     :param q: Heat generation for each point.
-    :param total_time: Length of time the calculation takes place (only necessary for transient solutions)
+    :param dt: Value of time between frames.
+    :param total_time: Length of time the calculation takes place (only necessary for transient solutions).
     :return: Temperature value for each point in the mesh.
     """
     from scipy import sparse
@@ -376,7 +376,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
     try:
         for boundary_condition in [mesh.boundary_conditions["space"], mesh.boundary_conditions["time"]]:
-            if (not isinstance(boundary_condition, Mesh.BoundaryConditions) or
+            if (not isinstance(boundary_condition, BoundaryConditions) or
                     not (len(boundary_condition.point_index_vector) and
                          len(boundary_condition.values_vector) and
                          len(boundary_condition.type_of_condition_vector))):
@@ -412,8 +412,8 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         return linalg.spsolve(k_matrix.tocsc(), b_vector)
 
     else:
-        # Optimal dt based on size of elements
-        dt = get_dt(mesh)
+        # Use custom dt or obtain optimal dt based on size of elements
+        dt = dt or get_dt(mesh)
 
         #      A = M/dt + K
         a_matrix = m_matrix / dt + k_matrix
@@ -447,17 +447,19 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         return frames
 
 
-def solve_poiseuille(mesh, nu_coef=1.0):
+def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
     """
     Solves the mesh defined 2D Poiseuille equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
+    :param dt: Value of time between frames.
+    :param total_time: Length of time the calculation takes place.
     :return: Velocity vectors and pressure values for each point in the mesh.
     """
     from scipy import sparse
     import scipy.sparse.linalg as linalg
-    # TODO: CONTINUE SOLUTION
 
-    dt = get_dt(mesh)
+    dt = dt or get_dt(mesh)
+    num_frames = int(total_time/dt)
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
     #    K_x,       K_y,        M,       G_x,       G_y
@@ -479,7 +481,7 @@ def solve_poiseuille(mesh, nu_coef=1.0):
                         dt=dt, frame_num=0)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
-    for frame_num in range(1, 3):
+    for frame_num in range(1, num_frames + 1):
         print("Performing loop {0}".format(frame_num))
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
@@ -620,6 +622,7 @@ class Mesh:
         :param name: Mesh's main name.
         """
         import os
+        from shutil import copy
         self.name = name
 
         if isinstance(points, list):
@@ -634,7 +637,9 @@ class Mesh:
         except FileNotFoundError:
             os.mkdir("./results/{0}".format(self.name))
             os.chdir("./results/{0}/".format(self.name))
-        # TODO: COPY ORIGINAL .msh FILE TO NEW DIRECTORY
+
+        if not points:
+            copy("../{0}.msh".format(self.name), "./")
 
     def import_point_structure(self, *args, points=None, light_version=True, import_mesh_file=""):
         """
