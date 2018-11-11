@@ -24,4 +24,4 @@ vect = solve_poisson(malha, permanent_solution=False)
 malha.show_animated_3d_solution(vect)
 
 vect = solve_poisson(malha, permanent_solution=False, q=Q)
-malha.show_animated_3d_solution(vect, dt=get_dt(malha))
+malha.show_animated_3d_solution(vect)

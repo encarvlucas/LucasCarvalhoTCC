@@ -63,7 +63,7 @@ def hagen_poiseuille_boundary_conditions(mesh):
     values = np.append(values, np.zeros(len(indices) - len(values)))
     indices = np.array(list(oD.fromkeys(np.append(indices, vertex_d))))
     values = np.append(values, np.zeros(len(indices) - len(values)) + 1.0)
-    vector = [{"name": "psi", "indices": np.copy(indices),"values": np.copy(values), "type": True}]
+    vector = [{"name": "psi", "indices": np.copy(indices), "values": np.copy(values), "type": True}]
 
     # Defining velocity (x axis component)
     indices = np.copy(vertex_a)
@@ -84,16 +84,18 @@ def check_method_call(*args):
     :param args: Any argument group that required for the method
     """
     for arg in args:
-        try:
-            if len(arg):
-                return
-        except TypeError:
-            if arg:
-                return
+        if arg is not None:
+            try:
+                if len(arg):
+                    return
+            except TypeError:
+                if arg:
+                    return
     raise ValueError("Method called incorrectly, please read the documentation and try changing the arguments.")
 
 
 def check_list_or_object(_list, _class):
+    # TODO: CHECK IF ITS BEING USED CORRECTLY
     """
     Checks if _list parameter is a list of the same type as _class, or if it is a single value of that type.
     :param _list: List or single value to be checked.
@@ -242,6 +244,19 @@ def sparse_to_vector(vector):
     return np.ravel(vector.toarray())
 
 
+def get_area(x_coord, y_coord):
+    """
+    Calculate area of a triangle, given it's vertices.
+    :param x_coord: The x coordinates of the vertices, in order.
+    :param y_coord: The y coordinates of the vertices, in order.
+    :return: The area of the triangle.
+    """
+    check_method_call(x_coord, y_coord)
+    return ((x_coord[0] * y_coord[1] - x_coord[1] * y_coord[0]) +
+            (x_coord[1] * y_coord[2] - x_coord[2] * y_coord[1]) +
+            (x_coord[2] * y_coord[0] - x_coord[0] * y_coord[2])) / 2.0
+
+
 def get_matrices(mesh):
     """
     Function that generates the algebraic components of the solution method
@@ -265,9 +280,7 @@ def get_matrices(mesh):
         x = mesh.x[elem]
         y = mesh.y[elem]
 
-        area = ((x[0] * y[1] - x[1] * y[0]) +
-                (x[1] * y[2] - x[2] * y[1]) +
-                (x[2] * y[0] - x[0] * y[2])) / 2.0
+        area = get_area(x, y)
 
         # B = [b_i, b_j, b_k]
         b = np.array([y[1] - y[2],
@@ -437,7 +450,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
 
     else:
         # Use custom dt or obtain optimal dt based on size of elements
-        dt = dt or get_dt(mesh)
+        dt = dt or mesh.default_dt
 
         #      A = M/dt + K
         a_matrix = m_matrix / dt + k_matrix
@@ -482,7 +495,7 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
     from scipy import sparse
     import scipy.sparse.linalg as linalg
 
-    dt = dt or get_dt(mesh)
+    dt = dt or mesh.default_dt
     num_frames = int(total_time/dt)
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
@@ -507,18 +520,20 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
     # --------------------------------- Adding particles ---------------------------------------------------------------
     mesh.add_particle("A", (0.1 * (max(mesh.x) - min(mesh.x)), 0.5 * (max(mesh.y) - min(mesh.y))))
     particles = Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")
+    mesh.add_particle(list_of_particles=particles)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
         print("Performing loop {0}".format(frame_num))
 
-        # TODO: TEMPORARY, REMOVE LATER
+        # Show particle progress
         mesh.show_geometry([particles])
+        mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt)
 
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
-        omega_vector = linalg.spsolve(m_matrix.tocsc(), (gx_matrix.dot(velocity_y_vector) -
-                                                         gy_matrix.dot(velocity_x_vector)))
+        omega_vector = linalg.spsolve(m_matrix.tocsc(),
+                                      (gx_matrix.dot(velocity_y_vector) - gy_matrix.dot(velocity_x_vector)))
         mesh.new_boundary_condition("omega", point_index=range(mesh.size), values=omega_vector, type_of_boundary=True)
 
         # ------------------------ Solve omega -------------------------------------------------------------------------
@@ -657,6 +672,7 @@ class Mesh:
     particles = []
     name = "default"
     size = 0
+    default_dt = 0.
 
     def __init__(self, name="untitled", points=None):
         """
@@ -718,6 +734,7 @@ class Mesh:
 
         self.x, self.y, self.ien, self.delauney_surfaces = surface
         self.size = len(self.x)
+        self.default_dt = get_dt(self)
 
     def new_boundary_condition(self, name, point_index=range(0), values=0., type_of_boundary=True):
         """
@@ -731,16 +748,48 @@ class Mesh:
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
-    def add_particle(self, name, position, color="r"):
+    def add_particle(self, name=None, position=None, color="r", list_of_particles=None):
         """
         Associates a new particle with the mesh.
         :param name: Name of the particle.
         :param position: Positional argument, (x, y) coordinates.
         :param color: Custom color for particle, default is "r" (red).
+        :param list_of_particles: Adds a list of predefined particle objects.
         """
-        check_method_call(name, position)
+        if list_of_particles:
+            list_of_particles = check_list_or_object(list_of_particles, Particle)
+            [self.particles.append(particle) for particle in list_of_particles]
 
-        self.particles.append(Particle(name, position, color))
+        else:
+            check_method_call(name)
+            check_method_call(position)
+            self.particles.append(Particle(name, position, color))
+
+    def move_particles(self, velocity=None, velocity_x=None, velocity_y=None, dt=None):
+        check_method_call(dt)
+
+        if velocity:
+            velocity_x = velocity[0]
+            velocity_y = velocity[1]
+
+        check_method_call(velocity_x, velocity_y)
+
+        for particle in self.particles:
+            # Determine which element contains the particle
+            element = self.ien[self.delauney_surfaces.find_simplex((particle.pos_x, particle.pos_y))]
+
+            total_area = get_area(self.x[element], self.y[element])
+            # Interpolate velocity value for particle coordinates
+
+            # Adds the velocity component from each point, interpolated by the proportion of the area opposite it.
+            for point in element:
+                _element = element.tolist()
+                _element.remove(point)
+                component = abs(get_area([particle.pos_x] + list(self.x[_element]),
+                                         [particle.pos_y] + list(self.y[_element])) / total_area)
+                particle.pos_x += component * velocity_x[point] * dt
+                particle.pos_y += component * velocity_y[point] * dt
+            # TODO: REMOVE PARTICLES THAT GO PAST MESH LIMITS
 
     def remove_previous_results(self, return_to_previous_directory=False):
         """
@@ -882,7 +931,7 @@ class Mesh:
 
         raise NameError("Format not available. Try VTK or CSV.")
 
-    def show_geometry(self, particles=None, names=False, rainbow=False, save=True):
+    def show_geometry(self, particles=None, names=False, rainbow=False, save=False):
         """
         Display mesh geometry on screen using matplotlib.
         :param particles: Particle or list of particles to be displayed inside the geometry.
