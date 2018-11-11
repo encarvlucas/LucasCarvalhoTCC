@@ -93,6 +93,28 @@ def check_method_call(*args):
     raise ValueError("Method called incorrectly, please read the documentation and try changing the arguments.")
 
 
+def check_list_or_object(_list, _class):
+    """
+    Checks if _list parameter is a list of the same type as _class, or if it is a single value of that type.
+    :param _list: List or single value to be checked.
+    :param _class: Type of object desired.
+    :return: List of values of the type _class.
+    """
+    if _list:
+        if isinstance(_list, (list, tuple)):
+            if all([isinstance(obj, _class) for obj in _list]):
+                return _list
+            else:
+                raise TypeError("Object in argument list is not a {0}!".format(_class.__name__))
+        else:
+            if isinstance(_list, _class):
+                return [_list]
+            else:
+                raise TypeError("Argument used is not a {0}!".format(_class.__name__))
+    else:
+        return []
+
+
 def style_plot(param_x, param_y):
     """
     Alter the plot styling.
@@ -117,14 +139,14 @@ def create_new_surface(*imported_points, lt_version=True):
     :return: Element information
     """
     import numpy as np
-    import scipy.spatial as dl
+    import scipy.spatial as sp
 
-    x, y, ien = 0, 0, 0
+    x, y, ien, delauney_surfaces = 0, 0, 0, 0
 
     if imported_points:
         # Custom geometry.
         imported_points = np.array(imported_points[0])
-        delauney_surfaces = dl.Delaunay(imported_points[:, :2])
+        delauney_surfaces = sp.Delaunay(imported_points[:, :2])
 
         if lt_version:
             x = delauney_surfaces.points[:, 0]
@@ -137,7 +159,7 @@ def create_new_surface(*imported_points, lt_version=True):
                 geom.add_polygon([[delauney_surfaces.points[tri[0]][0], delauney_surfaces.points[tri[0]][1], 0.0],
                                   [delauney_surfaces.points[tri[1]][0], delauney_surfaces.points[tri[1]][1], 0.0],
                                   [delauney_surfaces.points[tri[2]][0], delauney_surfaces.points[tri[2]][1], 0.0]])
-            x, y, ien = use_meshio(None, geom)
+            x, y, ien, delauney_surfaces = use_meshio(None, geom)
 
     else:
         if not lt_version:
@@ -154,9 +176,9 @@ def create_new_surface(*imported_points, lt_version=True):
                              ],
                              lcar=0.05)
 
-            x, y, ien = use_meshio(None, geom)
+            x, y, ien, delauney_surfaces = use_meshio(None, geom)
 
-    return x, y, ien
+    return x, y, ien, delauney_surfaces
 
 
 def use_meshio(filename, geometry):
@@ -182,9 +204,11 @@ def use_meshio(filename, geometry):
 
     x_ = points[:, 0]
     y_ = points[:, 1]
-    ien_ = sp.Delaunay(points[:, :2]).simplices
 
-    return x_, y_, ien_
+    delauney_surfaces = sp.Delaunay(points[:, :2])
+    ien_ = delauney_surfaces.simplices
+
+    return x_, y_, ien_, delauney_surfaces
 
 
 def get_dt(mesh):
@@ -480,9 +504,14 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
                                            "Velocity_Y": sparse_to_vector(velocity_y_vector)},
                         dt=dt, frame_num=0)
 
+    # --------------------------------- Adding particles ---------------------------------------------------------------
+    particle = Particle("A", (0.1 * (max(mesh.x) - min(mesh.x)), 0.4 * (max(mesh.y) - min(mesh.y))))
+    particles = Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))))
+
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
         print("Performing loop {0}".format(frame_num))
+        mesh.show_geometry([particle, particles])
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
         omega_vector = linalg.spsolve(m_matrix.tocsc(), (gx_matrix.dot(velocity_y_vector) -
@@ -612,7 +641,7 @@ class Mesh:
     """
     Mesh element to be used in the calculations
     """
-    x, y, ien = [], [], []
+    x, y, ien, delauney_surfaces = [], [], [], []
     name = "default"
     size = 0
 
@@ -674,7 +703,7 @@ class Mesh:
                 # surface = create_new_surface(lt_version=False)  # TODO: FIX LIBRARY
                 surface = use_meshio("results/untitled", None)
 
-        self.x, self.y, self.ien = surface
+        self.x, self.y, self.ien, self.delauney_surfaces = surface
         self.size = len(self.x)
 
     def new_boundary_condition(self, name, point_index=range(0), values=0., type_of_boundary=True):
@@ -726,6 +755,8 @@ class Mesh:
         import fnmatch
 
         # ------------------ Contingency -------------------------------------------------------------------------------
+        check_method_call(result_vector, result_dictionary)
+
         if not result_dictionary:
             result_dictionary = {}
             if isinstance(data_names, list):
@@ -743,6 +774,7 @@ class Mesh:
                 if len(_vector[0]) != self.size:
                     raise ValueError("Incorrect size for result _vector.")
                 number_frames = len(_vector)
+
             elif len(_vector) != self.size:
                 raise ValueError("Incorrect size for result vector.")
 
@@ -826,9 +858,10 @@ class Mesh:
 
         raise NameError("Format not available. Try VTK or CSV.")
 
-    def show_geometry(self, names=False, rainbow=False, save=False):
+    def show_geometry(self, particles=None, names=False, rainbow=False, save=True):
         """
         Display mesh geometry on screen using matplotlib.
+        :param particles: Particle or list of particles to be displayed inside the geometry.
         :param names: Show the index of each point next to it.
         :param rainbow: Color in the edge of each element in a different color.
         :param save: Save generated image.
@@ -837,7 +870,15 @@ class Mesh:
         import numpy as np
         import matplotlib.pyplot as plt
 
+        particles = check_list_or_object(particles, Particle)
+
+        # Draw mesh points
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
+
+        # Draw particles
+        plt.scatter([particle.pos_x for particle in particles], [particle.pos_y for particle in particles], c="r")
+
+        # Sets plot styling
         style_plot(self.x, self.y)
 
         if names:
@@ -950,6 +991,7 @@ class Mesh:
         import matplotlib.pyplot as plt
 
         check_method_call(velocity_x, velocity_y)
+
         try:
             if len(velocity_x) != self.size or len(velocity_y) != self.size:
                 raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
