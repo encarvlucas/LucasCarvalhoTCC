@@ -505,13 +505,16 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
                         dt=dt, frame_num=0)
 
     # --------------------------------- Adding particles ---------------------------------------------------------------
-    particle = Particle("A", (0.1 * (max(mesh.x) - min(mesh.x)), 0.4 * (max(mesh.y) - min(mesh.y))))
-    particles = Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))))
+    mesh.add_particle("A", (0.1 * (max(mesh.x) - min(mesh.x)), 0.5 * (max(mesh.y) - min(mesh.y))))
+    particles = Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
         print("Performing loop {0}".format(frame_num))
-        mesh.show_geometry([particle, particles])
+
+        # TODO: TEMPORARY, REMOVE LATER
+        mesh.show_geometry([particles])
+
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
         omega_vector = linalg.spsolve(m_matrix.tocsc(), (gx_matrix.dot(velocity_y_vector) -
@@ -570,10 +573,19 @@ class Particle:
     """
     Defines a moving particle.
     """
-    def __init__(self, name, position=(0., 0.)):
+    def __init__(self, name, position=(0., 0.), color="r"):
+        """
+        Particle class constructor.
+        :param name: Name of the particle.
+        :param position: Positional argument, (x, y) coordinates.
+        :param color: Custom color for particle, default is "r" (red).
+        """
+        check_method_call(name)
+
         self.name = name
         self.pos_x = position[0]
         self.pos_y = position[1]
+        self.color = color
 
 
 class BoundaryConditions:
@@ -642,6 +654,7 @@ class Mesh:
     Mesh element to be used in the calculations
     """
     x, y, ien, delauney_surfaces = [], [], [], []
+    particles = []
     name = "default"
     size = 0
 
@@ -717,6 +730,17 @@ class Mesh:
         self.boundary_conditions[name] = BoundaryConditions()
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
+
+    def add_particle(self, name, position, color="r"):
+        """
+        Associates a new particle with the mesh.
+        :param name: Name of the particle.
+        :param position: Positional argument, (x, y) coordinates.
+        :param color: Custom color for particle, default is "r" (red).
+        """
+        check_method_call(name, position)
+
+        self.particles.append(Particle(name, position, color))
 
     def remove_previous_results(self, return_to_previous_directory=False):
         """
@@ -871,20 +895,27 @@ class Mesh:
         import matplotlib.pyplot as plt
 
         particles = check_list_or_object(particles, Particle)
+        particles.extend(self.particles)
 
         # Draw mesh points
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
 
         # Draw particles
-        plt.scatter([particle.pos_x for particle in particles], [particle.pos_y for particle in particles], c="r")
+        plt.scatter([particle.pos_x for particle in particles], [particle.pos_y for particle in particles],
+                    c=[particle.color for particle in particles])
 
         # Sets plot styling
         style_plot(self.x, self.y)
 
+        # Display id's of points and names of objects
         if names:
             for _index in range(self.size):
                 plt.gca().annotate(_index, (self.x[_index], self.y[_index]))
 
+        [plt.gca().annotate(particle.name, (particle.pos_x, particle.pos_y), color=particle.color, fontsize=15)
+         for particle in particles]
+
+        # Displays elements as different colors to help distinguish each one
         if rainbow:
             plt.gca().set_prop_cycle(plt.cycler('color', plt.cm.hsv(np.linspace(0.0, 1.0, len(self.ien)))))
 
