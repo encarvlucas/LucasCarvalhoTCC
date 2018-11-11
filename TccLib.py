@@ -526,10 +526,6 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
     for frame_num in range(1, num_frames + 1):
         print("Performing loop {0}".format(frame_num))
 
-        # Show particle progress
-        mesh.show_geometry([particles])
-        mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt)
-
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
         omega_vector = linalg.spsolve(m_matrix.tocsc(),
@@ -574,6 +570,10 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
         apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
+        # Show particle progress
+        mesh.show_geometry()
+        mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt)
+
         # Saving frames
         mesh.output_results(result_dictionary={"Velocity_X": sparse_to_vector(velocity_x_vector),
                                                "Velocity_Y": sparse_to_vector(velocity_y_vector)},
@@ -588,6 +588,8 @@ class Particle:
     """
     Defines a moving particle.
     """
+    position_history = []
+
     def __init__(self, name, position=(0., 0.), color="r"):
         """
         Particle class constructor.
@@ -600,7 +602,23 @@ class Particle:
         self.name = name
         self.pos_x = position[0]
         self.pos_y = position[1]
+        self.position_history.append((self.pos_x, self.pos_y))
+
         self.color = color
+
+    def mark_new_position(self, movement=(0., 0.), mov_x=None, mov_y=None):
+        """
+        Assigns a new position for the particle and tracks it's location history.
+        :param movement: Tuple that contains the distance moved for the x and y axis (x, y).
+        :param mov_x: The distance moved in the x axis.
+        :param mov_y: The distance moved in the y axis.
+        """
+        if mov_x and mov_y:
+            movement = (mov_x, mov_y)
+
+        self.pos_x += movement[0]
+        self.pos_y += movement[1]
+        self.position_history.append((self.pos_x, self.pos_y))
 
 
 class BoundaryConditions:
@@ -766,15 +784,22 @@ class Mesh:
             self.particles.append(Particle(name, position, color))
 
     def move_particles(self, velocity=None, velocity_x=None, velocity_y=None, dt=None):
+        """
+        Method that moves all particles currently inside the mesh domain.
+        :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh.
+        :param velocity_x: Vector of velocity in the x axis.
+        :param velocity_y: Vector of velocity in the y axis.
+        :param dt: The time difference between frames.
+        """
         check_method_call(dt)
 
-        if velocity:
+        if isinstance(velocity, (list, tuple)) and len(velocity) == 2:
             velocity_x = velocity[0]
             velocity_y = velocity[1]
 
         check_method_call(velocity_x, velocity_y)
 
-        for particle in self.particles:
+        for particle in [_particle for _particle in self.particles if self.contains_particle(_particle)]:
             # Determine which element contains the particle
             element = self.ien[self.delauney_surfaces.find_simplex((particle.pos_x, particle.pos_y))]
 
@@ -782,14 +807,29 @@ class Mesh:
             # Interpolate velocity value for particle coordinates
 
             # Adds the velocity component from each point, interpolated by the proportion of the area opposite it.
+            movement_x = 0.
+            movement_y = 0.
             for point in element:
                 _element = element.tolist()
                 _element.remove(point)
                 component = abs(get_area([particle.pos_x] + list(self.x[_element]),
                                          [particle.pos_y] + list(self.y[_element])) / total_area)
-                particle.pos_x += component * velocity_x[point] * dt
-                particle.pos_y += component * velocity_y[point] * dt
-            # TODO: REMOVE PARTICLES THAT GO PAST MESH LIMITS
+                movement_x += component * velocity_x[point] * dt
+                movement_y += component * velocity_y[point] * dt
+
+            particle.mark_new_position((movement_x, movement_y))
+
+    def contains_particle(self, particle):
+        """
+        Checks if a particle is inside the mesh geometric domain.
+        :param particle: Particle object that contains it's current position.
+        :return: True if it is inside, otherwise False.
+        """
+        if not ((self.x.min() < particle.pos_x) and (particle.pos_x < self.x.max()) and
+                (self.y.min() < particle.pos_y) and (particle.pos_y < self.y.max())):
+            return False
+        else:
+            return True
 
     def remove_previous_results(self, return_to_previous_directory=False):
         """
@@ -950,8 +990,8 @@ class Mesh:
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
 
         # Draw particles
-        plt.scatter([particle.pos_x for particle in particles], [particle.pos_y for particle in particles],
-                    c=[particle.color for particle in particles])
+        [plt.scatter(particle.pos_x, particle.pos_y, c=particle.color) for particle in particles
+         if self.contains_particle(particle)]
 
         # Sets plot styling
         style_plot(self.x, self.y)
@@ -962,7 +1002,7 @@ class Mesh:
                 plt.gca().annotate(_index, (self.x[_index], self.y[_index]))
 
         [plt.gca().annotate(particle.name, (particle.pos_x, particle.pos_y), color=particle.color, fontsize=15)
-         for particle in particles]
+         for particle in particles if self.contains_particle(particle)]
 
         # Displays elements as different colors to help distinguish each one
         if rainbow:

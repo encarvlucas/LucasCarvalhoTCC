@@ -18,7 +18,7 @@ malha = Mesh("Poiseuille")
 # xy = np.array(([0, 0], [1, 0],
 #                [1, 1], [0, 1]))
 # xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
-# malha.show_geometry(names=True)
+# malha.show_geometry(names=True, save=True)
 
 list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_vect["indices"], values=_vect["values"],
                                                     type_of_boundary=_vect["type"]),
@@ -27,7 +27,7 @@ list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_
 poiseuille = True
 
 if poiseuille:
-    vel_x, vel_y = solve_poiseuille(malha, total_time=5., dt=1.)
+    vel_x, vel_y = solve_poiseuille(malha, total_time=5., dt=0.9)
     # malha.show_velocity_solution(vel_x, vel_y)
 
 else:
