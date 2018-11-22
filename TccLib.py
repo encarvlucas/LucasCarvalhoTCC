@@ -67,7 +67,7 @@ def hagen_poiseuille_boundary_conditions(mesh):
 
     # Defining velocity (x axis component)
     indices = np.copy(vertex_a)
-    values = np.zeros(len(indices)) + 1.0
+    values = np.zeros(len(indices)) + 1e-6
     indices = np.array(list(oD.fromkeys(np.append(indices, np.append(vertex_b, vertex_d)))))
     values = np.append(values, np.zeros(len(indices) - len(values)))
     vector.append({"name": "vel_x", "indices": np.copy(indices), "values": np.copy(values), "type": True})
@@ -393,12 +393,12 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
     :param permanent_solution: Parameter that defines if the solution will be calculated for the transient (True) or
                                 permanent (False) problem.
-    :param k_coef: Thermal conductivity coefficient both axis.
+    :param k_coef: Thermal conductivity coefficient both axis [TODO: ADD UNITS].
     :param k_coef_x: Thermal conductivity coefficient for x axis.
     :param k_coef_y: Thermal conductivity coefficient for y axis.
     :param q: Heat generation for each point.
-    :param dt: Value of time between frames.
-    :param total_time: Length of time the calculation takes place (only necessary for transient solutions).
+    :param dt: Value of time between frames [s].
+    :param total_time: Length of time the calculation takes place (only necessary for transient solutions) [s].
     :return: Temperature value for each point in the mesh.
     """
     from scipy import sparse
@@ -484,12 +484,15 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         return frames
 
 
-def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0, save_each_frame=True):
+def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt=None, total_time=1.0, reynolds=None, save_each_frame=True):
     """
     Solves the mesh defined 2D Poiseuille equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
-    :param dt: Value of time between frames.
-    :param total_time: Length of time the calculation takes place.
+    :param rho_coef: Fluid density [kg/m³].
+    :param mu_coef: Fluid dynamic viscosity [Pa.s || kg/m.s].
+    :param dt: Value of time between frames [s].
+    :param total_time: Length of time the calculation takes place [s].
+    :param reynolds: Option to provide the value of Reynolds Number [1].
     :param save_each_frame: True if every loop saves the current velocity values.
     :return: Velocity vectors and pressure values for each point in the mesh.
     """
@@ -518,8 +521,11 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0, save_each_frame
                                            "Velocity_Y": sparse_to_vector(velocity_y_vector)},
                         dt=dt, frame_num=0)
 
+    # Defining Reynolds number
+    re = reynolds or rho_coef * max(velocity_x_vector)[0, 0] * (max(mesh.y) - min(mesh.y)) / mu_coef
+
     # --------------------------------- Adding particles ---------------------------------------------------------------
-    mesh.add_particle("A", (0.1 * (max(mesh.x) - min(mesh.x)), 0.5 * (max(mesh.y) - min(mesh.y))))
+    mesh.add_particle("A", (0.07 * (max(mesh.x) - min(mesh.x)), 0.5 * (max(mesh.y) - min(mesh.y))), density=.43e3)
     particles = [Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")]
     mesh.add_particle(list_of_particles=particles)
     mesh.add_particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")
@@ -536,7 +542,7 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0, save_each_frame
 
         # ------------------------ Solve omega -------------------------------------------------------------------------
         #      A = M/dt + nu*K + (v.G)  -> v.G = G_x.(diagonal(v_x)) + G_y.(diagonal(v_y))
-        a_matrix = sparse.lil_matrix(m_matrix / dt + nu_coef * k_matrix +
+        a_matrix = sparse.lil_matrix(m_matrix / dt + (1./re) * k_matrix +
                                      (sparse_to_vector(velocity_x_vector) * gx_matrix +
                                       sparse_to_vector(velocity_y_vector) * gy_matrix))
 
@@ -580,7 +586,8 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0, save_each_frame
                 print("There are no visible particles in the mesh domain.")
 
         # Move particles
-        mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt)
+        mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt,
+                            viscosity=mu_coef)
 
         # Saving frames
         mesh.output_results(result_dictionary={"Velocity_X": sparse_to_vector(velocity_x_vector),
@@ -610,6 +617,8 @@ class Particle:
         :param diameter: Diameter of particle (approximated as a sphere).
         :param color: Custom color for particle, default is "r" (red).
         """
+        import numpy as np
+
         check_method_call(name)
 
         self.name = name
@@ -619,27 +628,37 @@ class Particle:
 
         self.density = density
         self.diameter = diameter
+        # Density * Volume of a sphere = rho * pi/6 * d^3
+        self.mass = np.pi / 6. * self.density * self.diameter ** 3
 
         self.color = color
 
-    def set_velocities(self, velocities, vel_x=0., vel_y=0.):
+    def apply_forces(self, forces, dt):
         """
-        Determines the velocity of the particle for each axis.
-        :param velocities: The list that contains each velocity value in the form (vel_x,vel_y)
-        :param vel_x: The particle velocity in the x axis.
-        :param vel_y: The particle velocity in the y axis.
+        TODO: FINISH THIS
+        :param forces:
+        :param dt:
+        :return:
         """
-        if isinstance(velocities, (list, tuple)):
-            self.velocity_x = velocities[0]
-            self.velocity_y = velocities[1]
-        else:
-            self.velocity_x = vel_x
-            self.velocity_y = vel_y
+        check_method_call(forces)
+        if not isinstance(forces, dict):
+            raise TypeError("Incorrect usage, please use a dict.")
+
+        sum_forces_x = 0.
+        sum_forces_y = 0.
+
+        for force in forces.values():
+            sum_forces_x += force[0]
+            sum_forces_y += force[1]
+
+        self.velocity_x += sum_forces_x * dt / self.mass
+        self.velocity_y += sum_forces_y * dt / self.mass
+        self.mark_new_position(dt)
 
     def mark_new_position(self, dt):
         """
-        Assigns a new position for the particle and tracks it's location history.
-        :param dt: The time difference between frames.
+        Assigns a new position for the particle and tracks its location history.
+        :param dt: The time difference between frames [s].
         """
         self.pos_x += self.velocity_x * dt
         self.pos_y += self.velocity_y * dt
@@ -796,9 +815,9 @@ class Mesh:
         """
         Associates a new particle with the mesh.
         :param name: Name of the particle. Each particle defined in a mesh must have different names.
-        :param position: Positional argument, (x, y) coordinates.
-        :param density: Particle density.
-        :param diameter: Diameter of particle (approximated as a sphere).
+        :param position: Positional argument, (x, y) coordinates [m].
+        :param density: Particle density [kg/m³].
+        :param diameter: Diameter of particle (approximated as a sphere) [m].
         :param color: Custom color for particle, default is "r" (red).
         :param list_of_particles: Adds a list of predefined particle objects.
         """
@@ -818,15 +837,20 @@ class Mesh:
 
                 self.particles.append(Particle(name, position, density, diameter, color))
 
-    def move_particles(self, velocity=None, velocity_vector_x=None, velocity_vector_y=None, dt=None):
+    def move_particles(self, velocity=None, velocity_vector_x=None, velocity_vector_y=None, dt=None, viscosity=None):
         """
         Method that moves all particles currently inside the mesh domain.
         :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh.
         :param velocity_vector_x: Vector of velocity in the x axis.
         :param velocity_vector_y: Vector of velocity in the y axis.
         :param dt: The time difference between frames.
+        :param viscosity: The fluid's dynamic viscosity [Pa.s || kg/m.s].
         """
+        import numpy as np
+
+        # Contingency
         check_method_call(dt)
+        check_method_call(viscosity)
 
         if isinstance(velocity, (list, tuple)) and len(velocity) == 2:
             velocity_vector_x = velocity[0]
@@ -834,26 +858,19 @@ class Mesh:
 
         check_method_call(velocity_vector_x, velocity_vector_y)
 
+        # Applying forces to each particle if it is still able.
         for particle in [_particle for _particle in self.particles if self.contains_particle(_particle)]:
-            # Determine which element contains the particle
-            element = self.ien[self.delauney_surfaces.find_simplex((particle.pos_x, particle.pos_y))]
+            forces = dict()
 
-            total_area = get_area(self.x[element], self.y[element])
-            # Interpolate velocity value for particle coordinates
+            # ----------------- Gravitational Force --------------------------------------------------------------------
+            forces["gravitational"] = (0., -9.80665 * particle.mass)
 
-            # Adds the velocity component from each point, interpolated by the proportion of the area opposite it.
-            velocity_x = 0.
-            velocity_y = 0.
-            for point in element:
-                _element = element.tolist()
-                _element.remove(point)
-                component = abs(get_area([particle.pos_x] + list(self.x[_element]),
-                                         [particle.pos_y] + list(self.y[_element])) / total_area)
-                velocity_x += component * velocity_vector_x[point]
-                velocity_y += component * velocity_vector_y[point]
+            # ----------------- Drag Force -----------------------------------------------------------------------------
+            fluid_velocity = self.get_fluid_velocity(particle, velocity_vector_x, velocity_vector_y)
+            forces["drag"] = (3 * np.pi * viscosity * particle.diameter * (fluid_velocity[0] - particle.velocity_x),
+                              3 * np.pi * viscosity * particle.diameter * (fluid_velocity[1] - particle.velocity_y))
 
-            particle.set_velocities((velocity_x, velocity_y))
-            particle.mark_new_position(dt)
+            particle.apply_forces(forces, dt)
 
     def contains_particle(self, particle):
         """
@@ -866,6 +883,33 @@ class Mesh:
             return False
         else:
             return True
+
+    def get_fluid_velocity(self, particle, velocity_vector_x, velocity_vector_y):
+        """
+        TODO: FINISH THIS
+        :param particle:
+        :param velocity_vector_x:
+        :param velocity_vector_y:
+        :return:
+        """
+        # Determine which element contains the particle
+        element = self.ien[self.delauney_surfaces.find_simplex((particle.pos_x, particle.pos_y))]
+
+        total_area = get_area(self.x[element], self.y[element])
+        # Interpolate velocity value for particle coordinates
+
+        # Adds the velocity component from each point, interpolated by the proportion of the area opposite it.
+        fluid_vel_x = 0.
+        fluid_vel_y = 0.
+        for point in element:
+            _element = element.tolist()
+            _element.remove(point)
+            component = abs(get_area([particle.pos_x] + list(self.x[_element]),
+                                     [particle.pos_y] + list(self.y[_element])) / total_area)
+            fluid_vel_x += component * velocity_vector_x[point]
+            fluid_vel_y += component * velocity_vector_y[point]
+
+        return fluid_vel_x, fluid_vel_y
 
     def remove_previous_results(self, return_to_previous_directory=False):
         """
@@ -1185,6 +1229,7 @@ class Mesh:
 
         def update(_frame):
             # Draw particles
+            # TODO: OPTIMIZE [LIST COMPREHENSION]
             for _particle, dot in list_of_dots.items():
                 if _frame < len(_particle.position_history):
                     dot.set_offsets((_particle.position_history[_frame][0], _particle.position_history[_frame][1]))
