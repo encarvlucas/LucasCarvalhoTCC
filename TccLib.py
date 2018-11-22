@@ -520,8 +520,9 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0, save_each_frame
 
     # --------------------------------- Adding particles ---------------------------------------------------------------
     mesh.add_particle("A", (0.1 * (max(mesh.x) - min(mesh.x)), 0.5 * (max(mesh.y) - min(mesh.y))))
-    particles = Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")
+    particles = [Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")]
     mesh.add_particle(list_of_particles=particles)
+    mesh.add_particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
@@ -596,7 +597,7 @@ class Particle:
     Defines a moving particle.
     Particles are defined as having a spherical shape of constant diameter.
     """
-    position_history = []
+    position_history = None
     velocity_x = 0.
     velocity_y = 0.
 
@@ -614,7 +615,7 @@ class Particle:
         self.name = name
         self.pos_x = position[0]
         self.pos_y = position[1]
-        self.position_history.append((self.pos_x, self.pos_y))
+        self.position_history = [(self.pos_x, self.pos_y)]
 
         self.density = density
         self.diameter = diameter
@@ -649,9 +650,9 @@ class BoundaryConditions:
     """
     Boundary conditions of the simulation.
     """
-    point_index_vector = []
-    values_vector = []
-    type_of_condition_vector = []
+    point_index_vector = None
+    values_vector = None
+    type_of_condition_vector = None
 
     def set_new_boundary_condition(self, *vect_argm, point_index=range(0), values=0., type_of_boundary=True):
         """
@@ -710,8 +711,8 @@ class Mesh:
     """
     Mesh element to be used in the calculations
     """
-    x, y, ien, delauney_surfaces = [], [], [], []
-    particles = []
+    x, y, ien, delauney_surfaces = None, None, None, None
+    particles = None
     name = "default"
     size = 0
     default_dt = 0.
@@ -724,6 +725,7 @@ class Mesh:
         import os
         from shutil import copy
         self.name = name
+        self.particles = []
 
         if isinstance(points, list):
             self.import_point_structure(points=points)
@@ -793,7 +795,7 @@ class Mesh:
     def add_particle(self, name=None, position=None, density=1., diameter=0.1, color="r", list_of_particles=None):
         """
         Associates a new particle with the mesh.
-        :param name: Name of the particle.
+        :param name: Name of the particle. Each particle defined in a mesh must have different names.
         :param position: Positional argument, (x, y) coordinates.
         :param density: Particle density.
         :param diameter: Diameter of particle (approximated as a sphere).
@@ -802,12 +804,19 @@ class Mesh:
         """
         if list_of_particles:
             list_of_particles = check_list_or_object(list_of_particles, Particle)
-            [self.particles.append(particle) for particle in list_of_particles]
+            [self.particles.append(particle) for particle in list_of_particles if particle.name not in
+             [obj.name for obj in self.particles]]
 
         else:
             check_method_call(name)
-            check_method_call(position)
-            self.particles.append(Particle(name, position, density, diameter, color))
+            if name in [obj.name for obj in self.particles]:
+                print("\nThere is a particle already with that name. "
+                      "Each particle defined inside a mesh must have a different name.\n")
+
+            else:
+                check_method_call(position)
+
+                self.particles.append(Particle(name, position, density, diameter, color))
 
     def move_particles(self, velocity=None, velocity_vector_x=None, velocity_vector_y=None, dt=None):
         """
@@ -1005,7 +1014,7 @@ class Mesh:
         :param names: Show the index of each point next to it.
         :param rainbow: Color in the edge of each element in a different color.
         :param save: Save generated image.
-        :return:
+        :return: Display image.
         """
         import numpy as np
         import matplotlib.pyplot as plt
@@ -1036,8 +1045,8 @@ class Mesh:
             plt.gca().set_prop_cycle(plt.cycler('color', plt.cm.hsv(np.linspace(0.0, 1.0, len(self.ien)))))
 
             for element in self.ien:
-                plot_coordinates = (self.x[element[0]], self.x[element[1]], self.x[element[2]], self.x[element[0]]), \
-                                   (self.y[element[0]], self.y[element[1]], self.y[element[2]], self.y[element[0]])
+                plot_coordinates = ((self.x[element[0]], self.x[element[1]], self.x[element[2]], self.x[element[0]]),
+                                    (self.y[element[0]], self.y[element[1]], self.y[element[2]], self.y[element[0]]))
 
                 plt.plot(plot_coordinates[0], plot_coordinates[1])
 
@@ -1047,7 +1056,7 @@ class Mesh:
         if save:
             plt.savefig("{0}_mesh".format(self.name))
 
-        plt.show()
+        return plt.show()
 
     def show_3d_solution(self, solution_vector):
         """
@@ -1128,7 +1137,7 @@ class Mesh:
 
         return plt.show()
 
-    def show_velocity_solution(self, velocity_x, velocity_y):
+    def show_velocity_quiver(self, velocity_x, velocity_y):
         """
 
         :param velocity_x:
@@ -1136,6 +1145,7 @@ class Mesh:
         :return:
         """
         import matplotlib.pyplot as plt
+        # TODO: CONTINUE METHOD IMPLEMENTATION
 
         check_method_call(velocity_x, velocity_y)
 
@@ -1155,13 +1165,46 @@ class Mesh:
 
         return plt.show()
 
+    def show_particle_movement(self, save=False):
+        """
+        Displays an animated image of the particles trajectories.
+        :return: Display image.
+        """
+        import matplotlib.pyplot as plt
+        from matplotlib.animation import FuncAnimation
+
+        # Draw mesh points
+        plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
+
+        number_of_frames = max([len(self.particles[i].position_history) for i in range(len(self.particles))])
+        list_of_dots = {}
+
+        for particle in self.particles:
+            list_of_dots[particle] = plt.scatter(0, 0, s=100, c=particle.color)
+            # TODO: CHANGE SIZE TO BE DETERMINED BY DIAMETER OF PARTICLE
+
+        def update(_frame):
+            # Draw particles
+            for _particle, dot in list_of_dots.items():
+                if _frame < len(_particle.position_history):
+                    dot.set_offsets((_particle.position_history[_frame][0], _particle.position_history[_frame][1]))
+
+            return
+
+        animation = FuncAnimation(plt.gcf(), update, frames=number_of_frames, interval=100, save_count=False)
+
+        if save:
+            animation.save("{0}_particle_movement.gif".format(self.name), dpi=80, writer='imagemagick')
+
+        return plt.show()
+
 
 class ComplexPointList:
     """
     Class that defines a list of points with an index value and a property value each.
     """
-    indexes = []
-    values = []
+    indexes = None
+    values = None
 
     def __init__(self, _indexes, _values):
         """
@@ -1180,5 +1223,6 @@ class ComplexPointList:
                 raise TypeError
 
         except TypeError:
+            self.values = []
             for i in range(len(_indexes)):
                 self.values.append(_values)

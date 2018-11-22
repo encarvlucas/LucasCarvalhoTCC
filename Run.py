@@ -9,8 +9,8 @@ xx = np.array(np.reshape(xx, (xx.size, 1)))
 yy = np.array(np.reshape(yy, (yy.size, 1)))
 xy = np.hstack((xx, yy))
 
-# malha = Mesh("Poiseuille_refined")
-malha = Mesh(points=list(xy))
+malha = Mesh("Poiseuille")
+# malha = Mesh(points=list(xy))
 
 # rand = np.random.rand(200)
 # rand_2 = np.random.rand(200)
@@ -18,7 +18,7 @@ malha = Mesh(points=list(xy))
 # xy = np.array(([0, 0], [1, 0],
 #                [1, 1], [0, 1]))
 # xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
-malha.show_geometry(names=True, save=True)
+# malha.show_geometry(names=True, save=True)
 
 list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_vect["indices"], values=_vect["values"],
                                                     type_of_boundary=_vect["type"]),
@@ -29,6 +29,7 @@ poiseuille = True
 if poiseuille:
     vel_x, vel_y = solve_poiseuille(malha, total_time=.5, dt=.01, save_each_frame=False)
     # malha.show_velocity_solution(vel_x, vel_y)
+    malha.show_particle_movement(save=False)
 
 else:
     Q = ComplexPointList([32, 39, 64, 67, 68, 70], 50.)
