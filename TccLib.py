@@ -484,12 +484,13 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         return frames
 
 
-def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
+def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0, save_each_frame=True):
     """
     Solves the mesh defined 2D Poiseuille equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
     :param dt: Value of time between frames.
     :param total_time: Length of time the calculation takes place.
+    :param save_each_frame: True if every loop saves the current velocity values.
     :return: Velocity vectors and pressure values for each point in the mesh.
     """
     from scipy import sparse
@@ -571,7 +572,13 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
         # Show particle progress
-        mesh.show_geometry()
+        if False:  # TODO: REMOVE CHECK AND CREATE GIF
+            if all([mesh.contains_particle(particle) for particle in mesh.particles]):
+                mesh.show_geometry()
+            else:
+                print("There are no visible particles in the mesh domain.")
+
+        # Move particles
         mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt)
 
         # Saving frames
@@ -587,14 +594,19 @@ def solve_poiseuille(mesh, nu_coef=1.0, dt=None, total_time=1.0):
 class Particle:
     """
     Defines a moving particle.
+    Particles are defined as having a spherical shape of constant diameter.
     """
     position_history = []
+    velocity_x = 0.
+    velocity_y = 0.
 
-    def __init__(self, name, position=(0., 0.), color="r"):
+    def __init__(self, name, position=(0., 0.), density=1., diameter=0.1, color="r"):
         """
         Particle class constructor.
         :param name: Name of the particle.
         :param position: Positional argument, (x, y) coordinates.
+        :param density: Particle density.
+        :param diameter: Diameter of particle (approximated as a sphere).
         :param color: Custom color for particle, default is "r" (red).
         """
         check_method_call(name)
@@ -604,20 +616,32 @@ class Particle:
         self.pos_y = position[1]
         self.position_history.append((self.pos_x, self.pos_y))
 
+        self.density = density
+        self.diameter = diameter
+
         self.color = color
 
-    def mark_new_position(self, movement=(0., 0.), mov_x=None, mov_y=None):
+    def set_velocities(self, velocities, vel_x=0., vel_y=0.):
+        """
+        Determines the velocity of the particle for each axis.
+        :param velocities: The list that contains each velocity value in the form (vel_x,vel_y)
+        :param vel_x: The particle velocity in the x axis.
+        :param vel_y: The particle velocity in the y axis.
+        """
+        if isinstance(velocities, (list, tuple)):
+            self.velocity_x = velocities[0]
+            self.velocity_y = velocities[1]
+        else:
+            self.velocity_x = vel_x
+            self.velocity_y = vel_y
+
+    def mark_new_position(self, dt):
         """
         Assigns a new position for the particle and tracks it's location history.
-        :param movement: Tuple that contains the distance moved for the x and y axis (x, y).
-        :param mov_x: The distance moved in the x axis.
-        :param mov_y: The distance moved in the y axis.
+        :param dt: The time difference between frames.
         """
-        if mov_x and mov_y:
-            movement = (mov_x, mov_y)
-
-        self.pos_x += movement[0]
-        self.pos_y += movement[1]
+        self.pos_x += self.velocity_x * dt
+        self.pos_y += self.velocity_y * dt
         self.position_history.append((self.pos_x, self.pos_y))
 
 
@@ -714,7 +738,7 @@ class Mesh:
             os.mkdir("./results/{0}".format(self.name))
             os.chdir("./results/{0}/".format(self.name))
 
-        if not points:
+        if points is not None:
             copy("../{0}.msh".format(self.name), "./")
 
     def import_point_structure(self, *args, points=None, light_version=True, import_mesh_file=""):
@@ -766,11 +790,13 @@ class Mesh:
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
-    def add_particle(self, name=None, position=None, color="r", list_of_particles=None):
+    def add_particle(self, name=None, position=None, density=1., diameter=0.1, color="r", list_of_particles=None):
         """
         Associates a new particle with the mesh.
         :param name: Name of the particle.
         :param position: Positional argument, (x, y) coordinates.
+        :param density: Particle density.
+        :param diameter: Diameter of particle (approximated as a sphere).
         :param color: Custom color for particle, default is "r" (red).
         :param list_of_particles: Adds a list of predefined particle objects.
         """
@@ -781,23 +807,23 @@ class Mesh:
         else:
             check_method_call(name)
             check_method_call(position)
-            self.particles.append(Particle(name, position, color))
+            self.particles.append(Particle(name, position, density, diameter, color))
 
-    def move_particles(self, velocity=None, velocity_x=None, velocity_y=None, dt=None):
+    def move_particles(self, velocity=None, velocity_vector_x=None, velocity_vector_y=None, dt=None):
         """
         Method that moves all particles currently inside the mesh domain.
         :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh.
-        :param velocity_x: Vector of velocity in the x axis.
-        :param velocity_y: Vector of velocity in the y axis.
+        :param velocity_vector_x: Vector of velocity in the x axis.
+        :param velocity_vector_y: Vector of velocity in the y axis.
         :param dt: The time difference between frames.
         """
         check_method_call(dt)
 
         if isinstance(velocity, (list, tuple)) and len(velocity) == 2:
-            velocity_x = velocity[0]
-            velocity_y = velocity[1]
+            velocity_vector_x = velocity[0]
+            velocity_vector_y = velocity[1]
 
-        check_method_call(velocity_x, velocity_y)
+        check_method_call(velocity_vector_x, velocity_vector_y)
 
         for particle in [_particle for _particle in self.particles if self.contains_particle(_particle)]:
             # Determine which element contains the particle
@@ -807,17 +833,18 @@ class Mesh:
             # Interpolate velocity value for particle coordinates
 
             # Adds the velocity component from each point, interpolated by the proportion of the area opposite it.
-            movement_x = 0.
-            movement_y = 0.
+            velocity_x = 0.
+            velocity_y = 0.
             for point in element:
                 _element = element.tolist()
                 _element.remove(point)
                 component = abs(get_area([particle.pos_x] + list(self.x[_element]),
                                          [particle.pos_y] + list(self.y[_element])) / total_area)
-                movement_x += component * velocity_x[point] * dt
-                movement_y += component * velocity_y[point] * dt
+                velocity_x += component * velocity_vector_x[point]
+                velocity_y += component * velocity_vector_y[point]
 
-            particle.mark_new_position((movement_x, movement_y))
+            particle.set_velocities((velocity_x, velocity_y))
+            particle.mark_new_position(dt)
 
     def contains_particle(self, particle):
         """
