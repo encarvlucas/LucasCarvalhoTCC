@@ -117,6 +117,21 @@ def check_list_or_object(_list, _class):
         return []
 
 
+def check_if_instance(obj, clazz):
+    """
+    Checks if the object is an instance of the class type.
+    :param obj: Object instance.
+    :param clazz: Class type, or list of types.
+    """
+    if not isinstance(obj, clazz):
+        if isinstance(clazz, (list, tuple)):
+            names = ", ".join([_clazz.__name__ for _clazz in clazz])
+            raise TypeError("Incorrect method usage, parameter of type --{0}-- used,"
+                            " please use a ({1}) object.".format(obj.__class__.__name__, names))
+        raise TypeError("Incorrect method usage, parameter of type --{0}-- used,"
+                        " please use a ({1}) object.".format(obj.__class__.__name__, clazz.__name__))
+
+
 def style_plot(param_x, param_y):
     """
     Alter the plot styling.
@@ -578,21 +593,15 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt=None, total_time=1.0, r
         apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
-        # Show particle progress
-        if False:  # TODO: REMOVE CHECK AND CREATE GIF
-            if all([mesh.contains_particle(particle) for particle in mesh.particles]):
-                mesh.show_geometry()
-            else:
-                print("There are no visible particles in the mesh domain.")
-
         # Move particles
         mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt,
                             viscosity=mu_coef)
 
         # Saving frames
-        mesh.output_results(result_dictionary={"Velocity_X": sparse_to_vector(velocity_x_vector),
-                                               "Velocity_Y": sparse_to_vector(velocity_y_vector)},
-                            dt=dt, frame_num=frame_num)
+        if save_each_frame:
+            mesh.output_results(result_dictionary={"Velocity_X": sparse_to_vector(velocity_x_vector),
+                                                   "Velocity_Y": sparse_to_vector(velocity_y_vector)},
+                                dt=dt, frame_num=frame_num)
 
     return sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)
 
@@ -612,9 +621,9 @@ class Particle:
         """
         Particle class constructor.
         :param name: Name of the particle.
-        :param position: Positional argument, (x, y) coordinates.
-        :param density: Particle density.
-        :param diameter: Diameter of particle (approximated as a sphere).
+        :param position: Positional argument, (x, y) coordinates [m].
+        :param density: Particle density [kg/m³].
+        :param diameter: Diameter of particle (approximated as a sphere) [m].
         :param color: Custom color for particle, default is "r" (red).
         """
         import numpy as np
@@ -633,33 +642,37 @@ class Particle:
 
         self.color = color
 
-    def apply_forces(self, forces, dt):
+    def apply_forces(self, forces, mesh, dt):
         """
-        TODO: FINISH THIS
-        :param forces:
-        :param dt:
-        :return:
+        Method that gather all the forces applied to a particle and calculates the movement of the particle.
+        :param forces: Forces as a dictionary with their names as keys
+                       and the tuple of force values in (x, y) [N || kg.m/s²].
+        :param mesh: Mesh object that determines the boundaries for collision.
+        :param dt: The time difference between frames [s].
         """
-        check_method_call(forces)
-        if not isinstance(forces, dict):
-            raise TypeError("Incorrect usage, please use a dict.")
+        import numpy as np
+        check_if_instance(forces, dict)
+        check_if_instance(mesh, Mesh)
 
         sum_forces_x = 0.
         sum_forces_y = 0.
 
         for force in forces.values():
+            check_if_instance(force, (list, tuple, np.ndarray))
             sum_forces_x += force[0]
             sum_forces_y += force[1]
 
         self.velocity_x += sum_forces_x * dt / self.mass
         self.velocity_y += sum_forces_y * dt / self.mass
-        self.mark_new_position(dt)
+        self.mark_new_position(mesh, dt)
 
-    def mark_new_position(self, dt):
+    def mark_new_position(self, mesh, dt):
         """
         Assigns a new position for the particle and tracks its location history.
+        :param mesh: Mesh object that determines the boundaries for collision.
         :param dt: The time difference between frames [s].
         """
+        # TODO: ADD WALL COLLISIONS
         self.pos_x += self.velocity_x * dt
         self.pos_y += self.velocity_y * dt
         self.position_history.append((self.pos_x, self.pos_y))
@@ -673,32 +686,32 @@ class BoundaryConditions:
     values_vector = None
     type_of_condition_vector = None
 
-    def set_new_boundary_condition(self, *vect_argm, point_index=range(0), values=0., type_of_boundary=True):
+    def set_new_boundary_condition(self, *vect_arg, point_index=range(0), values=0., type_of_boundary=True):
         """
         Sets the boundary condition for the mesh.
-        :param vect_argm: Vector(s) of boundary conditions.
+        :param vect_arg: Vector(s) of boundary conditions.
         :param point_index: Vector of order of points.
         :param values: Value or vector of values of the condition in each point.
         :param type_of_boundary: Value or vector of values, defined: True for Dirichlet and False for Neumann.
         """
         import numpy as np
 
-        if vect_argm:
-            check_method_call(vect_argm)
+        if vect_arg:
+            check_method_call(vect_arg)
         else:
             check_method_call(point_index)
 
         try:
-            if isinstance(vect_argm[0], list) or isinstance(values, np.ndarray):
-                array = np.array(vect_argm[0])
+            if isinstance(vect_arg[0], list) or isinstance(values, np.ndarray):
+                array = np.array(vect_arg[0])
 
-                if len(vect_argm[0][0]) == 3:
+                if len(vect_arg[0][0]) == 3:
                     self.point_index_vector = array[:, 0]
                     self.values_vector = array[:, 1]
                     self.type_of_condition_vector = list(map(bool, array[:, 2]))
                     return
 
-                if len(vect_argm[0][0]) == 2:
+                if len(vect_arg[0][0]) == 2:
                     self.point_index_vector = array[:, 0]
                     self.values_vector = array[:, 1]
                     self.type_of_condition_vector = [True] * len(self.point_index_vector)
@@ -840,10 +853,10 @@ class Mesh:
     def move_particles(self, velocity=None, velocity_vector_x=None, velocity_vector_y=None, dt=None, viscosity=None):
         """
         Method that moves all particles currently inside the mesh domain.
-        :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh.
-        :param velocity_vector_x: Vector of velocity in the x axis.
-        :param velocity_vector_y: Vector of velocity in the y axis.
-        :param dt: The time difference between frames.
+        :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh [m/s].
+        :param velocity_vector_x: Vector of velocity in the x axis [m/s].
+        :param velocity_vector_y: Vector of velocity in the y axis [m/s].
+        :param dt: The time difference between frames [s].
         :param viscosity: The fluid's dynamic viscosity [Pa.s || kg/m.s].
         """
         import numpy as np
@@ -863,14 +876,17 @@ class Mesh:
             forces = dict()
 
             # ----------------- Gravitational Force --------------------------------------------------------------------
-            forces["gravitational"] = (0., -9.80665 * particle.mass)
+            # forces["gravitational"] = (0., -9.80665 * particle.mass)
 
             # ----------------- Drag Force -----------------------------------------------------------------------------
-            fluid_velocity = self.get_fluid_velocity(particle, velocity_vector_x, velocity_vector_y)
-            forces["drag"] = (3 * np.pi * viscosity * particle.diameter * (fluid_velocity[0] - particle.velocity_x),
-                              3 * np.pi * viscosity * particle.diameter * (fluid_velocity[1] - particle.velocity_y))
+            fluid_velocity = self.get_fluid_velocity((particle.pos_x, particle.pos_y),
+                                                     velocity_vector_x, velocity_vector_y)
+            forces["test"] = (particle.mass / dt * np.array((fluid_velocity[0] - particle.velocity_x,
+                                                                  fluid_velocity[1] - particle.velocity_y)))
+            # forces["drag"] = (3 * np.pi * viscosity * particle.diameter * (fluid_velocity[0] - particle.velocity_x),
+            #                   3 * np.pi * viscosity * particle.diameter * (fluid_velocity[1] - particle.velocity_y))
 
-            particle.apply_forces(forces, dt)
+            particle.apply_forces(forces, self, dt)
 
     def contains_particle(self, particle):
         """
@@ -884,16 +900,19 @@ class Mesh:
         else:
             return True
 
-    def get_fluid_velocity(self, particle, velocity_vector_x, velocity_vector_y):
+    def get_fluid_velocity(self, position, velocity_vector_x, velocity_vector_y):
         """
-        TODO: FINISH THIS
-        :param particle:
-        :param velocity_vector_x:
-        :param velocity_vector_y:
-        :return:
+        Method that calculates the velocity of the fluid in the desired coordinates using interpolation of the closest
+        points know velocities.
+        :param position: Coordinates of the point (x, y) [m].
+        :param velocity_vector_x: Vector of velocity in the x axis [m/s].
+        :param velocity_vector_y: Vector of velocity in the y axis [m/s].
+        :return: The interpolated velocity of the fluid at the coordinates.
         """
+        check_if_instance(position, (list, tuple))
+
         # Determine which element contains the particle
-        element = self.ien[self.delauney_surfaces.find_simplex((particle.pos_x, particle.pos_y))]
+        element = self.ien[self.delauney_surfaces.find_simplex(position)]
 
         total_area = get_area(self.x[element], self.y[element])
         # Interpolate velocity value for particle coordinates
@@ -904,8 +923,8 @@ class Mesh:
         for point in element:
             _element = element.tolist()
             _element.remove(point)
-            component = abs(get_area([particle.pos_x] + list(self.x[_element]),
-                                     [particle.pos_y] + list(self.y[_element])) / total_area)
+            component = abs(get_area([position[0]] + list(self.x[_element]),
+                                     [position[1]] + list(self.y[_element])) / total_area)
             fluid_vel_x += component * velocity_vector_x[point]
             fluid_vel_y += component * velocity_vector_y[point]
 
