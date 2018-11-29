@@ -1,0 +1,281 @@
+% !TEX encoding = UTF-8 Unicode
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beamer Presentation
+% LaTeX Template
+% Version 1.0 (10/11/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+
+\documentclass{beamer}
+
+\mode<presentation> {
+
+% The Beamer class comes with a number of default slide themes
+% which change the colors and layouts of slides. Below this is a list
+% of all the themes, uncomment each in turn to see what they look like.
+
+%\usetheme{default}
+%\usetheme{AnnArbor}
+%\usetheme{Antibes}
+%\usetheme{Bergen}
+%\usetheme{Berkeley}
+%\usetheme{Berlin}
+%\usetheme{Boadilla}
+%\usetheme{CambridgeUS}
+%\usetheme{Copenhagen}
+%\usetheme{Darmstadt}
+%\usetheme{Dresden}
+\usetheme{Frankfurt}
+%\usetheme{Goettingen}
+%\usetheme{Hannover}
+%\usetheme{Ilmenau}
+%\usetheme{JuanLesPins}
+%\usetheme{Luebeck}
+%\usetheme{Madrid}
+%\usetheme{Malmoe}
+%\usetheme{Marburg}
+%\usetheme{Montpellier}
+%\usetheme{PaloAlto}
+%\usetheme{Pittsburgh}
+%\usetheme{Rochester}
+%\usetheme{Singapore}
+%\usetheme{Szeged}
+%\usetheme{Warsaw}
+
+% As well as themes, the Beamer class has a number of color themes
+% for any slide theme. Uncomment each of these in turn to see how it
+% changes the colors of your current slide theme.
+
+%\usecolortheme{albatross}
+%\usecolortheme{beaver}
+%\usecolortheme{beetle}
+%\usecolortheme{crane}
+%\usecolortheme{dolphin}
+%\usecolortheme{dove}
+%\usecolortheme{fly}
+%\usecolortheme{lily}
+%\usecolortheme{orchid}
+%\usecolortheme{rose}
+%\usecolortheme{seagull}
+%\usecolortheme{seahorse}
+%\usecolortheme{whale}
+%\usecolortheme{wolverine}
+
+%\setbeamertemplate{footline} % To remove the footer line in all slides uncomment this line
+%\setbeamertemplate{footline}[page number] % To replace the footer line in all slides with a simple slide count uncomment this line
+
+%\setbeamertemplate{navigation symbols}{} % To remove the navigation symbols from the bottom of all slides uncomment this line
+}
+
+\usepackage[portuguese]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+\usepackage{tikz}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\title[Métodos Numéricos]{Simulação Numérica De Escoamentos Dispersos Utilizando Método De Elementos Finitos} % The short title appears at the bottom of every slide, the full title is only on the title page
+
+\author{\textbf{Lucas Carvalho De Sousa} Gustavo Rabello Dos Anjos} % Your name
+\institute[UERJ] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
+{
+  Universidade do Estado do Rio de Janeiro \\ % Your institution for the title page
+  \medskip
+  \textit{encarvlucas@hotmail.com} % Your email address
+}
+\date{7 de Janeiro de 2019} %\today Date, can be changed to a custom date
+
+\titlegraphic{%
+  \makebox[0.9\paperwidth]{%
+    \includegraphics[width=1.5cm,keepaspectratio]{figure/UERJ.png}%
+    \hfill%
+    \includegraphics[height=1.5cm,keepaspectratio]{figure/fen-new.png}%
+  }%
+}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage % Print the title page as the first slide
+\end{frame}
+
+\begin{frame}
+  \frametitle{Sumário} % Table of contents slide, comment this block out to remove it
+  \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Introdução} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+
+\subsection{Método de Elementos Finitos} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+\begin{frame}
+  \frametitle{Motivação}
+  \begin{figure}
+    \includegraphics[width=0.75\linewidth]{figure/UERJ.png}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Situações de Análise}
+\begin{block}
+\centering
+Injeção de Traçador
+\end{block}
+\begin{block}
+\centering
+Injeção Contínua
+\end{block}
+\end{frame}
+
+
+\subsection{Escoamentos Dispersos}
+\begin{frame}
+\frametitle{Benchmark}
+\begin{itemize}
+ \item Five-spot
+\end{itemize}
+\begin{figure}
+\includegraphics[height=0.550\linewidth]{figure/UERJ.png}
+\end{figure}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Modelo Matemático}
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\begin{frame}
+ \frametitle{Problema Modelo}
+\begin{block}{Conservação de Massa}
+\centering
+$\vec{\nabla}.\vec{u}=\vec{f}$
+\end{block}
+
+\begin{block}{Lei de Darcy}
+\centering
+$\vec{u} = -\mathbf{K} (\nabla p+\rho \vec{g})$
+\end{block}
+
+ Onde: $\vec{u}$ é o campo de velocidades, $\mathbf{K}$ é o tensor de permeabilidade, $\rho$ é a densidade do fluido, 
+ $p$ é o a pressão, $g$ a gravidade e $\vec{f}$ é o termo fonte.
+% \begin{block}{Equação de Transporte}
+% \centering
+% $\phi \dfrac{\partial c}{\partial t}+\vec{u}.\nabla c-\nabla.(\mathbb{D}\nabla c)=\vec{f_2}$
+% \end{block}
+\end{frame}
+
+\subsection{Sistema de Equações}
+\begin{frame}
+ \frametitle{Sistema de Darcy}
+Utilizamos a relação do tensor de permeabilidade $\mathbf{K}$ e a permeabilidade geométrica $K$ e viscosidade do meio $\mu$:
+$\qquad \mathbf{K}=\dfrac{K}{\mu}$\\
+Para o caso de um fluido incompressível e com efeitos gravitacionais desprezados temos o seguinte sistema:
+ \begin{block}{Sistema Unidimensional}
+\centering
+$\left\{
+ \begin{array}{lr}
+  -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f \\
+  u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x} 
+%   \phi \dfrac{\partial c}{\partial t}+u\dfrac{\partial c}{\partial x}-\dfrac{\partial}{\partial x}\bigg(\mathbb{D}\dfrac{\partial c}{\partial x}\bigg)=f_2
+ \end{array}
+ \right.$
+\end{block}
+\end{frame}
+
+\begin{frame}
+ \frametitle{Tensor de Permeabilidade}
+\begin{block}{Tensor de permeabilidade constante no domínio}
+\centering
+$\mathbf{K}=\dfrac{K}{\mu}=\mathit{cte}$
+\end{block}
+\begin{figure}
+\includegraphics[width=0.3\linewidth]{figure/UERJ.png}
+\end{figure}
+
+\begin{block}{Tensor de permeabilidade variável no domínio}
+\centering
+$\mathbf{K}(x,y,z)=\dfrac{K(x,y,z)}{\mu(x,y,z)}$
+\end{block}
+\begin{figure}
+\includegraphics[width=0.3\linewidth]{figure/UERJ.png}
+\end{figure}
+
+\end{frame}
+
+\subsection{Equações Matriciais}
+\begin{frame}
+\end{frame}
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Algoritmo de Resolução}
+\begin{frame}
+\frametitle{Algoritmo de Resolução}
+\begin{block}{1º Passo}
+Encontrar a pressão: $\qquad \quad -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f$
+\end{block}
+
+\begin{block}{2º Passo}
+Encontrar a velocidade: $\qquad u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x}$
+\end{block}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Bibliografia}
+\footnotesize{
+\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+\bibitem[biezuner]{p1} R.J. Biezuner (2007)
+\newblock Métodos Numéricos para Equações Parciais Elípticas
+\newblock \emph{Notas de Aula}
+
+\bibitem[fortuna]{p1} A.O. Fortuna (2000)
+\newblock Técnicas Computacionais para Dinâmica dos Fluidos: Conceitos Básicos e Aplicações
+\newblock \emph{Edusp}
+
+\bibitem[leveque]{p1} R.J. LeVeque (2007)
+\newblock Finite Difference Methods for Ordinary and Partial Differential Equations. Steady-State and Time-Dependant Problems
+\newblock \emph{SIAM}
+
+\bibitem[biezuner]{p1} J.R. Rodrigues (2015)
+\newblock Introdução à Simulação de Reservatórios Petrolíferos
+\newblock \emph{Programa de Verão LNCC}
+\end{thebibliography}
+}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+  \frametitle{Agradecimentos}
+  \centering
+  \begin{tikzpicture}
+    \node[inner sep=0cm] (gesar) at (0,0){
+      \includegraphics[width=0.2\textwidth]{figure/gesar-logo-new.png}};
+    \node[inner sep=0cm] (uerj) at (4,0){
+      \includegraphics[width=0.2\textwidth]{figure/UERJ.png}};
+    \node[inner sep=0cm] (fen) at (8,0){
+      \includegraphics[width=0.2\textwidth]{figure/fen-new.png}};
+  \end{tikzpicture}
+  \Huge{\centerline{Fim}}
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
