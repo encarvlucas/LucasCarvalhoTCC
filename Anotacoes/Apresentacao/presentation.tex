@@ -1,0 +1,353 @@
+% Full instructions available at:
+% https://github.com/elauksap/focus-beamertheme
+
+\documentclass{beamer}
+\usetheme{focus}
+\usepackage{graphicx,subcaption}
+\usepackage[utf8]{inputenc}
+
+\title{Formulação Corrente-Vorticidade \\ e Transporte de Calor}
+\subtitle{MEF com Malhas Não Estruturadas}
+\author{\textbf{L. H. Carnevale} \\ G. R. Anjos}
+\titlegraphic{\begin{center}
+	\hspace{3cm}\includegraphics[scale=0.3]{fig/uerj.png}
+	\end{center}}
+\date{30/07/2018}
+
+
+%------------------------------------------------
+
+
+\begin{document}
+    \begin{frame}
+        \maketitle
+    \end{frame}
+    
+    
+    \begin{frame}{Sumário}
+		\tableofcontents
+	\end{frame}
+    
+%------------------------------------------------
+    
+	\section{Equações e Método}	
+	\subsection{Motivação}	
+	\begin{frame}{Motivação}
+		  Arrefecimento simultâneo de microprocessadores empilhados\footnote{figures from Prof. John Thome, Laboratoire de Transfert de Chaleur et de Masse (LTCM), EPFL, \textit{https://ltcm.epfl.ch}} com diferentes geometrias
+        \begin{figure}
+        	\includegraphics[scale=2.2]{fig/CMOSAIC.png}
+        	\includegraphics[scale=0.6]{fig/channels_67.jpg}
+        \end{figure}
+    \end{frame}
+
+%------------------------------------------------
+
+
+	\subsection{Equações}
+    \begin{frame}{Equações Gerais}
+    	\begin{columns}			
+			\begin{column}{0.5\textwidth}
+			   	\begin{block}{\small{Corrente-Vorticidade}}
+			   	 	\begin{equation}			   	 	
+\frac{\partial \omega_z}{\partial t} + \mathbf{v} \cdot \nabla \omega_z \ = \frac{1}{Re} \nabla^2 \omega_z		
+		        	\end{equation}
+        	       	\begin{equation}
+\frac{\partial^2 \psi}{\partial x^2} +\frac{\partial^2 \psi}{\partial y^2} = \omega_z
+		        	\end{equation}  
+                	\begin{equation}
+\frac{\partial \psi}{\partial y} = v_x \  , \ \ \frac{\partial \psi}{\partial x} = -v_y        
+        			\end{equation}        
+	        	\end{block}
+        	\end{column}
+			\begin{column}{0.5\textwidth}
+	    		\begin{block}{\small{Transporte de Calor}}
+    	    	  	\begin{equation}	
+\frac{\partial T}{\partial t} + \mathbf{v} \cdot \nabla T  \ = \frac{1}{Re Pr} \nabla^2 T 	 	
+		 			\end{equation}
+		 		\end{block}
+				\begin{block}{\small{Condições de Contorno e Inicias}}
+					\begin{equation}
+				\omega_z = \frac{\partial v_y}{\partial x}-\frac{\partial v_x}{\partial y}
+					\end{equation}
+					\begin{equation}
+				\psi = \psi_0
+					\end{equation}					
+				\end{block}	 	
+			\end{column}
+		\end{columns}	 	
+	 \end{frame}
+    
+%------------------------------------------------
+    
+    \subsection{Formulação MEF}
+    \begin{frame}{Formulação MEF}
+		\begin{columns}
+			\begin{column}{0.5\textwidth}
+				\begin{figure}[H]
+					\includegraphics[scale=0.23]{fig/triang.png}		
+				\end{figure}
+				\begin{block}{\small{Coeficientes da Função de Forma}}
+			\footnotesize{$a_i = x_j y_k - x_k y_j$ ; $b_i = y_j - y_k$ ; $c_i = x_k - x_j$} \\
+			\footnotesize{$a_j = x_k y_i - x_i y_k$ ; $b_j = y_k - y_i$ ; $c_j = x_i - x_k$}\\				
+			\footnotesize{$a_k = x_i y_j - x_j y_i$ ; $b_k = y_i - y_j$ ; $c_k = x_j - x_i$} 				
+				\end{block}
+			\end{column}
+
+			\begin{column}{0.5\textwidth}
+			\footnotesize{\begin{equation}
+			\mathbf{M} = \frac{A}{12}
+				\begin{bmatrix}
+					2 & 1 & 1   \\
+					1 & 2 & 1   \\
+					1 & 1 & 2  
+				\end{bmatrix} \notag 
+			\end{equation}
+
+			\begin{equation}
+			\mathbf{B} =
+				\begin{bmatrix}
+					B_x   \\
+					B_y  
+				\end{bmatrix} = \frac{1}{2A}
+				\begin{bmatrix}
+					b_i & b_j & b_k   \\
+					c_i & c_j & c_k   
+				\end{bmatrix}\notag 
+			\end{equation}
+
+			\begin{equation}
+			\mathbf{G_x} = \frac{1}{6}
+				\begin{bmatrix}
+					b_i & b_j & b_k   \\
+					b_i & b_j & b_k   \\
+					b_i & b_j & b_k   
+					\end{bmatrix}\notag
+			\end{equation}
+
+			\begin{equation}
+			\mathbf{G_y} = \frac{1}{6}
+				\begin{bmatrix}
+					c_i & c_j & c_k    \\
+					c_i & c_j & c_k    \\
+					c_i & c_j & c_k    
+					\end{bmatrix}\notag
+			\end{equation}			
+
+			\begin{equation}
+			\mathbf{K} = \mathbf{B}^T\mathbf{B} \notag 
+			\end{equation}	
+
+			\begin{equation}
+			A = a_i +a_j+a_k \notag 
+			\end{equation}			}		
+
+			\end{column}
+		\end{columns}     
+    \end{frame}
+
+%------------------------------------------------
+
+    \begin{frame}{Forma Matricial}
+		\begin{block}{Corrente-Vorticidade}
+			\begin{equation}
+				\left( \frac{\mathbf{M}}{\Delta t}  + \frac{1}{Re}\mathbf{K} +  v_x\mathbf{G_x} + v_y\mathbf{G_y}  \right) \omega_z^{n+1} = \left( \frac{\mathbf{M}}{\Delta t} \right) \omega_z^n  + \frac{\mathbf{f}}{Re} \notag 
+			\end{equation}	
+			\begin{equation}
+				\mathbf{K}\psi = \mathbf{M} \omega_z^{n+1} + \mathbf{f}\notag 
+			\end{equation}				
+			\begin{equation}
+				v_x = \mathbf{G_y} \psi  \texttt{  ,  }   v_y = - \mathbf{G_x}\psi\notag 
+			\end{equation}
+			\end{block}	
+			\begin{block}{Transport de Calor}
+			\begin{equation}
+				\left( \frac{\mathbf{M}}{\Delta t}  + \frac{1}{RePr}\mathbf{K} +  v_x\mathbf{G_x} + v_y\mathbf{G_y}  \right) T^{n+1} = \left( \frac{\mathbf{M}}{\Delta t} \right) T^n  + \frac{\mathbf{f}}{RePr} \notag 
+			\end{equation}			
+		\end{block}	 	
+	 \end{frame}
+
+
+
+%------------------------------------------------
+    
+    \subsection{Estrutura do Algoritmo}    
+    \begin{frame}{Estrutura do Algoritmo}
+        
+        \begin{figure}
+        	\includegraphics[scale=0.6]{fig/flux.png}
+        \end{figure}
+    \end{frame}
+    
+    
+    
+\section{Resultados}
+        
+%------------------------------------------------
+        
+    \subsection{Escoamento de Poiseuille entre placas aquecidas}
+    \begin{frame}{Escoamento de Poiseuille entre placas aquecidas}
+    Caso de Validação 
+		\begin{figure}[H]
+    		\includegraphics[scale=0.36]{fig/poi.png}
+%		    \caption{Unstructured Triangular Mesh}
+		 \end{figure}
+		 \vspace{-0.5cm}
+		\begin{figure}[H]
+    		\includegraphics[scale=0.54]{images/mesh-poi.png}
+%		    \caption{Unstructured Triangular Mesh}
+		 \end{figure}
+
+
+	\end{frame}
+   
+%------------------------------------------------
+   
+    \begin{frame}{Escoamento de Poiseuille entre placas aquecidas}
+    		 \begin{block}{Parâmetros}
+			$Re = 10$ , $Pr = 1$ , $\Delta t = 0.1$ , 100 iterações		
+		 \end{block}
+        \begin{figure}[H]
+
+  \begin{subfigure}[t]{.5\linewidth}
+  	\centering
+    \includegraphics[width=.98\linewidth]{images/temp.png}
+    \caption{Temperatura}
+  \end{subfigure}
+  \hspace{-0.182cm}
+  \begin{subfigure}[t]{.5\linewidth}
+    \centering  
+    \includegraphics[width=.98\linewidth]{images/vel.png}
+    \caption{Velocidade}
+  \end{subfigure}  
+
+	\vspace{0.6cm}  
+  
+  \begin{subfigure}[t]{.5\linewidth}
+   \centering
+   \includegraphics[width=0.98\linewidth]{images/w-poi.png}
+    \caption{Vorticidade}
+  \end{subfigure}
+  \hspace{-0.182cm}
+  \begin{subfigure}[t]{.5\linewidth}
+  	\centering
+	\includegraphics[width=0.98\linewidth]{images/psi-poi.png}
+    \caption{Função de Corrente}
+  \end{subfigure}
+	
+		\label{bfs}
+\end{figure}        
+    \end{frame}
+  
+%------------------------------------------------
+   
+    \begin{frame}{Escoamento de Poiseuille entre placas aquecidas}
+        \begin{figure}[H]
+        \centering
+        	\includegraphics[width=4.5cm]{images/t_graph.png} \hspace{0.2cm}
+			\includegraphics[width=5.5cm]{images/v_graph.png} %\\
+		
+				%\hspace{1cm} (a)               \hspace{4.5cm}     (b)
+%				\caption{Comparison of the numerical soluion obtaind with the stream function-vorticity finite element solver and the exact solution for (a) Velocity comparison; (b) Temperature comparison}
+		\end{figure}
+		
+		\small{Solução analítica:}
+			\begin{columns}
+			\hspace{0.6cm}\begin{column}{0.5\textwidth}
+         	\footnotesize{\begin{equation} 
+         		T = \frac{-15}{48}q + \frac{2}{Re (-\partial P / \partial x)}qx + 3q \left(\frac{y^2}{2} - \frac{y^4}{3} \right) \notag
+         	\end{equation}}
+         	\end{column}
+         	\begin{column}{0.5\textwidth}
+\footnotesize{\begin{equation} 
+         		u = 6y(1-y) \notag
+         	\end{equation}}
+
+         	\end{column}
+         	\end{columns}
+    \end{frame}
+  
+%------------------------------------------------
+    
+    \subsection{Transporte de calor entre placas não regulares}
+    \begin{frame}{Transporte de calor entre placas não regulares}
+		\begin{itemize}
+		\item Condições de contorno similares ao caso anterior
+		\item Fluxo de calor $q=1$ definido apenas nas regiões retangulares
+		
+		\item Mesmo número de Reynolds e Prandtl 
+		\end{itemize}
+
+		\begin{figure}
+        	\includegraphics[scale=0.5]{fig/mesh-ru.png}
+        	\caption{Malha não estruturada obtida com o software Gmsh}
+        \end{figure}		
+		
+    \end{frame}
+    
+%------------------------------------------------
+    
+     \begin{frame}{Transporte de calor entre placas não regulares}
+        \begin{figure}[H]
+  \begin{subfigure}[t]{.6\linewidth}
+  	\centering
+    \includegraphics[width=0.98\linewidth]{images/temp_r.png}
+    \caption{Temperatura}
+  \end{subfigure}
+
+  \begin{subfigure}[t]{.6\linewidth}
+    \centering  
+    \includegraphics[width=0.98\linewidth]{images/vel_r.png}
+    \caption{Velocidade}
+  \end{subfigure}  
+    
+  \begin{subfigure}[t]{.6\linewidth}
+   \centering
+   \includegraphics[width=0.98\linewidth]{images/w-ru.png}
+    \caption{Vorticidade}
+  \end{subfigure}
+
+  \begin{subfigure}[t]{.6\linewidth}
+  	\centering
+	\includegraphics[width=0.98\linewidth]{images/psi-ru.png}
+    \caption{Função Corrente}
+  \end{subfigure}
+	%\caption{Numerical solutions obtained by the stream function-vorticity FEM code for the complex geometry proposed}  
+	\label{prop}
+
+\end{figure}
+    \end{frame}
+    
+%------------------------------------------------
+ 
+    \subsection{Conclusão e Próximo Desenvolvimento}
+    \begin{frame}{Conclusão e Próximo Desenvolvimento}
+    \begin{itemize}
+    \item Boa aplicação com a equação do transporte de calor
+    \item Necessário aprimorar a metodologia para acomodar valores mais elevados de Re 
+    \item Formulação é melhor aplicada à casos 2D
+    \end{itemize}
+%		
+%		\begin{figure}
+%	    	\includegraphics[width=2cm]{fig/conemmesh.png} \hspace{0.2cm}
+%	    	\includegraphics[width=2cm]{fig/conem1.png}
+%	    	\caption{\footnotesize{Heat transport on two solid regions} }
+%    	\end{figure}
+
+	    \begin{figure}
+	    \centering
+	    	\includegraphics[scale=0.2]{fig/mesh.png} \hspace{0.2cm}
+	    	\includegraphics[scale=0.2]{fig/temp2.png} \hspace{0.2cm}
+	    	\includegraphics[scale=0.2]{fig/vel2.png}
+	    	\caption{\footnotesize{Resultados preliminares de um problema de troca de calor conjugado}}
+	    \end{figure}
+	 \end{frame}
+            
+%------------------------------------------------
+
+    \begin{frame}%[focus]    
+\centering  \huge{Obrigado!}
+        \begin{figure}
+        	\includegraphics[scale=0.35]{fig/uerj.png}
+        \end{figure}
+    \end{frame}
+\end{document}

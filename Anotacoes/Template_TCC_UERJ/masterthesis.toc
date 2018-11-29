@@ -1,0 +1,28 @@
+\babel@toc {brazil}{}
+\contentsline {chapter}{\hspace {1.7cm}\bfseries INTRODU\IeC {\c C}\IeC {\~A}O}{12}{chapter*.5}
+\contentsline {chapter}{\numberline {1}\bfseries \uppercase {REVIS\IeC {\~A}O DA LITERATURA}}{14}{chapter.1}
+\contentsline {section}{\numberline {1.1}\textbf {Introdu\IeC {\c c}\IeC {\~a}o}}{14}{section.1.1}
+\contentsline {section}{\numberline {1.2}\textbf {Rea\IeC {\c c}\IeC {\~o}es-difus\IeC {\~a}o em ci\IeC {\^e}ncia dos materiais}}{14}{section.1.2}
+\contentsline {chapter}{\numberline {2}\bfseries \uppercase {Sistemas N\IeC {\~a}o Lineares}}{15}{chapter.2}
+\contentsline {section}{\numberline {2.1}\textbf {Introdu\IeC {\c c}\IeC {\~a}o}}{15}{section.2.1}
+\contentsline {section}{\numberline {2.2}\textbf {Modelo de \textit {Lorenz}}}{15}{section.2.2}
+\contentsline {section}{\numberline {2.3}\textbf {Mecanismo de rea\IeC {\c c}\IeC {\~o}es: \textit {Brusselator}}}{15}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}An\IeC {\'a}lise de estabilidade linear}{16}{subsection.2.3.1}
+\contentsline {section}{\numberline {2.4}\textbf {Equa\IeC {\c c}\IeC {\~a}o de \textit {Van der Pol}}}{17}{section.2.4}
+\contentsline {section}{\numberline {2.5}\textbf {Modelo de \textit {Fitz-Hugh Nagumo}}}{17}{section.2.5}
+\contentsline {chapter}{\numberline {3}\bfseries \uppercase {Mecanismos de Rea\IeC {\c c}\IeC {\~a}o-Difus\IeC {\~a}o}}{18}{chapter.3}
+\contentsline {section}{\numberline {3.1}\textbf {Introdu\IeC {\c c}\IeC {\~a}o}}{18}{section.3.1}
+\contentsline {section}{\numberline {3.2}\textbf {Equa\IeC {\c c}\IeC {\~a}o de Rea\IeC {\c c}\IeC {\~a}o-Difus\IeC {\~a}o: \textit {Fitz-Hugh Nagumo}}}{18}{section.3.2}
+\contentsline {section}{\numberline {3.3}\textbf {Equa\IeC {\c c}\IeC {\~a}o de Rea\IeC {\c c}\IeC {\~a}o-Difus\IeC {\~a}o: \textit {Belousov-Zhabotinski}}}{18}{section.3.3}
+\contentsline {chapter}{\numberline {4}\bfseries \uppercase {Modelagem Matem\IeC {\'a}tica e Esquema num\IeC {\'e}rico}}{19}{chapter.4}
+\contentsline {section}{\numberline {4.1}\textbf {Equa\IeC {\c c}\IeC {\~a}o governo}}{19}{section.4.1}
+\contentsline {section}{\numberline {4.2}\textbf {Par\IeC {\^a}metros real\IeC {\'\i }sticos}}{19}{section.4.2}
+\contentsline {chapter}{\numberline {5}\bfseries \uppercase {Verifica\IeC {\c c}\IeC {\~a}o e Estabilidade}}{20}{chapter.5}
+\contentsline {section}{\numberline {5.1}\textbf {Verifica\IeC {\c c}\IeC {\~a}o do c\IeC {\'o}digo}}{20}{section.5.1}
+\contentsline {section}{\numberline {5.2}\textbf {Converg\IeC {\^e}ncia e erro}}{20}{section.5.2}
+\contentsline {section}{\numberline {5.3}\textbf {Estabilidade do esquema}}{20}{section.5.3}
+\contentsline {chapter}{\numberline {6}\bfseries \uppercase {Resultados}}{21}{chapter.6}
+\contentsline {section}{\numberline {6.1}\textbf {Preliminares}}{21}{section.6.1}
+\contentsline {section}{\numberline {6.2}\textbf {Avan\IeC {\c c}ados}}{21}{section.6.2}
+\contentsline {chapter}{\hspace {1.7cm}\bfseries CONCLUS\IeC {\~A}O}{22}{section.6.2}
+\contentsline {chapter}{\hspace {1.7cm}\bfseries AP\IeC {\^E}NDICE A}{23}{section.6.2}

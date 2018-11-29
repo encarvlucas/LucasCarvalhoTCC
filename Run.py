@@ -28,7 +28,7 @@ poiseuille = True
 
 if poiseuille:
     vel_x, vel_y = solve_poiseuille(malha, total_time=5.07, dt=.51, rho_coef=1e3, mu_coef=0.89e-3, save_each_frame=False)
-    # malha.show_velocity_quiver(vel_x, vel_y)
+    malha.show_velocity_quiver(vel_x, vel_y)
     malha.show_particle_movement(save=False)
 
 else:

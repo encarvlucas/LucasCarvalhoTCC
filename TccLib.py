@@ -94,8 +94,7 @@ def check_method_call(*args):
     raise ValueError("Method called incorrectly, please read the documentation and try changing the arguments.")
 
 
-def check_list_or_object(_list, _class):
-    # TODO: CHECK IF ITS BEING USED CORRECTLY
+def check_list_or_object(_list: list, _class: type):
     """
     Checks if _list parameter is a list of the same type as _class, or if it is a single value of that type.
     :param _list: List or single value to be checked.
@@ -400,7 +399,8 @@ def apply_initial_boundary_conditions(mesh, boundary_name, vector_v):
             vector_v[_point] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
 
 
-def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q=None, dt=None, total_time=1.):
+def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q: list=None, dt: float=None,
+                  total_time=1.):
     """
     Solves the mesh defined 2D Poisson equation problem:
         DT = -∇(k*∇T) + Q   ->   (M + K).T_i^n =  M.T_i^n-1 + M.Q_i
@@ -414,7 +414,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
     :param q: Heat generation for each point.
     :param dt: Value of time between frames [s].
     :param total_time: Length of time the calculation takes place (only necessary for transient solutions) [s].
-    :return: Temperature value for each point in the mesh.
+    :return: Temperature value for each point in the mesh [.
     """
     from scipy import sparse
     import scipy.sparse.linalg as linalg
@@ -499,7 +499,8 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         return frames
 
 
-def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt=None, total_time=1.0, reynolds=None, save_each_frame=True):
+def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float=None, total_time=1.0, reynolds: float=None,
+                     save_each_frame=True):
     """
     Solves the mesh defined 2D Poiseuille equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -540,10 +541,10 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt=None, total_time=1.0, r
     re = reynolds or rho_coef * max(velocity_x_vector)[0, 0] * (max(mesh.y) - min(mesh.y)) / mu_coef
 
     # --------------------------------- Adding particles ---------------------------------------------------------------
-    mesh.add_particle("A", (0.07 * (max(mesh.x) - min(mesh.x)), 0.5 * (max(mesh.y) - min(mesh.y))), density=.43e3)
+    mesh.add_particle("A", (0.07 * (max(mesh.x) - min(mesh.x)), 0.5 * (max(mesh.y) - min(mesh.y))), density=.43e3,
+                      diameter=1e-3)
     particles = [Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")]
     mesh.add_particle(list_of_particles=particles)
-    mesh.add_particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
@@ -613,6 +614,8 @@ class Particle:
     Defines a moving particle.
     Particles are defined as having a spherical shape of constant diameter.
     """
+    name, pos_x, pos_y, color = None, None, None, None
+
     position_history = None
     velocity_x = 0.
     velocity_y = 0.
@@ -824,7 +827,8 @@ class Mesh:
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
-    def add_particle(self, name=None, position=None, density=1., diameter=0.1, color="r", list_of_particles=None):
+    def add_particle(self, name: str=None, position: (list, tuple)=None, density=1., diameter=0.1, color="r",
+                     list_of_particles=None):
         """
         Associates a new particle with the mesh.
         :param name: Name of the particle. Each particle defined in a mesh must have different names.
@@ -882,18 +886,21 @@ class Mesh:
             fluid_velocity = self.get_fluid_velocity((particle.pos_x, particle.pos_y),
                                                      velocity_vector_x, velocity_vector_y)
             forces["test"] = (particle.mass / dt * np.array((fluid_velocity[0] - particle.velocity_x,
-                                                                  fluid_velocity[1] - particle.velocity_y)))
-            # forces["drag"] = (3 * np.pi * viscosity * particle.diameter * (fluid_velocity[0] - particle.velocity_x),
-            #                   3 * np.pi * viscosity * particle.diameter * (fluid_velocity[1] - particle.velocity_y))
+                                                             fluid_velocity[1] - particle.velocity_y)))
+            # forces["drag"] = (3 * np.pi * viscosity * particle.diameter * np.array(
+            #                   (fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
 
             particle.apply_forces(forces, self, dt)
 
-    def contains_particle(self, particle):
+    def contains_particle(self, particle: Particle):
         """
         Checks if a particle is inside the mesh geometric domain.
+        :rtype: bool
         :param particle: Particle object that contains it's current position.
         :return: True if it is inside, otherwise False.
         """
+        check_if_instance(particle, Particle)
+
         if not ((self.x.min() < particle.pos_x) and (particle.pos_x < self.x.max()) and
                 (self.y.min() < particle.pos_y) and (particle.pos_y < self.y.max())):
             return False
@@ -1002,7 +1009,6 @@ class Mesh:
 
         if extension == "CSV":
             # ------------------------- Saving results to CSV file -----------------------------------------------------
-            # TODO: FIX WITH NEW DICTIONARY APPLICATION
             with open("{0}_results.csv".format(self.name), "w") as arq:
                 arq.write("Points:0, Points:1, Points:2, {0}\n".format(data_names))
                 for i in range(self.size):
@@ -1178,18 +1184,11 @@ class Mesh:
         _max_value = np.max(frames_vector)
         surf = axes.plot_trisurf(self.x, self.y, frames_vector[0], cmap="jet", vmin=_min_value, vmax=_max_value)
         fig.colorbar(surf, shrink=0.4, aspect=9)
-        frame_index = 0
 
         def update(_current_frame):
             plt.cla()
             axes.plot_trisurf(self.x, self.y, _current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
             axes.set_zlim3d([_min_value, _max_value])
-            if dt:
-                # global frame_index
-                axes.text2D(0., 0.9, "Frame: {0}\nTime: {1}".format(frame_index, frame_index * dt),
-                            transform=axes.transAxes)
-                # frame_index += 1
-                # TODO: ADD TIME INFORMATION TO FRAME
             return
 
         animation = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
@@ -1202,13 +1201,13 @@ class Mesh:
 
     def show_velocity_quiver(self, velocity_x, velocity_y):
         """
-
-        :param velocity_x:
-        :param velocity_y:
-        :return:
+        Display velocity vector field as arrows that represent the intensity and the direction of the velocity of the
+        fluid at that point.
+        :param velocity_x: Vector of velocity in the x axis.
+        :param velocity_y: Vector of velocity in the y axis.
+        :return: Display image.
         """
         import matplotlib.pyplot as plt
-        # TODO: CONTINUE METHOD IMPLEMENTATION
 
         check_method_call(velocity_x, velocity_y)
 
@@ -1224,13 +1223,14 @@ class Mesh:
         fig, axes = plt.subplots()
         axes.quiver(self.x, self.y, velocity_x, velocity_y)
 
-        # plt.savefig("{0}_permanent_results".format(self.name))
+        plt.savefig("{0}_velocity_field".format(self.name))
 
         return plt.show()
 
     def show_particle_movement(self, save=False):
         """
         Displays an animated image of the particles trajectories.
+        :param save: Determines if the generated image will be saved.
         :return: Display image.
         """
         import matplotlib.pyplot as plt
@@ -1243,15 +1243,12 @@ class Mesh:
         list_of_dots = {}
 
         for particle in self.particles:
-            list_of_dots[particle] = plt.scatter(0, 0, s=100, c=particle.color)
-            # TODO: CHANGE SIZE TO BE DETERMINED BY DIAMETER OF PARTICLE
+            list_of_dots[particle] = plt.scatter(0, 0, s=(20000 * particle.diameter), c=particle.color)
 
         def update(_frame):
             # Draw particles
-            # TODO: OPTIMIZE [LIST COMPREHENSION]
-            for _particle, dot in list_of_dots.items():
-                if _frame < len(_particle.position_history):
-                    dot.set_offsets((_particle.position_history[_frame][0], _particle.position_history[_frame][1]))
+            [_dot.set_offsets((_particle.position_history[_frame][0], _particle.position_history[_frame][1]))
+             for _particle, _dot in list_of_dots.items() if _frame < len(_particle.position_history)]
 
             return
 

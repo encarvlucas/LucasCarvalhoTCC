@@ -1,0 +1,27 @@
+\BOOKMARK [0][-]{chapter*.5}{ INTRODU\307\303O}{}% 1
+\BOOKMARK [0][-]{chapter.1}{REVIS\303O DA LITERATURA}{}% 2
+\BOOKMARK [1][-]{section.1.1}{Introdu\347\343o}{chapter.1}% 3
+\BOOKMARK [1][-]{section.1.2}{Rea\347\365es-difus\343o em ci\352ncia dos materiais}{chapter.1}% 4
+\BOOKMARK [0][-]{chapter.2}{Sistemas N\343o Lineares}{}% 5
+\BOOKMARK [1][-]{section.2.1}{Introdu\347\343o}{chapter.2}% 6
+\BOOKMARK [1][-]{section.2.2}{Modelo de Lorenz}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.3}{Mecanismo de rea\347\365es: Brusselator}{chapter.2}% 8
+\BOOKMARK [2][-]{subsection.2.3.1}{An\341lise de estabilidade linear}{section.2.3}% 9
+\BOOKMARK [1][-]{section.2.4}{Equa\347\343o de Van der Pol}{chapter.2}% 10
+\BOOKMARK [1][-]{section.2.5}{Modelo de Fitz-Hugh Nagumo}{chapter.2}% 11
+\BOOKMARK [0][-]{chapter.3}{Mecanismos de Rea\347\343o-Difus\343o}{}% 12
+\BOOKMARK [1][-]{section.3.1}{Introdu\347\343o}{chapter.3}% 13
+\BOOKMARK [1][-]{section.3.2}{Equa\347\343o de Rea\347\343o-Difus\343o: Fitz-Hugh Nagumo}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.3}{Equa\347\343o de Rea\347\343o-Difus\343o: Belousov-Zhabotinski}{chapter.3}% 15
+\BOOKMARK [0][-]{chapter.4}{Modelagem Matem\341tica e Esquema num\351rico}{}% 16
+\BOOKMARK [1][-]{section.4.1}{Equa\347\343o governo}{chapter.4}% 17
+\BOOKMARK [1][-]{section.4.2}{Par\342metros real\355sticos}{chapter.4}% 18
+\BOOKMARK [0][-]{chapter.5}{Verifica\347\343o e Estabilidade}{}% 19
+\BOOKMARK [1][-]{section.5.1}{Verifica\347\343o do c\363digo}{chapter.5}% 20
+\BOOKMARK [1][-]{section.5.2}{Converg\352ncia e erro}{chapter.5}% 21
+\BOOKMARK [1][-]{section.5.3}{Estabilidade do esquema}{chapter.5}% 22
+\BOOKMARK [0][-]{chapter.6}{Resultados}{}% 23
+\BOOKMARK [1][-]{section.6.1}{Preliminares}{chapter.6}% 24
+\BOOKMARK [1][-]{section.6.2}{Avan\347ados}{chapter.6}% 25
+\BOOKMARK [0][-]{section.6.2}{ CONCLUS\303O}{}% 26
+\BOOKMARK [0][-]{section.6.2}{ AP\312NDICE A}{}% 27
