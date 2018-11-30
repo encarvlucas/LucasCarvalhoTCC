@@ -1222,6 +1222,9 @@ class Mesh:
 
         fig, axes = plt.subplots()
         axes.quiver(self.x, self.y, velocity_x, velocity_y)
+        
+        # Sets plot styling
+        style_plot(self.x, self.y)
 
         plt.savefig("{0}_velocity_field".format(self.name))
 
