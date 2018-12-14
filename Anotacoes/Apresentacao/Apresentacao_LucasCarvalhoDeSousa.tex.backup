@@ -82,6 +82,9 @@
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 \usepackage{tikz}
+\usepackage{stackengine}
+\usepackage{url}
+
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -89,12 +92,12 @@
 
 \title[Métodos Numéricos]{Simulação Numérica De Escoamentos Dispersos Utilizando Método De Elementos Finitos} % The short title appears at the bottom of every slide, the full title is only on the title page
 
-\author{\textbf{Lucas Carvalho De Sousa} Gustavo Rabello Dos Anjos} % Your name
+\author{\textbf{Lucas Carvalho De Sousa} \\ Gustavo Rabello Dos Anjos} % Your name
 \institute[UERJ] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
-Universidade do Estado do Rio de Janeiro \\ % Your institution for the title page
-\medskip
-\textit{encarvlucas@hotmail.com} % Your email address
+  Universidade do Estado do Rio de Janeiro \\ % Your institution for the title page
+  \medskip
+  \textit{encarvlucas@hotmail.com} % Your email address
 }
 \date{7 de Janeiro de 2019} %\today Date, can be changed to a custom date
 
@@ -109,12 +112,12 @@ Universidade do Estado do Rio de Janeiro \\ % Your institution for the title pag
 \begin{document}
 
 \begin{frame}
-\titlepage % Print the title page as the first slide
+  \titlepage % Print the title page as the first slide
 \end{frame}
 
 \begin{frame}
-\frametitle{Sumário} % Table of contents slide, comment this block out to remove it
-\tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
+  \frametitle{Sumário} % Table of contents slide, comment this block out to remove it
+  \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
 
 %----------------------------------------------------------------------------------------
@@ -125,12 +128,12 @@ Universidade do Estado do Rio de Janeiro \\ % Your institution for the title pag
 \section{Introdução} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 
-\subsection{Método de Elementos Finitos} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+\subsection{Motivação} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 \begin{frame}
-\frametitle{Motivação}
-\begin{figure}
-\includegraphics[width=0.75\linewidth]{figure/UERJ.png}
-\end{figure}
+  \frametitle{A Importância da Simulação de Escoamentos}
+  \begin{figure}
+    \includegraphics[width=1.0\linewidth]{figure/Aerial_view_of_the_Amazon_Rainforest.jpg}
+  \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -158,10 +161,10 @@ Injeção Contínua
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Modelo Matemático}
+\section{Metodologia}
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \begin{frame}
- \frametitle{Problema Modelo}
+ \frametitle{Modelo Matemático}
 \begin{block}{Conservação de Massa}
 \centering
 $\vec{\nabla}.\vec{u}=\vec{f}$
@@ -224,9 +227,22 @@ $\mathbf{K}(x,y,z)=\dfrac{K(x,y,z)}{\mu(x,y,z)}$
 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Algoritmo de Resolução}
+\section{Resultados Preliminares}
 \begin{frame}
-\frametitle{Algoritmo de Resolução}
+\frametitle{Problema Físico}
+\begin{block}{1º Passo}
+Encontrar a pressão: $\qquad \quad -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f$
+\end{block}
+
+\begin{block}{2º Passo}
+Encontrar a velocidade: $\qquad u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x}$
+\end{block}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Cronograma Futuro}
+\begin{frame}
+\frametitle{Previsão}
 \begin{block}{1º Passo}
 Encontrar a pressão: $\qquad \quad -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f$
 \end{block}
@@ -238,7 +254,7 @@ Encontrar a velocidade: $\qquad u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x}$
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \begin{frame}
-\frametitle{References}
+\frametitle{Bibliografia}
 \footnotesize{
 \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
 \bibitem[biezuner]{p1} R.J. Biezuner (2007)
@@ -263,15 +279,17 @@ Encontrar a velocidade: $\qquad u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x}$
 %------------------------------------------------
 
 \begin{frame}
-\centerline{Agradecimentos}
-\begin{figure}
-\includegraphics[width=0.30\linewidth]{figure/gesar-logo-new.png}
-\hfill
-\includegraphics[height=0.30\linewidth]{figure/UERJ.png}
-\hfill
-\includegraphics[width=0.30\linewidth]{figure/fen-new.png}
-\end{figure}
-\Huge{\centerline{Fim}}
+  \frametitle{Agradecimentos}
+  \centering
+  \begin{tikzpicture}
+    \node[inner sep=0cm] (gesar) at (0,0){
+      \includegraphics[width=0.2\textwidth]{figure/gesar-logo-new.png}};
+    \node[inner sep=0cm] (uerj) at (4,0){
+      \includegraphics[width=0.2\textwidth]{figure/UERJ.png}};
+    \node[inner sep=0cm] (fen) at (8,0){
+      \includegraphics[width=0.2\textwidth]{figure/fen-new.png}};
+  \end{tikzpicture}
+  \Huge{\centerline{Fim}}
 \end{frame}
 
 %----------------------------------------------------------------------------------------

@@ -82,6 +82,19 @@
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 \usepackage{tikz}
+\usepackage{stackengine}
+\usepackage{hyperref}
+
+%  NEW COMMANDS
+\newcommand{\figcopyright}[4]
+{
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=0.75\linewidth]{#1}
+    } {\raggedleft \tiny Fonte:\href{#2}{\textcopyright \ #3.}}
+    \caption{#4}
+  \end{figure}
+}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -89,12 +102,12 @@
 
 \title[Métodos Numéricos]{Simulação Numérica De Escoamentos Dispersos Utilizando Método De Elementos Finitos} % The short title appears at the bottom of every slide, the full title is only on the title page
 
-\author{\textbf{Lucas Carvalho De Sousa} Gustavo Rabello Dos Anjos} % Your name
+\author{\textbf{Lucas Carvalho De Sousa} \\ Gustavo Rabello Dos Anjos} % Your name
 \institute[UERJ] % Your institution as it will appear on the bottom of every slide, may be shorthand to save space
 {
   Universidade do Estado do Rio de Janeiro \\ % Your institution for the title page
   \medskip
-  \textit{encarvlucas@hotmail.com} % Your email address
+  \href{mailto:encarvlucas@hotmail.com}{\textit{encarvlucas@hotmail.com}} % Your email address
 }
 \date{7 de Janeiro de 2019} %\today Date, can be changed to a custom date
 
@@ -125,26 +138,22 @@
 \section{Introdução} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 
-\subsection{Método de Elementos Finitos} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
+\subsection{Motivação} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 \begin{frame}
-  \frametitle{Motivação}
-  \begin{figure}
-    \includegraphics[width=0.75\linewidth]{figure/UERJ.png}
-  \end{figure}
+  \frametitle{A Importância da Simulação de Escoamentos}
+  \figcopyright{figure/Aerial_view_of_the_Amazon_Rainforest.jpg}
+	       {https://www.flickr.com/photos/lubasi/4909683043/}
+	       {Lucía Barreiros}
+	       {Rio Solimões - Amazônia, Brasil}
 \end{frame}
 
 \begin{frame}
-\frametitle{Situações de Análise}
-\begin{block}
-\centering
-Injeção de Traçador
-\end{block}
-\begin{block}
-\centering
-Injeção Contínua
-\end{block}
+  \frametitle{A Importância da Simulação de Escoamentos}
+  \figcopyright{figure/Cologne_Germany_Bundle-extractor-01.jpg}
+	       {https://commons.wikimedia.org/wiki/File:Cologne_Germany_Bundle-extractor-01.jpg}
+	       {CEphoto, Uwe Aranas}
+	       {Interior de um trocador de calor - Colônia, Alemanha}
 \end{frame}
-
 
 \subsection{Escoamentos Dispersos}
 \begin{frame}
@@ -158,10 +167,10 @@ Injeção Contínua
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Modelo Matemático}
+\section{Metodologia}
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \begin{frame}
- \frametitle{Problema Modelo}
+ \frametitle{Modelo Matemático}
 \begin{block}{Conservação de Massa}
 \centering
 $\vec{\nabla}.\vec{u}=\vec{f}$
@@ -224,9 +233,22 @@ $\mathbf{K}(x,y,z)=\dfrac{K(x,y,z)}{\mu(x,y,z)}$
 
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Algoritmo de Resolução}
+\section{Resultados Preliminares}
 \begin{frame}
-\frametitle{Algoritmo de Resolução}
+\frametitle{Problema Físico}
+\begin{block}{1º Passo}
+Encontrar a pressão: $\qquad \quad -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f$
+\end{block}
+
+\begin{block}{2º Passo}
+Encontrar a velocidade: $\qquad u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x}$
+\end{block}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Cronograma Futuro}
+\begin{frame}
+\frametitle{Previsão}
 \begin{block}{1º Passo}
 Encontrar a pressão: $\qquad \quad -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f$
 \end{block}
