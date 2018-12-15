@@ -84,8 +84,14 @@
 \usepackage{tikz}
 \usepackage{stackengine}
 \usepackage{hyperref}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{amsmath}
+
+\usepackage{todonotes} % REMOVE LATER
 
 %  NEW COMMANDS
+\def\stackalignment{r}
 \newcommand{\figcopyright}[4]
 {
   \begin{figure}
@@ -96,6 +102,10 @@
   \end{figure}
 }
 
+\newcommand{\partfrac}[3] % Bugged function, must be called as \partfrac2
+{
+  \ensuremath{\dfrac{\partial{#2}}{\partial{#3}}}
+}
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
 %----------------------------------------------------------------------------------------
@@ -155,134 +165,185 @@
 	       {Interior de um trocador de calor - Colônia, Alemanha}
 \end{frame}
 
+%----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Escoamentos Dispersos}
 \begin{frame}
-\frametitle{Benchmark}
-\begin{itemize}
- \item Five-spot
-\end{itemize}
-\begin{figure}
-\includegraphics[height=0.550\linewidth]{figure/UERJ.png}
-\end{figure}
+  \frametitle{Escoamentos}
+  \begin{figure}
+    \includegraphics[width=\linewidth]{figure/developed_flow.pdf}
+    \caption{Escoamento permanente desenvolvido.}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Escoamentos Multifásicos}
+  \begin{figure}
+    \includegraphics[width=\linewidth]{figure/particle_flow.pdf}
+    \caption{Escoamento particulado.}
+  \end{figure}
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Metodologia}
 %----------------------------------------------------------------------------------------------------------------------------------------------------
+
+\subsection{Discretização}
 \begin{frame}
- \frametitle{Modelo Matemático}
-\begin{block}{Conservação de Massa}
-\centering
-$\vec{\nabla}.\vec{u}=\vec{f}$
-\end{block}
-
-\begin{block}{Lei de Darcy}
-\centering
-$\vec{u} = -\mathbf{K} (\nabla p+\rho \vec{g})$
-\end{block}
-
- Onde: $\vec{u}$ é o campo de velocidades, $\mathbf{K}$ é o tensor de permeabilidade, $\rho$ é a densidade do fluido, 
- $p$ é o a pressão, $g$ a gravidade e $\vec{f}$ é o termo fonte.
-% \begin{block}{Equação de Transporte}
-% \centering
-% $\phi \dfrac{\partial c}{\partial t}+\vec{u}.\nabla c-\nabla.(\mathbb{D}\nabla c)=\vec{f_2}$
-% \end{block}
+  \frametitle{Método dos Elementos Finitos}
+  \begin{figure}
+    \includegraphics[width=0.5\linewidth]{figure/element.pdf}
+    \caption{Elemento triangular.}
+  \end{figure}
 \end{frame}
 
+\begin{frame}
+  \frametitle{Método dos Elementos Finitos}
+  
+  \begin{figure}
+    \title{Soluções da pressão}
+    \begin{minipage}[t]{.49\textwidth}
+      \centering
+      \includegraphics[height=0.95\linewidth]{figure/structured_mesh.pdf}
+      \captionof{figure}{Malha estruturada.}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[t]{.49\textwidth}
+      \centering
+      \includegraphics[height=0.95\linewidth]{figure/unstructured_mesh.pdf}
+      \captionof{figure}{Malha não estruturada.}
+    \end{minipage}
+  \end{figure}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Sistema de Equações}
 \begin{frame}
- \frametitle{Sistema de Darcy}
-Utilizamos a relação do tensor de permeabilidade $\mathbf{K}$ e a permeabilidade geométrica $K$ e viscosidade do meio $\mu$:
-$\qquad \mathbf{K}=\dfrac{K}{\mu}$\\
-Para o caso de um fluido incompressível e com efeitos gravitacionais desprezados temos o seguinte sistema:
- \begin{block}{Sistema Unidimensional}
-\centering
-$\left\{
- \begin{array}{lr}
-  -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f \\
-  u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x} 
-%   \phi \dfrac{\partial c}{\partial t}+u\dfrac{\partial c}{\partial x}-\dfrac{\partial}{\partial x}\bigg(\mathbb{D}\dfrac{\partial c}{\partial x}\bigg)=f_2
- \end{array}
- \right.$
-\end{block}
+  \frametitle{Modelo Matemático}
+  \begin{block}{Equação de Vorticidade}
+    \centering
+    $\partfrac2{\omega_z}{t} + \vec{v}.\nabla\omega_z = \nu \nabla^2 \omega_z$
+  \end{block}
+
+  \begin{block}{Equação de Corrente}
+    \centering
+    $\nabla^2 \psi = -\omega_z$
+  \end{block}
+  
+  \begin{block}{Equação BBO (\it{Basset–Boussinesq–Oseen})}
+    \centering
+    $\sum \vec{F}_p = \vec{F}_{drag} + \vec{F}_{grav} + \vec{F}_{etc}$
+  \end{block}
+  
+  \begin{block}{Força de Arrasto (\it{Stoakes})}
+    \centering
+    $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
+  \end{block}
+  
 \end{frame}
 
 \begin{frame}
- \frametitle{Tensor de Permeabilidade}
-\begin{block}{Tensor de permeabilidade constante no domínio}
-\centering
-$\mathbf{K}=\dfrac{K}{\mu}=\mathit{cte}$
-\end{block}
-\begin{figure}
-\includegraphics[width=0.3\linewidth]{figure/UERJ.png}
-\end{figure}
-
-\begin{block}{Tensor de permeabilidade variável no domínio}
-\centering
-$\mathbf{K}(x,y,z)=\dfrac{K(x,y,z)}{\mu(x,y,z)}$
-\end{block}
-\begin{figure}
-\includegraphics[width=0.3\linewidth]{figure/UERJ.png}
-\end{figure}
-
+  \frametitle{Modelo Matemático}
+  \begin{block}{Força Gravitacional}
+    \centering
+    $\vec{F}_{grav} = \tfrac{\pi}{6} d_p \rho_p \vec{g}$
+  \end{block}
+  
+  \begin{block}{Equações Auxiliares}
+    \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+    \centering
+    \begin{align*}
+      \partfrac2{\psi}{y} &= v_x \\
+      \partfrac2{\psi}{x} &= -v_y \\
+      \omega_z &= \partfrac2{v_x}{y} - \partfrac2{v_y}{x} 
+    \end{align*}
+  \end{block}
+  
+  \footnotesize{
+    Onde: $\omega_z$ é o campo de vorticidade, $\psi$ é o campo de correntes, $\vec{v}$ é o campo vetorial de velocidades, 
+    $\mu$ é a viscosidade dinâmica, $\nu$ é o coeficiente de \_\_\_\_ sobre o domínio da malha.
+    E as variáveis $d_p$ são o diâmetro, $\rho_p$ é a densidade e $\vec{F}_p$ é a força resultante de uma partícula.
+    \todo[inline]{nome da propiedade}
+  }
+  
+%   Estas equações são utilizadas na definição e cálculo das condições de contorno.
 \end{frame}
 
+%----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Equações Matriciais}
 \begin{frame}
-\end{frame}
+  \frametitle{Equações Matriciais}
+  \begin{block}{Vorticidade}
+    \centering
+    $\bigg(\dfrac{\mathbf{M}}{\Delta t} + \nu \mathbf{K} + \mathbf{v.G} \bigg)\omega_z^{n+1} = \dfrac{\mathbf{M}}{\Delta t} \omega_z^n$
+  \end{block}
 
+  \begin{block}{Corrente}
+    \centering
+    $\mathbf{K} \psi = \mathbf{M} \omega_z$
+  \end{block}
+  
+  \begin{block}{Auxiliares}
+    \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+    \centering
+    \begin{align*}
+      \mathbf{M} v_x &= \mathbf{G}_y \psi \\
+      \mathbf{M} v_y &=-\mathbf{G}_x \psi \\
+      \mathbf{M} \omega_z &= \mathbf{G}_x v_y - \mathbf{G}_y v_x
+    \end{align*}
+  \end{block}
+\end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Resultados Preliminares}
-\begin{frame}
-\frametitle{Problema Físico}
-\begin{block}{1º Passo}
-Encontrar a pressão: $\qquad \quad -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f$
-\end{block}
+%----------------------------------------------------------------------------------------------------------------------------------------------------
 
-\begin{block}{2º Passo}
-Encontrar a velocidade: $\qquad u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x}$
-\end{block}
+\begin{frame}
+  \frametitle{Problema Físico}
+  \todo[inline]{Inserir quais resultados?}
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Cronograma Futuro}
-\begin{frame}
-\frametitle{Previsão}
-\begin{block}{1º Passo}
-Encontrar a pressão: $\qquad \quad -\dfrac{K}{\mu}\dfrac{\partial^2 p}{\partial x^2}=f$
-\end{block}
+%----------------------------------------------------------------------------------------------------------------------------------------------------
 
-\begin{block}{2º Passo}
-Encontrar a velocidade: $\qquad u=-\dfrac{K}{\mu}\dfrac{\partial p}{\partial x}$
-\end{block}
+\begin{frame}
+  \frametitle{Previsão}
+  \todo[inline]{Melhor forma de representar cronograma/previsão?}
+\end{frame}
+
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+% Bibliografia
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+
+\begin{frame}
+  \frametitle{Bibliografia}
+  \footnotesize{
+    \todo[inline]{Fazer bibliografia}
+    \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+
+      \bibitem[biezuner]{p1} R.J. Biezuner (2007)
+      \newblock Métodos Numéricos para Equações Parciais Elípticas
+      \newblock \emph{Notas de Aula}
+
+      \bibitem[fortuna]{p1} A.O. Fortuna (2000)
+      \newblock Técnicas Computacionais para Dinâmica dos Fluidos: Conceitos Básicos e Aplicações
+      \newblock \emph{Edusp}
+
+      \bibitem[leveque]{p1} R.J. LeVeque (2007)
+      \newblock Finite Difference Methods for Ordinary and Partial Differential Equations. Steady-State and Time-Dependant Problems
+      \newblock \emph{SIAM}
+
+      \bibitem[biezuner]{p1} J.R. Rodrigues (2015)
+      \newblock Introdução à Simulação de Reservatórios Petrolíferos
+      \newblock \emph{Programa de Verão LNCC}
+    \end{thebibliography}
+  }
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\begin{frame}
-\frametitle{Bibliografia}
-\footnotesize{
-\begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-\bibitem[biezuner]{p1} R.J. Biezuner (2007)
-\newblock Métodos Numéricos para Equações Parciais Elípticas
-\newblock \emph{Notas de Aula}
-
-\bibitem[fortuna]{p1} A.O. Fortuna (2000)
-\newblock Técnicas Computacionais para Dinâmica dos Fluidos: Conceitos Básicos e Aplicações
-\newblock \emph{Edusp}
-
-\bibitem[leveque]{p1} R.J. LeVeque (2007)
-\newblock Finite Difference Methods for Ordinary and Partial Differential Equations. Steady-State and Time-Dependant Problems
-\newblock \emph{SIAM}
-
-\bibitem[biezuner]{p1} J.R. Rodrigues (2015)
-\newblock Introdução à Simulação de Reservatórios Petrolíferos
-\newblock \emph{Programa de Verão LNCC}
-\end{thebibliography}
-}
-\end{frame}
-
-%------------------------------------------------
+% Agradecimentos
+%----------------------------------------------------------------------------------------------------------------------------------------------------
 
 \begin{frame}
   \frametitle{Agradecimentos}

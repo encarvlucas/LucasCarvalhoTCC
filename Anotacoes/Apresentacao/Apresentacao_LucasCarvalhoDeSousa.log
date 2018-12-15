@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.15)  14 DEC 2018 17:42
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.15)  15 DEC 2018 01:29
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1168,27 +1168,85 @@ LaTeX Info: Redefining \addtolength on input line 81.
 \@centerbox=\box61
 \c@ROWcellindex@=\count172
 )
+(/usr/share/texlive/texmf-dist/tex/latex/caption/subcaption.sty
+Package: subcaption 2016/02/20 v1.1-142 Sub-captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2016/02/21 v3.3-144 Customizing captions (AR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2016/02/04 v1.7-139 caption3 kernel (AR)
+Package caption3 Info: TeX engine: e-TeX on input line 67.
+\captionmargin=\dimen271
+\captionmargin@=\dimen272
+\captionwidth=\dimen273
+\caption@tempdima=\dimen274
+\caption@indent=\dimen275
+\caption@parindent=\dimen276
+\caption@hangindent=\dimen277
+)
+\c@ContinuedFloat=\count173
+Package caption Info: beamer document class.
+Package caption Info: hyperref package is loaded.
+Package caption Info: Hyperref support is turned off
+(caption)             because hyperref has stopped early.
+)
+\c@subfigure=\count174
+\c@subtable=\count175
+)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count176
+\float@exts=\toks47
+\float@box=\box62
+\@float@everytoks=\toks48
+\@floatcapt=\box63
+)
+(/usr/share/texlive/texmf-dist/tex/latex/todonotes/todonotes.sty
+Package: todonotes 2015/07/09 .dtx Todonotes source and documentation.
+Package: todonotes 2012/07/25
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2014/12/03 v2.7a package option processing (HA)
+
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks49
+\XKV@tempa@toks=\toks50
+)
+\XKV@depth=\count177
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(/usr/share/texlive/texmf-dist/tex/generic/pgf/frontendlayer/tikz/libraries/tik
+zlibrarypositioning.code.tex
+File: tikzlibrarypositioning.code.tex 2008/10/06 v3.0.1a (rcs-revision 1.7)
+)
+\c@@todonotes@numberoftodonotes=\count178
+)
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\\' on input line 105.
+(hyperref)                removing `\\' on input line 115.
 
 (./Apresentacao_LucasCarvalhoDeSousa.aux)
 \openout1 = `Apresentacao_LucasCarvalhoDeSousa.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 132.
+LaTeX Font Info:    ... okay on input line 132.
 
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
@@ -1226,17 +1284,17 @@ LaTeX Font Info:    ... okay on input line 122.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count173
-\scratchdimen=\dimen271
-\scratchbox=\box62
-\nofMPsegments=\count174
-\nofMParguments=\count175
-\everyMPshowfont=\toks47
-\MPscratchCnt=\count176
-\MPscratchDim=\dimen272
-\MPnumerator=\count177
-\makeMPintoPDFobject=\count178
-\everyMPtoPDFconversion=\toks48
+\scratchcounter=\count179
+\scratchdimen=\dimen278
+\scratchbox=\box64
+\nofMPsegments=\count180
+\nofMParguments=\count181
+\everyMPshowfont=\toks51
+\MPscratchCnt=\count182
+\MPscratchDim=\dimen279
+\MPnumerator=\count183
+\makeMPintoPDFobject=\count184
+\everyMPtoPDFconversion=\toks52
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
 
@@ -1253,8 +1311,8 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 ABD: EveryShipout initializing macros
-\AtBeginShipoutBox=\box63
-Package hyperref Info: Link coloring OFF on input line 122.
+\AtBeginShipoutBox=\box65
+Package hyperref Info: Link coloring OFF on input line 132.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
@@ -1262,11 +1320,11 @@ Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 (/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count179
+\c@section@level=\count185
 )
-LaTeX Info: Redefining \ref on input line 122.
-LaTeX Info: Redefining \pageref on input line 122.
-LaTeX Info: Redefining \nameref on input line 122.
+LaTeX Info: Redefining \ref on input line 132.
+LaTeX Info: Redefining \pageref on input line 132.
+LaTeX Info: Redefining \nameref on input line 132.
 
 (./Apresentacao_LucasCarvalhoDeSousa.out)
 (./Apresentacao_LucasCarvalhoDeSousa.out)
@@ -1274,57 +1332,57 @@ LaTeX Info: Redefining \nameref on input line 122.
 \openout5 = `Apresentacao_LucasCarvalhoDeSousa.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 122.
+(Font)                  OT1/cmr/m/n --> OT1/cmss/m/n on input line 132.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 122.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 132.
 \symnumbers=\mathgroup6
 \sympureletters=\mathgroup7
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 122.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 122.
+(Font)                  OT1/cmss/m/n --> OT1/cmr/m/n on input line 132.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 122.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 122.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 122.
+(Font)                  OT1/cmr/bx/n --> OT1/cmss/bx/n on input line 132.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 122.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/m/n on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 122.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 122.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/m/n on input line 132.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 122.
+(Font)                  OT1/cmr/m/it --> OT1/cmss/m/it on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 122.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 122.
+(Font)                  OT1/cmr/bx/it --> OT1/cmss/m/it on input line 132.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 122.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 122.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/m/n on input line 132.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 122.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 132.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 122.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 122.
+(Font)                  OT1/cmss/bx/n --> OT1/cmr/bx/n on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 122.
+(Font)                  OT1/cmss/bx/n --> OT1/cmss/bx/n on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 122.
+(Font)                  OT1/cmss/m/n --> OT1/cmss/bx/n on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 122.
+(Font)                  OT1/cmss/m/it --> OT1/cmss/bx/it on input line 132.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 122.
-LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 122.
+(Font)                  OT1/cmtt/m/n --> OT1/cmtt/bx/n on input line 132.
+LaTeX Font Info:    Redeclaring symbol font `pureletters' on input line 132.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `normal'
 (Font)                  OT1/cmss/m/it --> OT1/mathkerncmss/m/sl on input line 1
-22.
+32.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
 (Font)                  OT1/cmss/bx/it --> OT1/mathkerncmss/m/sl on input line 
-122.
+132.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
 (Font)                  OT1/mathkerncmss/m/sl --> OT1/mathkerncmss/bx/sl on inp
-ut line 122.
+ut line 132.
 
 (/usr/share/texlive/texmf-dist/tex/latex/beamer/translator/dicts/translator-bas
 ic-dictionary/translator-basic-dictionary-English.dict
@@ -1350,29 +1408,32 @@ Dictionary: translator-numbers-dictionary, Language: English
 orem-dictionary/translator-theorem-dictionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
 )
-LaTeX Info: Redefining \includegraphics on input line 122.
+LaTeX Info: Redefining \includegraphics on input line 132.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: End \AtBeginDocument code.
 
 (./Apresentacao_LucasCarvalhoDeSousa.nav)
-<figure/UERJ.png, id=68, 273.02pt x 301.125pt>
+<figure/UERJ.png, id=75, 273.02pt x 301.125pt>
 File: figure/UERJ.png Graphic file (type png)
  <use figure/UERJ.png>
-Package pdftex.def Info: figure/UERJ.png used on input line 126.
+Package pdftex.def Info: figure/UERJ.png used on input line 136.
 (pdftex.def)             Requested size: 42.67912pt x 47.06903pt.
 
-<figure/fen-new.png, id=69, 337.86224pt x 341.47575pt>
+<figure/fen-new.png, id=76, 337.86224pt x 341.47575pt>
 File: figure/fen-new.png Graphic file (type png)
 
 <use figure/fen-new.png>
-Package pdftex.def Info: figure/fen-new.png used on input line 126.
+Package pdftex.def Info: figure/fen-new.png used on input line 136.
 (pdftex.def)             Requested size: 42.22751pt x 42.67912pt.
 
-Overfull \hbox (20.48372pt too wide) in paragraph at lines 126--126
+Overfull \hbox (20.48372pt too wide) in paragraph at lines 136--136
  [][] 
  []
 
 
 LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <4> not available
-(Font)              size <5> substituted on input line 126.
+(Font)              size <5> substituted on input line 136.
 
 [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
 
@@ -1380,89 +1441,163 @@ LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <4> not available
 sa.toc) [2
 
 ]
-<figure/Aerial_view_of_the_Amazon_Rainforest.jpg, id=172, 3462.9375pt x 2125.94
+<figure/Aerial_view_of_the_Amazon_Rainforest.jpg, id=188, 3462.9375pt x 2125.94
 25pt>
 File: figure/Aerial_view_of_the_Amazon_Rainforest.jpg Graphic file (type jpg)
  <use figure/Aerial_view_of_the_Amazon_Rainforest.jpg>
 Package pdftex.def Info: figure/Aerial_view_of_the_Amazon_Rainforest.jpg used o
-n input line 148.
+n input line 158.
 (pdftex.def)             Requested size: 230.46739pt x 141.46747pt.
-LaTeX Font Info:    Try loading font information for OMS+cmss on input line 148
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 158
 .
-LaTeX Font Info:    No file OMScmss.fd. on input line 148.
+LaTeX Font Info:    No file OMScmss.fd. on input line 158.
 
 
 LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
-(Font)              using `OMS/cmsy/m/n' instead on input line 148.
+(Font)              using `OMS/cmsy/m/n' instead on input line 158.
 
 File: figure/Aerial_view_of_the_Amazon_Rainforest.jpg Graphic file (type jpg)
 <use figure/Aerial_view_of_the_Amazon_Rainforest.jpg>
 Package pdftex.def Info: figure/Aerial_view_of_the_Amazon_Rainforest.jpg used o
-n input line 148.
+n input line 158.
 (pdftex.def)             Requested size: 230.46739pt x 141.46747pt.
  [3
 
  <./figure/Aerial_view_of_the_Amazon_Rainforest.jpg>]
-<figure/Cologne_Germany_Bundle-extractor-01.jpg, id=210, 733.0587pt x 549.7338p
+<figure/Cologne_Germany_Bundle-extractor-01.jpg, id=229, 733.0587pt x 549.7338p
 t>
 File: figure/Cologne_Germany_Bundle-extractor-01.jpg Graphic file (type jpg)
  <use figure/Cologne_Germany_Bundle-extractor-01.jpg>
 Package pdftex.def Info: figure/Cologne_Germany_Bundle-extractor-01.jpg used on
- input line 156.
+ input line 166.
 (pdftex.def)             Requested size: 230.46739pt x 172.83153pt.
 File: figure/Cologne_Germany_Bundle-extractor-01.jpg Graphic file (type jpg)
 
 <use figure/Cologne_Germany_Bundle-extractor-01.jpg>
 Package pdftex.def Info: figure/Cologne_Germany_Bundle-extractor-01.jpg used on
- input line 156.
+ input line 166.
 (pdftex.def)             Requested size: 230.46739pt x 172.83153pt.
  [4
 
  <./figure/Cologne_Germany_Bundle-extractor-01.jpg>]
-File: figure/UERJ.png Graphic file (type png)
- <use figure/UERJ.png>
-Package pdftex.def Info: figure/UERJ.png used on input line 167.
-(pdftex.def)             Requested size: 153.2401pt x 169.01036pt.
+<figure/developed_flow.pdf, id=269, 210.9501pt x 57.70558pt>
+File: figure/developed_flow.pdf Graphic file (type pdf)
+
+<use figure/developed_flow.pdf>
+Package pdftex.def Info: figure/developed_flow.pdf used on input line 176.
+(pdftex.def)             Requested size: 307.28987pt x 84.06364pt.
  [5
 
-]
-LaTeX Font Info:    Try loading font information for U+msa on input line 190.
+ <./figure/developed_flow.pdf
 
-(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/developed_flow.pdf): PDF inclu
+sion: invalid other resource which is no dict (key 'ColorSpace', type <null>); 
+ignored.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/developed_flow.pdf): PDF inclu
+sion: invalid other resource which is no dict (key 'Pattern', type <null>); ign
+ored.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/developed_flow.pdf): PDF inclu
+sion: invalid other resource which is no dict (key 'ExtGState', type <null>); i
+gnored.
+>] <figure/particle_flow.pdf, id=309, 171.51678pt x 57.70558pt>
+File: figure/particle_flow.pdf Graphic file (type pdf)
+
+<use figure/particle_flow.pdf>
+Package pdftex.def Info: figure/particle_flow.pdf used on input line 184.
+(pdftex.def)             Requested size: 307.28987pt x 103.39447pt.
+ [6
+
+ <./figure/particle_flow.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/particle_flow.pdf): PDF inclus
+ion: invalid other resource which is no dict (key 'ColorSpace', type <null>); i
+gnored.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/particle_flow.pdf): PDF inclus
+ion: invalid other resource which is no dict (key 'Pattern', type <null>); igno
+red.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/particle_flow.pdf): PDF inclus
+ion: invalid other resource which is no dict (key 'ExtGState', type <null>); ig
+nored.
+>] <figure/element.pdf, id=348, 130.86693pt x 105.58446pt>
+File: figure/element.pdf Graphic file (type pdf)
+
+<use figure/element.pdf>
+Package pdftex.def Info: figure/element.pdf used on input line 197.
+(pdftex.def)             Requested size: 153.64493pt x 123.96829pt.
+ [7
+
+ <./figure/element.pdf>]
+<figure/structured_mesh.pdf, id=404, 461.26025pt x 450.33948pt>
+File: figure/structured_mesh.pdf Graphic file (type pdf)
+
+<use figure/structured_mesh.pdf>
+Package pdftex.def Info: figure/structured_mesh.pdf used on input line 216.
+(pdftex.def)             Requested size: 146.51537pt x 143.04456pt.
+
+<figure/unstructured_mesh.pdf, id=405, 473.01018pt x 450.33948pt>
+File: figure/unstructured_mesh.pdf Graphic file (type pdf)
+
+<use figure/unstructured_mesh.pdf>
+Package pdftex.def Info: figure/unstructured_mesh.pdf used on input line 216.
+(pdftex.def)             Requested size: 150.24762pt x 143.04456pt.
+ [8
+
+ <./figure/structured_mesh.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/structured_mesh.pdf): PDF incl
+usion: invalid other resource which is no dict (key 'ColorSpace', type <null>);
+ ignored.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/structured_mesh.pdf): PDF incl
+usion: invalid other resource which is no dict (key 'Pattern', type <null>); ig
+nored.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/structured_mesh.pdf): PDF incl
+usion: invalid other resource which is no dict (key 'ExtGState', type <null>); 
+ignored.
+> <./figure/unstructured_mesh.pdf
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/unstructured_mesh.pdf): PDF in
+clusion: invalid other resource which is no dict (key 'ColorSpace', type <null>
+); ignored.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/unstructured_mesh.pdf): PDF in
+clusion: invalid other resource which is no dict (key 'Pattern', type <null>); 
+ignored.
+
+
+pdfTeX warning: /usr/bin/pdflatex (file ./figure/unstructured_mesh.pdf): PDF in
+clusion: invalid other resource which is no dict (key 'ExtGState', type <null>)
+; ignored.
+>]
+LaTeX Font Info:    Try loading font information for U+msa on input line 242.
+ (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 190.
+LaTeX Font Info:    Try loading font information for U+msb on input line 242.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for OT1+mathkerncmss on input 
-line 190.
+line 242.
 
 (/usr/share/texlive/texmf-dist/tex/latex/sansmathaccent/ot1mathkerncmss.fd
 File: ot1mathkerncmss.fd 2013/03/27 Fontinst v1.933 font definitions for OT1/ma
 thkerncmss.
 )
-[6
-
-] [7
-
-]
-File: figure/UERJ.png Graphic file (type png)
- <use figure/UERJ.png>
-Package pdftex.def Info: figure/UERJ.png used on input line 228.
-(pdftex.def)             Requested size: 92.1879pt x 101.67813pt.
-File: figure/UERJ.png Graphic file (type png)
- <use figure/UERJ.png>
-Package pdftex.def Info: figure/UERJ.png used on input line 228.
-(pdftex.def)             Requested size: 92.1879pt x 101.67813pt.
-
-Overfull \vbox (116.32813pt too high) detected at line 228
- []
-
-[8
-
-] [9
+[9
 
 ] [10
 
@@ -1470,23 +1605,27 @@ Overfull \vbox (116.32813pt too high) detected at line 228
 
 ] [12
 
+] [13
+
+] [14
+
  </usr/share/texlive/texmf-dist/tex/latex/beamer/art/beamericonarticle.pdf>]
-<figure/gesar-logo-new.png, id=541, 677.53125pt x 214.55156pt>
+<figure/gesar-logo-new.png, id=700, 677.53125pt x 214.55156pt>
 File: figure/gesar-logo-new.png Graphic file (type png)
 
 <use figure/gesar-logo-new.png>
-Package pdftex.def Info: figure/gesar-logo-new.png used on input line 299.
+Package pdftex.def Info: figure/gesar-logo-new.png used on input line 360.
 (pdftex.def)             Requested size: 61.45703pt x 19.4594pt.
 File: figure/UERJ.png Graphic file (type png)
  <use figure/UERJ.png>
-Package pdftex.def Info: figure/UERJ.png used on input line 299.
+Package pdftex.def Info: figure/UERJ.png used on input line 360.
 (pdftex.def)             Requested size: 61.45703pt x 67.78235pt.
 File: figure/fen-new.png Graphic file (type png)
  <use figure/fen-new.png>
-Package pdftex.def Info: figure/fen-new.png used on input line 299.
+Package pdftex.def Info: figure/fen-new.png used on input line 360.
 (pdftex.def)             Requested size: 61.45703pt x 62.11429pt.
 
-[13
+[15
 
  <./figure/gesar-logo-new.png>]
 \tf@nav=\write6
@@ -1498,14 +1637,14 @@ Package pdftex.def Info: figure/fen-new.png used on input line 299.
 \tf@snm=\write8
 \openout8 = `Apresentacao_LucasCarvalhoDeSousa.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 303.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 303.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 364.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 364.
  (./Apresentacao_LucasCarvalhoDeSousa.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 303.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 303.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 364.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 364.
 Package rerunfilecheck Info: File `Apresentacao_LucasCarvalhoDeSousa.out' has n
 ot changed.
-(rerunfilecheck)             Checksum: CF58ED17DBD601962BE49F1C4A156391;489.
+(rerunfilecheck)             Checksum: DC690232ACAD4BE0C49B4F51992A2DC7;558.
 
 
 LaTeX Font Warning: Size substitutions with differences
@@ -1514,34 +1653,38 @@ LaTeX Font Warning: Size substitutions with differences
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 303.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 364.
  ) 
 Here is how much of TeX's memory you used:
- 21096 strings out of 494929
- 410771 string characters out of 6180141
- 490133 words of memory out of 5000000
- 23847 multiletter control sequences out of 15000+600000
- 13604 words of font info for 48 fonts, out of 8000000 for 9000
+ 22767 strings out of 494929
+ 441693 string characters out of 6180141
+ 530186 words of memory out of 5000000
+ 25469 multiletter control sequences out of 15000+600000
+ 15940 words of font info for 57 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 56i,20n,62p,953b,760s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,20n,83p,953b,830s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/te
-xmf-dist/fonts/type1/public/amsfonts/cm/cmss17.pfb></usr/share/texlive/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmss8.pfb></usr/share/texlive/texmf-dist/font
-s/type1/public/amsfonts/cm/cmss9.pfb></usr/share/texlive/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmssi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmssi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmssi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
-msy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.p
-fb>
-Output written on Apresentacao_LucasCarvalhoDeSousa.pdf (13 pages, 8313415 byte
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
+msfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmss17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
+mss8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pf
+b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/share/t
+exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/share/texlive
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb>
+Output written on Apresentacao_LucasCarvalhoDeSousa.pdf (15 pages, 8406232 byte
 s).
 PDF statistics:
- 632 PDF objects out of 1000 (max. 8388607)
- 560 compressed objects within 6 object streams
- 36 named destinations out of 1000 (max. 500000)
- 186 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 807 PDF objects out of 1000 (max. 8388607)
+ 718 compressed objects within 8 object streams
+ 41 named destinations out of 1000 (max. 500000)
+ 219 words of extra memory for PDF output out of 10000 (max. 10000000)
 

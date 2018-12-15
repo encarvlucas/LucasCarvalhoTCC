@@ -3,8 +3,9 @@
 \beamer@sectionintoc {1}{Introdu\IeC {\c c}\IeC {\~a}o}{3}{0}{1}
 \beamer@subsectionintoc {1}{1}{Motiva\IeC {\c c}\IeC {\~a}o}{3}{0}{1}
 \beamer@subsectionintoc {1}{2}{Escoamentos Dispersos}{5}{0}{1}
-\beamer@sectionintoc {2}{Metodologia}{6}{0}{2}
-\beamer@subsectionintoc {2}{1}{Sistema de Equa\IeC {\c c}\IeC {\~o}es}{7}{0}{2}
-\beamer@subsectionintoc {2}{2}{Equa\IeC {\c c}\IeC {\~o}es Matriciais}{9}{0}{2}
-\beamer@sectionintoc {3}{Resultados Preliminares}{10}{0}{3}
-\beamer@sectionintoc {4}{Cronograma Futuro}{11}{0}{4}
+\beamer@sectionintoc {2}{Metodologia}{7}{0}{2}
+\beamer@subsectionintoc {2}{1}{Discretiza\IeC {\c c}\IeC {\~a}o}{7}{0}{2}
+\beamer@subsectionintoc {2}{2}{Sistema de Equa\IeC {\c c}\IeC {\~o}es}{9}{0}{2}
+\beamer@subsectionintoc {2}{3}{Equa\IeC {\c c}\IeC {\~o}es Matriciais}{11}{0}{2}
+\beamer@sectionintoc {3}{Resultados Preliminares}{12}{0}{3}
+\beamer@sectionintoc {4}{Cronograma Futuro}{13}{0}{4}
