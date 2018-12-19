@@ -22,19 +22,19 @@
 \headcommand {\beamer@subsectionentry {0}{2}{1}{7}{Discretiza\IeC {\c c}\IeC {\~a}o}}\headcommand {\beamer@subsectionpages {7}{6}}
 \headcommand {\slideentry {2}{1}{1}{7/7}{Discretiza\IeC {\c c}\IeC {\~a}o}{0}}
 \headcommand {\beamer@framepages {7}{7}}
-\headcommand {\slideentry {2}{1}{2}{8/8}{Discretiza\IeC {\c c}\IeC {\~a}o}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{8}{Sistema de Equa\IeC {\c c}\IeC {\~o}es}}\headcommand {\beamer@subsectionpages {7}{7}}
+\headcommand {\slideentry {2}{2}{1}{8/8}{Sistema de Equa\IeC {\c c}\IeC {\~o}es}{0}}
 \headcommand {\beamer@framepages {8}{8}}
-\headcommand {\beamer@subsectionentry {0}{2}{2}{9}{Sistema de Equa\IeC {\c c}\IeC {\~o}es}}\headcommand {\beamer@subsectionpages {7}{8}}
-\headcommand {\slideentry {2}{2}{1}{9/9}{Sistema de Equa\IeC {\c c}\IeC {\~o}es}{0}}
+\headcommand {\slideentry {2}{2}{2}{9/9}{Sistema de Equa\IeC {\c c}\IeC {\~o}es}{0}}
 \headcommand {\beamer@framepages {9}{9}}
-\headcommand {\slideentry {2}{2}{2}{10/10}{Sistema de Equa\IeC {\c c}\IeC {\~o}es}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{3}{10}{Equa\IeC {\c c}\IeC {\~o}es Matriciais}}\headcommand {\beamer@subsectionpages {8}{9}}
+\headcommand {\slideentry {2}{3}{1}{10/10}{Equa\IeC {\c c}\IeC {\~o}es Matriciais}{0}}
 \headcommand {\beamer@framepages {10}{10}}
-\headcommand {\beamer@subsectionentry {0}{2}{3}{11}{Equa\IeC {\c c}\IeC {\~o}es Matriciais}}\headcommand {\beamer@subsectionpages {9}{10}}
-\headcommand {\slideentry {2}{3}{1}{11/11}{Equa\IeC {\c c}\IeC {\~o}es Matriciais}{0}}
+\headcommand {\slideentry {2}{3}{2}{11/11}{Equa\IeC {\c c}\IeC {\~o}es Matriciais}{0}}
 \headcommand {\beamer@framepages {11}{11}}
 \headcommand {\sectionentry {3}{Resultados Preliminares}{12}{Resultados Preliminares}{0}}
 \headcommand {\beamer@sectionpages {7}{11}}
-\headcommand {\beamer@subsectionpages {11}{11}}
+\headcommand {\beamer@subsectionpages {10}{11}}
 \headcommand {\slideentry {3}{0}{1}{12/12}{}{0}}
 \headcommand {\beamer@framepages {12}{12}}
 \headcommand {\sectionentry {4}{Cronograma Futuro}{13}{Cronograma Futuro}{0}}
@@ -44,10 +44,8 @@
 \headcommand {\beamer@framepages {13}{13}}
 \headcommand {\slideentry {4}{0}{2}{14/14}{}{0}}
 \headcommand {\beamer@framepages {14}{14}}
-\headcommand {\slideentry {4}{0}{3}{15/15}{}{0}}
-\headcommand {\beamer@framepages {15}{15}}
-\headcommand {\beamer@partpages {1}{15}}
-\headcommand {\beamer@subsectionpages {13}{15}}
-\headcommand {\beamer@sectionpages {13}{15}}
-\headcommand {\beamer@documentpages {15}}
-\headcommand {\def \inserttotalframenumber {15}}
+\headcommand {\beamer@partpages {1}{14}}
+\headcommand {\beamer@subsectionpages {13}{14}}
+\headcommand {\beamer@sectionpages {13}{14}}
+\headcommand {\beamer@documentpages {14}}
+\headcommand {\def \inserttotalframenumber {14}}

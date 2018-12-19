@@ -190,14 +190,6 @@
 \subsection{Discretização}
 \begin{frame}
   \frametitle{Método dos Elementos Finitos}
-  \begin{figure}
-    \includegraphics[width=0.5\linewidth]{figure/element.pdf}
-    \caption{Elemento triangular.}
-  \end{figure}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Método dos Elementos Finitos}
   
   \begin{figure}
     \title{Soluções da pressão}
@@ -219,78 +211,163 @@
 \subsection{Sistema de Equações}
 \begin{frame}
   \frametitle{Modelo Matemático}
-  \begin{block}{Equação de Vorticidade}
-    \centering
-    $\partfrac2{\omega_z}{t} + \vec{v}.\nabla\omega_z = \nu \nabla^2 \omega_z$
-  \end{block}
+  \begin{minipage}{.48\textwidth}
+    \begin{block}{Equação de Vorticidade}
+      \centering
+      $\partfrac2{\omega_z}{t} + \vec{v}.\nabla\omega_z = \nu \nabla^2 \omega_z$
+    \end{block}
 
-  \begin{block}{Equação de Corrente}
-    \centering
-    $\nabla^2 \psi = -\omega_z$
-  \end{block}
-  
-  \begin{block}{Equação BBO (\it{Basset–Boussinesq–Oseen})}
-    \centering
-    $\sum \vec{F}_p = \vec{F}_{drag} + \vec{F}_{grav} + \vec{F}_{etc}$
-  \end{block}
-  
-  \begin{block}{Força de Arrasto (\it{Stoakes})}
-    \centering
-    $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
-  \end{block}
+    \begin{block}{Equação de Corrente}
+      \centering
+      $\nabla^2 \psi = -\omega_z$
+    \end{block}
+    
+    \begin{block}{Equação BBO (\it{Basset–Boussinesq–Oseen})}
+      \centering
+      $\sum \vec{F}_p = \vec{F}_{drag} + \vec{F}_{grav} + \vec{F}_{etc}$
+    \end{block}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+    \begin{block}{Equações Auxiliares}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \centering
+      \begin{align*}
+	\partfrac2{\psi}{y} &= v_x \\
+	\partfrac2{\psi}{x} &= -v_y \\
+	\omega_z &= \partfrac2{v_x}{y} - \partfrac2{v_y}{x} 
+      \end{align*}
+    \end{block}
+  \end{minipage}
   
 \end{frame}
 
 \begin{frame}
   \frametitle{Modelo Matemático}
+  \begin{block}{Força de Arrasto (\it{Stoakes})}
+    \centering
+    $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
+  \end{block}
   \begin{block}{Força Gravitacional}
     \centering
     $\vec{F}_{grav} = \tfrac{\pi}{6} d_p \rho_p \vec{g}$
   \end{block}
   
-  \begin{block}{Equações Auxiliares}
-    \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
-    \centering
-    \begin{align*}
-      \partfrac2{\psi}{y} &= v_x \\
-      \partfrac2{\psi}{x} &= -v_y \\
-      \omega_z &= \partfrac2{v_x}{y} - \partfrac2{v_y}{x} 
-    \end{align*}
-  \end{block}
-  
-  \footnotesize{
-    Onde: $\omega_z$ é o campo de vorticidade, $\psi$ é o campo de correntes, $\vec{v}$ é o campo vetorial de velocidades, 
-    $\mu$ é a viscosidade dinâmica, $\nu$ é o coeficiente de \_\_\_\_ sobre o domínio da malha.
-    E as variáveis $d_p$ são o diâmetro, $\rho_p$ é a densidade e $\vec{F}_p$ é a força resultante de uma partícula.
-    \todo[inline]{nome da propiedade}
-  }
-  
-%   Estas equações são utilizadas na definição e cálculo das condições de contorno.
+  Onde: $\omega_z$ é o campo de vorticidade, $\psi$ é o campo de correntes, $\vec{v}$ é o campo vetorial de velocidades, 
+  $\mu$ é a viscosidade dinâmica, $\nu$ é a viscosidade cinemática sobre o domínio da malha.
+  E as variáveis $d_p$ são o diâmetro, $\rho_p$ é a densidade e $\vec{F}_p$ é a força resultante de uma partícula.
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Equações Matriciais}
 \begin{frame}
-  \frametitle{Equações Matriciais}
-  \begin{block}{Vorticidade}
+  \frametitle{Matrizes dos Elementos Triangulares}
+  \begin{minipage}{.25\textwidth}
     \centering
-    $\bigg(\dfrac{\mathbf{M}}{\Delta t} + \nu \mathbf{K} + \mathbf{v.G} \bigg)\omega_z^{n+1} = \dfrac{\mathbf{M}}{\Delta t} \omega_z^n$
-  \end{block}
-
-  \begin{block}{Corrente}
-    \centering
-    $\mathbf{K} \psi = \mathbf{M} \omega_z$
-  \end{block}
+    \includegraphics[width=0.95\linewidth]{figure/element.pdf}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.7\textwidth}
+    \begin{block}{Coeficientes de Forma}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \centering
+      \begin{equation*}
+      \mathbf{B} \left\{
+	\begin{align*}
+	  &b_i = y_j - y_k \\
+	  &b_j = y_k - y_i \\
+	  &b_k = y_i - y_j
+	\end{align*} \right.\qquad
+      \mathbf{C} \left\{
+	\begin{align*}
+	  &c_i = x_k - x_j \\
+	  &c_j = x_i - x_k \\
+	  &c_k = x_j - x_i
+	\end{align*} \right.
+      \end{equation*}
+    \end{block}
+  \end{minipage}
   
-  \begin{block}{Auxiliares}
-    \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{minipage}[t]{.45\textwidth}
     \centering
-    \begin{align*}
-      \mathbf{M} v_x &= \mathbf{G}_y \psi \\
-      \mathbf{M} v_y &=-\mathbf{G}_x \psi \\
-      \mathbf{M} \omega_z &= \mathbf{G}_x v_y - \mathbf{G}_y v_x
-    \end{align*}
-  \end{block}
+    \begin{block}{Matriz de Gradiente (eixo x)}
+      $\mathbf{G}_x = \frac{1}{6}
+	\begin{bmatrix}
+	  b_i & b_j & b_k \\
+	  b_i & b_j & b_k \\
+	  b_i & b_j & b_k
+	\end{bmatrix}$
+    \end{block}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{.45\textwidth}
+    \centering
+    \begin{block}{Matriz de Gradiente (eixo y)}
+      $\mathbf{G}_y = \frac{1}{4A}
+	\begin{bmatrix}
+	  c_i & c_j & c_k \\
+	  c_i & c_j & c_k \\
+	  c_i & c_j & c_k
+	\end{bmatrix}$
+    \end{block}
+  \end{minipage}
+  
+  \begin{minipage}[t]{.63\textwidth}
+    \centering
+    \begin{block}{Matriz de Rigidez}
+      \footnotesize
+      $\mathbf{K} = \frac{1}{4A}
+	\begin{bmatrix}
+	  b_i^2 + c_i^2 & b_i b_j + c_i c_j & b_i b_k + c_i c_k \\
+	  b_j b_i + c_j c_i & b_j^2 + c_j^2 & b_j b_k + c_j c_k \\
+	  b_k b_i + c_k c_i & b_k b_j + c_k c_j & b_k^2 + c_k^2
+	\end{bmatrix}$
+    \end{block}
+  \end{minipage}
+  \hfill
+  \begin{minipage}[t]{.33\textwidth}
+    \centering
+    \begin{block}{Matriz de Massa}
+      $\mathbf{M} = \frac{A}{12}
+	\begin{bmatrix}
+	  2 & 1 & 1   \\
+	  1 & 2 & 1   \\
+	  1 & 1 & 2  
+	\end{bmatrix}$
+    \end{block}
+  \end{minipage}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Equações Matriciais}
+  \begin{minipage}{.63\textwidth}
+    \centering
+    \begin{block}{Vorticidade}
+      \centering
+      $\bigg(\dfrac{\mathbf{M}}{\Delta t} + \nu \mathbf{K} + \mathbf{v.G} \bigg)\omega_z^{n+1} = \dfrac{\mathbf{M}}{\Delta t} \omega_z^n$
+    \end{block}
+    
+    \begin{block}{Corrente}
+      \centering
+      $\mathbf{K} \psi = \mathbf{M} \omega_z$
+    \end{block}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.33\textwidth}
+    \centering
+    \begin{block}{Auxiliares}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \centering
+      \begin{align*}
+	\mathbf{M} v_x &= \mathbf{G}_y \psi \\
+	\mathbf{M} v_y &=-\mathbf{G}_x \psi \\
+	\mathbf{M} \omega_z &= \mathbf{G}_x v_y - \mathbf{G}_y v_x
+      \end{align*}
+    \end{block}
+  \end{minipage}
+  
+  \ \\
+  As demais equações de força são calculadas para cada partícula individulamente.
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -307,8 +384,11 @@
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle{Previsão}
-  \todo[inline]{Melhor forma de representar cronograma/previsão?}
+  \frametitle{Atividades Concluídas e Previsão}
+  \begin{figure}
+    \includegraphics[width=\linewidth]{figure/Cronograma.png}
+    \caption{Cronograma previsto atualizado.}
+  \end{figure}
 \end{frame}
 
 
@@ -316,30 +396,30 @@
 % Bibliografia
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 
-\begin{frame}
-  \frametitle{Bibliografia}
-  \footnotesize{
-    \todo[inline]{Fazer bibliografia}
-    \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
-
-      \bibitem[biezuner]{p1} R.J. Biezuner (2007)
-      \newblock Métodos Numéricos para Equações Parciais Elípticas
-      \newblock \emph{Notas de Aula}
-
-      \bibitem[fortuna]{p1} A.O. Fortuna (2000)
-      \newblock Técnicas Computacionais para Dinâmica dos Fluidos: Conceitos Básicos e Aplicações
-      \newblock \emph{Edusp}
-
-      \bibitem[leveque]{p1} R.J. LeVeque (2007)
-      \newblock Finite Difference Methods for Ordinary and Partial Differential Equations. Steady-State and Time-Dependant Problems
-      \newblock \emph{SIAM}
-
-      \bibitem[biezuner]{p1} J.R. Rodrigues (2015)
-      \newblock Introdução à Simulação de Reservatórios Petrolíferos
-      \newblock \emph{Programa de Verão LNCC}
-    \end{thebibliography}
-  }
-\end{frame}
+% \begin{frame}
+%   \frametitle{Bibliografia}
+%   \footnotesize{
+%     \todo[inline]{Fazer bibliografia}
+%     \begin{thebibliography}{99} % Beamer does not support BibTeX so references must be inserted manually as below
+% 
+%       \bibitem[biezuner]{p1} R.J. Biezuner (2007)
+%       \newblock Métodos Numéricos para Equações Parciais Elípticas
+%       \newblock \emph{Notas de Aula}
+% 
+%       \bibitem[fortuna]{p1} A.O. Fortuna (2000)
+%       \newblock Técnicas Computacionais para Dinâmica dos Fluidos: Conceitos Básicos e Aplicações
+%       \newblock \emph{Edusp}
+% 
+%       \bibitem[leveque]{p1} R.J. LeVeque (2007)
+%       \newblock Finite Difference Methods for Ordinary and Partial Differential Equations. Steady-State and Time-Dependant Problems
+%       \newblock \emph{SIAM}
+% 
+%       \bibitem[biezuner]{p1} J.R. Rodrigues (2015)
+%       \newblock Introdução à Simulação de Reservatórios Petrolíferos
+%       \newblock \emph{Programa de Verão LNCC}
+%     \end{thebibliography}
+%   }
+% \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 % Agradecimentos
@@ -356,7 +436,7 @@
     \node[inner sep=0cm] (fen) at (8,0){
       \includegraphics[width=0.2\textwidth]{figure/fen-new.png}};
   \end{tikzpicture}
-  \Huge{\centerline{Fim}}
+  \Huge{\centerline{Muito Obrigado!}}
 \end{frame}
 
 %----------------------------------------------------------------------------------------

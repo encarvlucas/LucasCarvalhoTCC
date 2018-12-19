@@ -1,8 +1,5 @@
 from TccLib import *
 import numpy as np
-from matplotlib import pyplot
-from mpl_toolkits.mplot3d import Axes3D
-
 
 xx, yy = np.meshgrid(np.linspace(0, 5, 10), np.linspace(0, 1, 20))
 xx = np.array(np.reshape(xx, (xx.size, 1)))

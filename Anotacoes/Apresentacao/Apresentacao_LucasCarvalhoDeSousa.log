@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.15)  15 DEC 2018 01:29
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.15)  19 DEC 2018 14:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1526,29 +1526,20 @@ red.
 pdfTeX warning: /usr/bin/pdflatex (file ./figure/particle_flow.pdf): PDF inclus
 ion: invalid other resource which is no dict (key 'ExtGState', type <null>); ig
 nored.
->] <figure/element.pdf, id=348, 130.86693pt x 105.58446pt>
-File: figure/element.pdf Graphic file (type pdf)
-
-<use figure/element.pdf>
-Package pdftex.def Info: figure/element.pdf used on input line 197.
-(pdftex.def)             Requested size: 153.64493pt x 123.96829pt.
- [7
-
- <./figure/element.pdf>]
-<figure/structured_mesh.pdf, id=404, 461.26025pt x 450.33948pt>
+>] <figure/structured_mesh.pdf, id=348, 461.26025pt x 450.33948pt>
 File: figure/structured_mesh.pdf Graphic file (type pdf)
 
 <use figure/structured_mesh.pdf>
-Package pdftex.def Info: figure/structured_mesh.pdf used on input line 216.
+Package pdftex.def Info: figure/structured_mesh.pdf used on input line 208.
 (pdftex.def)             Requested size: 146.51537pt x 143.04456pt.
 
-<figure/unstructured_mesh.pdf, id=405, 473.01018pt x 450.33948pt>
+<figure/unstructured_mesh.pdf, id=349, 473.01018pt x 450.33948pt>
 File: figure/unstructured_mesh.pdf Graphic file (type pdf)
 
 <use figure/unstructured_mesh.pdf>
-Package pdftex.def Info: figure/unstructured_mesh.pdf used on input line 216.
+Package pdftex.def Info: figure/unstructured_mesh.pdf used on input line 208.
 (pdftex.def)             Requested size: 150.24762pt x 143.04456pt.
- [8
+ [7
 
  <./figure/structured_mesh.pdf
 
@@ -1581,51 +1572,91 @@ pdfTeX warning: /usr/bin/pdflatex (file ./figure/unstructured_mesh.pdf): PDF in
 clusion: invalid other resource which is no dict (key 'ExtGState', type <null>)
 ; ignored.
 >]
-LaTeX Font Info:    Try loading font information for U+msa on input line 242.
+LaTeX Font Info:    Try loading font information for U+msa on input line 243.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 242.
+LaTeX Font Info:    Try loading font information for U+msb on input line 243.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for OT1+mathkerncmss on input 
-line 242.
+line 243.
 
 (/usr/share/texlive/texmf-dist/tex/latex/sansmathaccent/ot1mathkerncmss.fd
 File: ot1mathkerncmss.fd 2013/03/27 Fontinst v1.933 font definitions for OT1/ma
 thkerncmss.
 )
-[9
+[8
 
-] [10
+] [9
 
-] [11
+] <figure/element.pdf, id=482, 121.01009pt x 106.00703pt>
+File: figure/element.pdf Graphic file (type pdf)
+
+<use figure/element.pdf>
+Package pdftex.def Info: figure/element.pdf used on input line 339.
+(pdftex.def)             Requested size: 72.9811pt x 63.93306pt.
+
+
+! Package amsmath Error: Erroneous nesting of equation structures;
+(amsmath)                trying to recover with `aligned'.
+
+See the amsmath package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.339 \end{frame}
+                 
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! Package amsmath Error: Erroneous nesting of equation structures;
+(amsmath)                trying to recover with `aligned'.
+
+See the amsmath package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.339 \end{frame}
+                 
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+[10
+
+ <./figure/element.pdf>] [11
 
 ] [12
 
-] [13
+]
+<figure/Cronograma.png, id=610, 847.165pt x 241.90375pt>
+File: figure/Cronograma.png Graphic file (type png)
 
-] [14
+<use figure/Cronograma.png>
+Package pdftex.def Info: figure/Cronograma.png used on input line 392.
+(pdftex.def)             Requested size: 307.28987pt x 87.7423pt.
+ [13
 
- </usr/share/texlive/texmf-dist/tex/latex/beamer/art/beamericonarticle.pdf>]
-<figure/gesar-logo-new.png, id=700, 677.53125pt x 214.55156pt>
+ <./figure/Cronograma.png>]
+<figure/gesar-logo-new.png, id=649, 677.53125pt x 214.55156pt>
 File: figure/gesar-logo-new.png Graphic file (type png)
 
 <use figure/gesar-logo-new.png>
-Package pdftex.def Info: figure/gesar-logo-new.png used on input line 360.
+Package pdftex.def Info: figure/gesar-logo-new.png used on input line 440.
 (pdftex.def)             Requested size: 61.45703pt x 19.4594pt.
 File: figure/UERJ.png Graphic file (type png)
  <use figure/UERJ.png>
-Package pdftex.def Info: figure/UERJ.png used on input line 360.
+Package pdftex.def Info: figure/UERJ.png used on input line 440.
 (pdftex.def)             Requested size: 61.45703pt x 67.78235pt.
 File: figure/fen-new.png Graphic file (type png)
  <use figure/fen-new.png>
-Package pdftex.def Info: figure/fen-new.png used on input line 360.
+Package pdftex.def Info: figure/fen-new.png used on input line 440.
 (pdftex.def)             Requested size: 61.45703pt x 62.11429pt.
 
-[15
+[14
 
  <./figure/gesar-logo-new.png>]
 \tf@nav=\write6
@@ -1637,14 +1668,14 @@ Package pdftex.def Info: figure/fen-new.png used on input line 360.
 \tf@snm=\write8
 \openout8 = `Apresentacao_LucasCarvalhoDeSousa.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 364.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 364.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 444.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 444.
  (./Apresentacao_LucasCarvalhoDeSousa.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 364.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 364.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 444.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 444.
 Package rerunfilecheck Info: File `Apresentacao_LucasCarvalhoDeSousa.out' has n
 ot changed.
-(rerunfilecheck)             Checksum: DC690232ACAD4BE0C49B4F51992A2DC7;558.
+(rerunfilecheck)             Checksum: DDC0B3A881FC41E97B444D3EDD1CFCD3;558.
 
 
 LaTeX Font Warning: Size substitutions with differences
@@ -1653,38 +1684,40 @@ LaTeX Font Warning: Size substitutions with differences
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 364.
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 444.
  ) 
 Here is how much of TeX's memory you used:
- 22767 strings out of 494929
- 441693 string characters out of 6180141
- 530186 words of memory out of 5000000
- 25469 multiletter control sequences out of 15000+600000
- 15940 words of font info for 57 fonts, out of 8000000 for 9000
+ 22722 strings out of 494929
+ 440211 string characters out of 6180141
+ 542066 words of memory out of 5000000
+ 25427 multiletter control sequences out of 15000+600000
+ 16171 words of font info for 58 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 56i,20n,83p,953b,830s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 56i,20n,83p,953b,798s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texl
-ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/
-type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/a
-msfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmss17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mss8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss9.pf
-b></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssbx10.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi10.pfb></usr/s
-hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb></usr/share/t
-exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb>
-Output written on Apresentacao_LucasCarvalhoDeSousa.pdf (15 pages, 8406232 byte
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex9.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf
+-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmss10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/p
+ublic/amsfonts/cm/cmss17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
+amsfonts/cm/cmss8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfont
+s/cm/cmss9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cm
+ssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi1
+0.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi8.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/
+texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb>
+Output written on Apresentacao_LucasCarvalhoDeSousa.pdf (14 pages, 8409714 byte
 s).
 PDF statistics:
- 807 PDF objects out of 1000 (max. 8388607)
- 718 compressed objects within 8 object streams
- 41 named destinations out of 1000 (max. 500000)
- 219 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 753 PDF objects out of 1000 (max. 8388607)
+ 669 compressed objects within 7 object streams
+ 38 named destinations out of 1000 (max. 500000)
+ 224 words of extra memory for PDF output out of 10000 (max. 10000000)
 
