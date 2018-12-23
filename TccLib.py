@@ -827,7 +827,7 @@ class Mesh:
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
-    def add_particle(self, name: str=None, position: (list, tuple)=None, density=1., diameter=0.1, color="r",
+    def add_particle(self, name: str = None, position: (list, tuple) = None, density=1., diameter=0.1, color="r",
                      list_of_particles=None):
         """
         Associates a new particle with the mesh.

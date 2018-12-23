@@ -150,20 +150,20 @@
 
 \subsection{Motivação} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 \begin{frame}
-  \frametitle{A Importância da Simulação de Escoamentos}
-  \figcopyright{figure/Aerial_view_of_the_Amazon_Rainforest.jpg}
-	       {https://www.flickr.com/photos/lubasi/4909683043/}
-	       {Lucía Barreiros}
-	       {Rio Solimões - Amazônia, Brasil}
+  \frametitle{Simulação de Escoamentos Multifásicos em Turbomáquinas}
+%   \figcopyright{figure/Aerial_view_of_the_Amazon_Rainforest.jpg}
+% 	       {https://www.flickr.com/photos/lubasi/4909683043/}
+% 	       {Lucía Barreiros}
+% 	       {Rio Solimões - Amazônia, Brasil}
 \end{frame}
 
-\begin{frame}
-  \frametitle{A Importância da Simulação de Escoamentos}
-  \figcopyright{figure/Cologne_Germany_Bundle-extractor-01.jpg}
-	       {https://commons.wikimedia.org/wiki/File:Cologne_Germany_Bundle-extractor-01.jpg}
-	       {CEphoto, Uwe Aranas}
-	       {Interior de um trocador de calor - Colônia, Alemanha}
-\end{frame}
+% \begin{frame}
+%   \frametitle{A Importância da Simulação de Escoamentos}
+%   \figcopyright{figure/Cologne_Germany_Bundle-extractor-01.jpg}
+% 	       {https://commons.wikimedia.org/wiki/File:Cologne_Germany_Bundle-extractor-01.jpg}
+% 	       {CEphoto, Uwe Aranas}
+% 	       {Interior de um trocador de calor - Colônia, Alemanha}
+% \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Escoamentos Dispersos}
@@ -171,7 +171,7 @@
   \frametitle{Escoamentos}
   \begin{figure}
     \includegraphics[width=\linewidth]{figure/developed_flow.pdf}
-    \caption{Escoamento permanente desenvolvido.}
+    \caption{Escoamento permanente desenvolvido. -- entre placas hagen-poiseuille}
   \end{figure}
 \end{frame}
 
@@ -181,15 +181,18 @@
     \includegraphics[width=\linewidth]{figure/particle_flow.pdf}
     \caption{Escoamento particulado.}
   \end{figure}
+  % itemizar informaçoes da figura
+  % particulas de diferentes tamanhos
+  % interaç~oes entrea particulas
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Metodologia}
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 
-\subsection{Discretização}
+\subsection{Malhas Computacionais}
 \begin{frame}
-  \frametitle{Método dos Elementos Finitos}
+  \frametitle{Discretização}
   
   \begin{figure}
     \title{Soluções da pressão}
@@ -221,6 +224,11 @@
       \centering
       $\nabla^2 \psi = -\omega_z$
     \end{block}
+    
+    \begin{block}{Equação BBO (\it{Basset–Boussinesq–Oseen})}
+      \centering
+      $\sum \vec{F}_p = \vec{F}_{drag} + \vec{F}_{grav} + \vec{F}_{etc}$
+    \end{block}
   \end{minipage}
   \hfill
   \begin{minipage}{.48\textwidth}
@@ -234,32 +242,23 @@
       \end{align*}
     \end{block}
   \end{minipage}
-%   \begin{block}{Equação BBO (\it{Basset–Boussinesq–Oseen})}
-%     \centering
-%     $\sum \vec{F}_p = \vec{F}_{drag} + \vec{F}_{grav} + \vec{F}_{etc}$
-%   \end{block}
-%   
-%   \begin{block}{Força de Arrasto (\it{Stoakes})}
-%     \centering
-%     $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
-%   \end{block}
   
 \end{frame}
 
 \begin{frame}
   \frametitle{Modelo Matemático}
+  \begin{block}{Força de Arrasto (\it{Stoakes})}
+    \centering
+    $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
+  \end{block}
   \begin{block}{Força Gravitacional}
     \centering
     $\vec{F}_{grav} = \tfrac{\pi}{6} d_p \rho_p \vec{g}$
   \end{block}
   
-  
-  \footnotesize{
-    Onde: $\omega_z$ é o campo de vorticidade, $\psi$ é o campo de correntes, $\vec{v}$ é o campo vetorial de velocidades, 
-    $\mu$ é a viscosidade dinâmica, $\nu$ é o coeficiente de \_\_\_\_ sobre o domínio da malha.
-    E as variáveis $d_p$ são o diâmetro, $\rho_p$ é a densidade e $\vec{F}_p$ é a força resultante de uma partícula.
-    \todo[inline]{nome da propiedade}
-  }
+  Onde: $\omega_z$ é o campo de vorticidade, $\psi$ é o campo de correntes, $\vec{v}$ é o campo vetorial de velocidades, 
+  $\mu$ é a viscosidade dinâmica, $\nu$ é a viscosidade cinemática sobre o domínio da malha.
+  E as variáveis $d_p$ são o diâmetro, $\rho_p$ é a densidade e $\vec{F}_p$ é a força resultante de uma partícula.
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -318,11 +317,11 @@
   
   \begin{minipage}[t]{.63\textwidth}
     \centering
-    \begin{block}{Matriz de Rigidez (eixo y)}
+    \begin{block}{Matriz de Rigidez}
       \footnotesize
       $\mathbf{K} = \frac{1}{4A}
 	\begin{bmatrix}
-	  b_i^2 + c_i^2 & b_i b_j + c_i c_j & b_i b_j + c_i c_k \\
+	  b_i^2 + c_i^2 & b_i b_j + c_i c_j & b_i b_k + c_i c_k \\
 	  b_j b_i + c_j c_i & b_j^2 + c_j^2 & b_j b_k + c_j c_k \\
 	  b_k b_i + c_k c_i & b_k b_j + c_k c_j & b_k^2 + c_k^2
 	\end{bmatrix}$
@@ -344,25 +343,34 @@
 
 \begin{frame}
   \frametitle{Equações Matriciais}
-  \begin{block}{Vorticidade}
+  \begin{minipage}{.63\textwidth}
     \centering
-    $\bigg(\dfrac{\mathbf{M}}{\Delta t} + \nu \mathbf{K} + \mathbf{v.G} \bigg)\omega_z^{n+1} = \dfrac{\mathbf{M}}{\Delta t} \omega_z^n$
-  \end{block}
-
-  \begin{block}{Corrente}
+    \begin{block}{Vorticidade}
+      \centering
+      $\bigg(\dfrac{\mathbf{M}}{\Delta t} + \nu \mathbf{K} + \mathbf{v.G} \bigg)\omega_z^{n+1} = \dfrac{\mathbf{M}}{\Delta t} \omega_z^n$
+    \end{block}
+    
+    \begin{block}{Corrente}
+      \centering
+      $\mathbf{K} \psi = \mathbf{M} \omega_z$
+    \end{block}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.33\textwidth}
     \centering
-    $\mathbf{K} \psi = \mathbf{M} \omega_z$
-  \end{block}
+    \begin{block}{Auxiliares}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \centering
+      \begin{align*}
+	\mathbf{M} v_x &= \mathbf{G}_y \psi \\
+	\mathbf{M} v_y &=-\mathbf{G}_x \psi \\
+	\mathbf{M} \omega_z &= \mathbf{G}_x v_y - \mathbf{G}_y v_x
+      \end{align*}
+    \end{block}
+  \end{minipage}
   
-  \begin{block}{Auxiliares}
-    \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
-    \centering
-    \begin{align*}
-      \mathbf{M} v_x &= \mathbf{G}_y \psi \\
-      \mathbf{M} v_y &=-\mathbf{G}_x \psi \\
-      \mathbf{M} \omega_z &= \mathbf{G}_x v_y - \mathbf{G}_y v_x
-    \end{align*}
-  \end{block}
+  \ \\
+  As demais equações de força são calculadas para cada partícula individulamente.
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -437,3 +445,4 @@
 %----------------------------------------------------------------------------------------
 
 \end{document}
+% Reduzir numero de slides, usar mais de uma figura por slide

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.15)  19 DEC 2018 14:21
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2018.10.15)  19 DEC 2018 16:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1414,13 +1414,13 @@ Package caption Info: float package is loaded.
 Package caption Info: End \AtBeginDocument code.
 
 (./Apresentacao_LucasCarvalhoDeSousa.nav)
-<figure/UERJ.png, id=75, 273.02pt x 301.125pt>
+<figure/UERJ.png, id=74, 273.02pt x 301.125pt>
 File: figure/UERJ.png Graphic file (type png)
  <use figure/UERJ.png>
 Package pdftex.def Info: figure/UERJ.png used on input line 136.
 (pdftex.def)             Requested size: 42.67912pt x 47.06903pt.
 
-<figure/fen-new.png, id=76, 337.86224pt x 341.47575pt>
+<figure/fen-new.png, id=75, 337.86224pt x 341.47575pt>
 File: figure/fen-new.png Graphic file (type png)
 
 <use figure/fen-new.png>
@@ -1441,52 +1441,40 @@ LaTeX Font Warning: Font shape `OT1/cmss/m/n' in size <4> not available
 sa.toc) [2
 
 ]
-<figure/Aerial_view_of_the_Amazon_Rainforest.jpg, id=188, 3462.9375pt x 2125.94
-25pt>
-File: figure/Aerial_view_of_the_Amazon_Rainforest.jpg Graphic file (type jpg)
- <use figure/Aerial_view_of_the_Amazon_Rainforest.jpg>
-Package pdftex.def Info: figure/Aerial_view_of_the_Amazon_Rainforest.jpg used o
-n input line 158.
-(pdftex.def)             Requested size: 230.46739pt x 141.46747pt.
-LaTeX Font Info:    Try loading font information for OMS+cmss on input line 158
+<figure/Washing_machine_agitator.jpg, id=184, 2280.52pt x 1710.39pt>
+File: figure/Washing_machine_agitator.jpg Graphic file (type jpg)
+
+<use figure/Washing_machine_agitator.jpg>
+Package pdftex.def Info: figure/Washing_machine_agitator.jpg used on input line
+ 163.
+(pdftex.def)             Requested size: 230.46739pt x 172.84981pt.
+LaTeX Font Info:    Try loading font information for OMS+cmss on input line 163
 .
-LaTeX Font Info:    No file OMScmss.fd. on input line 158.
+LaTeX Font Info:    No file OMScmss.fd. on input line 163.
 
 
 LaTeX Font Warning: Font shape `OMS/cmss/m/n' undefined
-(Font)              using `OMS/cmsy/m/n' instead on input line 158.
+(Font)              using `OMS/cmsy/m/n' instead on input line 163.
 
-File: figure/Aerial_view_of_the_Amazon_Rainforest.jpg Graphic file (type jpg)
-<use figure/Aerial_view_of_the_Amazon_Rainforest.jpg>
-Package pdftex.def Info: figure/Aerial_view_of_the_Amazon_Rainforest.jpg used o
-n input line 158.
-(pdftex.def)             Requested size: 230.46739pt x 141.46747pt.
- [3
+File: figure/Washing_machine_agitator.jpg Graphic file (type jpg)
+<use figure/Washing_machine_agitator.jpg>
+Package pdftex.def Info: figure/Washing_machine_agitator.jpg used on input line
+ 163.
+(pdftex.def)             Requested size: 230.46739pt x 172.84981pt.
 
- <./figure/Aerial_view_of_the_Amazon_Rainforest.jpg>]
-<figure/Cologne_Germany_Bundle-extractor-01.jpg, id=229, 733.0587pt x 549.7338p
-t>
-File: figure/Cologne_Germany_Bundle-extractor-01.jpg Graphic file (type jpg)
- <use figure/Cologne_Germany_Bundle-extractor-01.jpg>
-Package pdftex.def Info: figure/Cologne_Germany_Bundle-extractor-01.jpg used on
- input line 166.
-(pdftex.def)             Requested size: 230.46739pt x 172.83153pt.
-File: figure/Cologne_Germany_Bundle-extractor-01.jpg Graphic file (type jpg)
+Overfull \vbox (9.17397pt too high) detected at line 163
+ []
 
-<use figure/Cologne_Germany_Bundle-extractor-01.jpg>
-Package pdftex.def Info: figure/Cologne_Germany_Bundle-extractor-01.jpg used on
- input line 166.
-(pdftex.def)             Requested size: 230.46739pt x 172.83153pt.
- [4
+[3
 
- <./figure/Cologne_Germany_Bundle-extractor-01.jpg>]
-<figure/developed_flow.pdf, id=269, 210.9501pt x 57.70558pt>
+ <./figure/Washing_machine_agitator.jpg>]
+<figure/developed_flow.pdf, id=224, 210.9501pt x 57.70558pt>
 File: figure/developed_flow.pdf Graphic file (type pdf)
 
 <use figure/developed_flow.pdf>
-Package pdftex.def Info: figure/developed_flow.pdf used on input line 176.
+Package pdftex.def Info: figure/developed_flow.pdf used on input line 181.
 (pdftex.def)             Requested size: 307.28987pt x 84.06364pt.
- [5
+ [4
 
  <./figure/developed_flow.pdf
 
@@ -1503,13 +1491,13 @@ ored.
 pdfTeX warning: /usr/bin/pdflatex (file ./figure/developed_flow.pdf): PDF inclu
 sion: invalid other resource which is no dict (key 'ExtGState', type <null>); i
 gnored.
->] <figure/particle_flow.pdf, id=309, 171.51678pt x 57.70558pt>
+>] <figure/particle_flow.pdf, id=262, 171.51678pt x 57.70558pt>
 File: figure/particle_flow.pdf Graphic file (type pdf)
 
 <use figure/particle_flow.pdf>
-Package pdftex.def Info: figure/particle_flow.pdf used on input line 184.
+Package pdftex.def Info: figure/particle_flow.pdf used on input line 192.
 (pdftex.def)             Requested size: 307.28987pt x 103.39447pt.
- [6
+ [5
 
  <./figure/particle_flow.pdf
 
@@ -1526,20 +1514,20 @@ red.
 pdfTeX warning: /usr/bin/pdflatex (file ./figure/particle_flow.pdf): PDF inclus
 ion: invalid other resource which is no dict (key 'ExtGState', type <null>); ig
 nored.
->] <figure/structured_mesh.pdf, id=348, 461.26025pt x 450.33948pt>
+>] <figure/structured_mesh.pdf, id=301, 461.26025pt x 450.33948pt>
 File: figure/structured_mesh.pdf Graphic file (type pdf)
 
 <use figure/structured_mesh.pdf>
-Package pdftex.def Info: figure/structured_mesh.pdf used on input line 208.
+Package pdftex.def Info: figure/structured_mesh.pdf used on input line 216.
 (pdftex.def)             Requested size: 146.51537pt x 143.04456pt.
 
-<figure/unstructured_mesh.pdf, id=349, 473.01018pt x 450.33948pt>
+<figure/unstructured_mesh.pdf, id=302, 473.01018pt x 450.33948pt>
 File: figure/unstructured_mesh.pdf Graphic file (type pdf)
 
 <use figure/unstructured_mesh.pdf>
-Package pdftex.def Info: figure/unstructured_mesh.pdf used on input line 208.
+Package pdftex.def Info: figure/unstructured_mesh.pdf used on input line 216.
 (pdftex.def)             Requested size: 150.24762pt x 143.04456pt.
- [7
+ [6
 
  <./figure/structured_mesh.pdf
 
@@ -1572,31 +1560,31 @@ pdfTeX warning: /usr/bin/pdflatex (file ./figure/unstructured_mesh.pdf): PDF in
 clusion: invalid other resource which is no dict (key 'ExtGState', type <null>)
 ; ignored.
 >]
-LaTeX Font Info:    Try loading font information for U+msa on input line 243.
+LaTeX Font Info:    Try loading font information for U+msa on input line 251.
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Try loading font information for U+msb on input line 243.
+LaTeX Font Info:    Try loading font information for U+msb on input line 251.
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Try loading font information for OT1+mathkerncmss on input 
-line 243.
+line 251.
 
 (/usr/share/texlive/texmf-dist/tex/latex/sansmathaccent/ot1mathkerncmss.fd
 File: ot1mathkerncmss.fd 2013/03/27 Fontinst v1.933 font definitions for OT1/ma
 thkerncmss.
 )
-[8
+[7
 
-] [9
+] [8
 
-] <figure/element.pdf, id=482, 121.01009pt x 106.00703pt>
+] <figure/element.pdf, id=432, 121.01009pt x 106.00703pt>
 File: figure/element.pdf Graphic file (type pdf)
 
 <use figure/element.pdf>
-Package pdftex.def Info: figure/element.pdf used on input line 339.
+Package pdftex.def Info: figure/element.pdf used on input line 347.
 (pdftex.def)             Requested size: 72.9811pt x 63.93306pt.
 
 
@@ -1607,7 +1595,7 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.339 \end{frame}
+l.347 \end{frame}
                  
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1620,43 +1608,43 @@ See the amsmath package documentation for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.339 \end{frame}
+l.347 \end{frame}
                  
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
 
-[10
+[9
 
- <./figure/element.pdf>] [11
+ <./figure/element.pdf>] [10
 
-] [12
+] [11
 
 ]
-<figure/Cronograma.png, id=610, 847.165pt x 241.90375pt>
+<figure/Cronograma.png, id=556, 847.165pt x 241.90375pt>
 File: figure/Cronograma.png Graphic file (type png)
 
 <use figure/Cronograma.png>
-Package pdftex.def Info: figure/Cronograma.png used on input line 392.
+Package pdftex.def Info: figure/Cronograma.png used on input line 400.
 (pdftex.def)             Requested size: 307.28987pt x 87.7423pt.
- [13
+ [12
 
  <./figure/Cronograma.png>]
-<figure/gesar-logo-new.png, id=649, 677.53125pt x 214.55156pt>
+<figure/gesar-logo-new.png, id=593, 677.53125pt x 214.55156pt>
 File: figure/gesar-logo-new.png Graphic file (type png)
 
 <use figure/gesar-logo-new.png>
-Package pdftex.def Info: figure/gesar-logo-new.png used on input line 440.
+Package pdftex.def Info: figure/gesar-logo-new.png used on input line 448.
 (pdftex.def)             Requested size: 61.45703pt x 19.4594pt.
 File: figure/UERJ.png Graphic file (type png)
  <use figure/UERJ.png>
-Package pdftex.def Info: figure/UERJ.png used on input line 440.
+Package pdftex.def Info: figure/UERJ.png used on input line 448.
 (pdftex.def)             Requested size: 61.45703pt x 67.78235pt.
 File: figure/fen-new.png Graphic file (type png)
  <use figure/fen-new.png>
-Package pdftex.def Info: figure/fen-new.png used on input line 440.
+Package pdftex.def Info: figure/fen-new.png used on input line 448.
 (pdftex.def)             Requested size: 61.45703pt x 62.11429pt.
 
-[14
+[13
 
  <./figure/gesar-logo-new.png>]
 \tf@nav=\write6
@@ -1668,14 +1656,14 @@ Package pdftex.def Info: figure/fen-new.png used on input line 440.
 \tf@snm=\write8
 \openout8 = `Apresentacao_LucasCarvalhoDeSousa.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 444.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 444.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 452.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 452.
  (./Apresentacao_LucasCarvalhoDeSousa.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 444.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 444.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 452.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 452.
 Package rerunfilecheck Info: File `Apresentacao_LucasCarvalhoDeSousa.out' has n
 ot changed.
-(rerunfilecheck)             Checksum: DDC0B3A881FC41E97B444D3EDD1CFCD3;558.
+(rerunfilecheck)             Checksum: 741C97A7DDEBB8513E0DE1F267E47AAC;559.
 
 
 LaTeX Font Warning: Size substitutions with differences
@@ -1684,16 +1672,13 @@ LaTeX Font Warning: Size substitutions with differences
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 444.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 452.
  ) 
 Here is how much of TeX's memory you used:
- 22722 strings out of 494929
- 440211 string characters out of 6180141
- 542066 words of memory out of 5000000
- 25427 multiletter control sequences out of 15000+600000
+ 22708 strings out of 494929
+ 439774 string characters out of 6180141
+ 542019 words of memory out of 5000000
+ 25416 multiletter control sequences out of 15000+600000
  16171 words of font info for 58 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
  56i,20n,83p,953b,798s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1713,11 +1698,11 @@ ssbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi1
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmssi9.pfb></usr/
 share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb>
-Output written on Apresentacao_LucasCarvalhoDeSousa.pdf (14 pages, 8409714 byte
-s).
+Output written on Apresentacao_LucasCarvalhoDeSousa.pdf (13 pages, 968373 bytes
+).
 PDF statistics:
- 753 PDF objects out of 1000 (max. 8388607)
- 669 compressed objects within 7 object streams
- 38 named destinations out of 1000 (max. 500000)
- 224 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 695 PDF objects out of 1000 (max. 8388607)
+ 615 compressed objects within 7 object streams
+ 36 named destinations out of 1000 (max. 500000)
+ 219 words of extra memory for PDF output out of 10000 (max. 10000000)
 
