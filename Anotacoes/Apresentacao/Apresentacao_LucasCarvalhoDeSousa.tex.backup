@@ -151,6 +151,42 @@
 \subsection{Motivação} % A subsection can be created just before a set of slides with a common theme to further break down your presentation into chunks
 \begin{frame}
   \frametitle{Simulação de Escoamentos Multifásicos em Turbomáquinas}
+  
+  \begin{minipage}{.6\textwidth}
+    \def\stackalignment{l}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[width=\linewidth]{figure/dispersed_flow.pdf}
+      } {\raggedleft \tiny Escoamento entre placas, Hagen-Poiseuille.}
+    \end{figure}
+  \end{minipage}
+  \begin{minipage}{.3\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[width=\linewidth]{figure/Washing_machine_agitator.jpg}
+      } {\raggedleft \tiny Fonte:\href{https://commons.wikimedia.org/wiki/File:Washing_machine_agitator.JPG}
+	{\textcopyright \ BrokenSphere / Wikimedia Commons.}}
+    \end{figure}
+  \end{minipage}
+  
+  \hfill
+  
+  \begin{minipage}{.45\textwidth}
+    \def\stackalignment{l}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[width=0.75\linewidth]{figure/rotor_outline.pdf}
+      } {\raggedleft \tiny Seção de um rotor.}
+    \end{figure}
+  \end{minipage}
+  \begin{minipage}{.45\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[width=0.75\linewidth]{figure/rotor_flow.pdf}
+      } {\raggedleft \tiny Perfil de escoamento em um rotor.}
+    \end{figure}
+  \end{minipage}
+  
 %   \figcopyright{figure/Aerial_view_of_the_Amazon_Rainforest.jpg}
 % 	       {https://www.flickr.com/photos/lubasi/4909683043/}
 % 	       {Lucía Barreiros}
@@ -166,49 +202,49 @@
 % \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Escoamentos Dispersos}
-\begin{frame}
-  \frametitle{Escoamentos}
-  \begin{figure}
-    \includegraphics[width=\linewidth]{figure/developed_flow.pdf}
-    \caption{Escoamento permanente desenvolvido. -- entre placas hagen-poiseuille}
-  \end{figure}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Escoamentos Multifásicos}
-  \begin{figure}
-    \includegraphics[width=\linewidth]{figure/particle_flow.pdf}
-    \caption{Escoamento particulado.}
-  \end{figure}
-  % itemizar informaçoes da figura
-  % particulas de diferentes tamanhos
-  % interaç~oes entrea particulas
-\end{frame}
+% \subsection{Escoamentos Dispersos}
+% \begin{frame}
+%   \frametitle{Escoamentos}
+%   \begin{figure}
+%     \includegraphics[width=\linewidth]{figure/developed_flow.pdf}
+%     \caption{Escoamento permanente desenvolvido. -- entre placas hagen-poiseuille}
+%   \end{figure}
+% \end{frame}
+% 
+% \begin{frame}
+%   \frametitle{Escoamentos Multifásicos}
+%   \begin{figure}
+%     \includegraphics[width=\linewidth]{figure/particle_flow.pdf}
+%     \caption{Escoamento particulado.}
+%   \end{figure}
+%   % itemizar informaçoes da figura
+%   % particulas de diferentes tamanhos
+%   % interaç~oes entrea particulas
+% \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Metodologia}
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 
-\subsection{Malhas Computacionais}
-\begin{frame}
-  \frametitle{Discretização}
-  
-  \begin{figure}
-    \title{Soluções da pressão}
-    \begin{minipage}[t]{.49\textwidth}
-      \centering
-      \includegraphics[height=0.95\linewidth]{figure/structured_mesh.pdf}
-      \captionof{figure}{Malha estruturada.}
-    \end{minipage}
-    \hfill
-    \begin{minipage}[t]{.49\textwidth}
-      \centering
-      \includegraphics[height=0.95\linewidth]{figure/unstructured_mesh.pdf}
-      \captionof{figure}{Malha não estruturada.}
-    \end{minipage}
-  \end{figure}
-\end{frame}
+% \subsection{Malhas Computacionais}
+% \begin{frame}
+%   \frametitle{Discretização}
+%   
+%   \begin{figure}
+%     \title{Soluções da pressão}
+%     \begin{minipage}[t]{.49\textwidth}
+%       \centering
+%       \includegraphics[height=0.95\linewidth]{figure/structured_mesh.pdf}
+%       \captionof{figure}{Malha estruturada.}
+%     \end{minipage}
+%     \hfill
+%     \begin{minipage}[t]{.49\textwidth}
+%       \centering
+%       \includegraphics[height=0.95\linewidth]{figure/unstructured_mesh.pdf}
+%       \captionof{figure}{Malha não estruturada.}
+%     \end{minipage}
+%   \end{figure}
+% \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Sistema de Equações}
@@ -241,25 +277,35 @@
 	\omega_z &= \partfrac2{v_x}{y} - \partfrac2{v_y}{x} 
       \end{align*}
     \end{block}
+    
+    \begin{block}{Força de Arrasto (\it{Stoakes})}
+      \centering
+      $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
+    \end{block}
+    
+    \begin{block}{Força Gravitacional}
+      \centering
+      $\vec{F}_{grav} = \tfrac{\pi}{6} d_p \rho_p \vec{g}$
+    \end{block}
   \end{minipage}
   
 \end{frame}
 
-\begin{frame}
-  \frametitle{Modelo Matemático}
-  \begin{block}{Força de Arrasto (\it{Stoakes})}
-    \centering
-    $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
-  \end{block}
-  \begin{block}{Força Gravitacional}
-    \centering
-    $\vec{F}_{grav} = \tfrac{\pi}{6} d_p \rho_p \vec{g}$
-  \end{block}
-  
-  Onde: $\omega_z$ é o campo de vorticidade, $\psi$ é o campo de correntes, $\vec{v}$ é o campo vetorial de velocidades, 
-  $\mu$ é a viscosidade dinâmica, $\nu$ é a viscosidade cinemática sobre o domínio da malha.
-  E as variáveis $d_p$ são o diâmetro, $\rho_p$ é a densidade e $\vec{F}_p$ é a força resultante de uma partícula.
-\end{frame}
+% \begin{frame}
+%   \frametitle{Modelo Matemático}
+%   \begin{block}{Força de Arrasto (\it{Stoakes})}
+%     \centering
+%     $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
+%   \end{block}
+%   \begin{block}{Força Gravitacional}
+%     \centering
+%     $\vec{F}_{grav} = \tfrac{\pi}{6} d_p \rho_p \vec{g}$
+%   \end{block}
+%   
+%   Onde: $\omega_z$ é o campo de vorticidade, $\psi$ é o campo de correntes, $\vec{v}$ é o campo vetorial de velocidades, 
+%   $\mu$ é a viscosidade dinâmica, $\nu$ é a viscosidade cinemática sobre o domínio da malha.
+%   E as variáveis $d_p$ são o diâmetro, $\rho_p$ é a densidade e $\vec{F}_p$ é a força resultante de uma partícula.
+% \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Equações Matriciais}
@@ -343,6 +389,13 @@
 
 \begin{frame}
   \frametitle{Equações Matriciais}
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=0.4\linewidth]{figure/rotor_mesh.pdf}
+    } {\raggedleft \tiny Malha gerada para um perfil de rotor.}
+  \end{figure}
+  
   \begin{minipage}{.63\textwidth}
     \centering
     \begin{block}{Vorticidade}
@@ -369,8 +422,8 @@
     \end{block}
   \end{minipage}
   
-  \ \\
-  As demais equações de força são calculadas para cada partícula individulamente.
+%   \ \\
+%   As demais equações de força são calculadas para cada partícula individulamente.
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -378,8 +431,11 @@
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 
 \begin{frame}
-  \frametitle{Problema Físico}
-  \todo[inline]{Inserir quais resultados?}
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=\linewidth]{figure/poiseuille_results.png}
+    } {\raggedleft \tiny Perfil de velicidades no eixo x para um escoamento entre placas.}
+  \end{figure}
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------

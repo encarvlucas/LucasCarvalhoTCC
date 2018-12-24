@@ -546,6 +546,9 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float=None, total_time
     particles = [Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")]
     mesh.add_particle(list_of_particles=particles)
 
+    # Show initial particle position
+    mesh.show_geometry()
+
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
         print("Performing loop {0}".format(frame_num))
@@ -597,6 +600,9 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float=None, total_time
         # Move particles
         mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt,
                             viscosity=mu_coef)
+
+        # Show particle progress
+        mesh.show_geometry()
 
         # Saving frames
         if save_each_frame:
@@ -880,7 +886,7 @@ class Mesh:
             forces = dict()
 
             # ----------------- Gravitational Force --------------------------------------------------------------------
-            # forces["gravitational"] = (0., -9.80665 * particle.mass)
+            forces["gravitational"] = (0., 0.5e-1 * -9.80665 * particle.mass)  # TODO: FIX GRAVITY/SPEED RELATION
 
             # ----------------- Drag Force -----------------------------------------------------------------------------
             fluid_velocity = self.get_fluid_velocity((particle.pos_x, particle.pos_y),
