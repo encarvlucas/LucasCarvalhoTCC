@@ -6,7 +6,7 @@ xx = np.array(np.reshape(xx, (xx.size, 1)))
 yy = np.array(np.reshape(yy, (yy.size, 1)))
 xy = np.hstack((xx, yy))
 
-malha = Mesh("Poiseuille")
+malha = Mesh("Poiseuille_refined")
 # malha = Mesh(points=list(xy))
 
 # rand = np.random.rand(200)
@@ -15,7 +15,7 @@ malha = Mesh("Poiseuille")
 # xy = np.array(([0, 0], [1, 0],
 #                [1, 1], [0, 1]))
 # xy = np.vstack((xy, np.array(list(zip(rand, rand_2)))))
-malha.show_geometry(names=True, save=True)
+# malha.show_geometry(names=True, save=True)
 
 list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_vect["indices"], values=_vect["values"],
                                                     type_of_boundary=_vect["type"]),
