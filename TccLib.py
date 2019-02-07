@@ -499,7 +499,7 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         return frames
 
 
-def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float=None, total_time=1.0, reynolds: float=None,
+def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_time=1.0, reynolds: float = None,
                      save_each_frame=True):
     """
     Solves the mesh defined 2D Poiseuille equation problem:
@@ -547,7 +547,8 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float=None, total_time
     mesh.add_particle(list_of_particles=particles)
 
     # Show initial particle position
-    mesh.show_geometry()
+    # mesh.show_geometry()
+    mesh.save_frame(0)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
@@ -602,10 +603,11 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float=None, total_time
                             viscosity=mu_coef)
 
         # Show particle progress
-        mesh.show_geometry()
+        # mesh.show_geometry()
 
         # Saving frames
         if save_each_frame:
+            mesh.save_frame(frame_num)
             mesh.output_results(result_dictionary={"Velocity_X": sparse_to_vector(velocity_x_vector),
                                                    "Velocity_Y": sparse_to_vector(velocity_y_vector)},
                                 dt=dt, frame_num=frame_num)
@@ -1082,9 +1084,10 @@ class Mesh:
 
         raise NameError("Format not available. Try VTK or CSV.")
 
-    def show_geometry(self, particles=None, names=False, rainbow=False, save=False):
+    def show_geometry(self, show=True, particles=None, names=False, rainbow=False, save=False):
         """
         Display mesh geometry on screen using matplotlib.
+        :param show: Display plot on screen when its generated.
         :param particles: Particle or list of particles to be displayed inside the geometry.
         :param names: Show the index of each point next to it.
         :param rainbow: Color in the edge of each element in a different color.
@@ -1131,7 +1134,26 @@ class Mesh:
         if save:
             plt.savefig("{0}_mesh".format(self.name))
 
-        return plt.show()
+        if show:
+            return plt.show()
+
+    def save_frame(self, frame_num: int):
+        """
+        Saves frame image in the frames folder, to allow a better problem interpretation.
+        :param frame_num: Current frame number
+        """
+        import os
+        import matplotlib.pyplot as plt
+
+        try:
+            os.mkdir("./frames")
+        except FileExistsError:
+            pass
+
+        self.show_geometry(show=False)
+
+        plt.savefig("./frames/{0}_frame_{1}".format(self.name, frame_num))
+        plt.close()
 
     def show_3d_solution(self, solution_vector):
         """
