@@ -541,14 +541,18 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
     re = reynolds or rho_coef * max(velocity_x_vector)[0, 0] * (max(mesh.y) - min(mesh.y)) / mu_coef
 
     # --------------------------------- Adding particles ---------------------------------------------------------------
-    mesh.add_particle("A", (0.07 * (max(mesh.x) - min(mesh.x)), 0.5 * (max(mesh.y) - min(mesh.y))), density=.43e3,
-                      diameter=1e-3)
-    particles = [Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)), 0.8 * (max(mesh.y) - min(mesh.y))), color="b")]
+    mesh.add_particle("A", (0.07 * (max(mesh.x) - min(mesh.x)) + min(mesh.x), 0.5 * (max(mesh.y) - min(mesh.y)) +
+                            min(mesh.y)), density=430, diameter=1e-1, velocity=(1., 0.))
+    particles = [Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)) + min(mesh.x), 0.8 * (max(mesh.y) - min(mesh.y)) +
+                                min(mesh.y)), color="b", density=15e2, diameter=1e-1, velocity=(0.8, 0.)),
+                 Particle("C", (0.21 * (max(mesh.x) - min(mesh.x)) + min(mesh.x), 0.7 * (max(mesh.y) - min(mesh.y)) +
+                                min(mesh.y)), color="g", density=250, diameter=.5)]
     mesh.add_particle(list_of_particles=particles)
 
     # Show initial particle position
-    # mesh.show_geometry()
-    mesh.save_frame(0)
+    if save_each_frame:
+        # mesh.show_geometry()
+        mesh.save_frame(0)
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
@@ -600,7 +604,7 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
 
         # Move particles
         mesh.move_particles((sparse_to_vector(velocity_x_vector), sparse_to_vector(velocity_y_vector)), dt=dt,
-                            viscosity=mu_coef)
+                            viscosity=mu_coef, density=rho_coef)
 
         # Show particle progress
         # mesh.show_geometry()
@@ -628,11 +632,12 @@ class Particle:
     velocity_x = 0.
     velocity_y = 0.
 
-    def __init__(self, name, position=(0., 0.), density=1., diameter=0.1, color="r"):
+    def __init__(self, name, position=(0., 0.), velocity=(0., 0.), density=1., diameter=0.1, color="r"):
         """
         Particle class constructor.
         :param name: Name of the particle.
         :param position: Positional argument, (x, y) coordinates [m].
+        :param velocity: Initial particle velocity, (x, y) values [m/s].
         :param density: Particle density [kg/m³].
         :param diameter: Diameter of particle (approximated as a sphere) [m].
         :param color: Custom color for particle, default is "r" (red).
@@ -645,6 +650,9 @@ class Particle:
         self.pos_x = position[0]
         self.pos_y = position[1]
         self.position_history = [(self.pos_x, self.pos_y)]
+
+        self.velocity_x = velocity[0]
+        self.velocity_y = velocity[1]
 
         self.density = density
         self.diameter = diameter
@@ -683,10 +691,24 @@ class Particle:
         :param mesh: Mesh object that determines the boundaries for collision.
         :param dt: The time difference between frames [s].
         """
-        # TODO: ADD WALL COLLISIONS
+        # TODO: ADD GENERIC WALL COLLISIONS
         self.pos_x += self.velocity_x * dt
+        if not mesh.contains_particle(self):
+            self.pos_x = 0.
+
         self.pos_y += self.velocity_y * dt
+        if not mesh.contains_particle(self):
+            self.pos_y = 0.7*abs(self.pos_y)
+            self.velocity_y = 0.7*abs(self.velocity_y)
+
         self.position_history.append((self.pos_x, self.pos_y))
+
+    def get_pixel_size(self):
+        """
+        Returns the plot size os the particle
+        :return: Approximate plotting size
+        """
+        return self.diameter * 1000
 
 
 class BoundaryConditions:
@@ -835,12 +857,13 @@ class Mesh:
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
-    def add_particle(self, name: str = None, position: (list, tuple) = None, density=1., diameter=0.1, color="r",
-                     list_of_particles=None):
+    def add_particle(self, name: str = None, position: (list, tuple) = None, velocity = (0., 0.), density=1.,
+                     diameter=0.1, color="r", list_of_particles=None):
         """
         Associates a new particle with the mesh.
         :param name: Name of the particle. Each particle defined in a mesh must have different names.
         :param position: Positional argument, (x, y) coordinates [m].
+        :param velocity: Initial particle velocity, (x, y) values [m/s].
         :param density: Particle density [kg/m³].
         :param diameter: Diameter of particle (approximated as a sphere) [m].
         :param color: Custom color for particle, default is "r" (red).
@@ -860,9 +883,11 @@ class Mesh:
             else:
                 check_method_call(position)
 
-                self.particles.append(Particle(name, position, density, diameter, color))
+                self.particles.append(Particle(name=name, position=position, velocity=velocity, density=density,
+                                               diameter=diameter, color=color))
 
-    def move_particles(self, velocity=None, velocity_vector_x=None, velocity_vector_y=None, dt=None, viscosity=None):
+    def move_particles(self, velocity=None, velocity_vector_x=None, velocity_vector_y=None, dt=None, viscosity=None,
+                       density=None):
         """
         Method that moves all particles currently inside the mesh domain.
         :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh [m/s].
@@ -870,6 +895,7 @@ class Mesh:
         :param velocity_vector_y: Vector of velocity in the y axis [m/s].
         :param dt: The time difference between frames [s].
         :param viscosity: The fluid's dynamic viscosity [Pa.s || kg/m.s].
+        :param density: The fluid's density  [kg/m³].
         """
         import numpy as np
 
@@ -888,15 +914,31 @@ class Mesh:
             forces = dict()
 
             # ----------------- Gravitational Force --------------------------------------------------------------------
-            forces["gravitational"] = (0., 0.5e-1 * -9.80665 * particle.mass)  # TODO: FIX GRAVITY/SPEED RELATION
+            forces["gravitational"] = (0., -9.80665 * particle.mass)
 
             # ----------------- Drag Force -----------------------------------------------------------------------------
-            fluid_velocity = self.get_fluid_velocity((particle.pos_x, particle.pos_y),
-                                                     velocity_vector_x, velocity_vector_y)
-            forces["test"] = (particle.mass / dt * np.array((fluid_velocity[0] - particle.velocity_x,
-                                                             fluid_velocity[1] - particle.velocity_y)))
-            # forces["drag"] = (3 * np.pi * viscosity * particle.diameter * np.array(
-            #                   (fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
+            fluid_velocity = np.array(self.get_fluid_velocity((particle.pos_x, particle.pos_y),
+                                                              velocity_vector_x, velocity_vector_y))
+            relative_vel = np.array(((fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
+            relative_vel_norm = np.sqrt(relative_vel.dot(relative_vel))
+
+            try:
+                particle.relative_vel
+            except AttributeError:
+                particle.relative_vel = relative_vel_norm
+            relative_acceleration = ((relative_vel_norm**2 / particle.diameter) /
+                                     ((relative_vel_norm - particle.relative_vel) / dt))
+
+            # drag_coef = 1 + ((density * relative_vel_norm * particle.diameter / viscosity)**(2./3.))/6
+            alternative_drag_coef_a = 1.05 - 0.066 / (relative_acceleration**2 + 0.12)
+            # alternative_drag_coef_h = 2.88 + 3.12 / (relative_acceleration + 1.)**3
+            stoakes_num = particle.diameter**2 * particle.density * (np.sqrt(fluid_velocity.dot(fluid_velocity)) *
+                                                                     particle.diameter / viscosity) / (18. * 1.**2)
+
+            forces["drag"] = alternative_drag_coef_a * relative_vel / stoakes_num
+
+            # ----------------- Buoyant Force --------------------------------------------------------------------------
+            forces["buoyancy"] = (0., 0.)  # TODO: APPLY BUOYANT FORCE
 
             particle.apply_forces(forces, self, dt)
 
@@ -909,8 +951,7 @@ class Mesh:
         """
         check_if_instance(particle, Particle)
 
-        if not ((self.x.min() < particle.pos_x) and (particle.pos_x < self.x.max()) and
-                (self.y.min() < particle.pos_y) and (particle.pos_y < self.y.max())):
+        if self.delauney_surfaces.find_simplex((particle.pos_x, particle.pos_y)) < 0:
             return False
         else:
             return True
@@ -1084,7 +1125,7 @@ class Mesh:
 
         raise NameError("Format not available. Try VTK or CSV.")
 
-    def show_geometry(self, show=True, particles=None, names=False, rainbow=False, save=False):
+    def show_geometry(self, show=True, particles: list = None, names=False, rainbow=False, save=False):
         """
         Display mesh geometry on screen using matplotlib.
         :param show: Display plot on screen when its generated.
@@ -1103,9 +1144,11 @@ class Mesh:
         # Draw mesh points
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
 
+        plt.gca().autoscale(False)
+
         # Draw particles
-        [plt.scatter(particle.pos_x, particle.pos_y, c=particle.color) for particle in particles
-         if self.contains_particle(particle)]
+        [plt.scatter(particle.pos_x, particle.pos_y, s=particle.get_pixel_size(), c=particle.color) for
+         particle in particles if self.contains_particle(particle)]
 
         # Sets plot styling
         style_plot(self.x, self.y)
@@ -1115,7 +1158,9 @@ class Mesh:
             for _index in range(self.size):
                 plt.gca().annotate(_index, (self.x[_index], self.y[_index]))
 
-        [plt.gca().annotate(particle.name, (particle.pos_x, particle.pos_y), color=particle.color, fontsize=15)
+        [plt.gca().annotate(particle.name,
+                            (particle.pos_x + particle.diameter/10, particle.pos_y + particle.diameter/10),
+                            color=particle.color, fontsize=15)
          for particle in particles if self.contains_particle(particle)]
 
         # Displays elements as different colors to help distinguish each one
@@ -1274,7 +1319,7 @@ class Mesh:
         list_of_dots = {}
 
         for particle in self.particles:
-            list_of_dots[particle] = plt.scatter(0, 0, s=(20000 * particle.diameter), c=particle.color)
+            list_of_dots[particle] = plt.scatter(0, 0, s=(particle.get_pixel_size()), c=particle.color)
 
         def update(_frame):
             # Draw particles
