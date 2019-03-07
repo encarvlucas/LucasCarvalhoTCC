@@ -1,0 +1,202 @@
+% Modelo de Dissertação em Latex para o PPG em Engenharia Mecânica da UERJ
+% Este modelo foi adaptado da versão disponibilizada no site da Engenharia Elétrica da UERJ
+% http://www.pel.uerj.br/publico/Modelo_LaTeX_Dissertacao_UERJ.rar
+% http://www.pel.uerj.br/defesas/
+%
+% Utilizei o WinEdt 6.0 com Miktex 2.9
+%
+% Para gerar o PDF usei a opção PDFTeXfy com o documento [masterthesis.tex] aberto e em foco.
+%
+% Não consegui usar as figuras em EPS como o modelo original. Usei PNG e JPG sem problemas.
+%
+% Felipe M. - 20/06/2012
+%
+% 												Command             10pt    11pt    12pt
+% 												\tiny               5       6       6
+% 												\scriptsize         7       8       8
+% 												\footnotesize       8       9       10
+% 												\small              9       10      10.95
+% 												\normalsize         10      10.95   12
+% 												\large              12      12      14.4
+% 												\Large              14.4    14.4    17.28
+% 												\LARGE              17.28   17.28   20.74
+% 												\huge               20.74   20.74   24.88
+% 												\Huge               24.88   24.88   24.88
+
+
+\documentclass[a4paper,12pt,oneside,openany]{uerj}
+\usepackage[english,brazil]{babel}
+% \usepackage[math]{iwona}
+% \DeclareFontFamily{U}{futm}{}
+% \DeclareFontShape{U}{futm}{m}{n}{
+%   <-> fourier-bb % changed from .92 to 1
+%   }{}
+% \DeclareMathAlphabet{\mathbb}{U}{futm}{m}{n}
+%\usepackage[latin1]{inputenc}
+%\usepackage{fourier}
+%\usepackage[utopia]{mathdesign}
+%\usepackage{fouriernc}
+%\usepackage{fontspec}
+\usepackage{mathptmx} % Times New Roman
+
+%\usepackage{Times}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+%\setmainfont{Times}
+%\setmainfont{Arial}
+\usepackage[utf8]{inputenc}
+\usepackage{enumerate}
+\usepackage{cite}
+\usepackage{epsf,epsfig,psfig}
+\usepackage{pagina}
+\usepackage{indentfirst}
+\usepackage{theorem}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{boxedminipage}
+\usepackage{float}
+%\usepackage[style=base]{caption}
+\usepackage{subcaption}
+%\captionsetup{compatibility=false}
+%\usepackage{subcaption}
+%\usepackage[caption=false]{subfig}
+\usepackage{silence}
+\WarningFilter{caption}{Unsupported document class}
+\usepackage{makeidx}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage[hidelinks]{hyperref}
+\pdfstringdefDisableCommands{\let\uppercase\relax} % desabilitar alguns warnings e \uppercase
+
+%------------------------------------------------
+\usepackage{xargs}                      % Use more than one optional parameter in a new commands
+\usepackage[pdftex,dvipsnames]{xcolor}  % Coloured text etc.
+\usepackage[colorinlistoftodos,prependcaption,textsize=normalsize]{todonotes}
+\newcommandx{\balao}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\todo[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\todo[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
+\newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
+\newcommandx{\authorName}{Lucas Carvalho de Sousa}
+\newcommandx{\mainTitle}{Simulação Numérica De Escoamentos Dispersos Utilizando Método De Elementos Finitos}
+\newcommandx{\curYear}{2019}
+\newcommandx{\numPages}{xx f}
+%------------------------------------------------
+%------------------------------------------------
+\usepackage{geometry}
+\usepackage{mathtools}
+%------------------------------------------------
+
+\makeindex
+
+
+\newtheorem{deff}{Definição}[section]
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+
+\bibliographystyle{abnt-num}
+
+
+
+\begin{document}
+
+% \hypersetup{
+%      colorlinks,
+%     citecolor=black,
+%     filecolor=black,
+%     linkcolor=black,
+%     urlcolor=black,
+%     linktoc=all
+% }
+
+\thispagestyle{empty}\input{./01_Pre_textuais/Capa}
+\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/FolhaDeRosto}
+\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/FichaCatalog}   
+\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/FolhaDeAprovacao}
+\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Dedicatoria}
+\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Agradecimento}
+%\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Epigrafe}    % não coloquei epígrafe no meu trabalho, mas fica aqui a chamada comentada.
+\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Resumo}
+\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Abstract}
+
+\fancypagestyle{plain}{
+\fancyhf{} % clear all header and footer fields
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+\pagestyle{plain}
+
+\pagebreak
+
+\def\listfigurename{LISTA DE FIGURAS}\listoffigures
+\def\listtablename{LISTA DE TABELAS}\listoftables
+\input{./01_Pre_textuais/ListaDeSiglas.tex}    % não coloquei LISTA DE SIGLAS no meu trabalho, mas fica aqui a chamada comentada.
+\def\contentsname{SUMÁRIO}\tableofcontents
+
+\fancypagestyle{plain}{
+\fancyhf{} % clear all header and footer fields
+\fancyhead[R]{\thepage}
+\setlength{\voffset}{-1cm}
+\setlength{\headsep}{1cm}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+
+\pagestyle{plain}
+
+\pagebreak
+\addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries INTRODUÇÃO}
+\input{./01_Pre_textuais/Introducao.tex}
+
+\input{./01_Cap1/Capitulo1.tex}
+
+% \input{./02_Cap2/capitulo2.tex}
+% 
+% \input{./03_Cap3/capitulo3.tex}
+% 
+% \input{./04_Cap4/capitulo4.tex}
+% 
+% \input{./05_Cap5/capitulo5.tex}
+% 
+% \input{./06_Cap6/capitulo6.tex}
+% 
+% \input{./07_Cap7/capitulo7.tex}
+% 
+% \input{./08_Cap8/capitulo8.tex}
+% 
+% \input{./09_Cap9/capitulo9.tex}
+
+% inserir demais capítulos aqui
+% -----------------------------
+% -----------------------------
+% -----------------------------
+% -----------------------------
+
+\pagebreak
+\addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries CONCLUSÃO}
+\input{./10_Conclusao/conclusao.tex}
+
+\pagebreak
+\addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries APÊNDICE A}
+\input{Appendix_A/Appendix_A.tex}
+
+\pagebreak
+\addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries REFERÊNCIAS}
+\def\bibname{REFERÊNCIAS}
+% \pagebreak
+% \addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries ANEXO A}
+% \input{Appendix_A/Appendix_A.tex}
+
+
+% abaixo segue a chamada para o arquivo [.BIB]. Utilizei o programa JABREF para montar o arquivo com minhas referências.
+\nocite{*}
+\bibliography{dissertacao}
+\bibliographystyle{unsrt}
+
+
+
+
+% \printindex    %Removi o índice remissivo para a versão oficial do trabalho.
+
+
+\end{document}
