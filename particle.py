@@ -1,4 +1,5 @@
 import util
+import numpy as np
 
 
 class Particle:
@@ -22,7 +23,6 @@ class Particle:
         :param diameter: Diameter of particle (approximated as a sphere) [m].
         :param color: Custom color for particle, default is "r" (red).
         """
-        import numpy as np
 
         util.check_method_call(name)
 
@@ -40,6 +40,10 @@ class Particle:
         self.mass = np.pi / 6. * self.density * self.diameter ** 3
 
         self.color = color
+
+    @property
+    def velocity(self):
+        return np.array([self.velocity_x, self.velocity_y])
 
     def apply_forces(self, forces, mesh, dt):
         """
@@ -87,4 +91,4 @@ class Particle:
         Returns the plot size os the particle
         :return: Approximate plotting size
         """
-        return self.diameter * 1000
+        return self.diameter * 1e7

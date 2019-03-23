@@ -269,15 +269,6 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
     # Defining Reynolds number
     re = reynolds or rho_coef * max(velocity_x_vector)[0, 0] * (max(mesh.y) - min(mesh.y)) / mu_coef
 
-    # --------------------------------- Adding particles ---------------------------------------------------------------
-    mesh.add_particle("A", (0.07 * (max(mesh.x) - min(mesh.x)) + min(mesh.x), 0.5 * (max(mesh.y) - min(mesh.y)) +
-                            min(mesh.y)), density=430, diameter=1e-1, velocity=(1., 0.))
-    particles = [Particle("B", (0.11 * (max(mesh.x) - min(mesh.x)) + min(mesh.x), 0.8 * (max(mesh.y) - min(mesh.y)) +
-                                min(mesh.y)), color="b", density=15e2, diameter=1e-1, velocity=(0.8, 0.)),
-                 Particle("C", (0.21 * (max(mesh.x) - min(mesh.x)) + min(mesh.x), 0.7 * (max(mesh.y) - min(mesh.y)) +
-                                min(mesh.y)), color="g", density=250, diameter=.5)]
-    mesh.add_particle(list_of_particles=particles)
-
     # Show initial particle position
     if save_each_frame:
         # mesh.show_geometry()
@@ -285,7 +276,7 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
-        print("Performing loop {0}".format(frame_num))
+        print("\rSolving {0:.2f}%".format(100 * frame_num / (num_frames+1)), end="")
 
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
@@ -345,4 +336,5 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
                                                    "Velocity_Y": util.sparse_to_vector(velocity_y_vector)},
                                 dt=dt, frame_num=frame_num)
 
+    print("\rSolving done!")
     return util.sparse_to_vector(velocity_x_vector), util.sparse_to_vector(velocity_y_vector)
