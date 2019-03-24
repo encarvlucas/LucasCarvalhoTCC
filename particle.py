@@ -1,4 +1,5 @@
 import util
+
 import numpy as np
 
 
@@ -7,11 +8,12 @@ class Particle:
     Defines a moving particle.
     Particles are defined as having a spherical shape of constant diameter.
     """
-    name, pos_x, pos_y, color = None, None, None, None
-
     position_history = None
-    velocity_x = 0.
-    velocity_y = 0.
+
+    reynolds = 0.
+
+    # Number of skipped frames between saved positions.
+    frame_skips = 1000
 
     def __init__(self, name, position=(0., 0.), velocity=(0., 0.), density=1., diameter=0.1, color="r"):
         """
@@ -41,6 +43,9 @@ class Particle:
 
         self.color = color
 
+        # Number of times this particle's position has been calculated.
+        self.time_count = 1
+
     @property
     def velocity(self):
         return np.array([self.velocity_x, self.velocity_y])
@@ -53,7 +58,6 @@ class Particle:
         :param mesh: Mesh object that determines the boundaries for collision.
         :param dt: The time difference between frames [s].
         """
-        import numpy as np
         util.check_if_instance(forces, dict)
 
         sum_forces_x = 0.
@@ -84,11 +88,14 @@ class Particle:
             self.pos_y = 0.7*abs(self.pos_y)
             self.velocity_y = 0.7*abs(self.velocity_y)
 
-        self.position_history.append((self.pos_x, self.pos_y))
+        self.time_count += 1
+        if self.time_count % self.frame_skips == 0:
+            self.position_history.append((self.pos_x, self.pos_y))
 
-    def get_pixel_size(self):
+    @property
+    def pixel_size(self):
         """
-        Returns the plot size os the particle
-        :return: Approximate plotting size
+        Returns the plot size os the particle.
+        :return: Approximate plotting size.
         """
         return self.diameter * 1e7

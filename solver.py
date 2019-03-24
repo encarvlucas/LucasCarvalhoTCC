@@ -1,11 +1,11 @@
-import numpy as np
-from scipy import sparse
-from boundaryConditions import *
 from complexPointList import *
-from particle import *
+from mesh import *
+
+from scipy import sparse
+import scipy.sparse.linalg as linalg
 
 
-def get_matrices(mesh):
+def get_matrices(mesh: Mesh):
     """
     Function that generates the algebraic components of the solution method
     :param mesh: Mesh object to be used to generate the matrices
@@ -91,7 +91,7 @@ def get_matrices(mesh):
     return kx_sparse, ky_sparse, m_sparse, gx_sparse, gy_sparse
 
 
-def apply_boundary_conditions(mesh, boundary_name, matrix_a, vector_b):
+def apply_boundary_conditions(mesh: Mesh, boundary_name, matrix_a, vector_b):
     """
     Performs the evaluation of boundary conditions and applies the changes to the main matrix and vector.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -118,7 +118,7 @@ def apply_boundary_conditions(mesh, boundary_name, matrix_a, vector_b):
             vector_b[_column_index, 0] += mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
 
 
-def apply_initial_boundary_conditions(mesh, boundary_name, vector_v):
+def apply_initial_boundary_conditions(mesh: Mesh, boundary_name, vector_v):
     """
     Performs the evaluation of boundary conditions and applies initial values to the vector.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -130,8 +130,8 @@ def apply_initial_boundary_conditions(mesh, boundary_name, vector_v):
             vector_v[_point] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
 
 
-def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef_y=1.0, q: list=None, dt: float=None,
-                  total_time=1.):
+def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = 0., k_coef_x: float = 1.0,
+                  k_coef_y: float = 1.0, q: list = None, dt: float = None, total_time: float = 1.):
     """
     Solves the mesh defined 2D Poisson equation problem:
         DT = -∇(k*∇T) + Q   ->   (M + K).T_i^n =  M.T_i^n-1 + M.Q_i
@@ -147,8 +147,6 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
     :param total_time: Length of time the calculation takes place (only necessary for transient solutions) [s].
     :return: Temperature value for each point in the mesh [.
     """
-    import scipy.sparse.linalg as linalg
-
     k_coef_x = k_coef or k_coef_x
     k_coef_y = k_coef or k_coef_y
 
@@ -229,21 +227,17 @@ def solve_poisson(mesh, permanent_solution=True, k_coef=0., k_coef_x=1.0, k_coef
         return frames
 
 
-def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_time=1.0, reynolds: float = None,
-                     save_each_frame=True):
+def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, reynolds: float = None,
+                         save_each_frame: bool = True):
     """
-    Solves the mesh defined 2D Poiseuille equation problem:
+    Solves the mesh defined 2D current-vorticity equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
-    :param rho_coef: Fluid density [kg/m³].
-    :param mu_coef: Fluid dynamic viscosity [Pa.s || kg/m.s].
     :param dt: Value of time between frames [s].
     :param total_time: Length of time the calculation takes place [s].
     :param reynolds: Option to provide the value of Reynolds Number [1].
     :param save_each_frame: True if every loop saves the current velocity values.
     :return: Velocity vectors and pressure values for each point in the mesh.
     """
-    import scipy.sparse.linalg as linalg
-
     dt = dt or mesh.default_dt
     num_frames = int(total_time/dt)
 
@@ -267,7 +261,7 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
                         dt=dt, frame_num=0)
 
     # Defining Reynolds number
-    re = reynolds or rho_coef * max(velocity_x_vector)[0, 0] * (max(mesh.y) - min(mesh.y)) / mu_coef
+    re = reynolds or mesh.density * max(velocity_x_vector)[0, 0] * (max(mesh.y) - min(mesh.y)) / mesh.viscosity
 
     # Show initial particle position
     if save_each_frame:
@@ -276,7 +270,7 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
 
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_num in range(1, num_frames + 1):
-        print("\rSolving {0:.2f}%".format(100 * frame_num / (num_frames+1)), end="")
+        print("\rSolving velocity {0:.2f}%".format(100 * frame_num / (num_frames+1)), end="")
 
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
@@ -322,13 +316,6 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
         apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
-        # Move particles
-        mesh.move_particles((util.sparse_to_vector(velocity_x_vector), util.sparse_to_vector(velocity_y_vector)), dt=dt,
-                            viscosity=mu_coef, density=rho_coef)
-
-        # Show particle progress
-        # mesh.show_geometry()
-
         # Saving frames
         if save_each_frame:
             mesh.save_frame(frame_num)
@@ -336,5 +323,51 @@ def solve_poiseuille(mesh, rho_coef=1.0, mu_coef=1.0, dt: float = None, total_ti
                                                    "Velocity_Y": util.sparse_to_vector(velocity_y_vector)},
                                 dt=dt, frame_num=frame_num)
 
-    print("\rSolving done!")
+    print("\rSolving velocity done!")
     return util.sparse_to_vector(velocity_x_vector), util.sparse_to_vector(velocity_y_vector)
+
+
+def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_vector_x: float = None,
+                   velocity_vector_y: float = None, dt: float = None):
+    """
+    Method that moves all particles currently inside the mesh domain.
+    :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
+    :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh [m/s].
+    :param velocity_vector_x: Vector of velocity in the x axis [m/s].
+    :param velocity_vector_y: Vector of velocity in the y axis [m/s].
+    :param dt: The time difference between frames [s].
+    """
+    # Contingency
+    util.check_method_call(dt)
+
+    if isinstance(velocity, (list, tuple)) and len(velocity) == 2:
+        velocity_vector_x = velocity[0]
+        velocity_vector_y = velocity[1]
+
+    util.check_method_call(velocity_vector_x, velocity_vector_y)
+
+    # Applying forces to each particle if it is still able.
+    for particle in [_particle for _particle in mesh.particles if mesh.contains_particle(_particle)]:
+        forces = dict()
+
+        # ----------------- Gravitational Force ------------------------------------------------------------------------
+        forces["gravitational"] = (0., -9.80665 * particle.mass)
+
+        # ----------------- Drag Force ---------------------------------------------------------------------------------
+        fluid_velocity = np.array(mesh.get_fluid_velocity((particle.pos_x, particle.pos_y),
+                                                          velocity_vector_x, velocity_vector_y))
+        relative_vel = np.array(
+            ((fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
+        # relative_vel_norm = np.sqrt(relative_vel.dot(relative_vel))
+
+        # particle.reynolds = (mesh.density * relative_vel_norm * particle.diameter / mesh.viscosity)
+        #
+        # if particle.reynolds > 1:
+        #     pass
+        #     print("Reynolds number beyond usable definitions.")
+        forces["drag"] = 3 * np.pi * mesh.viscosity * particle.diameter * relative_vel
+
+        # -------------------- Lift Force ------------------------------------------------------------------------------
+        # forces["buoyancy"] = (0., 0.)  # TODO: APPLY LIFT FORCE
+
+        particle.apply_forces(forces, mesh, dt)

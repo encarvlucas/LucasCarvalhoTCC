@@ -1,6 +1,13 @@
 from boundaryConditions import *
 from particle import *
 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+
+import os
+import fnmatch
+
 
 class Mesh:
     """
@@ -11,16 +18,21 @@ class Mesh:
     name = "default"
     size = 0
     default_dt = 0.
+    density = None
+    viscosity = None
 
-    def __init__(self, name="untitled", points=None):
+    def __init__(self, name: str = "untitled", points=None, density: float = 1.0, viscosity: float = 1.0):
         """
         Class constructor, initializes geometry.
         :param name: Mesh's main name.
+        :param density: Fluid density [kg/m³].
+        :param viscosity: Fluid dynamic viscosity [Pa.s || kg/m.s].
         """
-        import os
         from shutil import copy
         self.name = name
         self.particles = []
+        self.density = density
+        self.viscosity = viscosity
 
         if isinstance(points, list):
             self.import_point_structure(points=points)
@@ -116,65 +128,6 @@ class Mesh:
                 self.particles.append(Particle(name=name, position=position, velocity=velocity, density=density,
                                                diameter=diameter, color=color))
 
-    def move_particles(self, velocity=None, velocity_vector_x=None, velocity_vector_y=None, dt=None, viscosity=None,
-                       density=None):
-        """
-        Method that moves all particles currently inside the mesh domain.
-        :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh [m/s].
-        :param velocity_vector_x: Vector of velocity in the x axis [m/s].
-        :param velocity_vector_y: Vector of velocity in the y axis [m/s].
-        :param dt: The time difference between frames [s].
-        :param viscosity: The fluid's dynamic viscosity [Pa.s || kg/m.s].
-        :param density: The fluid's density  [kg/m³].
-        """
-        import numpy as np
-
-        # Contingency
-        util.check_method_call(dt)
-        util.check_method_call(viscosity)
-
-        if isinstance(velocity, (list, tuple)) and len(velocity) == 2:
-            velocity_vector_x = velocity[0]
-            velocity_vector_y = velocity[1]
-
-        util.check_method_call(velocity_vector_x, velocity_vector_y)
-
-        # Applying forces to each particle if it is still able.
-        for particle in [_particle for _particle in self.particles if self.contains_particle(_particle)]:
-            forces = dict()
-
-            # ----------------- Gravitational Force --------------------------------------------------------------------
-            forces["gravitational"] = (0., -9.80665 * particle.mass)
-
-            # ----------------- Drag Force -----------------------------------------------------------------------------
-            fluid_velocity = np.array(self.get_fluid_velocity((particle.pos_x, particle.pos_y),
-                                                              velocity_vector_x, velocity_vector_y))
-            relative_vel = np.array(
-                ((fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
-            relative_vel_norm = np.sqrt(relative_vel.dot(relative_vel))
-
-            try:
-                particle.relative_vel
-            except AttributeError:
-                particle.relative_vel = relative_vel_norm
-            relative_acceleration = ((relative_vel_norm ** 2 / particle.diameter) /
-                                     ((relative_vel_norm - particle.relative_vel) / dt))
-
-            particle_reynolds = (density * relative_vel_norm * particle.diameter / viscosity)
-            # drag_coef = 1 + (particle_reynolds**(2./3.))/6
-            alternative_drag_coef_a = 1.05 - 0.066 / (relative_acceleration ** 2 + 0.12)
-            # alternative_drag_coef_h = 2.88 + 3.12 / (relative_acceleration + 1.)**3
-            stoakes_num = particle.diameter ** 2 * particle.density * (np.sqrt(fluid_velocity.dot(fluid_velocity)) *
-                                                                       particle.diameter / viscosity) / (18. * 1. ** 2)
-            print("Particle Reynolds number: ", particle_reynolds)
-
-            forces["drag"] = alternative_drag_coef_a * relative_vel / stoakes_num
-
-            # ----------------- Buoyant Force --------------------------------------------------------------------------
-            forces["buoyancy"] = (0., 0.)  # TODO: APPLY BUOYANT FORCE
-
-            particle.apply_forces(forces, self, dt)
-
     def contains_particle(self, particle: Particle):
         """
         Checks if a particle is inside the mesh geometric domain.
@@ -224,9 +177,6 @@ class Mesh:
         Removes previous results to prevent incorrect data analysis.
         :param return_to_previous_directory: Returns to previous directory.
         """
-        import os
-        import fnmatch
-
         # ---------------- Deleting previous results -------------------------------------------------------------------
         try:
             os.chdir("./paraview_results/")
@@ -252,9 +202,6 @@ class Mesh:
         :param data_names: Data name for display.
         :param result_dictionary: A dictionary that contains the names for each data and its values.
         """
-        import os
-        import fnmatch
-
         # ------------------ Contingency -------------------------------------------------------------------------------
         util.check_method_call(result_vector, result_dictionary)
 
@@ -368,9 +315,6 @@ class Mesh:
         :param save: Save generated image.
         :return: Display image.
         """
-        import numpy as np
-        import matplotlib.pyplot as plt
-
         particles = util.check_list_or_object(particles, Particle)
         particles.extend(self.particles)
 
@@ -380,7 +324,7 @@ class Mesh:
         plt.gca().autoscale(False)
 
         # Draw particles
-        [plt.scatter(particle.pos_x, particle.pos_y, s=particle.get_pixel_size(), c=particle.color) for
+        [plt.scatter(particle.pos_x, particle.pos_y, s=particle.pixel_size, c=particle.color) for
          particle in particles if self.contains_particle(particle)]
 
         # Sets plot styling
@@ -420,9 +364,6 @@ class Mesh:
         Saves frame image in the frames folder, to allow a better problem interpretation.
         :param frame_num: Current frame number
         """
-        import os
-        import matplotlib.pyplot as plt
-
         try:
             os.mkdir("./frames")
         except FileExistsError:
@@ -439,9 +380,6 @@ class Mesh:
         :param solution_vector: Vector that contains the value of the solution for each point in the mesh.
         :return: Display image.
         """
-        import matplotlib.pyplot as plt
-        from mpl_toolkits.mplot3d import Axes3D
-
         util.check_method_call(solution_vector)
         try:
             if len(solution_vector) != self.size:
@@ -470,11 +408,6 @@ class Mesh:
         :param dt: Time between each frame, if not specified the animation won't be saved.
         :return: Display image.
         """
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from mpl_toolkits.mplot3d import Axes3D
-        from matplotlib.animation import FuncAnimation
-
         util.check_method_call(frames_vector)
         try:
             if np.any([len(i) != self.size for i in frames_vector]):
@@ -513,8 +446,6 @@ class Mesh:
         :param velocity_y: Vector of velocity in the y axis.
         :return: Display image.
         """
-        import matplotlib.pyplot as plt
-
         util.check_method_call(velocity_x, velocity_y)
 
         try:
@@ -542,9 +473,6 @@ class Mesh:
         :param save: Determines if the generated image will be saved.
         :return: Display image.
         """
-        import matplotlib.pyplot as plt
-        from matplotlib.animation import FuncAnimation
-
         # Draw mesh points
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
 
@@ -552,7 +480,7 @@ class Mesh:
         list_of_dots = {}
 
         for particle in self.particles:
-            list_of_dots[particle] = plt.scatter(0, 0, s=(particle.get_pixel_size()), c=particle.color)
+            list_of_dots[particle] = plt.scatter(0, 0, s=particle.pixel_size, c=particle.color)
 
         def update(_frame):
             # Draw particles
@@ -561,7 +489,7 @@ class Mesh:
 
             return
 
-        animation = FuncAnimation(plt.gcf(), update, frames=number_of_frames, interval=100, save_count=False)
+        animation = FuncAnimation(plt.gcf(), update, frames=number_of_frames, interval=1, save_count=False)
 
         if save:
             animation.save("{0}_particle_movement.gif".format(self.name), dpi=80, writer='imagemagick')
