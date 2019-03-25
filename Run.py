@@ -24,7 +24,7 @@ list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_
 
 # --------------------------------- Adding particles ---------------------------------------------------------------
 malha.add_particle("A", (0.07 * (max(malha.x) - min(malha.x)) + min(malha.x), 0.5 * (max(malha.y) - min(malha.y)) +
-                         min(malha.y)), density=430, diameter=5e-5, velocity=(1., 0.))
+                         min(malha.y)), density=1430, diameter=5e-5, velocity=(1., 0.))
 particles = [TccLib.Particle("B", (0.11 * (max(malha.x) - min(malha.x)) + min(malha.x),
                                    0.8 * (max(malha.y) - min(malha.y)) + min(malha.y)),
                              color="b", density=15e2, diameter=1e-4, velocity=(0.8, 0.)),
@@ -36,12 +36,12 @@ malha.add_particle(list_of_particles=particles)
 poiseuille = True
 
 if poiseuille:
-    total_time = 3.15
+    total_time = 2.15
 
     vel_x, vel_y = TccLib.solve_velocity_field(malha, total_time=total_time, dt=.5, save_each_frame=False)
     # malha.show_velocity_quiver(vel_x, vel_y)
 
-    particle_dt = 1e-5
+    particle_dt = 5e-6
     TccLib.Particle.frame_skips = total_time / (100.*particle_dt)
     for t in np.arange(0, total_time, particle_dt):
         print("\rMoving Particles {0:.2f}%".format(100 * t / total_time), end="")

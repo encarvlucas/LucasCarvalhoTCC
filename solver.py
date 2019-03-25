@@ -360,12 +360,15 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_vector_x
             ((fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
         # relative_vel_norm = np.sqrt(relative_vel.dot(relative_vel))
 
-        # particle.reynolds = (mesh.density * relative_vel_norm * particle.diameter / mesh.viscosity)
+        # particle.reynolds = (mesh.density * max(relative_vel) * particle.diameter / mesh.viscosity)
         #
         # if particle.reynolds > 1:
         #     pass
         #     print("Reynolds number beyond usable definitions.")
         forces["drag"] = 3 * np.pi * mesh.viscosity * particle.diameter * relative_vel
+
+        # -------------------- Added Mass Force ------------------------------------------------------------------------
+        forces["added_mass"] = (np.pi/12.) * mesh.density * particle.diameter**3 * (relative_vel - particle.velocity)/dt
 
         # -------------------- Lift Force ------------------------------------------------------------------------------
         # forces["buoyancy"] = (0., 0.)  # TODO: APPLY LIFT FORCE
