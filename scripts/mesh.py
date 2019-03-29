@@ -1,5 +1,5 @@
-from boundaryConditions import *
-from particle import *
+from scripts.boundaryConditions import *
+from scripts.particle import *
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D

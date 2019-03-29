@@ -1,4 +1,4 @@
-import util
+import scripts.util as util
 
 
 class ComplexPointList:

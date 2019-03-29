@@ -1,5 +1,5 @@
-from complexPointList import *
-from mesh import *
+from scripts.complexPointList import *
+from scripts.mesh import *
 
 from scipy import sparse
 import scipy.sparse.linalg as linalg

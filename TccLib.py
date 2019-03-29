@@ -8,7 +8,7 @@ __author__ = "Lucas Carvalho de Sousa"
 __author_email__ = "encarvlucas@gmail.com"
 __website__ = "https://github.com/encarvlucas/LucasCarvalhoTCC"
 
-from mesh import *
-from util import *
-from solver import *
-from complexPointList import *
+from scripts.mesh import *
+from scripts.util import *
+from scripts.solver import *
+from scripts.complexPointList import *

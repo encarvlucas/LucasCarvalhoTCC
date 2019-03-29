@@ -36,11 +36,14 @@ malha.add_particle("A", (0.07 * (max(malha.x) - min(malha.x)) + min(malha.x), 0.
 poiseuille = True
 
 if poiseuille:
-    velocity_time = 1.
-
-    vel_x, vel_y = TccLib.solve_velocity_field(malha, total_time=velocity_time, dt=.51, save_each_frame=False)
-    # malha.show_velocity_quiver(vel_x, vel_y)
-    malha.output_results(result_dictionary={"Velocity_X": vel_x, "Velocity_Y": vel_y})
+    # velocity_time = 10.
+    #
+    # vel_x, vel_y = TccLib.solve_velocity_field(malha, total_time=velocity_time, dt=.05, save_each_frame=False)
+    # # malha.show_velocity_quiver(vel_x, vel_y)
+    # malha.output_results(result_dictionary={"Velocity_X": vel_x, "Velocity_Y": vel_y})
+    #
+    # TccLib.util.save((vel_x, vel_y), "vel")
+    vel_x, vel_y = TccLib.util.load("vel")
 
     particle_time = 2.
     particle_dt = 1e-5

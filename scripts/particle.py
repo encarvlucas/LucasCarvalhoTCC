@@ -1,4 +1,4 @@
-import util
+import scripts.util as util
 
 import numpy as np
 
@@ -39,7 +39,8 @@ class Particle:
         self.density = density
         self.diameter = diameter
         # Density * Volume of a sphere = rho * pi/6 * d^3
-        self.mass = np.pi / 6. * self.density * self.diameter ** 3
+        self.volume = np.pi / 6. * self.diameter ** 3
+        self.mass = self.volume * self.density
 
         self.color = color
 

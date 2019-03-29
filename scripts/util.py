@@ -1,6 +1,7 @@
 import numpy as np
 from collections import OrderedDict as oD
 import scipy.spatial as sp
+import pickle
 
 
 def border_temperature_boundary_conditions(mesh):
@@ -250,3 +251,23 @@ def get_dt(mesh):
         return _a / _l
 
     return min(list(map(lambda x: _h(x), mesh.ien)))
+
+
+def save(obj, filename: str = "temp"):
+    """
+    Saves a temporary Python obj to prevent repeated work.
+    :param obj: Any object.
+    :param filename: Optional file name.
+    """
+    with open(filename + ".dat", "wb") as file:
+        pickle.dump(obj, file)
+
+
+def load(filename: str = "temp"):
+    """
+    Loads a previously created Python obj to prevent repeated work.
+    :param filename: Optional file name.
+    :return: Original object.
+    """
+    with open(filename + ".dat", "rb") as file:
+        return pickle.load(file)
