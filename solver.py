@@ -327,24 +327,24 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
     return util.sparse_to_vector(velocity_x_vector), util.sparse_to_vector(velocity_y_vector)
 
 
-def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_vector_x: float = None,
-                   velocity_vector_y: float = None, dt: float = None):
+def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: float = None, velocity_y: float = None,
+                   dt: float = None):
     """
     Method that moves all particles currently inside the mesh domain.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
     :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh [m/s].
-    :param velocity_vector_x: Vector of velocity in the x axis [m/s].
-    :param velocity_vector_y: Vector of velocity in the y axis [m/s].
+    :param velocity_x: Vector of velocity in the x axis [m/s].
+    :param velocity_y: Vector of velocity in the y axis [m/s].
     :param dt: The time difference between frames [s].
     """
     # Contingency
     util.check_method_call(dt)
 
     if isinstance(velocity, (list, tuple)) and len(velocity) == 2:
-        velocity_vector_x = velocity[0]
-        velocity_vector_y = velocity[1]
+        velocity_x = velocity[0]
+        velocity_y = velocity[1]
 
-    util.check_method_call(velocity_vector_x, velocity_vector_y)
+    util.check_method_call(velocity_x, velocity_y)
 
     # Applying forces to each particle if it is still able.
     for particle in [_particle for _particle in mesh.particles if mesh.contains_particle(_particle)]:
@@ -355,7 +355,7 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_vector_x
 
         # ----------------- Drag Force ---------------------------------------------------------------------------------
         fluid_velocity = np.array(mesh.get_fluid_velocity((particle.pos_x, particle.pos_y),
-                                                          velocity_vector_x, velocity_vector_y))
+                                                          velocity_x, velocity_y))
         relative_vel = np.array(
             ((fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
         # relative_vel_norm = np.sqrt(relative_vel.dot(relative_vel))
@@ -367,10 +367,15 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_vector_x
         #     print("Reynolds number beyond usable definitions.")
         forces["drag"] = 3 * np.pi * mesh.viscosity * particle.diameter * relative_vel
 
+        # -------------------- Lift Force ------------------------------------------------------------------------------
+        dv_dy = (mesh.get_fluid_velocity((particle.pos_x, particle.pos_y + particle.radius), velocity_x, velocity_y)[1]-
+                 mesh.get_fluid_velocity((particle.pos_x, particle.pos_y - particle.radius), velocity_x, velocity_y)[1])
+        forces["lift"] = (0.,
+                          dv_dy/abs(dv_dy) * 1.61 * mesh.viscosity * particle.diameter * relative_vel[1] *
+                          np.sqrt(particle.diameter * mesh.density / mesh.viscosity * abs(dv_dy))
+                          )
+
         # -------------------- Added Mass Force ------------------------------------------------------------------------
         forces["added_mass"] = (np.pi/12.) * mesh.density * particle.diameter**3 * (relative_vel - particle.velocity)/dt
-
-        # -------------------- Lift Force ------------------------------------------------------------------------------
-        # forces["buoyancy"] = (0., 0.)  # TODO: APPLY LIFT FORCE
 
         particle.apply_forces(forces, mesh, dt)

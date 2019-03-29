@@ -50,6 +50,10 @@ class Particle:
     def velocity(self):
         return np.array([self.velocity_x, self.velocity_y])
 
+    @property
+    def radius(self):
+        return self.diameter / 2.
+
     def apply_forces(self, forces, mesh, dt):
         """
         Method that gather all the forces applied to a particle and calculates the movement of the particle.
