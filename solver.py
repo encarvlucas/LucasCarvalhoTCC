@@ -350,26 +350,29 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: float
     for particle in [_particle for _particle in mesh.particles if mesh.contains_particle(_particle)]:
         forces = dict()
 
-        # ----------------- Gravitational Force ------------------------------------------------------------------------
-        forces["gravitational"] = (0., -9.80665 * particle.mass)
-
-        # ----------------- Drag Force ---------------------------------------------------------------------------------
-        fluid_velocity = np.array(mesh.get_fluid_velocity((particle.pos_x, particle.pos_y),
-                                                          velocity_x, velocity_y))
+        # ----------------- Obtain velocity ----------------------------------------------------------------------------
+        fluid_velocity = np.array(mesh.get_interpolated_value((particle.pos_x, particle.pos_y),
+                                                              velocity_x, velocity_y))
         relative_vel = np.array(
             ((fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
         # relative_vel_norm = np.sqrt(relative_vel.dot(relative_vel))
 
-        # particle.reynolds = (mesh.density * max(relative_vel) * particle.diameter / mesh.viscosity)
-        #
+        particle.reynolds = (mesh.density * max(relative_vel) * particle.diameter / mesh.viscosity)
+
+        # ----------------- Gravitational Force ------------------------------------------------------------------------
+        forces["gravitational"] = (0., -9.80665 * particle.mass)
+
+        # ----------------- Drag Force ---------------------------------------------------------------------------------
         # if particle.reynolds > 1:
         #     pass
         #     print("Reynolds number beyond usable definitions.")
         forces["drag"] = 3 * np.pi * mesh.viscosity * particle.diameter * relative_vel
 
         # -------------------- Lift Force ------------------------------------------------------------------------------
-        dv_dy = (mesh.get_fluid_velocity((particle.pos_x, particle.pos_y + particle.radius), velocity_x, velocity_y)[1]-
-                 mesh.get_fluid_velocity((particle.pos_x, particle.pos_y - particle.radius), velocity_x, velocity_y)[1])
+        dv_dy = (mesh.get_interpolated_value((particle.pos_x, particle.pos_y + particle.radius),
+                                             velocity_x, velocity_y)[1] -
+                 mesh.get_interpolated_value((particle.pos_x, particle.pos_y - particle.radius),
+                                             velocity_x, velocity_y)[1])
         forces["lift"] = (0.,
                           dv_dy/abs(dv_dy) * 1.61 * mesh.viscosity * particle.diameter * relative_vel[1] *
                           np.sqrt(particle.diameter * mesh.density / mesh.viscosity * abs(dv_dy))

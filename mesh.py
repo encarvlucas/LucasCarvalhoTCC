@@ -142,35 +142,39 @@ class Mesh:
         else:
             return True
 
-    def get_fluid_velocity(self, position, velocity_vector_x, velocity_vector_y):
+    def get_interpolated_value(self, position: (tuple, list), property_vector: (list, np.ndarray),
+                               optional_property_vector: (list, np.ndarray) = None):
         """
-        Method that calculates the velocity of the fluid in the desired coordinates using interpolation of the closest
-        points know velocities.
+        Method that calculates the scalar value of the property in the fluid's coordinates using interpolation of the
+        closest points known values.
         :param position: Coordinates of the point (x, y) [m].
-        :param velocity_vector_x: Vector of velocity in the x axis [m/s].
-        :param velocity_vector_y: Vector of velocity in the y axis [m/s].
-        :return: The interpolated velocity of the fluid at the coordinates.
+        :param property_vector: Vector of scalar property values [varies].
+        :param optional_property_vector: Vector of scalar property values [varies].
+        :return: The interpolated value of the property in the fluid at the coordinates.
         """
         util.check_if_instance(position, (list, tuple))
+        util.check_if_instance(property_vector, (list, np.ndarray))
+        if optional_property_vector is not None:
+            util.check_if_instance(optional_property_vector, (list, np.ndarray))
 
         # Determine which element contains the particle
         element = self.ien[self.delauney_surfaces.find_simplex(position)]
 
         total_area = util.get_area(self.x[element], self.y[element])
-        # Interpolate velocity value for particle coordinates
 
-        # Adds the velocity component from each point, interpolated by the proportion of the area opposite it.
-        fluid_vel_x = 0.
-        fluid_vel_y = 0.
+        # Interpolate property value for particle coordinates
+        # Adds the property component from each point, interpolated by the proportion of the area opposite it.
+        fluid_prop = 0.
+        opt_fluid_prop = 0.
         for point in element:
             _element = element.tolist()
             _element.remove(point)
             component = abs(util.get_area([position[0]] + list(self.x[_element]),
                                           [position[1]] + list(self.y[_element])) / total_area)
-            fluid_vel_x += component * velocity_vector_x[point]
-            fluid_vel_y += component * velocity_vector_y[point]
+            fluid_prop += component * property_vector[point]
+            opt_fluid_prop += component * optional_property_vector[point] if optional_property_vector is not None else 0
 
-        return fluid_vel_x, fluid_vel_y
+        return fluid_prop, opt_fluid_prop
 
     def remove_previous_results(self, return_to_previous_directory=False):
         """
