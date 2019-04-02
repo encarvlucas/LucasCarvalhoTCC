@@ -339,6 +339,7 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: float
     """
     # Contingency
     util.check_method_call(dt)
+    dt = min([dt] + [particle.max_dt(mesh.viscosity) for particle in mesh.particles])
 
     if isinstance(velocity, (list, tuple)) and len(velocity) == 2:
         velocity_x = velocity[0]

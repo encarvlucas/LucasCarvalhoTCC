@@ -49,11 +49,26 @@ class Particle:
 
     @property
     def velocity(self):
+        """
+        :return: Particle's current velocity as a ndarray.
+        """
         return np.array([self.velocity_x, self.velocity_y])
 
     @property
     def radius(self):
+        """
+        Particle radius, defined as 1/2 of it's diameter.
+        :return: Particle's radius.
+        """
         return self.diameter / 2.
+
+    def max_dt(self, fluid_viscosity):
+        """
+        Determines the max dt to still allow convergence.
+        :param fluid_viscosity: Fluid's viscosity.
+        :return: Maximum allowed dt.
+        """
+        return self.diameter**2 * self.density / (9. * fluid_viscosity)
 
     def apply_forces(self, forces, mesh, dt):
         """
