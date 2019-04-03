@@ -172,9 +172,13 @@ class Mesh:
             component = abs(util.get_area([position[0]] + list(self.x[_element]),
                                           [position[1]] + list(self.y[_element])) / total_area)
             fluid_prop += component * property_vector[point]
-            opt_fluid_prop += component * optional_property_vector[point] if optional_property_vector is not None else 0
+            if optional_property_vector is not None:
+                opt_fluid_prop += component * optional_property_vector[point]
 
-        return fluid_prop, opt_fluid_prop
+        if optional_property_vector is not None:
+            return fluid_prop, opt_fluid_prop
+        else:
+            return fluid_prop
 
     def remove_previous_results(self, return_to_previous_directory=False):
         """

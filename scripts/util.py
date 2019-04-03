@@ -1,7 +1,9 @@
 import numpy as np
 from collections import OrderedDict as oD
 import scipy.spatial as sp
+import scipy.sparse
 import pickle
+import matplotlib.pyplot as plt
 
 
 def border_temperature_boundary_conditions(mesh):
@@ -118,14 +120,12 @@ def check_if_instance(obj, clazz):
                         " please use a ({1}) object.".format(obj.__class__.__name__, clazz.__name__))
 
 
-def style_plot(param_x, param_y):
+def style_plot(param_x: list, param_y: list):
     """
     Alter the plot styling.
     :param param_x: List of x coordinates.
     :param param_y: List of y coordinates.
     """
-    import matplotlib.pyplot as plt
-
     def max_amplitude(_list):
         return max(_list) - min(_list)
 
@@ -136,7 +136,34 @@ def style_plot(param_x, param_y):
     fig.subplots_adjust(left=0.1 - 0.01 * max_amplitude(param_x) / max_amplitude(param_y), right=0.95)
 
 
-def create_new_surface(*imported_points, lt_version=True):
+def show_comparison(x_coordinates: np.ndarray, numeric_solution: [list, np.ndarray], analytic_expression: callable):
+    """
+    Method that shows the comparison between the analytic and numeric solutions.
+    :param x_coordinates: Array of input values for function.
+    :param numeric_solution: Array of values for the numeric solution.
+    :param analytic_expression: Function that describes the analytic solution.
+    :return: Displays the graphical comparison.
+    """
+    check_method_call(x_coordinates)
+    check_method_call(numeric_solution)
+    check_method_call(analytic_expression)
+
+    analytic_solution = analytic_expression(x_coordinates)
+    numeric_solution = np.array(numeric_solution)
+
+    error_array = analytic_solution - numeric_solution
+    error_mean = np.mean(error_array)
+    error_std = np.std(error_array)
+
+    plt.plot(x_coordinates, numeric_solution, "b--", label="Numeric Solution")
+    plt.plot(x_coordinates, analytic_solution, "r-", label="Analytic Solution")
+
+    plt.grid()
+    plt.legend()
+    return plt.show()
+
+
+def create_new_surface(*imported_points, lt_version: bool = True):
     """
     Create new surface
     :return: Element information
@@ -182,7 +209,7 @@ def create_new_surface(*imported_points, lt_version=True):
     return x, y, ien, delauney_surfaces
 
 
-def use_meshio(filename, geometry):
+def use_meshio(filename: str, geometry):
     """
     Use MeshIO library for creating or importing the mesh point structure from Gmsh.
     :param filename: Name of ".msh" file to be imported.
@@ -211,7 +238,7 @@ def use_meshio(filename, geometry):
     return x_, y_, ien_, delauney_surfaces
 
 
-def sparse_to_vector(vector):
+def sparse_to_vector(vector: scipy.sparse.spmatrix):
     """
     Converts one dimensional sparse matrix to a vector array to allow more features.
     :param vector: Vector as a sparse matrix (x,1) or (1,x).
@@ -220,7 +247,7 @@ def sparse_to_vector(vector):
     return np.ravel(vector.toarray())
 
 
-def get_area(x_coord, y_coord):
+def get_area(x_coord: list, y_coord: list):
     """
     Calculate area of a triangle, given it's vertices.
     :param x_coord: The x coordinates of the vertices, in order.
