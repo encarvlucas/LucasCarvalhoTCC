@@ -7,7 +7,7 @@ xx = np.array(np.reshape(xx, (xx.size, 1)))
 yy = np.array(np.reshape(yy, (yy.size, 1)))
 xy = np.hstack((xx, yy))
 
-malha = TccLib.Mesh("Poiseuille_refined", density=1e3, viscosity=0.89e-3)
+malha = TccLib.Mesh("Poiseuille", density=1e3, viscosity=0.89e-3)
 # malha = Mesh(points=list(xy))
 
 # rand = np.random.rand(200)
@@ -24,7 +24,7 @@ list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_
 
 # --------------------------------- Adding particles ---------------------------------------------------------------
 malha.add_particle("A", (0.07 * (max(malha.x) - min(malha.x)) + min(malha.x), 0.8 * (max(malha.y) - min(malha.y)) +
-                         min(malha.y)), density=1.4e5, diameter=5e-5, velocity=(0.5, -0.05))
+                         min(malha.y)), density=5.4e5, diameter=5e-5, velocity=(0.5, -0.5))
 # particles = [TccLib.Particle("B", (0.11 * (max(malha.x) - min(malha.x)) + min(malha.x),
 #                                    0.8 * (max(malha.y) - min(malha.y)) + min(malha.y)),
 #                              color="b", density=7.5e6, diameter=1e-4, velocity=(0.8, 0.)),
@@ -45,7 +45,7 @@ if poiseuille:
     # TccLib.util.save((vel_x, vel_y), "vel")
     vel_x, vel_y = TccLib.util.load("vel")
 
-    particle_time = 2.
+    particle_time = 5.
     particle_dt = 1e-5
     TccLib.Particle.frame_skips = int(particle_time / (60.*particle_dt))
     for t in np.arange(0, particle_time, particle_dt):

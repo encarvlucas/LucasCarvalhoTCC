@@ -1,27 +1,27 @@
-from TccLib import *
+import TccLib
 
-malha = Mesh("Poisson")
+import numpy as np
 
-malha.show_geometry(names=True, save=True)
+mesh = TccLib.Mesh("Poisson")
 
-xy_indices, xy_values, xy_types = border_temperature_boundary_conditions(malha)
+# mesh.show_geometry(names=True)
 
-malha.new_boundary_condition("space", point_index=xy_indices, values=xy_values,
-                             type_of_boundary=True)
-malha.new_boundary_condition("time", point_index=xy_indices, values=xy_values,
-                             type_of_boundary=True)
+xy_indices, xy_values, xy_types = TccLib.border_temperature_boundary_conditions(mesh)
 
+mesh.new_boundary_condition("space", point_index=xy_indices, values=xy_values,
+                            type_of_boundary=True)
+mesh.new_boundary_condition("time", point_index=xy_indices, values=xy_values,
+                            type_of_boundary=True)
 
-vect = solve_poisson(malha, permanent_solution=True)
-malha.show_3d_solution(vect)
+temperature = TccLib.solve_poisson(mesh, permanent_solution=True)
+# mesh.show_3d_solution(temperature)
 
-Q = ComplexPointList([32, 39, 64, 67, 68, 70], 50.)
+# temperature = TccLib.solve_poisson(mesh, permanent_solution=False)
+# mesh.show_animated_3d_solution(temperature)
 
-vect = solve_poisson(malha, permanent_solution=True, q=Q)
-malha.show_3d_solution(vect)
+x_position = (max(mesh.x) - min(mesh.x))/2.
 
-vect = solve_poisson(malha, permanent_solution=False)
-malha.show_animated_3d_solution(vect)
+x_vector = np.arange(min(mesh.y), max(mesh.y), (max(mesh.x) - min(mesh.x))/100.)
+y_vector = [mesh.get_interpolated_value([x_position, x], temperature) for x in x_vector]
 
-vect = solve_poisson(malha, permanent_solution=False, q=Q)
-malha.show_animated_3d_solution(vect)
+TccLib.util.show_comparison(x_vector, y_vector, lambda x: x ** 2)
