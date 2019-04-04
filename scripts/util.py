@@ -136,12 +136,16 @@ def style_plot(param_x: list, param_y: list):
     fig.subplots_adjust(left=0.1 - 0.01 * max_amplitude(param_x) / max_amplitude(param_y), right=0.95)
 
 
-def show_comparison(x_coordinates: np.ndarray, numeric_solution: [list, np.ndarray], analytic_expression: callable):
+def show_comparison(x_coordinates: np.ndarray, numeric_solution: [list, np.ndarray], analytic_expression: callable,
+                    numeric_label: str = "Numeric Solution", analytic_label: str = "Analytic Solution",
+                    x_label: str = "Position", y_label: str = "Value"):
     """
     Method that shows the comparison between the analytic and numeric solutions.
     :param x_coordinates: Array of input values for function.
     :param numeric_solution: Array of values for the numeric solution.
     :param analytic_expression: Function that describes the analytic solution.
+    :param numeric_label: Label for numeric solution on graph.
+    :param analytic_label: Label for analytic solution on graph.
     :return: Displays the graphical comparison.
     """
     check_method_call(x_coordinates)
@@ -155,8 +159,8 @@ def show_comparison(x_coordinates: np.ndarray, numeric_solution: [list, np.ndarr
     error_mean = np.mean(error_array)
     error_std = np.std(error_array)
 
-    plt.plot(x_coordinates, numeric_solution, "b--", label="Numeric Solution")
-    plt.plot(x_coordinates, analytic_solution, "r-", label="Analytic Solution")
+    plt.plot(x_coordinates, numeric_solution, "b--", label=numeric_label)
+    plt.plot(x_coordinates, analytic_solution, "r-", label=analytic_label)
 
     plt.grid()
     plt.legend()

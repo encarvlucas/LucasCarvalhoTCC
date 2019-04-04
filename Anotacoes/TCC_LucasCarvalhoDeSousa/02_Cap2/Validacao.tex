@@ -1,0 +1,23 @@
+\chapter{VALIDAÇÃO DOS MODELOS}
+\label{validacao}
+\section{\textbf{Introdução}}
+Neste capítulo serão apresentadas as validações realizadas com x exemplos conhecidos amplamente na literatura.
+As validações são comparações entre os resultados numéricos obtidos pela modelagem apresentada e resultados gerados por soluções analíticas conhecidas. Elas foram separadas em três grupos que representam diferentes tipos de etapas do cálculo, desse forma espera-se demonstrar a qualidade do modelo em todas as etapas e relacionar o histórico de aprendizado e desenvolvimento do código.
+São utilizadas as soluções analíticas unidimensionais dos problemas para que se possa comparar os resultados pois estas são as soluções presentes na literatura. Como os resultados são obtidos para problemas bidimensionais é preciso fazer a comparação entre resultados tomando uma seção da solução como referência, usualmente perto do meio. Essa adaptação dos dados gera uma aproximação dos resultados.
+
+O primeiro grupo são os problemas em sólidos, que buscam confirmar a construção correta das matrizes de elementos, a aplicação apropriada dos diferentes tipos de condições de contorno e a solução de um modelo mais simples.
+O segundo grupo trata dos exemplos de problemas com fluidos. 
+Nesta etapa verifica-se novamente a construção das matrizes e aplicação das condições de contorno, 
+porém o foco principal destes exemplos é validar o modelo e analisar as restrições de aplicabilidade.
+Para o terceiro e último grupo de validações são trabalhados problemas clássicos em partículas.
+São realidados testes para validar cada força trabalhando isoladamente, dessa forma facilita-se a correção pontual no modelo e pode-se comprovar com maior certeza a influência correta das forças.
+
+A execução do código e computação dos resultados foram realizados em um computador de uso pessoal com as seguintes especificações:
+\begin{itemize}
+    \item Dell Latitude E6410 com processador Intel® Core™ i5 CPU M 520 2.40GHz com 4 núcloes e 4Gb de memória RAM.
+          O sistema operacional ubuntu 16.04 LTS e compilador Python 3.5.
+\end{itemize}
+
+\section{\textbf{Validações de Problemas em Sólidos}}
+
+\subsection{\textbf{Equação de Laplace com Condição de Contorno de Dirichlet}}

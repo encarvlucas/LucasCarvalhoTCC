@@ -40,7 +40,7 @@
 \usepackage{mathptmx} % Times New Roman
 
 %\usepackage{Times}
-\usepackage[T1]{fontenc}
+% \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 %\setmainfont{Times}
 %\setmainfont{Arial}
@@ -111,15 +111,15 @@
 %     linktoc=all
 % }
 
-\thispagestyle{empty}\input{./01_Pre_textuais/Capa}
-\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/FolhaDeRosto}
-\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/FichaCatalog}   
-\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/FolhaDeAprovacao}
-\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Dedicatoria}
-\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Agradecimento}
-%\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Epigrafe}    % não coloquei epígrafe no meu trabalho, mas fica aqui a chamada comentada.
-\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Resumo}
-\pagebreak\thispagestyle{empty}\input{./01_Pre_textuais/Abstract}
+\thispagestyle{empty}\input{./00_Pre_textuais/Capa}
+\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/FolhaDeRosto}
+\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/FichaCatalog}   
+\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/FolhaDeAprovacao}
+\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Dedicatoria}
+\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Agradecimento}
+%\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Epigrafe}    % não coloquei epígrafe no meu trabalho, mas fica aqui a chamada comentada.
+\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Resumo}
+\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Abstract}
 
 \fancypagestyle{plain}{
 \fancyhf{} % clear all header and footer fields
@@ -131,7 +131,7 @@
 
 \def\listfigurename{LISTA DE FIGURAS}\listoffigures
 \def\listtablename{LISTA DE TABELAS}\listoftables
-\input{./01_Pre_textuais/ListaDeSiglas.tex}    % não coloquei LISTA DE SIGLAS no meu trabalho, mas fica aqui a chamada comentada.
+\input{./00_Pre_textuais/ListaDeSiglas.tex}    % não coloquei LISTA DE SIGLAS no meu trabalho, mas fica aqui a chamada comentada.
 \def\contentsname{SUMÁRIO}\tableofcontents
 
 \fancypagestyle{plain}{
@@ -146,9 +146,11 @@
 
 \pagebreak
 \addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries INTRODUÇÃO}
-\input{./01_Pre_textuais/Introducao.tex}
+\input{./00_Pre_textuais/Introducao.tex}
 
-\input{./01_Cap1/Capitulo1.tex}
+\input{./01_Cap1/RevisaoBibliografica.tex}
+
+\input{./02_Cap2/Validacao.tex}
 
 % inserir demais capítulos aqui
 % -----------------------------

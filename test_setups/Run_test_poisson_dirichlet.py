@@ -21,7 +21,7 @@ temperature = TccLib.solve_poisson(mesh, permanent_solution=True)
 
 x_position = (max(mesh.x) - min(mesh.x))/2.
 
-x_vector = np.arange(min(mesh.y), max(mesh.y), (max(mesh.x) - min(mesh.x))/100.)
+x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)
 y_vector = [mesh.get_interpolated_value([x_position, x], temperature) for x in x_vector]
 
 TccLib.util.show_comparison(x_vector, y_vector, lambda x: x ** 2)
