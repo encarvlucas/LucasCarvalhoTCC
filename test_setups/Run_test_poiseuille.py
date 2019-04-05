@@ -4,7 +4,7 @@ malha = Mesh("Poiseuille")
 
 malha.show_geometry(names=True)
 
-xy_indices, xy_values, xy_types = border_temperature_boundary_conditions(malha)
+xy_indices, xy_values, xy_types = build_boundary_conditions(malha)
 
 malha.new_boundary_condition("space", point_index=xy_indices, values=xy_values,
                              type_of_boundary=True)

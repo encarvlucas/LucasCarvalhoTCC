@@ -382,10 +382,11 @@ class Mesh:
         plt.savefig("./frames/{0}_frame_{1}".format(self.name, frame_num))
         plt.close()
 
-    def show_3d_solution(self, solution_vector):
+    def show_3d_solution(self, solution_vector: [list, np.ndarray], view_from_above: bool = True):
         """
         Display 3D solution of the mesh geometry.
         :param solution_vector: Vector that contains the value of the solution for each point in the mesh.
+        :param view_from_above: Sets the view from top of graph, defaults to True.
         :return: Display image.
         """
         util.check_method_call(solution_vector)
@@ -401,7 +402,8 @@ class Mesh:
         fig = plt.gcf()
         axes = Axes3D(fig)
         surf = axes.plot_trisurf(self.x, self.y, solution_vector, cmap="jet")
-        axes.view_init(90, 270)
+        if view_from_above:
+            axes.view_init(90, 270)
         fig.colorbar(surf, shrink=0.4, aspect=9)
 
         plt.savefig("{0}_permanent_results".format(self.name))

@@ -6,27 +6,103 @@ import pickle
 import matplotlib.pyplot as plt
 
 
-def border_temperature_boundary_conditions(mesh):
+def get_dict_value(values: list, default: any, if_expression: np.ndarray = None):
+    """
+    Returns first value in list that is not None. To prevent False values when facing zero.
+    :param values: List of values.
+    :param default: Default value if no other is found.
+    :return: First not None value or default value.
+    """
+    for value in values:
+        if value is not None:
+            if callable(value):
+                return value(if_expression)
+            return value
+    return default
+
+
+def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict = None, default_value: float = 1.0,
+                              default_type: bool = True):
     """
     Function that returns three vectors for the standard boundary condition for the Poisson temperature problem.
+    Function used to create the vectors for use as boundary conditions builders. Creates the information for points
+    distributed along the borders of the mesh. Uses a dict with each side name as a key and its value or type as values.
     :param mesh: Mesh object to be used to obtain the points information.
+    :param values_dict: Dictionary of values for each side of the contours.
+                        Each key corresponds to a side, acceptable keys are (in order of priority):
+                        "n", "north", "t", "top";
+                        "e", "east", "r", "right";
+                        "s", "south", "b", "bottom";
+                        "w", "west", "l", "left".
+                        If more than one key is used for a side the one with more priority is used.
+                        If no keys are found for a side the default_value is used.
+    :param types_dict: Dictionary of types for each side of the contours.
+                       True for Dirichlet Condition,
+                       False for Neumann Condition.
+    :param default_value: Default value for unset boundaries, will be used for any boundary not defined in the dict.
+    :param default_type: Default type for unset boundaries, will be used for any boundary not defined in the dict.
+    :return: [indices, values, types]. Each represents the boundary conditions information vectors of each parameter.
+             Note: The boundaries are defined in clockwise order, mutual points, such as origin, are defined in order:
+             north, east, south and west.
     """
     # Acquiring borders
-    #     _d
-    #  a |_| c
-    #     b
-    vertex_a = np.where(mesh.x == np.min(mesh.x))[0]
-    vertex_b = np.where(mesh.y == np.min(mesh.y))[0]
-    vertex_c = np.where(mesh.x == np.max(mesh.x))[0]
-    vertex_d = np.where(mesh.y == np.max(mesh.y))[0]
+    #     _n
+    #  w |_| e
+    #     s
 
-    # Defining indices, types and values
-    indices = list(oD.fromkeys(np.append(vertex_a, vertex_b)))
-    values = np.zeros(len(indices))
-    types = np.zeros(len(values)) + 1
-    indices = list(oD.fromkeys(np.append(indices, list(oD.fromkeys(np.append(vertex_c, vertex_d))))))
-    types = np.hstack((types, np.zeros(len(indices) - len(values))))
-    values = np.append(values, np.zeros(len(indices) - len(values)) + 1)
+    if not values_dict:
+        values_dict = {}
+    if not types_dict:
+        types_dict = {}
+
+    # Finding indices of nodes in contours
+    vertex_n = np.where(mesh.y == mesh.y.max())[0]
+    vertex_e = np.where(mesh.x == mesh.x.max())[0]
+    vertex_s = np.where(mesh.y == mesh.y.min())[0]
+    vertex_w = np.where(mesh.x == mesh.x.min())[0]
+
+    # Defining indices, types and values of each side, moving clockwise
+    # Setting information of north side
+    indices = vertex_n
+    values = np.zeros(len(indices)) + get_dict_value([values_dict.get("n"), values_dict.get("north"),
+                                                      values_dict.get("t"), values_dict.get("top")],
+                                                     default_value, indices)
+    types = np.zeros(len(indices)) + get_dict_value([types_dict.get("n"), types_dict.get("north"),
+                                                     types_dict.get("t"), types_dict.get("top")],
+                                                    default_type)
+
+    # Setting information of east side
+    indices = np.array(list(oD.fromkeys(np.append(indices, vertex_e))))
+    values = np.append(values, np.zeros(len(indices) - len(values)) +
+                       get_dict_value([values_dict.get("e"), values_dict.get("east"),
+                                       values_dict.get("r"), values_dict.get("right")],
+                                      default_value, indices[-(len(indices) - len(values))::]))
+    types = np.append(types, np.zeros(len(indices) - len(types)) +
+                      get_dict_value([types_dict.get("e"), types_dict.get("east"),
+                                      types_dict.get("r"), types_dict.get("right")],
+                                     default_type))
+
+    # Setting information of south side
+    indices = np.array(list(oD.fromkeys(np.append(indices, vertex_s))))
+    values = np.append(values, np.zeros(len(indices) - len(values)) +
+                       get_dict_value([values_dict.get("s"), values_dict.get("south"),
+                                       values_dict.get("b"), values_dict.get("bottom")],
+                                      default_value, indices[-(len(indices) - len(values))::]))
+    types = np.append(types, np.zeros(len(indices) - len(types)) +
+                      get_dict_value([types_dict.get("s"), types_dict.get("south"),
+                                      types_dict.get("b"), types_dict.get("bottom")],
+                                     default_type))
+
+    # Setting information of west side
+    indices = np.array(list(oD.fromkeys(np.append(indices, vertex_w))))
+    values = np.append(values, np.zeros(len(indices) - len(values)) +
+                       get_dict_value([values_dict.get("w"), values_dict.get("west"),
+                                       values_dict.get("l"), values_dict.get("left")],
+                                      default_value, indices[-(len(indices) - len(values))::]))
+    types = np.append(types, np.zeros(len(indices) - len(types)) +
+                      get_dict_value([types_dict.get("w"), types_dict.get("west"),
+                                      types_dict.get("l"), types_dict.get("left")],
+                                     default_type))
 
     return indices, values, types
 
@@ -136,9 +212,9 @@ def style_plot(param_x: list, param_y: list):
     fig.subplots_adjust(left=0.1 - 0.01 * max_amplitude(param_x) / max_amplitude(param_y), right=0.95)
 
 
-def show_comparison(x_coordinates: np.ndarray, numeric_solution: [list, np.ndarray], analytic_expression: callable,
+def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, numeric_solution: [list, np.ndarray],
                     numeric_label: str = "Numeric Solution", analytic_label: str = "Analytic Solution",
-                    x_label: str = "Position", y_label: str = "Value"):
+                    title: str = None, x_label: str = None, y_label: str = None):
     """
     Method that shows the comparison between the analytic and numeric solutions.
     :param x_coordinates: Array of input values for function.
@@ -146,8 +222,12 @@ def show_comparison(x_coordinates: np.ndarray, numeric_solution: [list, np.ndarr
     :param analytic_expression: Function that describes the analytic solution.
     :param numeric_label: Label for numeric solution on graph.
     :param analytic_label: Label for analytic solution on graph.
+    :param title: Title of plot figure.
+    :param x_label: Label for the x axis.
+    :param y_label: Label for the y axis.
     :return: Displays the graphical comparison.
     """
+    # TODO: ADD DICT THAT TAKES KEYS AS TITLES AND VALUES AS NUMERIC SOLUTIONS
     check_method_call(x_coordinates)
     check_method_call(numeric_solution)
     check_method_call(analytic_expression)
@@ -155,29 +235,39 @@ def show_comparison(x_coordinates: np.ndarray, numeric_solution: [list, np.ndarr
     analytic_solution = analytic_expression(x_coordinates)
     numeric_solution = np.array(numeric_solution)
 
-    error_array = analytic_solution - numeric_solution
+    error_array = np.nan_to_num((numeric_solution - analytic_solution)/analytic_solution)
     error_mean = np.mean(error_array)
     error_std = np.std(error_array)
 
-    plt.plot(x_coordinates, numeric_solution, "b--", label=numeric_label)
     plt.plot(x_coordinates, analytic_solution, "r-", label=analytic_label)
+    plt.plot(x_coordinates, numeric_solution, "b--", label=numeric_label)
+
+    axes = plt.gca()
+    if x_label:
+        axes.set_xlabel(x_label)
+    if y_label:
+        axes.set_ylabel(y_label)
+    if title:
+        axes.set_title(title)
 
     plt.grid()
     plt.legend()
     return plt.show()
 
 
-def create_new_surface(*imported_points, lt_version: bool = True):
+def create_new_surface(imported_points: list = None, lt_version: bool = True):
     """
     Create new surface
+    :param imported_points: List of tuples containing each point coordinate.
+                            Eg: [(x_1, y_1), (x_2, y_2), ...]
+    :param lt_version: Light version does not utilise meshio library.
     :return: Element information
     """
-
     x, y, ien, delauney_surfaces = 0, 0, 0, 0
 
     if imported_points:
         # Custom geometry.
-        imported_points = np.array(imported_points[0])
+        imported_points = np.array(imported_points)
         delauney_surfaces = sp.Delaunay(imported_points[:, :2])
 
         if lt_version:
@@ -191,7 +281,7 @@ def create_new_surface(*imported_points, lt_version: bool = True):
                 geom.add_polygon([[delauney_surfaces.points[tri[0]][0], delauney_surfaces.points[tri[0]][1], 0.0],
                                   [delauney_surfaces.points[tri[1]][0], delauney_surfaces.points[tri[1]][1], 0.0],
                                   [delauney_surfaces.points[tri[2]][0], delauney_surfaces.points[tri[2]][1], 0.0]])
-            x, y, ien, delauney_surfaces = use_meshio(None, geom)
+            x, y, ien, delauney_surfaces = use_meshio("", geom)
 
     else:
         if not lt_version:
@@ -208,7 +298,7 @@ def create_new_surface(*imported_points, lt_version: bool = True):
                              ],
                              lcar=0.05)
 
-            x, y, ien, delauney_surfaces = use_meshio(None, geom)
+            x, y, ien, delauney_surfaces = use_meshio("", geom)
 
     return x, y, ien, delauney_surfaces
 
