@@ -21,8 +21,8 @@ def get_dict_value(values: list, default: any, if_expression: np.ndarray = None)
     return default
 
 
-def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict = None, default_value: float = 1.0,
-                              default_type: bool = True):
+def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict = None, default_value: float = 0.0,
+                              default_type: bool = False):
     """
     Function that returns three vectors for the standard boundary condition for the Poisson temperature problem.
     Function used to create the vectors for use as boundary conditions builders. Creates the information for points
@@ -40,15 +40,18 @@ def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict =
                        True for Dirichlet Condition,
                        False for Neumann Condition.
     :param default_value: Default value for unset boundaries, will be used for any boundary not defined in the dict.
+                          Value defaults to 0.
     :param default_type: Default type for unset boundaries, will be used for any boundary not defined in the dict.
+                          Type defaults to Neumann (False).
     :return: [indices, values, types]. Each represents the boundary conditions information vectors of each parameter.
              Note: The boundaries are defined in clockwise order, mutual points, such as origin, are defined in order:
              north, east, south and west.
     """
     # Acquiring borders
-    #     _n
-    #  w |_| e
-    #     s
+    #     _N_
+    #  W |   |
+    #    |___| E
+    #      S
 
     if not values_dict:
         values_dict = {}

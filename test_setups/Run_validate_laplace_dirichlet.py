@@ -3,56 +3,30 @@ import TccLib
 import numpy as np
 
 # Import gmsh created mesh
-# mesh = TccLib.Mesh("Poisson")
-mesh = TccLib.Mesh(points=[
-    (0., 0),
-    (0., 1./3.),
-    (0., 2./3.),
-    (0., 3./3.),
-    (1./3., 0),
-    (1./3., 1./3.),
-    (1./3., 2./3.),
-    (1./3., 3./3.),
-    (2./3., 0),
-    (2./3., 1./3.),
-    (2./3., 2./3.),
-    (2./3., 3./3.),
-    (3./3., 0),
-    (3./3., 1./3.),
-    (3./3., 2./3.),
-    (3./3., 3./3.),
-])
-# mesh = TccLib.Mesh(points=[
-#     (0., 0),
-#     (0., 1./2.),
-#     (0., 2./2.),
-#     (1./2., 0),
-#     (1./2., 1./2.),
-#     (1./2., 2./2.),
-#     (2./2., 0),
-#     (2./2., 1./2.),
-#     (2./2., 2./2.),
-# ])
+mesh = TccLib.Mesh("Poisson")
 
 # Show mesh geometry
-# mesh.show_geometry(names=True)
+mesh.show_geometry(names=True)
 
 # Define boundary conditions parameters
-boundary_conditions = {
-    "north": lambda i: mesh.x[i]**2 + 1,
-    "east": lambda i: mesh.y[i]**2 + 1,
-    "south": lambda i: mesh.x[i],
-    "west": lambda i: mesh.y[i],
+boundary_conditions_values = {
+    "north": lambda i: 1.0,
+}
+
+boundary_conditions_types = {
+    "north": True,
+    "south": True,
 }
 
 # Get vectors of nodes values
-xy_indices, xy_values, xy_types = TccLib.build_boundary_conditions(mesh, boundary_conditions)
+xy_indices, xy_values, xy_types = TccLib.build_boundary_conditions(mesh, boundary_conditions_values,
+                                                                   boundary_conditions_types)
 
 # Set Boundary Conditions
 mesh.new_boundary_condition("space", point_index=xy_indices, values=xy_values,
-                            type_of_boundary=True)
+                            type_of_boundary=xy_types)
 mesh.new_boundary_condition("time", point_index=xy_indices, values=xy_values,
-                            type_of_boundary=True)
+                            type_of_boundary=xy_types)
 
 # Solve for permanent solution
 temperature_perm = TccLib.solve_poisson(mesh, permanent_solution=True)
