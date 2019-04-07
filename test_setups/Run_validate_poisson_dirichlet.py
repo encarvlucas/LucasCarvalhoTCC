@@ -3,16 +3,17 @@ import TccLib
 import numpy as np
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Laplace_Dirichlet")
+mesh = TccLib.Mesh("Poisson_Dirichlet")
 
 # Show mesh geometry
-mesh.show_geometry(names=True)
+# mesh.show_geometry(names=True)
 
 # Define boundary conditions and parameters
 T_0 = 0.
-T_L = 1.
+T_L = 0.
 k = 5
-analytic_expression = lambda x: (T_L - T_0)/mesh.length_y * x + T_0
+Q = 40
+analytic_expression = lambda x: Q/(2.*k) * (-x**2 + mesh.length_y*x) + (T_L-T_0)/mesh.length_y * x + T_0
 
 boundary_conditions_values = {
     "north": T_L,
@@ -35,7 +36,7 @@ mesh.new_boundary_condition("time", point_index=xy_indices, values=xy_values,
                             type_of_boundary=xy_types)
 
 # Solve for permanent solution
-temperature_perm = TccLib.solve_poisson(mesh, permanent_solution=True, k_coef=k)
+temperature_perm = TccLib.solve_poisson(mesh, permanent_solution=True, k_coef=k, q=Q)
 
 # Show results in 3D graph
 mesh.show_3d_solution(temperature_perm, view_from_above=False)
@@ -54,7 +55,7 @@ TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_lab
                             save_file_as="{0}_permanent_validation".format(mesh.name))
 
 # Solve for transient solution
-temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, k_coef=k, stop_criteria=1e-5,
+temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, k_coef=k, stop_criteria=1e-5, q=Q,
                                          return_history=True)
 
 # Show results in 3D graph

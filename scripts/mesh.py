@@ -37,6 +37,8 @@ class Mesh:
         else:
             self.import_point_structure(import_mesh_file=self.name)
 
+        self.length_x = max(self.x) - min(self.x)
+        self.length_y = max(self.y) - min(self.y)
         self.size = len(self.x)
         self.number_of_elements = len(self.ien)
         self.default_dt = util.get_dt(self)
@@ -437,6 +439,7 @@ class Mesh:
         def update(_current_frame):
             plt.cla()
             axes.plot_trisurf(self.x, self.y, _current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
+            axes.set_zlim3d([_min_value, _max_value])
             return
 
         animation = FuncAnimation(fig, update, frames=frames_vector, interval=10, save_count=False)

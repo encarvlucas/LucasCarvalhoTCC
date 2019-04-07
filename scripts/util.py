@@ -219,7 +219,7 @@ def style_plot(param_x: list, param_y: list):
 
 def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, numeric_solution: [dict, np.ndarray],
                     numeric_label: str = "Numeric Solution", analytic_label: str = "Analytic Solution",
-                    title: str = None, x_label: str = None, y_label: str = None):
+                    title: str = None, x_label: str = None, y_label: str = None, save_file_as: str = None):
     """
     Method that shows the comparison between the analytic and numeric solutions.
     :param x_coordinates: Array of input values for function.
@@ -230,6 +230,7 @@ def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, nu
     :param title: Title of plot figure.
     :param x_label: Label for the x axis.
     :param y_label: Label for the y axis.
+    :param save_file_as: Filename used to save generated figure. If not defined figure is not saved.
     :return: Displays the graphical comparison.
     """
     check_method_call(x_coordinates)
@@ -238,12 +239,12 @@ def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, nu
 
     analytic_solution = analytic_expression(x_coordinates)
 
-    default_cycler = cycler('color', ['b', 'g', 'k']) * cycler('linestyle', ['--', ':', '-.'])
+    default_cycler = cycler('color', ['b', 'g', 'k']) * cycler('linestyle', ['--', '-.', ':'])
     plt.rc('axes', prop_cycle=default_cycler)
 
     plt.plot(x_coordinates, analytic_solution, "r-", label=analytic_label)
     if isinstance(numeric_solution, dict):
-        [plt.plot(x_coordinates, numeric_solution[key], label=key) for key in sorted(numeric_solution)]
+        [plt.plot(x_coordinates, numeric_solution[key], label="{0:.4f}s".format(key)) for key in sorted(numeric_solution)]
     else:
         plt.plot(x_coordinates, numeric_solution, "b--", label=numeric_label)
 
@@ -264,6 +265,9 @@ def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, nu
 
     error_array = np.nan_to_num((numeric_solution - analytic_solution)/analytic_solution)
     print("Mean Error: {0}\nStandard Error: {1}".format(np.mean(error_array), np.std(error_array)))
+
+    if save_file_as is not None and isinstance(save_file_as, str):
+        plt.savefig("{0}".format(save_file_as))
 
     return plt.show()
 

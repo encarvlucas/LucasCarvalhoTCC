@@ -132,8 +132,8 @@ def apply_initial_boundary_conditions(mesh: Mesh, boundary_name, vector_v):
 
 
 def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = None, k_coef_x: float = 1.0,
-                  k_coef_y: float = 1.0, q: ComplexPointList = None, dt: float = None, total_time: float = None,
-                  stop_criteria: float = 0., return_history: bool = False):
+                  k_coef_y: float = 1.0, q: [float, ComplexPointList] = None, dt: float = None,
+                  total_time: float = None, stop_criteria: float = 0., return_history: bool = False):
     """
     Solves the mesh defined 2D Poisson equation problem:
         DT = -∇(k*∇T) + Q   ->   (M + K).T_i^n =  M.T_i^n-1 + M.Q_i
@@ -184,6 +184,8 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
     if isinstance(q, ComplexPointList):
         for _relative_index, _q in enumerate(q.indexes):
             q_matrix[_q] = q.values[_relative_index]
+    if isinstance(q, (float, int)):
+        q_matrix = q_matrix.toarray() + q
 
     if permanent_solution:
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
