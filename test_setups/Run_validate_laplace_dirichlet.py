@@ -12,8 +12,11 @@ mesh.show_geometry(names=True)
 T_0 = 0.
 T_L = 1.
 k = 5
+
+# Define analytic comparison expression
 analytic_expression = lambda x: (T_L - T_0)/mesh.length_y * x + T_0
 
+# Define boundary conditions
 boundary_conditions_values = {
     "north": T_L,
     "south": T_0,

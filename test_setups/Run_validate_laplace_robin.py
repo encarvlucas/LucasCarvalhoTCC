@@ -3,28 +3,28 @@ import TccLib
 import numpy as np
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Poisson_Dirichlet")
+mesh = TccLib.Mesh("Laplace_Neumann")
 
 # Show mesh geometry
-mesh.show_geometry(names=True)
+# mesh.show_geometry(names=True)
 
 # Define parameters
 T_0 = 0.
-T_L = 0.
+dT_L_dx = 1.
 k = 5
-Q = 40
+Q = -20
 
 # Define analytic comparison expression
-analytic_expression = lambda x: Q/(2.*k) * (-x**2 + mesh.length_y*x) + (T_L-T_0)/mesh.length_y * x + T_0
+analytic_expression = lambda x: Q/k * (-x**2 / 2. + mesh.length_y*x) + dT_L_dx * x + T_0
 
 # Define boundary conditions
 boundary_conditions_values = {
-    "north": T_L,
+    "north": dT_L_dx,
     "south": T_0,
 }
 
 boundary_conditions_types = {
-    "north": True,
+    "north": False,
     "south": True,
 }
 
@@ -62,7 +62,7 @@ temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, k_coef=
                                          return_history=True)
 
 # Show results in 3D graph
-mesh.show_animated_3d_solution(temperature_trans, dt=mesh.default_dt)
+mesh.show_animated_3d_solution(temperature_trans)#, dt=mesh.default_dt)
 
 # Get a small dictionary with each value state with timestamps as keys
 small_dict = temperature_trans.reduced_dict_log(5)
