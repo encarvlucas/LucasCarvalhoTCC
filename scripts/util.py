@@ -263,8 +263,7 @@ def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, nu
                                 numeric_solution[max(numeric_solution.keys())])
 
     error_array = np.nan_to_num((numeric_solution - analytic_solution)/analytic_solution)
-    error_mean = np.mean(error_array)
-    error_std = np.std(error_array)
+    print("Mean Error: {0}\nStandard Error: {1}".format(np.mean(error_array), np.std(error_array)))
 
     return plt.show()
 

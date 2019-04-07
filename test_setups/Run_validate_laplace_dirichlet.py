@@ -20,6 +20,7 @@ boundary_conditions_types = {
     "north": True,
     "south": True,
 }
+k_coef = 5
 
 # Get vectors of nodes values
 xy_indices, xy_values, xy_types = TccLib.build_boundary_conditions(mesh, boundary_conditions_values,
@@ -32,7 +33,7 @@ mesh.new_boundary_condition("time", point_index=xy_indices, values=xy_values,
                             type_of_boundary=xy_types)
 
 # Solve for permanent solution
-temperature_perm = TccLib.solve_poisson(mesh, permanent_solution=True)
+temperature_perm = TccLib.solve_poisson(mesh, permanent_solution=True, k_coef=k_coef)
 
 # Show results in 3D graph
 mesh.show_3d_solution(temperature_perm, view_from_above=False)
@@ -50,7 +51,8 @@ TccLib.util.show_comparison(x_vector, lambda x: x, y_vector, numeric_label="Solu
                             x_label="Posição no Eixo X(m)", y_label="Valor da Temperatura (°C)")
 
 # Solve for transient solution
-temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, stop_criteria=1e-5, return_history=True)
+temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, k_coef=k_coef, stop_criteria=1e-5,
+                                         return_history=True)
 
 # Show results in 3D graph
 mesh.show_animated_3d_solution(temperature_trans)

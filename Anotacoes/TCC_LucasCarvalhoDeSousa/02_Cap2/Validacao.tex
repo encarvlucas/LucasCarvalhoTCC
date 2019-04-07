@@ -20,4 +20,51 @@ A execução do código e computação dos resultados foram realizados em um com
 
 \section{\textbf{Validações de Problemas em Sólidos}}
 
-\subsection{\textbf{Equação de Laplace com Condição de Contorno de Dirichlet}}
+\subsection{\textbf{Equação de Laplace com Condições de Contorno de Dirichlet Permanente}}
+O problema de troca de calor em uma placa é um dos exemplos clássicos utilizados para estudar as equações de transmissão de calor em sólidos. O mais simples destes é uma barra unidimensional sem geração de calor onde a temperatura é conhecida nas extremidades.
+Como a malha do código foi desenvolvida para solução de problemas bidimensionais, cria-se um problema bidimensional com condições de contorno equivalentes e extrai-se uma seção para que se possa comparar os resultados.
+
+A equação de governo é dada por:
+\begin{equation}
+    \nabla^2 T = 0
+    \label{laplace_d_perm_eq} 
+\end{equation}
+
+O problema unidimensional é definido como:
+\begin{itemize}
+    \item $x\in [0,1]m$
+    \item $T(0) = 0^{\circ}C$
+    \item $T(1) = 1^{\circ}C$
+\end{itemize}
+
+As condições do problema bidimensional equivalente, ver \ref{laplace_d_perm_bc}, onde a seção tomada será em $x=0,5m$, é dado por:
+\begin{itemize}
+    \item $x,y\in [0,1]m$
+    \item $T(0,y) = 0^{\circ}C$
+    \item $T(1,y) = 1^{\circ}C$
+    \item $\dfrac{dT}{dt}(x,0) = 0^{\circ}C/s$
+    \item $\dfrac{dT}{dt}(x,1) = 0^{\circ}C/s$
+\end{itemize}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_boundary_conditions.pdf}
+    \caption{Condições de contorno da placa.}
+    \label{laplace_d_perm_bc}
+\end{figure}
+
+A solução analítica da equação \ref{laplace_d_perm_eq} deste problema é dada por:
+\begin{equation}
+    T(x) = C_1*x + C_0
+    \label{laplace_d_perm_sol}
+\end{equation}
+Onde $C_0$ e $C_1$ são, respectivamente, as condições de contorno em $x=0m$ e $x=1m$.
+
+A solução na placa bidimensional encontrada foi:
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_3d.png}
+    \caption{Distribuição de temperaturas na placa.}
+    \label{laplace_d_perm_3d}
+\end{figure}
+

@@ -64,6 +64,7 @@
 \WarningFilter{caption}{Unsupported document class}
 \usepackage{makeidx}
 \usepackage{amsmath}
+\usepackage{import}
 \usepackage{mathtools}
 \usepackage{geometry}
 \usepackage[hidelinks]{hyperref}
@@ -111,15 +112,15 @@
 %     linktoc=all
 % }
 
-\thispagestyle{empty}\input{./00_Pre_textuais/Capa}
-\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/FolhaDeRosto}
-\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/FichaCatalog}   
-\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/FolhaDeAprovacao}
-\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Dedicatoria}
-\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Agradecimento}
-%\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Epigrafe}    % não coloquei epígrafe no meu trabalho, mas fica aqui a chamada comentada.
-\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Resumo}
-\pagebreak\thispagestyle{empty}\input{./00_Pre_textuais/Abstract}
+\thispagestyle{empty}\import{00_Pre_textuais/}{Capa}
+\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FolhaDeRosto}
+\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FichaCatalog}   
+\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FolhaDeAprovacao}
+\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Dedicatoria}
+\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Agradecimento}
+%\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Epigrafe}    % não coloquei epígrafe no meu trabalho, mas fica aqui a chamada comentada.
+\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Resumo}
+\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Abstract}
 
 \fancypagestyle{plain}{
 \fancyhf{} % clear all header and footer fields
@@ -131,7 +132,7 @@
 
 \def\listfigurename{LISTA DE FIGURAS}\listoffigures
 \def\listtablename{LISTA DE TABELAS}\listoftables
-\input{./00_Pre_textuais/ListaDeSiglas.tex}    % não coloquei LISTA DE SIGLAS no meu trabalho, mas fica aqui a chamada comentada.
+\import{00_Pre_textuais/}{ListaDeSiglas.tex}    % não coloquei LISTA DE SIGLAS no meu trabalho, mas fica aqui a chamada comentada.
 \def\contentsname{SUMÁRIO}\tableofcontents
 
 \fancypagestyle{plain}{
@@ -146,11 +147,11 @@
 
 \pagebreak
 \addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries INTRODUÇÃO}
-\input{./00_Pre_textuais/Introducao.tex}
+\import{00_Pre_textuais/}{Introducao.tex}
 
-\input{./01_Cap1/RevisaoBibliografica.tex}
+\import{01_Cap1/}{RevisaoBibliografica.tex}
 
-\input{./02_Cap2/Validacao.tex}
+\import{02_Cap2/}{Validacao.tex}
 
 % inserir demais capítulos aqui
 % -----------------------------
@@ -160,18 +161,18 @@
 
 \pagebreak
 \addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries CONCLUSÃO}
-\input{./10_Conclusao/conclusao.tex}
+\import{10_Conclusao/}{conclusao.tex}
 
 \pagebreak
 \addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries APÊNDICE A}
-\input{Appendix_A/Appendix_A.tex}
+\import{Appendix_A/}{Appendix_A.tex}
 
 \pagebreak
 \addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries REFERÊNCIAS}
 \def\bibname{REFERÊNCIAS}
 % \pagebreak
 % \addcontentsline{toc}{chapter}{\hspace{1.7cm}\bfseries ANEXO A}
-% \input{Appendix_A/Appendix_A.tex}
+% \import{Appendix_A/}{Appendix_A.tex}
 
 
 % abaixo segue a chamada para o arquivo [.BIB]. Utilizei o programa JABREF para montar o arquivo com minhas referências.

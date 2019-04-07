@@ -131,7 +131,7 @@ def apply_initial_boundary_conditions(mesh: Mesh, boundary_name, vector_v):
             vector_v[_point] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
 
 
-def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = 0., k_coef_x: float = 1.0,
+def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = None, k_coef_x: float = 1.0,
                   k_coef_y: float = 1.0, q: ComplexPointList = None, dt: float = None, total_time: float = None,
                   stop_criteria: float = 0., return_history: bool = False):
     """
