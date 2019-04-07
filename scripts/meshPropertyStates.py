@@ -43,7 +43,7 @@ class MeshPropertyStates:
 
         elif states_list is not None:
             if isinstance(states_list, list):
-                self.states = [PropertyState(state, 0.) for state in states_list]
+                self.states = [PropertyState(state, float(index)) for index, state in enumerate(states_list)]
             else:
                 self.states = [PropertyState(states_list, 0.)]
 
