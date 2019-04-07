@@ -1,27 +1,20 @@
-from scripts.boundaryConditions import *
-from scripts.particle import *
+import fnmatch
+import os
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
 
-import os
-import fnmatch
+from scripts.boundaryConditions import *
+from scripts.particle import *
+from scripts.meshPropertyStates import *
 
 
 class Mesh:
     """
     Mesh element to be used in the calculations
     """
-    x, y, ien, delauney_surfaces = None, None, None, None
-    particles = None
-    name = "default"
-    size = 0
-    default_dt = 0.
-    density = None
-    viscosity = None
-
-    def __init__(self, name: str = "untitled", points=None, density: float = 1.0, viscosity: float = 1.0):
+    def __init__(self, name: str = "untitled", points: list = None, density: float = 1.0, viscosity: float = 1.0):
         """
         Class constructor, initializes geometry.
         :param name: Mesh's main name.
@@ -29,7 +22,12 @@ class Mesh:
         :param viscosity: Fluid dynamic viscosity [Pa.s || kg/m.s].
         """
         from shutil import copy
+
         self.name = name
+        self.x = []
+        self.y = []
+        self.ien = []
+        self.delauney_surfaces = None
         self.particles = []
         self.density = density
         self.viscosity = viscosity
@@ -39,6 +37,9 @@ class Mesh:
         else:
             self.import_point_structure(import_mesh_file=self.name)
 
+        self.size = len(self.x)
+        self.number_of_elements = len(self.ien)
+        self.default_dt = util.get_dt(self)
         self.boundary_conditions = {}
 
         try:
@@ -84,8 +85,6 @@ class Mesh:
                 surface = util.use_meshio("results/untitled", None)
 
         self.x, self.y, self.ien, self.delauney_surfaces = surface
-        self.size = len(self.x)
-        self.default_dt = util.get_dt(self)
 
     def new_boundary_condition(self, name, point_index=range(0), values=0., type_of_boundary=True):
         """
@@ -410,7 +409,7 @@ class Mesh:
 
         return plt.show()
 
-    def show_animated_3d_solution(self, frames_vector, dt=0.):
+    def show_animated_3d_solution(self, frames_vector: MeshPropertyStates, dt=0.):
         """
         Display animated version of the 3D solution.
         :param frames_vector: Vector which each element contains a vector with the value of the solution for each point
@@ -429,18 +428,18 @@ class Mesh:
 
         fig = plt.gcf()
         axes = Axes3D(fig)
-        _min_value = np.min(frames_vector)
-        _max_value = np.max(frames_vector)
+        _min_value = frames_vector.min
+        _max_value = frames_vector.max
         surf = axes.plot_trisurf(self.x, self.y, frames_vector[0], cmap="jet", vmin=_min_value, vmax=_max_value)
+        axes.set_zlim3d([_min_value, _max_value])
         fig.colorbar(surf, shrink=0.4, aspect=9)
 
         def update(_current_frame):
             plt.cla()
             axes.plot_trisurf(self.x, self.y, _current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
-            axes.set_zlim3d([_min_value, _max_value])
             return
 
-        animation = FuncAnimation(fig, update, frames=frames_vector, interval=100, save_count=False)
+        animation = FuncAnimation(fig, update, frames=frames_vector, interval=10, save_count=False)
 
         if dt:
             self.output_results(result_dictionary={"Temperature": frames_vector}, dt=dt)

@@ -4,19 +4,21 @@ import scipy.spatial as sp
 import scipy.sparse
 import pickle
 import matplotlib.pyplot as plt
+from cycler import cycler
 
 
-def get_dict_value(values: list, default: any, if_expression: np.ndarray = None):
+def get_dict_value(values: list, default: any, expression_input: np.ndarray = None):
     """
     Returns first value in list that is not None. To prevent False values when facing zero.
     :param values: List of values.
     :param default: Default value if no other is found.
+    :param expression_input: Input of the expression, if provided.
     :return: First not None value or default value.
     """
     for value in values:
         if value is not None:
             if callable(value):
-                return value(if_expression)
+                return value(expression_input) if expression_input is not None else default
             return value
     return default
 
@@ -215,7 +217,7 @@ def style_plot(param_x: list, param_y: list):
     fig.subplots_adjust(left=0.1 - 0.01 * max_amplitude(param_x) / max_amplitude(param_y), right=0.95)
 
 
-def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, numeric_solution: [list, np.ndarray],
+def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, numeric_solution: [dict, np.ndarray],
                     numeric_label: str = "Numeric Solution", analytic_label: str = "Analytic Solution",
                     title: str = None, x_label: str = None, y_label: str = None):
     """
@@ -230,20 +232,20 @@ def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, nu
     :param y_label: Label for the y axis.
     :return: Displays the graphical comparison.
     """
-    # TODO: ADD DICT THAT TAKES KEYS AS TITLES AND VALUES AS NUMERIC SOLUTIONS
     check_method_call(x_coordinates)
-    check_method_call(numeric_solution)
     check_method_call(analytic_expression)
+    check_method_call(numeric_solution)
 
     analytic_solution = analytic_expression(x_coordinates)
-    numeric_solution = np.array(numeric_solution)
 
-    error_array = np.nan_to_num((numeric_solution - analytic_solution)/analytic_solution)
-    error_mean = np.mean(error_array)
-    error_std = np.std(error_array)
+    default_cycler = cycler('color', ['b', 'g', 'k']) * cycler('linestyle', ['--', ':', '-.'])
+    plt.rc('axes', prop_cycle=default_cycler)
 
     plt.plot(x_coordinates, analytic_solution, "r-", label=analytic_label)
-    plt.plot(x_coordinates, numeric_solution, "b--", label=numeric_label)
+    if isinstance(numeric_solution, dict):
+        [plt.plot(x_coordinates, numeric_solution[key], label=key) for key in sorted(numeric_solution)]
+    else:
+        plt.plot(x_coordinates, numeric_solution, "b--", label=numeric_label)
 
     axes = plt.gca()
     if x_label:
@@ -255,6 +257,15 @@ def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, nu
 
     plt.grid()
     plt.legend()
+
+    # Calculate errors
+    numeric_solution = np.array(numeric_solution if not isinstance(numeric_solution, dict) else
+                                numeric_solution[max(numeric_solution.keys())])
+
+    error_array = np.nan_to_num((numeric_solution - analytic_solution)/analytic_solution)
+    error_mean = np.mean(error_array)
+    error_std = np.std(error_array)
+
     return plt.show()
 
 

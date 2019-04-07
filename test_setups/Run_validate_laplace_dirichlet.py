@@ -1,6 +1,9 @@
 import TccLib
 
 import numpy as np
+import os
+
+os.chdir("..")
 
 # Import gmsh created mesh
 mesh = TccLib.Mesh("Poisson")
@@ -47,11 +50,19 @@ TccLib.util.show_comparison(x_vector, lambda x: x, y_vector, numeric_label="Solu
                             x_label="Posição no Eixo X(m)", y_label="Valor da Temperatura (°C)")
 
 # Solve for transient solution
-temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, total_time=5.)
+temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, stop_criteria=1e-5, return_history=True)
+
+# Show results in 3D graph
 mesh.show_animated_3d_solution(temperature_trans)
 
-z_vector = [mesh.get_interpolated_value([x_position, x], temperature_trans[-1]) for x in x_vector]
+# Get a small dictionary with each value state with timestamps as keys
+small_dict = temperature_trans.reduced_dict_log(4)
 
-TccLib.util.show_comparison(x_vector, lambda x: x, z_vector, numeric_label="Solução Numérica",
+# Find values of property in the mesh at a determined set position for every value in the vector of x at each timestamp
+z_vectors = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
+             for key in small_dict}
+
+# Show comparison graph
+TccLib.util.show_comparison(x_vector, lambda x: x, z_vectors, numeric_label="Solução Numérica",
                             analytic_label="Solução Analítica", title="Equação de Laplace Transiente",
                             x_label="Posição no Eixo X(m)", y_label="Valor da Temperatura (°C)")
