@@ -56,7 +56,7 @@ temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, stop_cr
 mesh.show_animated_3d_solution(temperature_trans)
 
 # Get a small dictionary with each value state with timestamps as keys
-small_dict = temperature_trans.reduced_dict_log(4)
+small_dict = temperature_trans.reduced_dict_log(5)
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x at each timestamp
 z_vectors = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]

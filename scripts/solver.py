@@ -218,7 +218,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = 0
 
         t_vector = util.sparse_to_vector(t_vector)
         states = MeshPropertyStates(t_vector)
-        for time in np.arange(0, total_time if total_time is not None else dt*1e3, dt):
+        for time in np.arange(dt, total_time if total_time is not None else dt*1e3, dt):
             #      b = M.Q_i + (M/dt).(T_i^n-1)
             b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix) + m_matrix.dot(t_vector.reshape(-1, 1)) / dt)
 

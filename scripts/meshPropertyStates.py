@@ -97,11 +97,12 @@ class MeshPropertyStates:
             self.states[0].time: self.states[0].values,
             self.states[-1].time: self.states[-1].values,
         }
-        for i in [int(len(self.states)*np.log(j)/(size-1)) - 1 for j in range(2, size)]:
+        for i in [int(len(self.states)*np.log(j)/(size-1)**2) - 1 for j in range(2, size)]:
             small_dict[self.states[i].time] = self.states[i].values
         return small_dict
 
     def value_at(self, time: float):
+        # TODO: FINISH METHOD
         return
 
     def __getitem__(self, item):
