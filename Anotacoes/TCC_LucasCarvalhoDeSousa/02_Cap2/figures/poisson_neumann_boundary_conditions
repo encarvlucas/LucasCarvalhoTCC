@@ -9,8 +9,6 @@
 \usetikzlibrary{patterns}
 \begin{document}
     \begin{tikzpicture}[scale=10, >=stealth]
-%        \draw [lightgray, thin, step = 0.1] (0,0) grid +(10,10);
-%        \draw [blue, ultra thick] (0, 0) rectangle (10, 10);
 
         \draw [ultra thick](0, 0) rectangle (1, 1);
         \draw [<->, ultra thick] (-0.2,1.2) -- (-0.2,-0.2) -- (1.2,-0.2);
@@ -30,22 +28,6 @@
         \node [above right] at (1, 1) {$(1, 1)$};
 
         \node [right] at (0.5, 0.5) {$Q(x,y)=-7W/m^2$};
-
-%        \foreach \x/\y in
-%        {
-%            0.0/0.0,
-%            0.0/1.0,
-%            0.0/0.875,
-%            0.0/0.750,
-%            0.0/0.625,
-%            0.0/0.500,
-%            0.0/0.375,
-%            0.0/0.250,
-%            0.0/0.125
-%        }
-%        {
-%            \node [left] at (\x * 10, \y * 10) {\y};
-%            \node [below] at (\y * 10, \x * 10) {\y};
-%        }
     \end{tikzpicture}
 \end{document}
+

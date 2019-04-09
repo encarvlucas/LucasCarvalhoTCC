@@ -3,7 +3,8 @@ import TccLib
 import numpy as np
 
 # Define boundary conditions and parameters
-vel = 1.
+vel_top = 1.
+vel_bot = 0.
 dt = 1.0
 
 # Set liquid parameters or declare liquid
@@ -12,13 +13,13 @@ viscosity = 0.89e-3
 liquid = "oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Poiseuille_ref", liquid=liquid)
+mesh = TccLib.Mesh("Couette", liquid=liquid)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True)
 
 # Define analytic comparison expression
-analytic_expression = lambda y: 4 * vel / (mesh.length_y**2) * (mesh.length_y - y) * y
+analytic_expression = lambda y: (vel_top - vel_bot) * y / mesh.length_y + vel_bot
 
 # -------------------------------------------------- PSI ---------------------------------------------------------------
 # Define boundary conditions for psi
@@ -47,17 +48,17 @@ mesh.new_boundary_condition("psi", point_index=xy_indices, values=xy_values,
 # -------------------------------------------------- VEL X -------------------------------------------------------------
 # Define boundary conditions for vel_x
 boundary_conditions_values_x = {
-    "north": 0.,
+    "north": vel_top,
     "east": 0.,
-    "south": 0.,
-    "west": vel,
+    "south": vel_bot,
+    "west": 0.,
 }
 
 boundary_conditions_types_x = {
     "north": True,
     "east": False,
     "south": True,
-    "west": True,
+    "west": False,
 }
 
 # Get vectors of nodes values
@@ -93,9 +94,9 @@ mesh.new_boundary_condition("vel_y", point_index=xy_indices, values=xy_values,
                             type_of_boundary=xy_types)
 
 # Solve for FEM velocity field solution
-# velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=30.)
-# TccLib.util.save(velocity_x, "vel_x")
-velocity_x = TccLib.util.load("vel_x")
+velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=30.)
+TccLib.util.save(velocity_x, "vel_x")
+# velocity_x = TccLib.util.load("vel_x")
 
 # Show results in quiver plot
 # mesh.show_velocity_quiver(velocity_x, velocity_y)

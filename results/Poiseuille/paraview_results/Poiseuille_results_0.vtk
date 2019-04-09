@@ -5,7 +5,7 @@ ASCII
 DATASET POLYDATA
 FIELD FieldData 1
 TIME 1 1 double
-0.01
+1.0
 
 POINTS 273 float
 4.583333333332117 0.0 0.0
@@ -782,7 +782,6 @@ LOOKUP_TABLE Velocity_X
 0.0
 0.0
 0.0
-1e-06
 0.0
 0.0
 0.0
@@ -814,7 +813,6 @@ LOOKUP_TABLE Velocity_X
 0.0
 0.0
 0.0
-1e-06
 0.0
 0.0
 0.0
@@ -826,13 +824,15 @@ LOOKUP_TABLE Velocity_X
 0.0
 0.0
 0.0
-1e-06
-1e-06
-1e-06
-1e-06
-1e-06
-1e-06
-1e-06
+0.0
+0.0
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
 0.0
 0.0
 0.0

@@ -16,8 +16,8 @@
         \node [above left] at (-0.2,1.2) {{\huge $y$}{$(m)$}};
         \node [below right] at (1.2,-0.1) {{\huge $x$}{$(m)$}};
 
-        \node [above, text width=2cm] at (0.5, 1) {$T = 1^{\circ}C\\(0.5, 1)$};
-        \node [below, text width=2cm] at (0.5, 0) {$(0.5, 0)\\ T = 0^{\circ}C$};
+        \node [above, text width=3cm, align=center] at (0.5, 1) {$T = 1^{\circ}C$\\$(0.5, 1)$};
+        \node [below, text width=3cm, align=center] at (0.5, 0) {$(0.5, 0)$\\$ T = 0^{\circ}C$};
         \node [left] at (0, 0.5) {$\dfrac{\partial T}{\partial n} = 0$};
         \node [right] at (1, 0.5) {$\dfrac{\partial T}{\partial n}  = 0$};
 

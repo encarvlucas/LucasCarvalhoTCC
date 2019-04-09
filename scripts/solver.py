@@ -278,7 +278,9 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
                         dt=dt, frame_num=0)
 
     # Defining Reynolds number
-    re = reynolds or mesh.density * max(velocity_x_vector)[0, 0] * (max(mesh.y) - min(mesh.y)) / mesh.viscosity
+    re = reynolds or mesh.density * max(velocity_x_vector)[0, 0] * mesh.length_y / mesh.viscosity
+    if re > 100.:
+        print("Reynolds value is beyond defined maximum value: Re = {0} > 100".format(int(re)))
 
     # Show initial particle position
     if save_each_frame:

@@ -38,36 +38,36 @@ A execução do código e computação dos resultados foram realizados em um com
           O sistema operacional ubuntu 16.04 LTS e compilador Python 3.5.
 \end{itemize}
 
+%---------------------------------------------------------------------------------------------------------Validação de sólidos
 \section{\textbf{Validações de Problemas em Sólidos}}
 %---------------------------------------------------------------------------------------------Primeiro Exemplo
 \subsection{\textbf{Equação de Laplace com Condições de Contorno de Dirichlet}}
+\label{sec_laplace_dir}
 O problema de troca de calor em uma placa é um dos exemplos clássicos utilizados para estudar as equações de transmissão de calor em sólidos. O mais simples destes é uma barra unidimensional sem geração de calor onde a temperatura é conhecida nas extremidades.
 Como a malha do código foi desenvolvida para solução de problemas bidimensionais, cria-se um problema bidimensional com condições de contorno equivalentes e extrai-se uma seção para que se possa comparar os resultados.
 
-A equação de governo é dada por:
+A equação de governo desta situação é a equação de Laplace \ref{laplace_d_perm_eq} para sólidos em estado permanente.
 \begin{equation}
     \nabla^2 T = 0
     \label{laplace_d_perm_eq} 
 \end{equation}
 Onde T é a temperatura na placa.
 
-E a solução analítica deste problema é dada por:
+E a solução analítica do problema unidimensional associado é \ref{laplace_d_sol}.
 \begin{equation}
     T(x) = \dfrac{T_L-T_0}{L} x + T_0
     \label{laplace_d_sol}
 \end{equation}
 Onde $L$ é o comprimento da barra, $T_0$ e $T_L$ são, respectivamente, os valores da temperatura em $x=0$ e $x=L$.
 
-O problema unidimensional é definido como:
+Os parâmetros do problema unidimensional são definidos como:
 \begin{itemize}
     \item $x\in [0,1]m$
     \item $T(0) = 0^{\circ}C$
     \item $T(1) = 1^{\circ}C$
-    \item $\dfrac{dT}{dx}(0) = 0^{\circ}C/m$
-    \item $\dfrac{dT}{dx}(1) = 0^{\circ}C/m$
 \end{itemize}
 
-As condições do problema bidimensional equivalente, ver \ref{laplace_d_bc}, onde a seção tomada será em $x=0,5m$, é dado por:
+As condições do problema bidimensional equivalente, ver \ref{laplace_d_bc}, onde a seção tomada será em $x=0.5m$, é dado por:
 \begin{itemize}
     \item $x,y\in [0,1]m$
     \item $T(0,y) = 0^{\circ}C$
@@ -79,7 +79,7 @@ As condições do problema bidimensional equivalente, ver \ref{laplace_d_bc}, on
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_boundary_conditions.pdf}
-    \caption{Condições de contorno da placa para o problema de Laplace.}
+    \caption{Condições de contorno da placa para o problema de Laplace \ref{sec_laplace_dir}.}
     \label{laplace_d_bc}
 \end{figure}
 
@@ -87,7 +87,7 @@ Para os cálculos deste exemplo foi utilizada uma malha com 768 elementos e 417 
 \begin{figure}[H]
     \centering
     \includegraphics[width=.5\linewidth]{figures/laplace_dirichlet_permanent_3d.png}
-    \caption{Distribuição de temperaturas na placa.}
+    \caption{Distribuição de temperaturas na placa da solução permanente da equação de Laplace \ref{sec_laplace_dir}.}
     \label{laplace_d_3d}
 \end{figure}
 
@@ -95,10 +95,10 @@ A comparação entre os resultados da solução analítica \ref{laplace_d_sol} e
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica.}
+    \caption{Comparação de resultado das soluções númerica e analítica do caso permanente da equação de Laplace \ref{sec_laplace_dir}.}
     \label{laplace_d_perm_comp}
 \end{figure}
-Onde o erro relativo médio encontrado foi de $0.1136\%$ e com desvio padrão de $0.0851\%$.
+Onde o erro relativo médio encontrado foi de $0.1136\%$ e com desvio padrão de $0.0008\%$.
 
 Ao solucionar o mesmo problema introduzindo um termo temporal a equação de governo, pode-se verificar a evolução de comportamento da temperatura ao longo do tempo.
 \begin{equation}
@@ -114,31 +114,32 @@ As condições iniciais $t=0s$ atribuídas aos pontos sem condição de contorno
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_transient_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica ao longo do tempo.}
+    \caption{Comparação de resultado das soluções númerica e analítica ao longo do tempo do caso transiente da equação de Laplace \ref{sec_laplace_dir}.}
     \label{laplace_d_trans_comp}
 \end{figure}
-Onde o erro relativo médio encontrado foi de $0.1092\%$ e com desvio padrão de $0.0827\%$.
+Onde o erro relativo médio encontrado foi de $0.1092\%$ e com desvio padrão de $0.0008\%$.
 
 
 %---------------------------------------------------------------------------------------------Segundo Exemplo
 \subsection{\textbf{Equação de Poisson com Condições de Contorno de Dirichlet}}
+\label{sec_poisson_dir}
 Neste problema busca-se estudar o comportamento de uma placa com geração de calor em seu domínio e temperaturas fixas nas laterais.
 Novamente, para permitir a comparação de resultados, é extraída uma seção da placa para observar os resultados como um problema unidimensional.
 
-A equação deste caso é:
+A equação deste caso é denomidada equação de Poisson \ref{poisson_d_perm_eq}, tomada para um problema permanente, ou seja sem variação no tempo.
 \begin{equation}
     -k\nabla^2 T = Q
     \label{poisson_d_perm_eq} 
 \end{equation}
 Onde $Q$ é a geração de calor na placa.
 
-A solução analítica deste caso é:
+A solução analítica para o caso de uma barra unidimensional é descrita em \ref{poisson_d_sol}
 \begin{equation}
-    T(x) = \dfrac{Q}{2k}(-x^2 + L x) + \dfrac{T_L-T_0}{L} x + T_0
+    T(x) = \dfrac{Q}{2k}\Big(-x^2 + L x\Big) + \dfrac{T_L-T_0}{L} x + T_0
     \label{poisson_d_sol} 
 \end{equation}
 
-As condições do problema bidimensional, ver \ref{poisson_d_bc}, onde a seção tomada será em $x=0,5m$, são dadas por:
+As condições do problema bidimensional, ver \ref{poisson_d_bc}, onde a seção de comparação será em $x=0.5m$, são dadas por:
 \begin{itemize}
     \item $x,y\in [0,1]m$
     \item $T(0,y) = 0^{\circ}C$
@@ -152,7 +153,7 @@ As condições do problema bidimensional, ver \ref{poisson_d_bc}, onde a seção
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_boundary_conditions.pdf}
-    \caption{Condições de contorno da placa para o problema de Poisson.}
+    \caption{Condições de contorno da placa para o problema de Poisson \ref{sec_poisson_dir}.}
     \label{poisson_d_bc}
 \end{figure}
 
@@ -160,26 +161,95 @@ Novamente foi utilizada uma malha com 768 elementos e 417 nós.
 \begin{figure}[H]
     \centering
     \includegraphics[width=.5\linewidth]{figures/poisson_dirichlet_permanent_3d.png}
-    \caption{Distribuição de temperaturas na placa.}
+    \caption{Distribuição de temperaturas na placa da solução do problema permanente de Poisson \ref{sec_poisson_dir}.}
     \label{poisson_d_3d}
 \end{figure}
 
-A comparação entre os resultados da solução analítica \ref{laplace_d_sol} e a solução numérica \ref{laplace_d_3d}:
+A comparação entre os resultados da solução analítica \ref{poisson_d_sol} e a solução numérica \ref{poisson_d_3d}:
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica.}
+    \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_permanent_comparison.png}
+    \caption{Comparação de resultado das soluções númerica e analítica do problema permanete de Poisson \ref{sec_poisson_dir}.}
     \label{poisson_d_perm_comp}
 \end{figure}
-Onde o erro relativo médio encontrado foi de $-0.323\%$ e com desvio padrão de $1.0101\%$.
+Onde o erro relativo médio encontrado foi de $-0.323\%$ e com desvio padrão de $0.0101\%$.
 
-E o resultado com o termo de tempo $\dfrac{\partial T}{\partial t}$ tendendo a um estado permanente, novamente foi utilizado um critério de parada de $10^{-5}$ entre a variação de valores de intervalos de tempo nos resultados em \ref{poisson_d_trans_comp}.
+E o resultado com o termo de tempo $\dfrac{\partial T}{\partial t}$ tendendo a um estado permanente, novamente foi utilizado um critério de parada de $10^{-5}$ de diferença nos valores entre os intervalos de tempo nos resultados em \ref{poisson_d_trans_comp}.
 As condições iniciais $t=0s$ atribuídas aos pontos sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_transient_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica.}
+    \caption{Comparação de resultado das soluções númerica e analítica do problema transiente de Poisson \ref{sec_poisson_dir}.}
     \label{poisson_d_trans_comp}
 \end{figure}
-Onde o erro relativo médio encontrado foi de $-0.325\%$ e com desvio padrão de $1.0101\%$.
+Onde o erro relativo médio encontrado foi de $-0.325\%$ e com desvio padrão de $0.0101\%$.
+
+%---------------------------------------------------------------------------------------------Terceiro Exemplo
+\subsection{\textbf{Equação de Poisson com Condições de Contorno de Dirichlet e Neumann}}
+\label{sec_poisson_neu}
+Este caso foi escolhido para validar a solução de problemas com condições de contorno de Neumann.
+Trata-se de uma placa com temperatura fixa em uma das paredes e no lado oposto é defido um valor para a taxa de troca de calor presente.
+Toma-se uma seção da placa para observar os resultados e compará-los com um problema unidimensional de uma barra com as mesmas condições presentes.
+
+A equação de troca térmica é novamente a equação de Poisson \ref{poisson_d_perm_eq}, com solução analítica para uma barra unidimensional \ref{poisson_n_sol}.
+\begin{equation}
+    T(x) = \dfrac{Q}{k}\Big(\dfrac{-x^2}{2} + L x\Big) + dT_L x + T_0
+    \label{poisson_n_sol} 
+\end{equation}
+Onde $dT_L$ é o valor da taxa de troca térmica na extremidade $x=L$.
+
+As condições do problema bidimensional, ver \ref{poisson_n_bc}, onde a seção tomada será em $x=0.5m$, são dadas por:
+\begin{itemize}
+    \item $x,y\in [0,1]m$
+    \item $T(0,y) = 0^{\circ}C$
+    \item $\dfrac{\partial T}{\partial n}(1,y) = 1^{\circ}C/m$
+    \item $\dfrac{\partial T}{\partial n}(x,0) = 0^{\circ}C/m$
+    \item $\dfrac{\partial T}{\partial n}(x,1) = 0^{\circ}C/m$
+    \item $Q(x,y) = -7W/m^2$
+    \item $k = 5W/K$
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/poisson_neumann_boundary_conditions.pdf}
+    \caption{Condições de contorno da placa para o problema de Poisson \ref{sec_poisson_neu}.}
+    \label{poisson_n_bc}
+\end{figure}
+
+Mais uma vez foi utilizada uma malha com 768 elementos e 417 nós.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.5\linewidth]{figures/poisson_neumann_permanent_3d.png}
+    \caption{Distribuição de temperaturas na placa da solução do problema permanente de Poisson \ref{sec_poisson_neu}.}
+    \label{poisson_n_3d}
+\end{figure}
+
+A comparação entre os resultados da solução analítica \ref{poisson_n_sol} e a solução numérica \ref{poisson_n_3d}:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/poisson_neumann_permanent_comparison.png}
+    \caption{Comparação de resultado das soluções númerica e analítica do problema permanete de Poisson \ref{sec_poisson_neu}.}
+    \label{poisson_n_perm_comp}
+\end{figure}
+Onde o erro relativo médio encontrado foi de $-0.427\%$ e com desvio padrão de $0.8414\%$.
+
+Para o resultado transiente foi utilizado um critério de parada de $10^{-5}$.
+As condições iniciais $t=0s$ atribuídas aos pontos sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/poisson_neumann_transient_comparison.png}
+    \caption{Comparação de resultado das soluções númerica e analítica do problema transiente de Poisson \ref{sec_poisson_neu}.}
+    \label{poisson_n_trans_comp}
+\end{figure}
+Onde o erro relativo médio encontrado foi de $-0.31\%$ e com desvio padrão de $0.9205\%$.
+
+%---------------------------------------------------------------------------------------------------------Validação de fluidos
+\section{\textbf{Validações de Problemas em Fluídos}}
+%---------------------------------------------------------------------------------------------Primeiro Exemplo
+\subsection{\textbf{Escoamento de Hagen-Poiseuille}}
+%---------------------------------------------------------------------------------------------Segundo Exemplo
+\subsection{\textbf{Escoamento de Couette}}
+%---------------------------------------------------------------------------------------------Terceiro Exemplo
+\subsection{\textbf{Escoamento de Cavidade (\it{Lid-Driven Cavity Flow})}}

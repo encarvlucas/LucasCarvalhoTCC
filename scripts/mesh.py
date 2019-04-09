@@ -14,12 +14,22 @@ class Mesh:
     """
     Mesh element to be used in the calculations
     """
-    def __init__(self, name: str = "untitled", points: list = None, density: float = 1.0, viscosity: float = 1.0):
+    standard_liquids = {
+        "water": {"density": 1e3, "viscosity": 0.89e-3},
+        "oil": {"density": 500, "viscosity": 5.},  # Not real
+        "sae30": {"density": 865, "viscosity": 1.53},  # Measured at 0°C
+        "sae40": {"density": 865, "viscosity": 2.61},  # Measured at 0°C
+        "sae50": {"density": 872, "viscosity": 3.82},  # Measured at 0°C
+    }
+
+    def __init__(self, name: str = "untitled", points: list = None, liquid: str = None, density: float = 1.0,
+                 viscosity: float = 1.0):
         """
         Class constructor, initializes geometry.
         :param name: Mesh's main name.
         :param density: Fluid density [kg/m³].
         :param viscosity: Fluid dynamic viscosity [Pa.s || kg/m.s].
+        :param liquid: Desired liquid pre-recorded properties. Liquid must be declared inside Mesh.standard_liquids.
         """
         from shutil import copy
 
@@ -31,6 +41,14 @@ class Mesh:
         self.particles = []
         self.density = density
         self.viscosity = viscosity
+
+        try:
+            if liquid is not None:
+                self.density = self.standard_liquids[liquid]["density"]
+                self.viscosity = self.standard_liquids[liquid]["viscosity"]
+        except KeyError:
+            print("Liquid is not in library of standard liquids. "
+                  "Check Mesh.standard_liquids.keys() for a list of available liquids.")
 
         if isinstance(points, list):
             self.import_point_structure(points=points)
