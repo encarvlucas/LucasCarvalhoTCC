@@ -99,6 +99,7 @@ def apply_boundary_conditions(mesh: Mesh, boundary_name: str, matrix_a, vector_b
     :param boundary_name: The boundary name as defined for each problem.
     :param matrix_a: The coefficients matrix A in the linear solution method [A*x = b].
     :param vector_b: The results vector b in the linear solution method [A*x = b].
+    :param const: Optional correction constant.
     """
     for _rel_index, _column_index in enumerate(mesh.boundary_conditions[boundary_name].point_index_vector):
         if mesh.boundary_conditions[boundary_name].type_of_condition_vector[_rel_index]:
@@ -219,7 +220,10 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
                     a_matrix[_point, _column_index] = 0.
                 a_matrix[_point, _point] = 1.
             else:
-                q_matrix[_point, 0] += mesh.boundary_conditions["space"].values_vector[_relative_index]
+                # Neumann Treatment
+                q_matrix[_point, 0] += 0. if mesh.boundary_conditions["space"].values_vector[_relative_index] == 0\
+                    else (mesh.boundary_conditions["space"].values_vector[_relative_index] * correction_coef *
+                          mesh.mean_side_length)
 
         t_vector = util.sparse_to_vector(t_vector)
         states = MeshPropertyStates(t_vector)
@@ -229,11 +233,11 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
             # --------------------------------- Boundary conditions treatment ------------------------------------------
             #     b += C.C. Dirichlet/Neumann
-            apply_boundary_conditions(mesh, "space", None, b_vector)
+            apply_boundary_conditions(mesh, "space", None, b_vector, correction_coef)
 
             #    A.x = b   ->   x = solve(A, b)
             t_vector = linalg.spsolve(a_matrix, b_vector)
-            if np.mean(t_vector-states[-1]) < stop_criteria:
+            if abs(np.mean(t_vector-states[-1])) < stop_criteria:
                 break
             states.append(t_vector, time)
 

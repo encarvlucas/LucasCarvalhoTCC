@@ -3,7 +3,7 @@ import TccLib
 import numpy as np
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Laplace_Neumann")
+mesh = TccLib.Mesh("Poisson_Neumann")
 
 # Show mesh geometry
 # mesh.show_geometry(names=True)
@@ -12,7 +12,7 @@ mesh = TccLib.Mesh("Laplace_Neumann")
 T_0 = 0.
 dT_L_dx = 1.
 k = 5
-Q = -20
+Q = -7
 
 # Define analytic comparison expression
 analytic_expression = lambda x: Q/k * (-x**2 / 2. + mesh.length_y*x) + dT_L_dx * x + T_0
@@ -62,7 +62,7 @@ temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, k_coef=
                                          return_history=True)
 
 # Show results in 3D graph
-mesh.show_animated_3d_solution(temperature_trans)#, dt=mesh.default_dt)
+mesh.show_animated_3d_solution(temperature_trans, dt=mesh.default_dt)
 
 # Get a small dictionary with each value state with timestamps as keys
 small_dict = temperature_trans.reduced_dict_log(5)
