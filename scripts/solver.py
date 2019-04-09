@@ -92,7 +92,7 @@ def get_matrices(mesh: Mesh):
     return kx_sparse, ky_sparse, m_sparse, gx_sparse, gy_sparse
 
 
-def apply_boundary_conditions(mesh: Mesh, boundary_name, matrix_a, vector_b):
+def apply_boundary_conditions(mesh: Mesh, boundary_name: str, matrix_a, vector_b, const=1.0):
     """
     Performs the evaluation of boundary conditions and applies the changes to the main matrix and vector.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -100,23 +100,24 @@ def apply_boundary_conditions(mesh: Mesh, boundary_name, matrix_a, vector_b):
     :param matrix_a: The coefficients matrix A in the linear solution method [A*x = b].
     :param vector_b: The results vector b in the linear solution method [A*x = b].
     """
-    for _relative_index, _column_index in enumerate(mesh.boundary_conditions[boundary_name].point_index_vector):
-        if mesh.boundary_conditions[boundary_name].type_of_condition_vector[_relative_index]:
+    for _rel_index, _column_index in enumerate(mesh.boundary_conditions[boundary_name].point_index_vector):
+        if mesh.boundary_conditions[boundary_name].type_of_condition_vector[_rel_index]:
             # Dirichlet Treatment
             if matrix_a is not None:
                 # Skip applying matrix a values for loops
                 for _line_index in matrix_a.tocsc()[:, _column_index].indices:
                     vector_b[_line_index, 0] -= (matrix_a[_line_index, _column_index] *
-                                                 mesh.boundary_conditions[boundary_name].values_vector[_relative_index])
+                                                 mesh.boundary_conditions[boundary_name].values_vector[_rel_index])
                     matrix_a[_line_index, _column_index] = 0.
                     matrix_a[_column_index, _line_index] = 0.
 
                 matrix_a[_column_index, _column_index] = 1.
 
-            vector_b[_column_index, 0] = mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
+            vector_b[_column_index, 0] = mesh.boundary_conditions[boundary_name].values_vector[_rel_index]
         else:
             # Neumann Treatment
-            vector_b[_column_index, 0] += mesh.boundary_conditions[boundary_name].values_vector[_relative_index]
+            vector_b[_column_index, 0] += 0. if mesh.boundary_conditions[boundary_name].values_vector[_rel_index] == 0\
+                else (mesh.boundary_conditions[boundary_name].values_vector[_rel_index] * const * mesh.mean_side_length)
 
 
 def apply_initial_boundary_conditions(mesh: Mesh, boundary_name, vector_v):
@@ -154,6 +155,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
     """
     k_coef_x = k_coef or k_coef_x
     k_coef_y = k_coef or k_coef_y
+    correction_coef = (k_coef_x + k_coef_y)/(2.*(0.909759 + 15.4696*mesh.mean_area))
 
     # ------------------ Contingency -----------------------------------------------------------------------------------
     if not (len(mesh.x) and len(mesh.y) and len(mesh.ien)):
@@ -192,7 +194,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
         #      A = K
         #      b = M / dt
         b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix))
-        apply_boundary_conditions(mesh, "space", k_matrix, b_vector)
+        apply_boundary_conditions(mesh, "space", k_matrix, b_vector, correction_coef)
 
         # --------------------------------- Solver ---------------------------------------------------------------------
         #    A.x = b   ->   x = solve(A, b)
@@ -211,6 +213,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
         # --------------------------------- Boundary conditions treatment ----------------------------------------------
         for _relative_index, _point in enumerate(mesh.boundary_conditions["space"].point_index_vector):
+            # Dirichlet Treatment
             if mesh.boundary_conditions["space"].type_of_condition_vector[_relative_index]:
                 for _column_index in a_matrix.tocsr()[_point, :].indices:
                     a_matrix[_point, _column_index] = 0.

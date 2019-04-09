@@ -372,6 +372,15 @@ def get_area(x_coord: list, y_coord: list):
             (x_coord[2] * y_coord[0] - x_coord[0] * y_coord[2])) / 2.0
 
 
+def get_side_length(x_coord: list, y_coord: list):
+    """
+    Calculate average side length of a triangle, given it's vertices.
+    """
+    return (np.sqrt((x_coord[0] - x_coord[1])**2 + (y_coord[0] - y_coord[1])**2) +
+            np.sqrt((x_coord[1] - x_coord[2])**2 + (y_coord[1] - y_coord[2])**2) +
+            np.sqrt((x_coord[2] - x_coord[0])**2 + (y_coord[2] - y_coord[0])**2)) / 3.0
+
+
 def get_dt(mesh):
     """
     Calculates optimal dt based on mesh.

@@ -44,6 +44,9 @@ class Mesh:
         self.default_dt = util.get_dt(self)
         self.boundary_conditions = {}
 
+        self.mean_area = np.mean([util.get_area(self.x[elem], self.y[elem]) for elem in self.ien])
+        self.mean_side_length = np.mean([util.get_side_length(self.x[elem], self.y[elem]) for elem in self.ien])
+
         try:
             os.chdir("./results/{0}/".format(self.name))
         except FileNotFoundError:
@@ -52,6 +55,21 @@ class Mesh:
 
         if points is not None:
             copy("../{0}.msh".format(self.name), "./")
+
+    def get_elem_side_length(self, elem_index):
+        """
+        :param elem_index: Element index in ien list.
+        :return: Average size of element side lengths.
+        """
+        elem = self.ien[elem_index]
+        return util.get_side_length(self.x[elem], self.y[elem])
+
+    def get_elems_from_node(self, node_index):
+        """
+        :param node_index: Index of node.
+        :return: Index of elements that contain node.
+        """
+        return [i for i, elem in enumerate(self.ien) if node_index in elem]
 
     def import_point_structure(self, *args, points=None, light_version=True, import_mesh_file=""):
         """
