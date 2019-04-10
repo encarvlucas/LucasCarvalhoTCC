@@ -94,20 +94,21 @@ mesh.new_boundary_condition("vel_y", point_index=xy_indices, values=xy_values,
                             type_of_boundary=xy_types)
 
 # Solve for FEM velocity field solution
-velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time)
-TccLib.util.save(velocity_x, "vel_x")
-# velocity_x = TccLib.util.load("vel_x")
+# velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time)
+# TccLib.util.save(velocity_x, "vel_x")
+velocity_x = TccLib.util.load("vel_x")
 
 # Show results in quiver plot
 # mesh.show_velocity_quiver(velocity_x, velocity_y)
 
 # Define x vector of positions
 x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)
+small_dict = velocity_x.reduced_dict_log(5)
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x
-x_position = mesh.length_x*0.8
-y_vector = [mesh.get_interpolated_value([x_position, x], velocity_x) for x in x_vector]
-
+x_position = mesh.length_x*0.7
+y_vector = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
+            for key in small_dict}
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",
                             analytic_label="Solução Analítica", title="Equação de Hagen-Poiseuille",

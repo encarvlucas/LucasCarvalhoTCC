@@ -416,7 +416,7 @@ class Mesh:
 
         self.show_geometry(show=False)
 
-        plt.savefig("./frames/{0}_frame_{1}".format(self.name, frame_num))
+        plt.savefig("./frames/{0}_frame_{1}.png".format(self.name, frame_num))
         plt.close()
 
     def show_3d_solution(self, solution_vector: [list, np.ndarray], view_from_above: bool = True):

@@ -23,13 +23,13 @@ list(map(lambda _vect: malha.new_boundary_condition(_vect["name"], point_index=_
          TccLib.hagen_poiseuille_boundary_conditions(malha)))
 
 # --------------------------------- Adding particles ---------------------------------------------------------------
-malha.add_particle("A", (0.07 * (max(malha.x) - min(malha.x)) + min(malha.x), 0.8 * (max(malha.y) - min(malha.y)) +
+malha.add_particle("A", (0.07 * malha.length_x, 0.8 * (max(malha.y) - min(malha.y)) +
                          min(malha.y)), density=5.4e5, diameter=5e-5, velocity=(0.5, -0.5))
-# particles = [TccLib.Particle("B", (0.11 * (max(malha.x) - min(malha.x)) + min(malha.x),
-#                                    0.8 * (max(malha.y) - min(malha.y)) + min(malha.y)),
+# particles = [TccLib.Particle("B", (0.11 * malha.length_x,
+#                                    0.8 * malha.length_y),
 #                              color="b", density=7.5e6, diameter=1e-4, velocity=(0.8, 0.)),
-#              TccLib.Particle("C", (0.21 * (max(malha.x) - min(malha.x)) + min(malha.x),
-#                                    0.7 * (max(malha.y) - min(malha.y)) + min(malha.y)),
+#              TccLib.Particle("C", (0.21 * malha.length_x,
+#                                    0.7 * malha.length_y),
 #                              color="g", density=2.5e6, diameter=3e-5)]
 # malha.add_particle(list_of_particles=particles)
 

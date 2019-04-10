@@ -14,7 +14,7 @@ total_time = 50.
 liquid = "oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Couette_ref", liquid=liquid)
+mesh = TccLib.Mesh("Couette", liquid=liquid)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True)

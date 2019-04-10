@@ -245,7 +245,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
 
 def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, reynolds: float = None,
-                         save_each_frame: bool = True, stop_criteria: float = None):
+                         save_each_frame: bool = False, stop_criteria: float = None):
     """
     Solves the mesh defined 2D current-vorticity equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -287,8 +287,8 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
         # mesh.show_geometry()
         mesh.save_frame(0)
 
-    velocity_x_states = MeshPropertyStates(velocity_x_vector)
-    velocity_y_states = MeshPropertyStates(velocity_y_vector)
+    velocity_x_states = MeshPropertyStates(util.sparse_to_vector(velocity_x_vector))
+    velocity_y_states = MeshPropertyStates(util.sparse_to_vector(velocity_y_vector))
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for time in np.arange(dt, total_time, dt):
         print("\rSolving velocity {0:.2f}%".format(100 * time / total_time), end="")
