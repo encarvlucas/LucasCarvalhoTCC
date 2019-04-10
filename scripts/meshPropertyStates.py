@@ -55,6 +55,13 @@ class MeshPropertyStates:
         self.dt = self.states[-1].time - self.states[-2].time
 
     @property
+    def last(self):
+        """
+        :return: The last state registered.
+        """
+        return self[-1]
+
+    @property
     def min(self):
         """
         :return: Smallest value of the property of all timestamps.

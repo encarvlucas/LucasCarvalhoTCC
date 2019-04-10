@@ -478,7 +478,7 @@ class Mesh:
             axes.set_zlim3d([_min_value, _max_value])
             return
 
-        animation = FuncAnimation(fig, update, frames=frames_vector, interval=10, save_count=False)
+        animation = FuncAnimation(fig, update, frames=frames_vector, interval=50, save_count=False)
 
         if dt:
             self.output_results(result_dictionary={"Temperature": frames_vector}, dt=dt)

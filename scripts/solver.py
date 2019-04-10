@@ -135,7 +135,7 @@ def apply_initial_boundary_conditions(mesh: Mesh, boundary_name, vector_v):
 
 def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = None, k_coef_x: float = 1.0,
                   k_coef_y: float = 1.0, q: [float, ComplexPointList] = None, dt: float = None,
-                  total_time: float = None, stop_criteria: float = 0., return_history: bool = False):
+                  total_time: float = None, stop_criteria: float = None, return_history: bool = False):
     """
     Solves the mesh defined 2D Poisson equation problem:
         DT = -∇(k*∇T) + Q   ->   (M + K).T_i^n =  M.T_i^n-1 + M.Q_i
@@ -237,7 +237,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
             #    A.x = b   ->   x = solve(A, b)
             t_vector = linalg.spsolve(a_matrix, b_vector)
-            if abs(np.mean(t_vector-states[-1])) < stop_criteria:
+            if stop_criteria is not None and abs(np.mean(t_vector-states[-1])) < stop_criteria:
                 break
             states.append(t_vector, time)
 
@@ -245,7 +245,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
 
 def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, reynolds: float = None,
-                         save_each_frame: bool = True):
+                         save_each_frame: bool = True, stop_criteria: float = None):
     """
     Solves the mesh defined 2D current-vorticity equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -253,10 +253,10 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
     :param total_time: Length of time the calculation takes place [s].
     :param reynolds: Option to provide the value of Reynolds Number [1].
     :param save_each_frame: True if every loop saves the current velocity values.
+    :param stop_criteria: Precision used to detect if method can be stopped early.
     :return: Velocity vectors and pressure values for each point in the mesh.
     """
     dt = dt or mesh.default_dt
-    num_frames = int(total_time/dt)
 
     # --- Defining the Matrices ----------------------------------------------------------------------------------------
     #    K_x,       K_y,        M,       G_x,       G_y
@@ -287,9 +287,11 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
         # mesh.show_geometry()
         mesh.save_frame(0)
 
+    velocity_x_states = MeshPropertyStates(velocity_x_vector)
+    velocity_y_states = MeshPropertyStates(velocity_y_vector)
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
-    for frame_num in range(1, num_frames + 1):
-        print("\rSolving velocity {0:.2f}%".format(100 * frame_num / (num_frames+1)), end="")
+    for time in np.arange(dt, total_time, dt):
+        print("\rSolving velocity {0:.2f}%".format(100 * time / total_time), end="")
 
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
@@ -336,14 +338,20 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
         # Saving frames
+        velocity_x_states.append(util.sparse_to_vector(velocity_x_vector), time)
+        velocity_y_states.append(util.sparse_to_vector(velocity_y_vector), time)
         if save_each_frame:
-            mesh.save_frame(frame_num)
+            mesh.save_frame(time)
             mesh.output_results(result_dictionary={"Velocity_X": util.sparse_to_vector(velocity_x_vector),
                                                    "Velocity_Y": util.sparse_to_vector(velocity_y_vector)},
-                                dt=dt, frame_num=frame_num)
+                                dt=dt, frame_num=time)
+
+        if stop_criteria is not None and (abs(np.mean(velocity_x_vector-velocity_x_states.last)) < stop_criteria and
+                                          abs(np.mean(velocity_y_vector-velocity_y_states.last)) < stop_criteria):
+            break
 
     print("\rSolving velocity done!")
-    return util.sparse_to_vector(velocity_x_vector), util.sparse_to_vector(velocity_y_vector)
+    return velocity_x_states, velocity_y_states
 
 
 def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: float = None, velocity_y: float = None,

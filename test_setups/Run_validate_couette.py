@@ -5,15 +5,16 @@ import numpy as np
 # Define boundary conditions and parameters
 vel_top = 1.
 vel_bot = 0.
-dt = 1.0
+dt = 0.1
+total_time = 50.
 
 # Set liquid parameters or declare liquid
-density = 1e3
-viscosity = 0.89e-3
+# density = 1e3
+# viscosity = 0.89e-3
 liquid = "oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Couette", liquid=liquid)
+mesh = TccLib.Mesh("Couette_ref", liquid=liquid)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True)
@@ -94,7 +95,7 @@ mesh.new_boundary_condition("vel_y", point_index=xy_indices, values=xy_values,
                             type_of_boundary=xy_types)
 
 # Solve for FEM velocity field solution
-velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=30.)
+velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time)
 TccLib.util.save(velocity_x, "vel_x")
 # velocity_x = TccLib.util.load("vel_x")
 
@@ -105,11 +106,11 @@ TccLib.util.save(velocity_x, "vel_x")
 x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x
-x_position = (max(mesh.x) - min(mesh.x))/2.
+x_position = mesh.length_x*0.8
 y_vector = [mesh.get_interpolated_value([x_position, x], velocity_x) for x in x_vector]
 
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",
-                            analytic_label="Solução Analítica", title="Equação de Laplace Permanente",
-                            x_label="Posição no Eixo de Comparação(m)", y_label="Valor da Temperatura (°C)",
-                            save_file_as="{0}_permanent_validation".format(mesh.name))
+                            analytic_label="Solução Analítica", title="Escoamento de Couette",
+                            x_label="Posição no Eixo de Comparação(m)", y_label="Valor da Velocidade (m/s)",
+                            save_file_as="{0}_validation".format(mesh.name))
