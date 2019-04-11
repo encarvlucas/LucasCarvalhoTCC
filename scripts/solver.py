@@ -227,7 +227,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
         t_vector = util.sparse_to_vector(t_vector)
         states = MeshPropertyStates(t_vector)
-        for time in np.arange(dt, total_time if total_time is not None else dt*1e3, dt):
+        for time in np.arange(dt, total_time or dt*1e3, dt):
             #      b = M.Q_i + (M/dt).(T_i^n-1)
             b_vector = sparse.lil_matrix(m_matrix.dot(q_matrix) + m_matrix.dot(t_vector.reshape(-1, 1)) / dt)
 
@@ -355,8 +355,8 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
     return [velocity_x_states, velocity_y_states] if return_history else [velocity_x_vector, velocity_y_vector]
 
 
-def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: float = None, velocity_y: float = None,
-                   dt: float = None):
+def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list, np.ndarray] = None,
+                   velocity_y: [list, np.ndarray] = None, dt: float = None):
     """
     Method that moves all particles currently inside the mesh domain.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -366,7 +366,7 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: float
     :param dt: The time difference between frames [s].
     """
     # Contingency
-    util.check_method_call(dt)
+    dt = dt or mesh.default_dt
     dt = min([dt] + [particle.max_dt(mesh.viscosity) for particle in mesh.particles])
 
     if isinstance(velocity, (list, tuple)) and len(velocity) == 2:

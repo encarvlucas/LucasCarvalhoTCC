@@ -16,7 +16,7 @@ liquid = "oil"
 mesh = TccLib.Mesh("Poiseuille", liquid=liquid)
 
 # Show mesh geometry
-# mesh.show_geometry(names=True)
+mesh.show_geometry(names=True)
 
 # Define analytic comparison expression
 analytic_expression = lambda y: 4 * 1.5 * vel / (mesh.length_y**2) * (mesh.length_y - y) * y

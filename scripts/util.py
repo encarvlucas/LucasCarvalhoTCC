@@ -18,7 +18,7 @@ def get_dict_value(values: list, default: any, expression_input: np.ndarray = No
     for value in values:
         if value is not None:
             if callable(value):
-                return value(expression_input) if expression_input is not None else default
+                return value(expression_input) or default
             return value
     return default
 
