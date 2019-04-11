@@ -38,6 +38,7 @@ def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict =
                         "w", "west", "l", "left".
                         If more than one key is used for a side the one with more priority is used.
                         If no keys are found for a side the default_value is used.
+                        There is also the key "a", for a repeatable condition for all sides.
     :param types_dict: Dictionary of types for each side of the contours.
                        True for Dirichlet Condition,
                        False for Neumann Condition.
@@ -59,6 +60,16 @@ def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict =
         values_dict = {}
     if not types_dict:
         types_dict = {}
+    if "all" in values_dict:
+        values_dict["n"] = values_dict.get("all")
+        values_dict["e"] = values_dict.get("all")
+        values_dict["s"] = values_dict.get("all")
+        values_dict["w"] = values_dict.get("all")
+    if "all" in types_dict:
+        types_dict["n"] = types_dict.get("all")
+        types_dict["e"] = types_dict.get("all")
+        types_dict["s"] = types_dict.get("all")
+        types_dict["w"] = types_dict.get("all")
 
     # Finding indices of nodes in contours
     vertex_n = np.where(mesh.y == mesh.y.max())[0]

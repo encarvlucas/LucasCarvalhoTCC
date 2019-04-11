@@ -89,38 +89,42 @@ class Mesh:
         """
         return [i for i, elem in enumerate(self.ien) if node_index in elem]
 
-    def import_point_structure(self, *args, points=None, light_version=True, import_mesh_file=""):
+    def import_point_structure(self, points_filename: str = "points.txt", points=None, light_version=True,
+                               import_mesh_file=""):
         """
         Imports points position to create mesh from source file.
-        :param args: Name of source file, defaults to "points.txt".
+        :param points_filename: Name of source file, defaults to "points.txt".
         :param points: Custom set of defined points, in form of list of shape (x, 2).
         :param light_version: Defines if script will use Gmsh to obtain elements.
         :param import_mesh_file: Use public library meshio to import already generated ".msh" file.
         """
-        if not args:
-            filename = "points.txt"
-        else:
-            filename = args[0]
-
         if isinstance(points, list):
             surface = util.create_new_surface(points, lt_version=light_version)
 
         else:
             try:
                 if import_mesh_file:
-                    surface = util.use_meshio("results/{0}".format(import_mesh_file), None)
+                    surface = util.use_meshio("{0}".format(import_mesh_file), None)
 
                 else:
-                    with open(filename, "r") as arq:
+                    with open(points_filename, "r") as arq:
                         points = []
                         for line in arq:
                             points.append([float(i) for i in line.split(";")] + [0.0])
                         surface = util.create_new_surface(points, lt_version=light_version)
 
             except FileNotFoundError:
-                print("File not found, generating new default mesh.")
-                # surface = create_new_surface(lt_version=False)  # TODO: FIX LIBRARY
-                surface = util.use_meshio("results/untitled", None)
+                try:
+                    surface = util.use_meshio("results/{0}".format(import_mesh_file), None)
+
+                except FileNotFoundError:
+                    try:
+                        surface = util.use_meshio("results/{0}/{0}".format(import_mesh_file.replace(".msh", "")), None)
+
+                    except FileNotFoundError:
+                        print("File not found, generating new default mesh.")
+                        # surface = create_new_surface(lt_version=False)  # TODO: FIX LIBRARY
+                        surface = util.use_meshio("results/untitled", None)
 
         self.x, self.y, self.ien, self.delauney_surfaces = surface
 
@@ -486,7 +490,8 @@ class Mesh:
 
         return plt.show()
 
-    def show_velocity_quiver(self, velocity_x, velocity_y):
+    def show_velocity_quiver(self, velocity_x: [list, np.ndarray, MeshPropertyStates],
+                             velocity_y: [list, np.ndarray, MeshPropertyStates]):
         """
         Display velocity vector field as arrows that represent the intensity and the direction of the velocity of the
         fluid at that point.
@@ -495,6 +500,11 @@ class Mesh:
         :return: Display image.
         """
         util.check_method_call(velocity_x, velocity_y)
+
+        if isinstance(velocity_x, MeshPropertyStates):
+            velocity_x = velocity_x.last
+        if isinstance(velocity_y, MeshPropertyStates):
+            velocity_y = velocity_y.last
 
         try:
             if len(velocity_x) != self.size or len(velocity_y) != self.size:

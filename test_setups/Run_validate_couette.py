@@ -4,7 +4,7 @@ import numpy as np
 
 # Define boundary conditions and parameters
 vel_top = 1.
-vel_bot = 0.
+vel_bot = -1.
 dt = 0.1
 total_time = 50.
 
@@ -25,17 +25,11 @@ analytic_expression = lambda y: (vel_top - vel_bot) * y / mesh.length_y + vel_bo
 # -------------------------------------------------- PSI ---------------------------------------------------------------
 # Define boundary conditions for psi
 boundary_conditions_values_psi = {
-    "north": lambda y: mesh.y[y],
-    "east": lambda y: mesh.y[y],
-    "south": lambda y: mesh.y[y],
-    "west": lambda y: mesh.y[y],
+    "all": lambda y: mesh.y[y],
 }
 
 boundary_conditions_types_psi = {
-    "north": True,
-    "east": True,
-    "south": True,
-    "west": True,
+    "all": True,
 }
 
 # Get vectors of nodes values
@@ -73,10 +67,7 @@ mesh.new_boundary_condition("vel_x", point_index=xy_indices, values=xy_values,
 # -------------------------------------------------- VEL Y -------------------------------------------------------------
 # Define boundary conditions for vel_y
 boundary_conditions_values_y = {
-    "north": 0.,
-    "east": 0.,
-    "south": 0.,
-    "west": 0.,
+    "all": 0.,
 }
 
 boundary_conditions_types_y = {
@@ -95,7 +86,8 @@ mesh.new_boundary_condition("vel_y", point_index=xy_indices, values=xy_values,
                             type_of_boundary=xy_types)
 
 # Solve for FEM velocity field solution
-velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time)
+velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time, save_each_frame=True,
+                                                     stop_criteria=1e-5)
 TccLib.util.save(velocity_x, "vel_x")
 # velocity_x = TccLib.util.load("vel_x")
 
@@ -104,10 +96,12 @@ TccLib.util.save(velocity_x, "vel_x")
 
 # Define x vector of positions
 x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)
+small_dict = velocity_x.reduced_dict_log(5)
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x
-x_position = mesh.length_x*0.8
-y_vector = [mesh.get_interpolated_value([x_position, x], velocity_x) for x in x_vector]
+x_position = mesh.length_x*0.6
+y_vector = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
+            for key in small_dict}
 
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",

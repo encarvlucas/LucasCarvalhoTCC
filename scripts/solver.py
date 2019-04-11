@@ -283,14 +283,14 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
         print("Reynolds value is beyond defined maximum value: Re = {0} > 100".format(int(re)))
 
     # Show initial particle position
-    if save_each_frame:
+    # if save_each_frame:
         # mesh.show_geometry()
-        mesh.save_frame(0)
+        # mesh.save_frame(0)
 
     velocity_x_states = MeshPropertyStates(util.sparse_to_vector(velocity_x_vector))
     velocity_y_states = MeshPropertyStates(util.sparse_to_vector(velocity_y_vector))
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
-    for time in np.arange(dt, total_time, dt):
+    for frame_index, time in enumerate(np.arange(dt, total_time, dt)):
         print("\rSolving velocity {0:.2f}%".format(100 * time / total_time), end="")
 
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
@@ -337,6 +337,10 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
         apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
+        if stop_criteria is not None and (abs(np.mean(velocity_x_vector.toarray()-velocity_x_states.last)) < stop_criteria and
+                                          abs(np.mean(velocity_y_vector.toarray()-velocity_y_states.last)) < stop_criteria):
+            break
+
         # Saving frames
         velocity_x_states.append(util.sparse_to_vector(velocity_x_vector), time)
         velocity_y_states.append(util.sparse_to_vector(velocity_y_vector), time)
@@ -344,11 +348,7 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
             mesh.save_frame(time)
             mesh.output_results(result_dictionary={"Velocity_X": util.sparse_to_vector(velocity_x_vector),
                                                    "Velocity_Y": util.sparse_to_vector(velocity_y_vector)},
-                                dt=dt, frame_num=time)
-
-        if stop_criteria is not None and (abs(np.mean(velocity_x_vector-velocity_x_states.last)) < stop_criteria and
-                                          abs(np.mean(velocity_y_vector-velocity_y_states.last)) < stop_criteria):
-            break
+                                dt=dt, frame_num=frame_index)
 
     print("\rSolving velocity done!")
     return velocity_x_states, velocity_y_states
