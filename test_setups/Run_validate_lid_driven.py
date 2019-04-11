@@ -4,7 +4,7 @@ import numpy as np
 
 # Define boundary conditions and parameters
 vel_top = 1.
-dt = 0.1
+dt = 01.
 total_time = 50.
 
 # Set liquid parameters or declare liquid
@@ -13,7 +13,7 @@ total_time = 50.
 liquid = "oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Lid_driven_ref", liquid=liquid)
+mesh = TccLib.Mesh("Lid_driven", liquid=liquid)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True)
@@ -79,12 +79,12 @@ mesh.new_boundary_condition("vel_y", point_index=xy_indices, values=xy_values,
                             type_of_boundary=xy_types)
 
 # Solve for FEM velocity field solution
-velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time, save_each_frame=True,
-                                                     stop_criteria=1e-5)
-TccLib.util.save(velocity_x, "vel_x")
-TccLib.util.save(velocity_y, "vel_y")
-# velocity_x = TccLib.util.load("vel_x")
-# velocity_y = TccLib.util.load("vel_y")
+# velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time, save_each_frame=True,
+#                                                      stop_criteria=1e-5)
+# TccLib.util.save(velocity_x, "vel_x")
+# TccLib.util.save(velocity_y, "vel_y")
+velocity_x = TccLib.util.load("vel_x")
+velocity_y = TccLib.util.load("vel_y")
 
 # Show results in quiver plot
 mesh.show_velocity_quiver(velocity_x, velocity_y)

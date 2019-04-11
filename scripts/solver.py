@@ -245,7 +245,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
 
 def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, reynolds: float = None,
-                         save_each_frame: bool = False, stop_criteria: float = None):
+                         save_each_frame: bool = False, stop_criteria: float = None, return_history: bool = True):
     """
     Solves the mesh defined 2D current-vorticity equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -342,16 +342,17 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
             break
 
         # Saving frames
-        velocity_x_states.append(util.sparse_to_vector(velocity_x_vector), time)
-        velocity_y_states.append(util.sparse_to_vector(velocity_y_vector), time)
+        if return_history:
+            velocity_x_states.append(util.sparse_to_vector(velocity_x_vector), time)
+            velocity_y_states.append(util.sparse_to_vector(velocity_y_vector), time)
         if save_each_frame:
-            mesh.save_frame(time)
-            mesh.output_results(result_dictionary={"Velocity_X": util.sparse_to_vector(velocity_x_vector),
-                                                   "Velocity_Y": util.sparse_to_vector(velocity_y_vector)},
+            # mesh.save_frame(time)
+            mesh.output_results(result_dictionary={"Velocity": {"x": util.sparse_to_vector(velocity_x_vector),
+                                                                "y": util.sparse_to_vector(velocity_y_vector)}},
                                 dt=dt, frame_num=frame_index)
 
     print("\rSolving velocity done!")
-    return velocity_x_states, velocity_y_states
+    return [velocity_x_states, velocity_y_states] if return_history else [velocity_x_vector, velocity_y_vector]
 
 
 def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: float = None, velocity_y: float = None,

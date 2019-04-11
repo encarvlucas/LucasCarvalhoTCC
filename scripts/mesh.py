@@ -272,7 +272,7 @@ class Mesh:
                     raise ValueError("Incorrect size for result _vector.")
                 number_frames = len(_vector)
 
-            elif len(_vector) != self.size:
+            elif len(_vector) != self.size and not isinstance(_vector, dict):
                 raise ValueError("Incorrect size for result vector.")
 
         # ----------------------- Change to result directory -----------------------------------------------------------
@@ -296,18 +296,24 @@ class Mesh:
         if extension == "VTK":
             size = self.size
 
-            def write_scalars(file, property_name, vector):
-                file.write("\nSCALARS {0} float 1\n".format(property_name))
-                file.write("\nLOOKUP_TABLE {0}\n".format(property_name))
-                for _i in range(size):
-                    file.write("{}\n".format(vector[_i]))
+            def write_values(file, property_name, vector):
+                if isinstance(vector, dict):
+                    file.write("\nVECTORS {0} float\n".format(property_name))
+                    for _i in range(size):
+                        file.write("{0:.16f} {1:.16f} 0.0\n".format(vector["x"][_i], vector["y"][_i]))
 
-            def write_header_and_cells(file):
+                else:
+                    file.write("\nSCALARS {0} float 1\n".format(property_name))
+                    file.write("\nLOOKUP_TABLE {0}\n".format(property_name))
+                    for _i in range(size):
+                        file.write("{0:.16f}\n".format(vector[_i]))
+
+            def write_header_and_cells(file, frame=1.0):
                 # ------------------------------------ Header ----------------------------------------------------------
                 file.write("# vtk DataFile Version 3.0\n{0}\n{1}\n\nDATASET {2}\n".format("LucasCarvalhoTCC Results",
                                                                                           "ASCII", "POLYDATA"))
                 if dt:
-                    file.write("FIELD FieldData 1\nTIME 1 1 double\n{}\n".format(dt))
+                    file.write("FIELD FieldData 1\nTIME 1 1 double\n{}\n".format(dt*frame))
                 # ------------------------------------ Points coordinates ----------------------------------------------
                 file.write("\nPOINTS {0} {1}\n".format(size, "float"))
                 for _i in range(size):
@@ -322,11 +328,11 @@ class Mesh:
                     # ----- Saving a single result (frame) to VTK file -------------------------------------------------
                     with open("{0}_results_{1}.vtk".format(self.name, frame_num), "w") as arq:
                         # --------------------------------- Header and cells -------------------------------------------
-                        write_header_and_cells(arq)
+                        write_header_and_cells(arq, frame_num)
 
                         # ------------------------------------ Data in each point --------------------------------------
                         arq.write("\nPOINT_DATA {0}\n".format(size))
-                        [write_scalars(arq, name, vector) for name, vector in result_dictionary.items()]
+                        [write_values(arq, name, vector) for name, vector in result_dictionary.items()]
 
                 else:
                     self.remove_previous_results()
@@ -334,11 +340,11 @@ class Mesh:
                     for j in range(number_frames):
                         with open("{0}_results_{1}.vtk".format(self.name, j), "w") as arq:
                             # ----------------------------- Header and cells -------------------------------------------
-                            write_header_and_cells(arq)
+                            write_header_and_cells(arq, j)
 
                             # -------------------------------- Data in each point --------------------------------------
                             arq.write("\nPOINT_DATA {0}\n".format(size))
-                            [write_scalars(arq, name, vector[j]) for name, vector in result_dictionary.items()]
+                            [write_values(arq, name, vector[j]) for name, vector in result_dictionary.items()]
 
             else:
                 # ------------------------- Saving results to VTK file -------------------------------------------------
@@ -348,7 +354,7 @@ class Mesh:
 
                     # ----------------------------------- Data in each point--------------------------------------------
                     arq.write("\nPOINT_DATA {0}\n".format(size))
-                    [write_scalars(arq, name, vector) for name, vector in result_dictionary.items()]
+                    [write_values(arq, name, vector) for name, vector in result_dictionary.items()]
 
             return os.chdir("..")
 
@@ -513,7 +519,7 @@ class Mesh:
         except TypeError:
             raise ValueError("Solution must be a vector")
 
-        self.output_results(result_dictionary={"Velocity_X": velocity_x, "Velocity_Y": velocity_y})
+        self.output_results(result_dictionary={"Velocity": {"x": velocity_x, "y": velocity_y}})
 
         fig, axes = plt.subplots()
         axes.quiver(self.x, self.y, velocity_x, velocity_y)
