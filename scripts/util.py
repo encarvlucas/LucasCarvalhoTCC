@@ -18,7 +18,7 @@ def get_dict_value(values: list, default: any, expression_input: np.ndarray = No
     for value in values:
         if value is not None:
             if callable(value):
-                return value(expression_input) or default
+                return value(expression_input) if expression_input is not None else default
             return value
     return default
 
@@ -121,42 +121,6 @@ def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict =
                                      default_type))
 
     return indices, values, types
-
-
-def hagen_poiseuille_boundary_conditions(mesh):
-    """
-    Function that returns three vectors for the standard boundary condition for the Poisson temperature problem.
-    :param mesh: Mesh object to be used to obtain the points information.
-    """
-    # Acquiring borders
-    #     _d
-    #  a |_| c
-    #     b
-    vertex_a = np.where(mesh.x == np.min(mesh.x))[0]
-    vertex_b = np.where(mesh.y == np.min(mesh.y))[0]
-    vertex_c = np.where(mesh.x == np.max(mesh.x))[0]
-    vertex_d = np.where(mesh.y == np.max(mesh.y))[0]
-
-    # Defining psi
-    indices = np.append(vertex_a, vertex_c)
-    values = list(map(lambda x: mesh.y[x], indices))
-    indices = np.array(list(oD.fromkeys(np.append(indices, vertex_b))))
-    values = np.append(values, np.zeros(len(indices) - len(values)))
-    indices = np.array(list(oD.fromkeys(np.append(indices, vertex_d))))
-    values = np.append(values, np.zeros(len(indices) - len(values)) + 1.0)
-    vector = [{"name": "psi", "indices": np.copy(indices), "values": np.copy(values), "type": True}]
-
-    # Defining velocity (x axis component)
-    indices = np.copy(vertex_a)
-    values = np.zeros(len(indices)) + 1e-6
-    indices = np.array(list(oD.fromkeys(np.append(indices, np.append(vertex_b, vertex_d)))))
-    values = np.append(values, np.zeros(len(indices) - len(values)))
-    vector.append({"name": "vel_x", "indices": np.copy(indices), "values": np.copy(values), "type": True})
-
-    # Defining velocity (y axis component)
-    vector.append({"name": "vel_y", "indices": np.copy(indices), "values": np.copy(values * 0.), "type": True})
-
-    return vector
 
 
 def check_method_call(*args):

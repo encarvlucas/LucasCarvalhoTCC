@@ -10,10 +10,14 @@ class Particle:
     """
     position_history = None
 
+    # Particle Reynolds
     reynolds = 0.
 
     # Number of skipped frames between saved positions.
     frame_skips = 1000
+
+    # Defines size of particles when plotting
+    resolution_multiplier = 1e7
 
     def __init__(self, name, position=(0., 0.), velocity=(0., 0.), density=1., diameter=0.1, color="r"):
         """
@@ -70,23 +74,27 @@ class Particle:
         """
         return self.diameter**2 * self.density / (9. * fluid_viscosity)
 
-    def apply_forces(self, forces, mesh, dt):
+    def apply_forces(self, forces: dict, mesh, dt: float, single_force: str = None):
         """
         Method that gather all the forces applied to a particle and calculates the movement of the particle.
         :param forces: Forces as a dictionary with their names as keys
                        and the tuple of force values in (x, y) [N || kg.m/s²].
         :param mesh: Mesh object that determines the boundaries for collision.
         :param dt: The time difference between frames [s].
+        :param single_force: Parameter used for testing single forces one at a time.
         """
         util.check_if_instance(forces, dict)
 
         sum_forces_x = 0.
         sum_forces_y = 0.
 
-        for force in forces.values():
-            util.check_if_instance(force, (list, tuple, np.ndarray))
-            sum_forces_x += force[0]
-            sum_forces_y += force[1]
+        if single_force in forces:
+            sum_forces_x += forces[single_force][0]
+            sum_forces_y += forces[single_force][1]
+        else:
+            for force in forces.values():
+                sum_forces_x += force[0]
+                sum_forces_y += force[1]
 
         self.velocity_x += sum_forces_x * dt / self.mass
         self.velocity_y += sum_forces_y * dt / self.mass
@@ -118,4 +126,4 @@ class Particle:
         Returns the plot size os the particle.
         :return: Approximate plotting size.
         """
-        return self.diameter * 1e7
+        return self.diameter * self.resolution_multiplier

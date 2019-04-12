@@ -6,12 +6,12 @@ import numpy as np
 vel_top = 1.
 vel_bot = -1.
 dt = 01.
-total_time = 50.
+total_time = 100.
 
 # Set liquid parameters or declare liquid
 # density = 1e3
 # viscosity = 0.89e-3
-liquid = "oil"
+liquid = "super_oil"
 
 # Import gmsh created mesh
 mesh = TccLib.Mesh("Couette", liquid=liquid)

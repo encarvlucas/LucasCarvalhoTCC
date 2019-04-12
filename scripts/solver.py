@@ -356,7 +356,7 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
 
 
 def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list, np.ndarray] = None,
-                   velocity_y: [list, np.ndarray] = None, dt: float = None):
+                   velocity_y: [list, np.ndarray] = None, dt: float = None, single_force: str = None):
     """
     Method that moves all particles currently inside the mesh domain.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -364,6 +364,7 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
     :param velocity_x: Vector of velocity in the x axis [m/s].
     :param velocity_y: Vector of velocity in the y axis [m/s].
     :param dt: The time difference between frames [s].
+    :param single_force: Parameter used for testing single forces one at a time.
     """
     # Contingency
     dt = dt or mesh.default_dt
@@ -410,4 +411,4 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
         # -------------------- Added Mass Force ------------------------------------------------------------------------
         forces["added_mass"] = (np.pi/12.) * mesh.density * particle.diameter**3 * (relative_vel - particle.velocity)/dt
 
-        particle.apply_forces(forces, mesh, dt)
+        particle.apply_forces(forces, mesh, dt, single_force)

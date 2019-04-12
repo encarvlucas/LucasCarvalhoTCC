@@ -15,11 +15,12 @@ class Mesh:
     Mesh element to be used in the calculations
     """
     standard_liquids = {
-        "water": {"density": 1e3, "viscosity": 0.89e-3},
-        "oil": {"density": 500, "viscosity": 5.},  # Not real
-        "sae30": {"density": 865, "viscosity": 1.53},  # Measured at 0°C
-        "sae40": {"density": 865, "viscosity": 2.61},  # Measured at 0°C
-        "sae50": {"density": 872, "viscosity": 3.82},  # Measured at 0°C
+        "water":        {"density": 1e3, "viscosity": 0.89e-3},
+        "oil":          {"density": 500, "viscosity": 5.},  # Not real
+        "super_oil":    {"density": 50, "viscosity": 50.},  # Not real
+        "sae30":        {"density": 865, "viscosity": 1.53},  # Measured at 0°C
+        "sae40":        {"density": 865, "viscosity": 2.61},  # Measured at 0°C
+        "sae50":        {"density": 872, "viscosity": 3.82},  # Measured at 0°C
     }
 
     def __init__(self, name: str = "untitled", points: list = None, liquid: str = None, density: float = 1.0,
