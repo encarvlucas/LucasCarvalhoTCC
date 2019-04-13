@@ -3,11 +3,12 @@ import TccLib
 import numpy as np
 
 # Define boundary conditions and parameters
+vel_const = 2.0
 total_time = 0.4
 TccLib.Particle.frame_skips = 1
-force = "gravitational"
-particle_density = 5.4e5
-particle_diameter = 5e-5
+force = "drag"
+particle_density = 5.4e3
+particle_diameter = 5e-2
 
 # Set liquid parameters or declare liquid
 # density = 1e3
@@ -16,22 +17,26 @@ liquid = "oil"
 
 # Import gmsh created mesh, and set velocity field
 mesh = TccLib.Mesh("Forces", liquid=liquid)
-vel_x = np.zeros(mesh.size) + 1.0
+vel_x = np.zeros(mesh.size) + vel_const
 vel_y = np.zeros(mesh.size)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True)
 
-# Define analytic comparison expression
-analytic_expression = lambda t: -9.80665/2. * t**2 + mesh.length_y
-
 # Define Particles
-particle_a = TccLib.Particle("A", (0.07 * mesh.length_x, mesh.length_y), density=particle_density,
+particle_a = TccLib.Particle("A", (0.0, 0.5 * mesh.length_y), density=particle_density,
                              diameter=particle_diameter)
 mesh.add_particle(list_of_particles=[particle_a])
 
+# Define analytic comparison expression
+m = particle_a.mass
+c = 3 * np.pi * mesh.viscosity * particle_a.diameter
+if c/m > 1:
+    print("Particle conditions might cause an unexpected behavior!")
+analytic_expression = lambda t: -vel_const / c * (m*(-np.exp(-c*t/m)) + m - c*t)
+
 # Define dt based on convergence limit
-dt = particle_a.max_dt(mesh.viscosity)/2.
+dt = min(particle_a.max_dt(mesh.viscosity), 1e-5)
 
 # Define x vector of positions
 x_vector = np.arange(0, total_time, dt)
@@ -45,10 +50,10 @@ print("\rFinished moving particles")
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x
 x_position = mesh.length_x*0.5
-y_vector = np.array(particle_a.position_history)[:-1, 1]
+y_vector = np.array(particle_a.position_history)[:-1, 0]
 
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",
-                            analytic_label="Solução Analítica", title="Força Gravitacional",
-                            x_label="Tempo(s)", y_label="Posição no Eixo Y(m)",
+                            analytic_label="Solução Analítica", title="Força de Arrasto",
+                            x_label="Tempo(s)", y_label="Posição no Eixo X(m)",
                             save_file_as="{0}_{1}_validation".format(mesh.name, force))

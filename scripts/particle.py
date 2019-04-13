@@ -10,8 +10,6 @@ class Particle:
     """
     position_history = None
 
-    # Particle Reynolds
-    reynolds = 0.
 
     # Number of skipped frames between saved positions.
     frame_skips = 1000
@@ -45,6 +43,9 @@ class Particle:
         # Density * Volume of a sphere = rho * pi/6 * d^3
         self.volume = np.pi / 6. * self.diameter ** 3
         self.mass = self.volume * self.density
+
+        # Particle Reynolds
+        self.reynolds = 0.
 
         self.color = color
 
@@ -88,9 +89,12 @@ class Particle:
         sum_forces_x = 0.
         sum_forces_y = 0.
 
-        if single_force in forces:
-            sum_forces_x += forces[single_force][0]
-            sum_forces_y += forces[single_force][1]
+        if single_force is not None:
+            if single_force in forces:
+                sum_forces_x += forces[single_force][0]
+                sum_forces_y += forces[single_force][1]
+            else:
+                raise KeyError(single_force + " force is not available.")
         else:
             for force in forces.values():
                 sum_forces_x += force[0]
