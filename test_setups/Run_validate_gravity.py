@@ -6,13 +6,13 @@ import numpy as np
 total_time = 0.4
 TccLib.Particle.frame_skips = 1
 force = "gravitational"
-particle_density = 5.4e5
-particle_diameter = 5e-5
+particle_density = 3e4
+particle_diameter = 1e-3
 
 # Set liquid parameters or declare liquid
 # density = 1e3
 # viscosity = 0.89e-3
-liquid = "oil"
+liquid = "water"
 
 # Import gmsh created mesh, and set velocity field
 mesh = TccLib.Mesh("Forces", liquid=liquid)
@@ -31,7 +31,7 @@ particle_a = TccLib.Particle("A", (0.07 * mesh.length_x, mesh.length_y), density
 mesh.add_particle(list_of_particles=[particle_a])
 
 # Define dt based on convergence limit
-dt = particle_a.max_dt(mesh.viscosity)/2.
+dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**4.
 
 # Define x vector of positions
 x_vector = np.arange(0, total_time, dt)

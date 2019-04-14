@@ -7,13 +7,13 @@ vel_const = 2.0
 total_time = 0.4
 TccLib.Particle.frame_skips = 1
 force = "drag"
-particle_density = 5.4e3
-particle_diameter = 5e-2
+particle_density = 3e4
+particle_diameter = 1e-3
 
 # Set liquid parameters or declare liquid
 # density = 1e3
 # viscosity = 0.89e-3
-liquid = "oil"
+liquid = "water"
 
 # Import gmsh created mesh, and set velocity field
 mesh = TccLib.Mesh("Forces", liquid=liquid)
@@ -33,10 +33,10 @@ m = particle_a.mass
 c = 3 * np.pi * mesh.viscosity * particle_a.diameter
 if c/m > 1:
     print("Particle conditions might cause an unexpected behavior!")
-analytic_expression = lambda t: -vel_const / c * (m*(-np.exp(-c*t/m)) + m - c*t)
+analytic_expression = lambda t: vel_const * ((np.exp(-c*t/m) - 1)*m/c + t)
 
 # Define dt based on convergence limit
-dt = min(particle_a.max_dt(mesh.viscosity), 1e-5)
+dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**6.
 
 # Define x vector of positions
 x_vector = np.arange(0, total_time, dt)
