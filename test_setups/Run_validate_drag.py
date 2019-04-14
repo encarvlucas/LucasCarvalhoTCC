@@ -9,6 +9,8 @@ force = "drag"
 particle_density = 3e4
 particle_diameter = 1e-3
 vel_const = 2.0
+vel_x_0 = 0.
+vel_y_0 = 0.
 
 # Set liquid parameters or declare liquid
 # density = 1e3
@@ -24,8 +26,10 @@ vel_y = np.zeros(mesh.size)
 # mesh.show_geometry(names=True)
 
 # Define Particles
-particle_a = TccLib.Particle("A", (0.0, 0.5 * mesh.length_y), density=particle_density,
-                             diameter=particle_diameter)
+x_0 = 0.5 * mesh.length_x
+y_0 = 0.8 * mesh.length_y
+particle_a = TccLib.Particle("A", (x_0, y_0), density=particle_density, diameter=particle_diameter,
+                             velocity=(vel_x_0, vel_y_0))
 mesh.add_particle(list_of_particles=[particle_a])
 
 # Define analytic comparison expression
@@ -33,7 +37,7 @@ m = particle_a.mass
 c = 3 * np.pi * mesh.viscosity * particle_a.diameter
 if c/m > 1:
     print("Particle conditions might cause an unexpected behavior!")
-analytic_expression = lambda t: vel_const * ((np.exp(-c*t/m) - 1)*m/c + t)
+analytic_expression = lambda t: m/c*(vel_x_0*(1 - np.exp(-c*t/m)) + vel_const*(np.exp(-c*t/m) - 1)) + vel_const*t + x_0
 
 # Define dt based on convergence limit
 dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**6.

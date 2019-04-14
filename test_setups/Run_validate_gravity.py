@@ -9,6 +9,8 @@ force = "gravitational"
 particle_density = 3e4
 particle_diameter = 1e-3
 vel_const = 2.0
+vel_x_0 = 0.
+vel_y_0 = 0.
 
 # Set liquid parameters or declare liquid
 # density = 1e3
@@ -23,16 +25,18 @@ vel_y = np.zeros(mesh.size)
 # Show mesh geometry
 # mesh.show_geometry(names=True)
 
-# Define analytic comparison expression
-analytic_expression = lambda t: -9.80665/2. * t**2 + mesh.length_y
-
 # Define Particles
-particle_a = TccLib.Particle("A", (0.07 * mesh.length_x, mesh.length_y), density=particle_density,
-                             diameter=particle_diameter)
+x_0 = 0.5 * mesh.length_x
+y_0 = 0.8 * mesh.length_y
+particle_a = TccLib.Particle("A", (x_0, y_0), density=particle_density, diameter=particle_diameter,
+                             velocity=(vel_x_0, vel_y_0))
 mesh.add_particle(list_of_particles=[particle_a])
 
+# Define analytic comparison expression
+analytic_expression = lambda t: -9.80665/2. * t**2 + vel_y_0*t + y_0
+
 # Define dt based on convergence limit
-dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**4.
+dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**6.
 
 # Define x vector of positions
 x_vector = np.arange(0, total_time, dt)

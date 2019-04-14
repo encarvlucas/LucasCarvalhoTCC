@@ -9,9 +9,10 @@ force = "lift"
 particle_density = 3e4
 particle_diameter = 1e-3
 u_const = 2.0
-v_const = -1.0
-du_dy = 5.0
-vel_y_0 = -0.10
+v_const = 0.0
+du_dy = 10.0
+vel_x_0 = 0
+vel_y_0 = -0.1
 
 # Set liquid parameters or declare liquid
 # density = 1e3
@@ -27,21 +28,23 @@ vel_y = np.zeros(mesh.size) + v_const
 # mesh.show_geometry(names=True)
 
 # Define Particles
-y_0 = 0.95*mesh.length_y
-particle_a = TccLib.Particle("A", (0.5 * mesh.length_x, y_0), density=particle_density,
-                             diameter=particle_diameter, velocity=(0., vel_y_0))
+x_0 = 0.5 * mesh.length_x
+y_0 = 0.8 * mesh.length_y
+particle_a = TccLib.Particle("A", (x_0, y_0), density=particle_density, diameter=particle_diameter,
+                             velocity=(vel_x_0, vel_y_0))
 mesh.add_particle(list_of_particles=[particle_a])
 
 # Define analytic comparison expression
-re_g = np.sqrt(particle_a.diameter**2 * mesh.density / mesh.viscosity * abs(du_dy))
+re_g = du_dy/abs(du_dy) * np.sqrt(particle_a.diameter**2 * mesh.density / mesh.viscosity * abs(du_dy))
 m = particle_a.mass
 c = 1.61 * mesh.viscosity * particle_a.diameter * re_g
 if c/m > 1:
     print("Particle conditions might cause an unexpected behavior!")
-analytic_expression = lambda t: (m/c) * (vel_y_0-v_const) * (np.exp(c*t/m) - 1) + v_const*t + y_0
+analytic_expression = lambda t: (m/c) * (vel_y_0-v_const) * np.exp(-c*t/m) * (np.exp(c*t/m) - 1) + v_const*t + y_0
+# analytic_expression = lambda t: (m/c) * (vel_y_0-v_const) * (np.exp(c*t/m) - 1) + v_const*t + y_0
 
 # Define dt based on convergence limit
-dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**5.
+dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**6.
 
 # Define x vector of positions
 x_vector = np.arange(0, total_time, dt)

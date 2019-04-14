@@ -8,7 +8,7 @@ TccLib.Particle.frame_skips = 1
 force = "added_mass"
 particle_density = 3e4
 particle_diameter = 1e-3
-vel_const = 2.50
+vel_const = 2.0
 vel_x_0 = 0.
 vel_y_0 = 0.
 
@@ -26,9 +26,10 @@ vel_y = np.zeros(mesh.size)
 # mesh.show_geometry(names=True)
 
 # Define Particles
-x_0 = 0.0
-particle_a = TccLib.Particle("A", (x_0, 0.5 * mesh.length_y), density=particle_density,
-                             diameter=particle_diameter, velocity=(vel_x_0, vel_y_0))
+x_0 = 0.5 * mesh.length_x
+y_0 = 0.8 * mesh.length_y
+particle_a = TccLib.Particle("A", (x_0, y_0), density=particle_density, diameter=particle_diameter,
+                             velocity=(vel_x_0, vel_y_0))
 mesh.add_particle(list_of_particles=[particle_a])
 
 # Define analytic comparison expression

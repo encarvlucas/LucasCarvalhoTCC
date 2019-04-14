@@ -403,7 +403,7 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
                  mesh.get_interpolated_value((particle.pos_x, particle.pos_y - particle.radius),
                                              velocity_x, velocity_y)[0])
         forces["lift"] = (0.,
-                          -du_dy/abs(du_dy) * 1.61 * mesh.viscosity * particle.diameter * relative_vel[1] *
+                          du_dy/abs(du_dy) * 1.61 * mesh.viscosity * particle.diameter * relative_vel[1] *
                           np.sqrt(particle.diameter * mesh.density / mesh.viscosity * abs(du_dy))
                           )
 
