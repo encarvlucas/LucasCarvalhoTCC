@@ -8,6 +8,7 @@ TccLib.Particle.frame_skips = 1
 force = "gravitational"
 particle_density = 3e4
 particle_diameter = 1e-3
+vel_const = 2.0
 
 # Set liquid parameters or declare liquid
 # density = 1e3
@@ -16,7 +17,7 @@ liquid = "water"
 
 # Import gmsh created mesh, and set velocity field
 mesh = TccLib.Mesh("Forces", liquid=liquid)
-vel_x = np.zeros(mesh.size) + 1.0
+vel_x = np.zeros(mesh.size) + vel_const
 vel_y = np.zeros(mesh.size)
 
 # Show mesh geometry

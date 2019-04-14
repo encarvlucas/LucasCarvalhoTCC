@@ -394,18 +394,17 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
 
         # ----------------- Drag Force ---------------------------------------------------------------------------------
         # if particle.reynolds > 1:
-        #     pass
         #     print("Reynolds number beyond usable definitions.")
         forces["drag"] = 3 * np.pi * mesh.viscosity * particle.diameter * relative_vel
 
         # -------------------- Lift Force ------------------------------------------------------------------------------
-        dv_dy = (mesh.get_interpolated_value((particle.pos_x, particle.pos_y + particle.radius),
-                                             velocity_x, velocity_y)[1] -
+        du_dy = (mesh.get_interpolated_value((particle.pos_x, particle.pos_y + particle.radius),
+                                             velocity_x, velocity_y)[0] -
                  mesh.get_interpolated_value((particle.pos_x, particle.pos_y - particle.radius),
-                                             velocity_x, velocity_y)[1])
+                                             velocity_x, velocity_y)[0])
         forces["lift"] = (0.,
-                          dv_dy/abs(dv_dy) * 1.61 * mesh.viscosity * particle.diameter * relative_vel[1] *
-                          np.sqrt(particle.diameter * mesh.density / mesh.viscosity * abs(dv_dy))
+                          -du_dy/abs(du_dy) * 1.61 * mesh.viscosity * particle.diameter * relative_vel[1] *
+                          np.sqrt(particle.diameter * mesh.density / mesh.viscosity * abs(du_dy))
                           )
 
         # -------------------- Added Mass Force ------------------------------------------------------------------------

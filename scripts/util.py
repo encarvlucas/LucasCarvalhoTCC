@@ -219,7 +219,7 @@ def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, nu
 
     plt.plot(x_coordinates, analytic_solution, "r-", label=analytic_label)
     if isinstance(numeric_solution, dict):
-        [plt.plot(x_coordinates, numeric_solution[key], label="{:.4f}s".format(key)) for key in
+        [plt.plot(x_coordinates, numeric_solution[key], label=key) for key in
          sorted(numeric_solution)]
     else:
         plt.plot(x_coordinates, numeric_solution, "b--", label=numeric_label)

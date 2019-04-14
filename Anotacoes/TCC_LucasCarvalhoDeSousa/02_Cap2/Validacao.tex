@@ -135,7 +135,7 @@ Onde $Q$ é a geração de calor na placa.
 
 A solução analítica para o caso de uma barra unidimensional é descrita em \ref{poisson_d_sol}
 \begin{equation}
-    T(x) = \dfrac{Q}{2k}\Big(-x^2 + L x\Big) + \dfrac{T_L-T_0}{L} x + T_0
+    T(x) = \dfrac{Q}{2k}\left(-x^2 + L x\right) + \dfrac{T_L-T_0}{L} x + T_0
     \label{poisson_d_sol} 
 \end{equation}
 
@@ -194,7 +194,7 @@ Toma-se uma seção da placa para observar os resultados e compará-los com um p
 
 A equação de troca térmica é novamente a equação de Poisson \ref{poisson_d_perm_eq}, com solução analítica para uma barra unidimensional \ref{poisson_n_sol}.
 \begin{equation}
-    T(x) = \dfrac{Q}{k}\Big(\dfrac{-x^2}{2} + L x\Big) + dT_L x + T_0
+    T(x) = \dfrac{Q}{k}\left(\dfrac{-x^2}{2} + L x\right) + dT_L x + T_0
     \label{poisson_n_sol} 
 \end{equation}
 Onde $dT_L$ é o valor da taxa de troca térmica na extremidade $x=L$.
@@ -269,3 +269,6 @@ Mean Error: 5.116557525520803e-05
 Standard Error: 0.0025345030420307977
 %---------------------------------------------------------------------------------------------Terceiro Exemplo
 \subsection{\textbf{Força de Sustentação}}
+
+Mean Error: 6.52554446290127e-08
+Standard Error: 3.79349081853567e-08

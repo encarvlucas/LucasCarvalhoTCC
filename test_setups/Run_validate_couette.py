@@ -100,7 +100,7 @@ small_dict = velocity_x.reduced_dict_log(5)
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x
 x_position = mesh.length_x*0.6
-y_vector = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
+y_vector = {"{:.4f}s".format(key): [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
             for key in small_dict}
 
 # Show comparison graph

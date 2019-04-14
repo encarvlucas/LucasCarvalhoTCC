@@ -194,10 +194,11 @@ class Mesh:
         :param optional_property_vector: Vector of scalar property values [varies].
         :return: The interpolated value of the property in the fluid at the coordinates.
         """
-        util.check_if_instance(position, (list, tuple))
-        util.check_if_instance(property_vector, (list, np.ndarray))
-        if optional_property_vector is not None:
-            util.check_if_instance(optional_property_vector, (list, np.ndarray))
+        # Removed checks to improve performance
+        # util.check_if_instance(position, (list, tuple))
+        # util.check_if_instance(property_vector, (list, np.ndarray))
+        # if optional_property_vector is not None:
+        #     util.check_if_instance(optional_property_vector, (list, np.ndarray))
 
         # Determine which element contains the particle
         element = self.ien[self.delauney_surfaces.find_simplex(position)]
