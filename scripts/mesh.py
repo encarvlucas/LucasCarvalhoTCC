@@ -431,14 +431,18 @@ class Mesh:
         plt.savefig("./frames/{0}_frame_{1}.png".format(self.name, frame_num))
         plt.close()
 
-    def show_3d_solution(self, solution_vector: [list, np.ndarray], view_from_above: bool = True):
+    def show_3d_solution(self, solution_vector: [list, np.ndarray], view_from_above: bool = True,
+                         axis_labels: dict = None):
         """
         Display 3D solution of the mesh geometry.
         :param solution_vector: Vector that contains the value of the solution for each point in the mesh.
         :param view_from_above: Sets the view from top of graph, defaults to True.
+        :param axis_labels: Optional labels for 3D axis. Usable as dictionary keys "x", "y" and "z" and mapped values
+                            as the labels.
         :return: Display image.
         """
         util.check_method_call(solution_vector)
+        axis_labels = {} if axis_labels is None else axis_labels
         try:
             if len(solution_vector) != self.size:
                 raise ValueError("Incorrect size of solution vector, it must be the same size as the mesh: "
@@ -451,6 +455,9 @@ class Mesh:
         fig = plt.gcf()
         axes = Axes3D(fig)
         surf = axes.plot_trisurf(self.x, self.y, solution_vector, cmap="jet")
+        axes.set_xlabel(axis_labels.get("x") or "x(m)")
+        axes.set_ylabel(axis_labels.get("y") or "y(m)")
+        axes.set_zlabel(axis_labels.get("z") or "z")
         if view_from_above:
             axes.view_init(90, 270)
         fig.colorbar(surf, shrink=0.4, aspect=9)
@@ -459,12 +466,14 @@ class Mesh:
 
         return plt.show()
 
-    def show_animated_3d_solution(self, frames_vector: MeshPropertyStates, dt=0.):
+    def show_animated_3d_solution(self, frames_vector: MeshPropertyStates, dt=0., axis_labels: dict = None):
         """
         Display animated version of the 3D solution.
         :param frames_vector: Vector which each element contains a vector with the value of the solution for each point
                               in the mesh.
         :param dt: Time between each frame, if not specified the animation won't be saved.
+        :param axis_labels: Optional labels for 3D axis. Usable as dictionary keys "x", "y" and "z" and mapped values
+                            as the labels.
         :return: Display image.
         """
         util.check_method_call(frames_vector)
@@ -488,6 +497,9 @@ class Mesh:
             plt.cla()
             axes.plot_trisurf(self.x, self.y, _current_frame, cmap="jet", vmin=_min_value, vmax=_max_value)
             axes.set_zlim3d([_min_value, _max_value])
+            axes.set_xlabel(axis_labels.get("x") or "x(m)")
+            axes.set_ylabel(axis_labels.get("y") or "y(m)")
+            axes.set_zlabel(axis_labels.get("z") or "z")
             return
 
         animation = FuncAnimation(fig, update, frames=frames_vector, interval=50, save_count=False)

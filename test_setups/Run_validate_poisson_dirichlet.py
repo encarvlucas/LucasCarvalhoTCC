@@ -42,7 +42,7 @@ mesh.new_boundary_condition("time", point_index=xy_indices, values=xy_values,
 temperature_perm = TccLib.solve_poisson(mesh, permanent_solution=True, k_coef=k, q=Q)
 
 # Show results in 3D graph
-mesh.show_3d_solution(temperature_perm, view_from_above=False)
+mesh.show_3d_solution(temperature_perm, view_from_above=False, axis_labels={"z": "T(°C)"})
 
 # Define x vector of positions
 x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)
@@ -62,7 +62,7 @@ temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, k_coef=
                                          return_history=True)
 
 # Show results in 3D graph
-mesh.show_animated_3d_solution(temperature_trans, dt=mesh.default_dt)
+mesh.show_animated_3d_solution(temperature_trans, dt=mesh.default_dt, axis_labels={"z": "T(°C)"})
 
 # Get a small dictionary with each value state with timestamps as keys
 small_dict = temperature_trans.reduced_dict_log(5)
