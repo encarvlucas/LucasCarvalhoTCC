@@ -408,6 +408,6 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
                           )
 
         # -------------------- Added Mass Force ------------------------------------------------------------------------
-        forces["added_mass"] = (np.pi/12.) * mesh.density * particle.diameter**3 * (relative_vel - particle.velocity)/dt
+        forces["added_mass"] = mesh.density/2. * particle.volume * (relative_vel - particle.velocity)/dt
 
         particle.apply_forces(forces, mesh, dt, single_force)
