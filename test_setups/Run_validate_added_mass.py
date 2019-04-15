@@ -59,5 +59,5 @@ y_vector = np.array(particle_a.position_history)[:-1, 0]
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",
                             analytic_label="Solução Analítica", title="Força de Massa Virtual",
-                            x_label="Tempo(s)", y_label="Posição no Eixo X(m)",
+                            x_label="Tempo(s)", y_label="Posição no Eixo x(m)",
                             save_file_as="{0}_{1}_validation".format(mesh.name, force))

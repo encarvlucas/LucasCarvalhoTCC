@@ -239,7 +239,7 @@ def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, nu
     numeric_solution = np.array(numeric_solution if not isinstance(numeric_solution, dict) else
                                 numeric_solution[max(numeric_solution.keys())])
 
-    error_array = np.nan_to_num((numeric_solution - analytic_solution)/analytic_solution)
+    error_array = np.nan_to_num(abs(numeric_solution - analytic_solution)/analytic_solution)
     print("Mean Error: {0}\nStandard Error: {1}".format(np.mean(error_array), np.std(error_array)))
 
     if save_file_as is not None and isinstance(save_file_as, str):

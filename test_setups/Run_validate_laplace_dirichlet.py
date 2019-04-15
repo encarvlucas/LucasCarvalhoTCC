@@ -53,7 +53,7 @@ y_vector = [mesh.get_interpolated_value([x_position, x], temperature_perm) for x
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",
                             analytic_label="Solução Analítica", title="Equação de Laplace Permanente",
-                            x_label="Posição no Eixo de Comparação(m)", y_label="Valor da Temperatura (°C)",
+                            x_label="Posição no Eixo y (m)", y_label="Valor da Temperatura (°C)",
                             save_file_as="{0}_permanent_validation".format(mesh.name))
 
 # Solve for transient solution
@@ -73,5 +73,5 @@ z_vectors = {"{:.4f}s".format(key): [mesh.get_interpolated_value([x_position, x]
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, z_vectors, numeric_label="Solução Numérica",
                             analytic_label="Solução Analítica", title="Equação de Laplace Transiente",
-                            x_label="Posição no Eixo de Comparação(m)", y_label="Valor da Temperatura (°C)",
+                            x_label="Posição no Eixo y (m)", y_label="Valor da Temperatura (°C)",
                             save_file_as="{0}_transient_validation".format(mesh.name))
