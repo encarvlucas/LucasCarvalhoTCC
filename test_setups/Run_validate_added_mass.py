@@ -11,6 +11,7 @@ particle_diameter = 1e-3
 vel_const = 2.0
 vel_x_0 = 0.
 vel_y_0 = 0.
+du = 1.
 
 # Set liquid parameters or declare liquid
 # density = 1e3
@@ -21,6 +22,7 @@ liquid = "water"
 mesh = TccLib.Mesh("Forces", liquid=liquid)
 vel_x = np.zeros(mesh.size) + vel_const
 vel_y = np.zeros(mesh.size)
+acc = np.zeros(mesh.size) + du
 
 # Show mesh geometry
 # mesh.show_geometry(names=True)
@@ -34,10 +36,10 @@ mesh.add_particle(list_of_particles=[particle_a])
 
 # Define analytic comparison expression
 m = particle_a.mass
-c = 3 * np.pi * mesh.viscosity * particle_a.diameter
+c = 1/2. * mesh.density * particle_a.volume
 if c/m > 1:
     print("Particle conditions might cause an unexpected behavior!")
-analytic_expression = lambda t: vel_const*t/2. + x_0
+analytic_expression = lambda t: (du*c*t**2)/(2*(c + m)) + vel_x_0*t + x_0
 
 # Define dt based on convergence limit
 dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**6.
@@ -48,7 +50,7 @@ x_vector = np.arange(0, total_time, dt)
 # Move Particles
 for time in x_vector:
     print("\rMoving particles {0:.2f}%".format(100 * time / total_time), end="")
-    TccLib.move_particles(mesh, velocity_x=vel_x, velocity_y=vel_y, dt=dt, single_force=force)
+    TccLib.move_particles(mesh, velocity_x=vel_x, velocity_y=vel_y, dt=dt, single_force=force, acceleration_x=acc)
 
 print("\rFinished moving particles")
 
@@ -59,5 +61,5 @@ y_vector = np.array(particle_a.position_history)[:-1, 0]
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",
                             analytic_label="Solução Analítica", title="Força de Massa Virtual",
-                            x_label="Tempo(s)", y_label="Posição no Eixo x(m)",
+                            x_label="Tempo(s)", y_label="Posição no Eixo X(m)",
                             save_file_as="{0}_{1}_validation".format(mesh.name, force))

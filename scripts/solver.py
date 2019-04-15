@@ -254,6 +254,8 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
     :param reynolds: Option to provide the value of Reynolds Number [1].
     :param save_each_frame: True if every loop saves the current velocity values.
     :param stop_criteria: Precision used to detect if method can be stopped early.
+    :param return_history: Flag used to check if return is resulting array of property values in the mesh,
+                           or a MeshPropertyStates object that contains the information of values in various timestamps.
     :return: Velocity vectors and pressure values for each point in the mesh.
     """
     dt = dt or mesh.default_dt
@@ -356,13 +358,16 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
 
 
 def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list, np.ndarray] = None,
-                   velocity_y: [list, np.ndarray] = None, dt: float = None, single_force: str = None):
+                   velocity_y: [list, np.ndarray] = None, dt: float = None, single_force: str = None,
+                   acceleration_x: [list, np.ndarray] = None, acceleration_y: [list, np.ndarray] = None):
     """
     Method that moves all particles currently inside the mesh domain.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
     :param velocity: List or Tuple that contains the vector of velocity for each point in the mesh [m/s].
     :param velocity_x: Vector of velocity in the x axis [m/s].
     :param velocity_y: Vector of velocity in the y axis [m/s].
+    :param acceleration_x: Vector of acceleration in the fluid field in the x axis [m/s²].
+    :param acceleration_y: Vector of acceleration in the fluid field in the y axis [m/s²].
     :param dt: The time difference between frames [s].
     :param single_force: Parameter used for testing single forces one at a time.
     """
@@ -376,6 +381,12 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
 
     util.check_method_call(velocity_x, velocity_y)
 
+    if (acceleration_x is not None) or (acceleration_y is not None):
+        if acceleration_x is None:
+            acceleration_x = np.zeros(mesh.size)
+        if acceleration_y is None:
+            acceleration_y = np.zeros(mesh.size)
+
     # Applying forces to each particle if it is still able.
     for particle in [_particle for _particle in mesh.particles if mesh.contains_particle(_particle)]:
         forces = dict()
@@ -383,8 +394,7 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
         # ----------------- Obtain velocity ----------------------------------------------------------------------------
         fluid_velocity = np.array(mesh.get_interpolated_value((particle.pos_x, particle.pos_y),
                                                               velocity_x, velocity_y))
-        relative_vel = np.array(
-            ((fluid_velocity[0] - particle.velocity_x), (fluid_velocity[1] - particle.velocity_y)))
+        relative_vel = fluid_velocity - particle.velocity
         # relative_vel_norm = np.sqrt(relative_vel.dot(relative_vel))
 
         particle.reynolds = (mesh.density * max(relative_vel) * particle.diameter / mesh.viscosity)
@@ -408,6 +418,9 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
                           )
 
         # -------------------- Added Mass Force ------------------------------------------------------------------------
-        forces["added_mass"] = mesh.density/2. * particle.volume * (relative_vel - particle.velocity)/dt
+        acceleration = (0, 0) if (acceleration_x is None) or (acceleration_y is None) else \
+            np.array(mesh.get_interpolated_value((particle.pos_x, particle.pos_y), acceleration_x, acceleration_y))
+        forces["added_mass"] = mesh.density/2. * particle.volume * (acceleration -
+                                                                    (particle.velocity - particle.last_velocity)/dt)
 
         particle.apply_forces(forces, mesh, dt, single_force)

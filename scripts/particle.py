@@ -10,7 +10,6 @@ class Particle:
     """
     position_history = None
 
-
     # Number of skipped frames between saved positions.
     frame_skips = 1000
 
@@ -37,6 +36,7 @@ class Particle:
 
         self.velocity_x = velocity[0]
         self.velocity_y = velocity[1]
+        self.last_velocity = self.velocity
 
         self.density = density
         self.diameter = diameter
@@ -100,6 +100,7 @@ class Particle:
                 sum_forces_x += force[0]
                 sum_forces_y += force[1]
 
+        self.last_velocity = self.velocity
         self.velocity_x += sum_forces_x * dt / self.mass
         self.velocity_y += sum_forces_y * dt / self.mass
         self.mark_new_position(mesh, dt)
