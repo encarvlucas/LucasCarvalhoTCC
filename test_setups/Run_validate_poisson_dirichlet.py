@@ -68,7 +68,7 @@ mesh.show_animated_3d_solution(temperature_trans, dt=mesh.default_dt, axis_label
 small_dict = temperature_trans.reduced_dict_log(5)
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x at each timestamp
-z_vectors = {"{:.4f}s".format(key): [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
+z_vectors = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
              for key in small_dict}
 
 # Show comparison graph

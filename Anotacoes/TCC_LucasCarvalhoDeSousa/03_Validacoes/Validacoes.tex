@@ -91,7 +91,7 @@ Essa proximidade é quantificada pelo erro relativo médio que foi de $0.1136\%$
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica do caso de transporte de temperatura em sólidos no regime permanente.}
+    \caption{Comparação de resultado das solução númerica e analítica do caso de transporte de temperatura em sólidos no regime permanente.}
     \label{laplace_d_perm_comp}
 \end{figure}
 
@@ -111,7 +111,7 @@ O erro relativo médio calculado para este caso foi de $0.1092\%$ e com desvio p
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_transient_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica de transporte em sólidos no regime transiente.}
+    \caption{Comparação de resultado das soluções númericas e analítica de transporte em sólidos no regime transiente.}
     \label{laplace_d_trans_comp}
 \end{figure}
 
@@ -158,7 +158,7 @@ Essa proximidade é quantificada pelo erro relativo médio que foi de $0.323\%$ 
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_permanent_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração de calor.}
+    \caption{Comparação de resultado das solução númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração de calor.}
     \label{poisson_d_perm_comp}
 \end{figure}
 
@@ -170,7 +170,7 @@ O erro relativo médio calculado para este caso foi de $0.325\%$ e com desvio pa
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_transient_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica do problema de trasnporte de temperatura em sólidos no regime transiente com geração de calor.}
+    \caption{Comparação de resultado das soluções númericas e analítica do problema de trasnporte de temperatura em sólidos no regime transiente com geração de calor.}
     \label{poisson_d_trans_comp}
 \end{figure}
 
@@ -211,7 +211,7 @@ A semelhança entre elas é quantificada pelo erro relativo médio que foi de $0
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/poisson_neumann_permanent_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
+    \caption{Comparação de resultado das solução númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
     \label{poisson_n_perm_comp}
 \end{figure}
 
@@ -222,7 +222,7 @@ O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio pad
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/poisson_neumann_transient_comparison.png}
-    \caption{Comparação de resultado das soluções númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
+    \caption{Comparação de resultado das soluções númericas e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
     \label{poisson_n_trans_comp}
 \end{figure}
 
@@ -231,10 +231,80 @@ O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio pad
 \label{sec_fluidos}
 %---------------------------------------------------------------------------------------------Primeiro Exemplo
 \subsection{\textbf{Escoamento de Poiseuille}}
+\label{sec_poiseuille}
+Este é um dos primeiros exemplos dados ao estudar-se a meĉanica dos fluidos e a equação de Navier-Stoakes\eqref{todo}, pois trata-se de uma configuração geométrica muito simples.
+O escoamento de Poiseuille também é conhecido como escoamento entre placas paralelas, já que essa é exatamente a descrição de sua forma e as placas são tomadas como estacionárias em relação ao fluido.
+
+O escoamento ocorre entre duas placas paralelas de comprimento infinito com uma distância constante entre elas.
+É tomado um fluído ideal, isto é, newtoniano, imcompressível e em estado permanente com seu perfil plenamente desenvolvido.
+As condições de contorno são definidas para a função corrente e a velocidade.
+Para os valores iniciais nos pontos sem condição de contorno foram arbitrados como nulos.
+
+O sistema de equações de governo deste escoamento é o sistema corrente-vorticidade \ref{todo}, e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
+\begin{equation}
+    v_x(y) = \dfrac{4U_{max}}{L^2}y(L-y)
+    \label{poiseuille_sol} 
+\end{equation}
+onde $v_x$ é velocidade do fluido na direção do eixo $x$, $L$ é o comprimento das placas e $U_{max}$ é a velocidade máxima do escoamento.
+
+Para esta simulação foram usadas as condições de contorno e o dominio bidimensional apresentados na \ref{poiseuille_bc}.
+A velocidade máxima $U_{max}$ é tomada em função da velocidade de entrada $U$ na relação $U_{max}=1.5U$.
+Foi escolhido um valor para o número de Reynolds\eqref{reynolds} de $Re=100$ e um intervalo de tempo $dt=0.1s$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/Poiseuille_boundary_conditions.pdf}
+    \caption{Condições de contorno de um escoamento entre placas paralelas de Poiseuille \ref{sec_poiseuille}.}
+    \label{poiseuille_bc}
+\end{figure}
+
+A \ref{poiseuille_comp} apresenta a evolução do perfil de velocidades de uma seção tomada em $x=0.75L=6.0m$ em função do tempo.
+Foi utilizada uma malha triangular linear não estruturada com 4200 elementos e 781 nós.
+Nota-se que a solução numérica converge para a solução analítica ao se aproximar do estado permanente.
+O erro relativo médio calculado para este caso foi de $4.587\%$ e com desvio padrão de $0.0535\%$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/Poiseuille_validation.png}
+    \caption{Comparação de resultado das soluções númericas e analítica \ref{poiseuille_sol} do problema de corrente-vorticidade no regime permanente.}
+    \label{poiseuille_comp}
+\end{figure}
+
 %---------------------------------------------------------------------------------------------Segundo Exemplo
 \subsection{\textbf{Escoamento de Couette}}
+\label{sec_couette}
+Similar ao escoamento de Poiseuille\ref{sec_poiseuille}, entre duas placas paralelas de comprimento infinito separadas por uma distância constante.
+Porém, neste caso, as placas possuem uma velocidade relativa entre si, ou seja, estão em movimento.
+Novamente, utiliza-se a aproximação do escoamento para um fluído newtoniano, imcompressível e em estado permanente com seu perfil plenamente desenvolvido.
+As condições de contorno são definidas para a função corrente e a velocidade, com os valores iniciais nos pontos sem condição de contorno arbitrados como nulos.
+
+Novamente trabalha-se com o sistema corrente-vorticidade \ref{todo} e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
+\begin{equation}
+    v_x(y) = \dfrac{U_{sup} - U_{inf}}{L}y + U_{inf}
+    \label{couette_sol} 
+\end{equation}
+onde $U_{sup}$ e $U_{inf}$ são as velocidades das placas superior e inferior, respectivamente.
+
+Para esta simulação foram usadas as condições de contorno e o dominio bidimensional apresentados na \ref{couette_bc}.
+Foram tomadas as velocidade superior como $U_{sup}=1m/s$ e $U_{inf}=-1m/s$ para um escoamente com número de Reynolds de $Re=1$ e um intervalo de tempo $dt=1.0s$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{figures/Couette_boundary_conditions.pdf}
+    \caption{Condições de contorno de um escoamento entre placas paralelas de Couette \ref{sec_couette}.}
+    \label{couette_bc}
+\end{figure}
+
+A \ref{couette_comp} apresenta a evolução do perfil de velocidades de uma seção tomada em $x=0.75L=6.0m$ em função do tempo.
+Novamente utilizou-se uma malha triangular linear não estruturada com 4200 elementos e 781 nós.
+Pode-se observar que a solução numérica converge para a solução analítica ao se aproximar do estado permanente.
+O erro relativo médio calculado para este caso foi de $0.2920\%$ e com desvio padrão de $0.3371\%$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/Couette_validation.png}
+    \caption{Comparação de resultado das soluções númericas e analítica \ref{couette_sol} do problema de corrente-vorticidade no regime permanente.}
+    \label{couette_comp}
+\end{figure}
+
 %---------------------------------------------------------------------------------------------Terceiro Exemplo
-\subsection{\textbf{Escoamento de Cavidade (\textit{Lid-Driven Cavity Flow})}}
+% \subsection{\textbf{Escoamento de Cavidade (\textit{Lid-Driven Cavity Flow})}}
 
 
 %---------------------------------------------------------------------------------------------Validação de partículas

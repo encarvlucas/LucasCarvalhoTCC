@@ -17,7 +17,7 @@ liquid = "super_oil"
 mesh = TccLib.Mesh("Couette", liquid=liquid)
 
 # Show mesh geometry
-mesh.show_geometry(names=True)
+# mesh.show_geometry(names=True, save=True)
 
 # Define analytic comparison expression
 analytic_expression = lambda y: (vel_top - vel_bot) * y / mesh.length_y + vel_bot
@@ -99,12 +99,12 @@ x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)
 small_dict = velocity_x.reduced_dict_log(5)
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x
-x_position = mesh.length_x*0.6
-y_vector = {"{:.4f}s".format(key): [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
+x_position = mesh.length_x*0.65
+y_vector = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
             for key in small_dict}
 
 # Show comparison graph
 TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",
                             analytic_label="Solução Analítica", title="Escoamento de Couette",
-                            x_label="Posição no Eixo de Comparação(m)", y_label="Valor da Velocidade (m/s)",
+                            x_label="Posição no Eixo Y(m)", y_label="Valor da Velocidade (m/s)",
                             save_file_as="{0}_validation".format(mesh.name))
