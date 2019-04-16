@@ -249,7 +249,7 @@ onde $v_x$ é velocidade do fluido na direção do eixo $x$, $L$ é o compriment
 
 Para esta simulação foram usadas as condições de contorno e o dominio bidimensional apresentados na \ref{poiseuille_bc}.
 A velocidade máxima $U_{max}$ é tomada em função da velocidade de entrada $U$ na relação $U_{max}=1.5U$.
-Foi escolhido um valor para o número de Reynolds\eqref{reynolds} de $Re=100$ e um intervalo de tempo $dt=0.1s$.
+Foi escolhido um valor para o número de Reynolds\eqref{reynolds} de $Re=1$ e um intervalo de tempo $dt=0.1s$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{figures/Poiseuille_boundary_conditions.pdf}
@@ -292,10 +292,10 @@ Foram tomadas as velocidade superior como $U_{sup}=1m/s$ e $U_{inf}=-1m/s$ para 
     \label{couette_bc}
 \end{figure}
 
-A \ref{couette_comp} apresenta a evolução do perfil de velocidades de uma seção tomada em $x=0.75L=6.0m$ em função do tempo.
+A \ref{couette_comp} apresenta a evolução do perfil de velocidades de uma seção tomada em $x=0.5L=4.0m$ em função do tempo.
 Novamente utilizou-se uma malha triangular linear não estruturada com 4200 elementos e 781 nós.
 Pode-se observar que a solução numérica converge para a solução analítica ao se aproximar do estado permanente.
-O erro relativo médio calculado para este caso foi de $0.2920\%$ e com desvio padrão de $0.3371\%$.
+O erro relativo médio calculado para este caso foi de $1.4251\%$ e com desvio padrão de $0.2793\%$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/Couette_validation.png}

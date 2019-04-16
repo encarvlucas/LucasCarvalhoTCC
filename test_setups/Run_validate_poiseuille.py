@@ -4,16 +4,16 @@ import numpy as np
 
 # Define boundary conditions and parameters
 vel = 1.
-dt = 01.
+dt = 0.1
 total_time = 50.
 
 # Set liquid parameters or declare liquid
 # density = 1e3
 # viscosity = 0.89e-3
-liquid = "oil"
+liquid = "super_oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Poiseuille", liquid=liquid)
+mesh = TccLib.Mesh("Poiseuille_ref", liquid=liquid)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True, save=True)

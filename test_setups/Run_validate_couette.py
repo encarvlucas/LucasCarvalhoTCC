@@ -5,7 +5,7 @@ import numpy as np
 # Define boundary conditions and parameters
 vel_top = 1.
 vel_bot = -1.
-dt = 01.
+dt = 1.
 total_time = 100.
 
 # Set liquid parameters or declare liquid
@@ -14,7 +14,7 @@ total_time = 100.
 liquid = "super_oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Couette", liquid=liquid)
+mesh = TccLib.Mesh("Couette_ref", liquid=liquid)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True, save=True)
@@ -29,7 +29,10 @@ boundary_conditions_values_psi = {
 }
 
 boundary_conditions_types_psi = {
-    "all": True,
+    "north": True,
+    "east": False,
+    "south": True,
+    "west": False,
 }
 
 # Get vectors of nodes values
@@ -99,7 +102,7 @@ x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)
 small_dict = velocity_x.reduced_dict_log(5)
 
 # Find values of property in the mesh at a determined set position for every value in the vector of x
-x_position = mesh.length_x*0.65
+x_position = mesh.length_x*0.5
 y_vector = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
             for key in small_dict}
 
