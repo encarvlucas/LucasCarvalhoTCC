@@ -23,14 +23,15 @@
 
         \draw [fill] (0.5, 0.8) circle [radius=0.02];
         \draw [<->] (0.5, 0.9) -- (0.5, 0.8) -- (0.6, 0.8);
-        \node [above right] at (0.5, 0.8) {$\vec{v}_{p}=(v_x,v_y)$};
+        \node [above right] at (0.5, 0.8) {$\vec{v}_{p}=(v_{x0},v_{y0})$};
         \node [below left] at (0.5, 0.8) {$(0.5,0.8)$};
 
-        \node [right] at (0.15, 0.5) {$\vec{v}_f(x,y)=(U,0)m/s$};
+        \node [center] at (0.5, 0.5) {$\vec{v}_f(x,y)=(U,0)m/s$};
 
         \foreach \y in {0.1, 0.2, ..., 0.9}
         {
             \draw [blue, ->, ultra thick] (-0.15, \y) -- (0.15, \y);
+            \draw [blue, ->, ultra thick] (0.85, \y) -- (1.15, \y);
         }
     \end{tikzpicture}
 \end{document}

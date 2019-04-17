@@ -312,22 +312,51 @@ O erro relativo médio calculado para este caso foi de $1.4251\%$ e com desvio p
 \label{sec_particulas}
 %---------------------------------------------------------------------------------------------Primeiro Exemplo
 \subsection{\textbf{Força Gravitacional}}
+\label{sec_grav}
 
-Mean Error: -7.706324287531013e-06
-Standard Error: 1.7532532539087766e-05
+Para o caso de uma partícula isolada sob efeito da força gravitacional, a solução analítica para a posição da partícula no eixo $y$ é:
+\begin{equation}
+    y(t) = \dfrac{g}{2}t^2 + v_{y0}t + p_{y0}
+    \label{grav_sol} 
+\end{equation}
+onde $g$ é a aceleração da gravidade, tomada como $g=9.80665m/s^2$, $v_{y0}$ é a velocidade e $p_{y0}$ a posição inicial da partícula no eixo $y$.
+
+Na simulação das forças, foram aplicadas cada uma separadamente a uma partícula isolada para se avaliar seus efeitos e comparar sua solução numérica com a solução analítica respectiva.
+Para a força gravitacional, utilizou-se uma malha com as condições apresentadas na \ref{grav_bc}.
+A velocidade inicial tomada foi $v_{y0}=0$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/forces_boundary_conditions.pdf}
+    \caption{Condições de contorno de uma partícula sob efeito da força gravitacional em um escoamento.}
+    \label{grav_bc}
+\end{figure}
+
+Na \ref{grav_comp} pode-se observar a evolução da posição da partícula no eixo $y$ em função do tempo.
+Foi utilizada uma malha triangular linear não estruturada com 2304 elementos e 417 nós, seu campo de velocidades não foi calculado e foi criado com um valor constante $U=2m/s$.
+O erro relativo médio calculado para este caso foi de $7.706e^{-4}\%$ e com desvio padrão de $1.753e^{-5}\%$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/Forces_gravitational_validation.png}
+    \caption{Comparação de resultado da solução númerica e analítica \ref{grav_sol} do percurso de uma partícula em queda livre.}
+    \label{grav_comp}
+\end{figure}
+
 %---------------------------------------------------------------------------------------------Segundo Exemplo
 \subsection{\textbf{Força de Arrasto}}
+\label{sec_drag}
 
 Mean Error: 3.083075647620123e-07
 Standard Error: 1.6723400282002147e-07
 %---------------------------------------------------------------------------------------------Terceiro Exemplo
 \subsection{\textbf{Força de Sustentação}}
+\label{sec_lift}
 
 Mean Error: 6.52554446290127e-08
 Standard Error: 3.79349081853567e-08
 
 %---------------------------------------------------------------------------------------------Terceiro Exemplo
 \subsection{\textbf{Força de Massa Virtual (\textit{Added Mass})}}
+\label{sec_mass}
 
 Mean Error: -6.657465890493951e-05
 Standard Error: 1.1362509215219308e-05
