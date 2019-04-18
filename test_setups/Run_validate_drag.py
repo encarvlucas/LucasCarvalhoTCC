@@ -37,7 +37,7 @@ m = particle_a.mass
 c = 3 * np.pi * mesh.viscosity * particle_a.diameter
 if c/m > 1:
     print("Particle conditions might cause an unexpected behavior!")
-analytic_expression = lambda t: m/c*(vel_x_0*(1 - np.exp(-c*t/m)) + vel_const*(np.exp(-c*t/m) - 1)) + vel_const*t + x_0
+analytic_expression = lambda t: m/c * (vel_x_0 - vel_const) * (1 - np.exp(-c*t/m)) + vel_const*t + x_0
 
 # Define dt based on convergence limit
 dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**6.

@@ -87,7 +87,7 @@ A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ r
 \end{figure}
 
 A comparação entre os resultados da solução analítica \eqref{laplace_d_sol} e a solução numerica, para a seção $x=0.5m$, é apresentada na \ref{laplace_d_perm_comp}, onde é possível observar que ambas possuem o mesmo perfil.
-Essa proximidade é quantificada pelo erro relativo médio que foi de $0.1136\%$ e com desvio padrão de $0.0008\%$
+Essa proximidade é quantificada pelo erro relativo médio que foi de $0.1136\%$ e com desvio padrão de $0.0801\%$
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_comparison.png}
@@ -107,7 +107,7 @@ Porém, ao longo dos passos de tempo, a solução se aproxima de um problema per
 As condições iniciais $t=0s$ atribuídas aos nós sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
 A \ref{laplace_d_trans_comp} apresenta a evolução do campo de temperaturas em função do tempo.
 É possível observar que a solução numérica converge para a solução analítica formando um perfil linear.
-O erro relativo médio calculado para este caso foi de $0.1092\%$ e com desvio padrão de $0.0008\%$.
+O erro relativo médio calculado para este caso foi de $0.1092\%$ e com desvio padrão de $0.0801\%$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_transient_comparison.png}
@@ -154,7 +154,7 @@ A \ref{poisson_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ r
 \end{figure}
 
 A comparação entre os resultados da solução analítica \eqref{poisson_d_sol} e a solução numerica, para a seção $x=0.5m$, é apresentada na \ref{poisson_d_perm_comp}, onde é possível observar que ambas possuem o mesmo perfil.
-Essa proximidade é quantificada pelo erro relativo médio que foi de $0.323\%$ e com desvio padrão de $0.0101\%$.
+Essa proximidade é quantificada pelo erro relativo médio que foi de $0.323\%$ e com desvio padrão de $1.0101\%$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_permanent_comparison.png}
@@ -166,7 +166,7 @@ A seguir, é apresentado o resultado com termo transiente $\dfrac{\partial T}{\p
 As condições iniciais $t=0s$ atribuídas aos pontos sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
 A \ref{poisson_d_trans_comp} apresenta a evolução do campo de temperaturas em função do tempo.
 É possível observar que a solução numérica converge para a solução analítica formando um perfil parabólico.
-O erro relativo médio calculado para este caso foi de $0.325\%$ e com desvio padrão de $0.0101\%$.
+O erro relativo médio calculado para este caso foi de $0.325\%$ e com desvio padrão de $1.0101\%$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_transient_comparison.png}
@@ -260,7 +260,7 @@ Foi escolhido um valor para o número de Reynolds\eqref{reynolds} de $Re=1$ e um
 A \ref{poiseuille_comp} apresenta a evolução do perfil de velocidades de uma seção tomada em $x=0.75L=6.0m$ em função do tempo.
 Foi utilizada uma malha triangular linear não estruturada com 4200 elementos e 781 nós.
 Nota-se que a solução numérica converge para a solução analítica ao se aproximar do estado permanente.
-O erro relativo médio calculado para este caso foi de $4.587\%$ e com desvio padrão de $0.0535\%$.
+O erro relativo médio calculado para este caso foi de $4.587\%$ e com desvio padrão de $5.3501\%$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/Poiseuille_validation.png}
@@ -295,7 +295,7 @@ Foram tomadas as velocidade superior como $U_{sup}=1m/s$ e $U_{inf}=-1m/s$ para 
 A \ref{couette_comp} apresenta a evolução do perfil de velocidades de uma seção tomada em $x=0.5L=4.0m$ em função do tempo.
 Novamente utilizou-se uma malha triangular linear não estruturada com 4200 elementos e 781 nós.
 Pode-se observar que a solução numérica converge para a solução analítica ao se aproximar do estado permanente.
-O erro relativo médio calculado para este caso foi de $1.4251\%$ e com desvio padrão de $0.2793\%$.
+O erro relativo médio calculado para este caso foi de $1.4251\%$ e com desvio padrão de $27.934\%$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/Couette_validation.png}
@@ -310,30 +310,39 @@ O erro relativo médio calculado para este caso foi de $1.4251\%$ e com desvio p
 %---------------------------------------------------------------------------------------------Validação de partículas
 \section{\textbf{Validações de Problemas em Partículas}}
 \label{sec_particulas}
+A simulação das forças é realizada sobre uma partícula isolada inserida em um malha com um escoamento com campo de velocidades constante em função da posição da partícula no eixo $y$, para facilitar os cálculos das soluções analíticas.
+O campo de velocidades é arbitrado e não calculado como anteriormente.
+
+Para a simulação de cada força foi utilizada uma malha triangular linear não estruturada com 2304 elementos e 417 nós.
+Pode-se observar os parâmetros padrão, a menos que especificado o contrário, utilizados a seguir:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/forces_boundary_conditions.pdf}
+    \caption{Condições de contorno de uma partícula isolada sob efeito de uma força.}
+    \label{force_bc}
+\end{figure}
+A validação das forças é feita individualmente, para que se possa comparar os valores do movimento simulado da partícula com a curva da solução analítica esperada.
+Os parâmetros definidos para as simulações foram: uma partícula com diâmetro $d_p=0.001m$, densidade $\rho_p=30000Kg/m^3$, variação de tempo $dt=1.5625e^{-6}s$, tempo total $t_{max}=0.4s$, em um fluido com densidade $\rho_p=1000Kg/m^3$ e viscosidade dinâmica $0.89e^{-3}Pa.s$.
+
 %---------------------------------------------------------------------------------------------Primeiro Exemplo
 \subsection{\textbf{Força Gravitacional}}
 \label{sec_grav}
+A força gravitacional é a primeira e mais simples implementação de uma força.
+A partícula é acelerada pela constante de aceleração gravitacional.
+A validação deste caso permite verificar a base da estrutura de movimentação de partículas do código.
 
 Para o caso de uma partícula isolada sob efeito da força gravitacional, a solução analítica para a posição da partícula no eixo $y$ é:
 \begin{equation}
-    y(t) = \dfrac{g}{2}t^2 + v_{y0}t + p_{y0}
+    y(t) = -\dfrac{g}{2}t^2 + v_{y0}t + p_{y0}
     \label{grav_sol} 
 \end{equation}
 onde $g$ é a aceleração da gravidade, tomada como $g=9.80665m/s^2$, $v_{y0}$ é a velocidade e $p_{y0}$ a posição inicial da partícula no eixo $y$.
 
-Na simulação das forças, foram aplicadas cada uma separadamente a uma partícula isolada para se avaliar seus efeitos e comparar sua solução numérica com a solução analítica respectiva.
-Para a força gravitacional, utilizou-se uma malha com as condições apresentadas na \ref{grav_bc}.
+Para a força gravitacional, utilizou-se uma malha com as condições e posição inicial apresentadas na \ref{force_bc}.
 A velocidade inicial tomada foi $v_{y0}=0$.
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\linewidth]{figures/forces_boundary_conditions.pdf}
-    \caption{Condições de contorno de uma partícula sob efeito da força gravitacional em um escoamento.}
-    \label{grav_bc}
-\end{figure}
-
 Na \ref{grav_comp} pode-se observar a evolução da posição da partícula no eixo $y$ em função do tempo.
-Foi utilizada uma malha triangular linear não estruturada com 2304 elementos e 417 nós, seu campo de velocidades não foi calculado e foi criado com um valor constante $U=2m/s$.
-O erro relativo médio calculado para este caso foi de $7.706e^{-4}\%$ e com desvio padrão de $1.753e^{-5}\%$.
+Foi utilizado um campo de velocidades com valor constante de $U=2m/s$.
+O erro relativo médio calculado para este caso foi de $7.706e^{-4}\%$ e com desvio padrão de $1.753e^{-3}\%$.
 \begin{figure}[H]
     \centering
     \includegraphics[width=.7\linewidth]{figures/Forces_gravitational_validation.png}
@@ -344,19 +353,105 @@ O erro relativo médio calculado para este caso foi de $7.706e^{-4}\%$ e com des
 %---------------------------------------------------------------------------------------------Segundo Exemplo
 \subsection{\textbf{Força de Arrasto}}
 \label{sec_drag}
+A força de arrasto é a principal fonte de movimentação da partícula.
+A partícula é movimentada pela força de cisalhamento do fluido que exerce atrito sobre sua superfície. 
+Neste caso, a validação é feita para analisar o comportamento da força em relação as propiedades da partícula e avaliar a convergência em função do valor de $dt$.
 
-Mean Error: 3.083075647620123e-07
-Standard Error: 1.6723400282002147e-07
+A solução analítica para a posição da partícula sob efeito da força de arrasto no eixo $x$ é:
+\begin{equation}
+    x(t) = \dfrac{m_p}{c_{d}} (U - v_{x0}) \left(1 - e^{-\frac{c_{d}}{m_p}t}\right) + v_{x0}t + p_{x0}
+    \label{drag_sol} 
+\end{equation}
+define-se $c_{d}$ como:
+\begin{equation}
+    c_d = 3 \pi \mu_f d_p
+    \label{drag_c} 
+\end{equation}
+onde $m_p$ é a massa da partícula, $\mu_f$ é a viscosidade dinâmica do fluido, $d_p$ é o diâmetro da partícula, $v_{x0}$ é a velocidade e $p_{x0}$ a posição inicial da partícula no eixo $x$.
+
+Foi utilizada a malha padrão com as condições e posição inicial apresentadas na \ref{force_bc}, com velocidade inicial $v_{x0}=0$.
+Demonstra-se na \ref{drag_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
+Foi utilizado um campo de velocidades com valor constante de $U=2m/s$.
+Pode-se observar que a partícula é acelerada até atingir a velocidade do fluído, como se era esperado.
+O erro relativo médio calculado para este caso foi de $3.083e^{-5}\%$ e com desvio padrão de $1.6723e^{-5}\%$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/Forces_drag_validation.png}
+    \caption{Comparação de resultado da solução númerica e analítica \ref{drag_sol} do percurso de uma partícula em movimento de arrasto em um escoamento.}
+    \label{drag_comp}
+\end{figure}
+
 %---------------------------------------------------------------------------------------------Terceiro Exemplo
 \subsection{\textbf{Força de Sustentação}}
 \label{sec_lift}
+A força de sustentação é a força que permite que a partícula se mantenha elevada.
+Essa força afeta a partícula quando há uma variação entre as velocidades no topo e fundo da partícula, portanto ela só ocorre quando o campo de velocidades não for constante em relação ao eixo perpendicular ao movimento da partícula.
 
-Mean Error: 6.52554446290127e-08
-Standard Error: 3.79349081853567e-08
+A força de sustentação possui a seguinte solução analítica para a posição da partícula no eixo $y$ semelhante a força de arrasto \eqref{lift_sol}, porém com constantes diferentes:
+\begin{equation}
+    y(t) = \dfrac{m_p}{c_l} (0 - v_{y0}) \left(1 - e^{-\frac{c_l}{m_p}t}\right) + v_{y0}t + p_{y0}
+    \label{lift_sol} 
+\end{equation}
+define-se $c_l$ como:
+\begin{equation}
+    c_l = 1.61 \mu_f d_p \sqrt{{Re}_G}
+    \label{lift_c} 
+\end{equation}
+e $Re_G$ é o número de Reynolds de cisalhamento \cite{crowe}:
+\begin{equation}
+    Re_G = \dfrac{d_p^2 \rho_f}{\mu_f} \dfrac{dv_x}{dy}
+    \label{lift_reg}
+\end{equation}
+onde $\rho_f$ é a densidade do fluido e $\tfrac{dv_x}{dy}$ é a variação da velocidade na partícula sobre o eixo perpendicular ao movimento.
+
+Para este caso, foi preciso utilizar a malha padrão com condições diferentes do padrão, para que fosse possível observar os efeitos da força de sustentação com mais clareza.
+As condições utilizadas são:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\linewidth]{figures/lift_boundary_conditions.pdf}
+    \caption{Condições de contorno de uma partícula isolada sob efeito da força de sustentação.}
+    \label{lift_bc}
+\end{figure}
+
+Demonstra-se na \ref{lift_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
+Foi utilizado um valor base para o campo de velocidades de $U=2m/s$, uma velocidade inicial $v_{y0}=-0.1m/s$, e um gradiente de velocidades no eixo $y$ de $\tfrac{dv_x}{dy}=100m/m.s$ para auxiliar a comparação.
+Também foi incluída uma curva que demostra a trajetória da partícula sem o efeito da força de sustentação, para que se possa notar que a partícula é desacelerada e não acompanha esta curva.
+O erro relativo médio calculado para este caso foi de $6.162e^{-7}\%$ e com desvio padrão de $3.6111e^{-7}\%$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/Forces_lift_validation.png}
+    \caption{Comparação de resultado da solução númerica e analítica \ref{lift_sol} do percurso de uma partícula em movimento de sustentação em um escoamento.}
+    \label{lift_comp}
+\end{figure}
 
 %---------------------------------------------------------------------------------------------Terceiro Exemplo
 \subsection{\textbf{Força de Massa Virtual (\textit{Added Mass})}}
 \label{sec_mass}
+A força de massa virtual é uma força de reação do fluido presente devido ao movimento da partícula presente.
+O valor dessa força está relacionado a massa de fluido que estaria se deslocando na posição da partícula.
 
-Mean Error: -6.657465890493951e-05
-Standard Error: 1.1362509215219308e-05
+Para encontrar-se a solução analítica da força de massa virtual que pudesse ser observada e comparada com os resultados das simulações, ou seja não sendo nula, foi preciso assumir um campo de velocidades que variasse no tempo.
+Para isso, define-se que a aceleração do campo de velocidades do escoamento é constante $\tfrac{d\vec{v}}{dt}=\vec{a}=const$.
+Portanto, obtem-se a solução analítica da força de massa virtual para a posição da partícula no eixo $x$.
+\begin{equation}
+    x(t) = \dfrac{a_x c_m}{2(c_m + m)}t^2 + + v_{x0}t + p_{x0}
+    \label{mass_sol} 
+\end{equation}
+define-se $c_m$ como:
+\begin{equation}
+    c_m = \dfrac{1}{2} \rho_f V_p
+    \label{mass_c} 
+\end{equation}
+onde $a_x$ é a aceleração, ou variação da velocidade no tempo, do campo de velocidades do fluido no eixo $x$ e $V_p$ é o volume da partícula.
+
+Novamente utilizou-se a malha padrão com condições e posição inicial apresentadas na \ref{force_bc}, com velocidade inicial $v_{x0}=0$.
+Revela-se na \ref{mass_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
+Foi utilizado um campo de velocidades que varia no tempo com valor constante, como explicado anteriormente, na forma de $U=2m/s+a_x t$, onde $a_x=1m/s^2$.
+Pode-se observar que a partícula é acelerada até atingir a velocidade do fluído, como se era esperado.
+O erro relativo médio calculado para este caso foi de $6.6574e^{-3}\%$ e com desvio padrão de $1.1362e^{-3}\%$.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.7\linewidth]{figures/Forces_added_mass_validation.png}
+    \caption{Comparação de resultado da solução númerica e analítica \ref{mass_sol} do percurso de uma partícula em movimento de aceleração em um escoamento.}
+    \label{mass_comp}
+\end{figure}
