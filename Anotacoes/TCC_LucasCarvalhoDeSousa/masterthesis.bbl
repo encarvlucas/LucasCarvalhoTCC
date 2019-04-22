@@ -5,17 +5,17 @@
 \providecommand{\abntbstabout}[1]{}
 \abntbstabout{1.42 }
 
+\bibitem{pontes_norberto}
+\abntrefinfo{Pontes e Mangiavacchi}{PONTES; MANGIAVACCHI}{2010}
+{PONTES, J. da R.~M.; MANGIAVACCHI, N. \emph{Fenômenos de Transferência}.
+  [S.l.]: SBM, 2010.}
+
 \bibitem{gmsh}
 \abntrefinfo{Geuzaine e Remacle}{GEUZAINE; REMACLE}{2009}
 {GEUZAINE, C.; REMACLE, J.-F. Gmsh: A 3-d finite element mesh generator with
   built-in pre- and post-processing facilities.
 \emph{International Journal for Numerical Methods in Engineering}, John Wiley
   and Sons, v.~79, 2009.}
-
-\bibitem{pontes_norberto}
-\abntrefinfo{Pontes e Mangiavacchi}{PONTES; MANGIAVACCHI}{2010}
-{PONTES, J. da R.~M.; MANGIAVACCHI, N. \emph{Fenômenos de Transferência}.
-  [S.l.]: SBM, 2010.}
 
 \bibitem{crowe}
 \abntrefinfo{Crowe}{CROWE}{2011}

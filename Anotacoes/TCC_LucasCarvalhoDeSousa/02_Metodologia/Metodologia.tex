@@ -54,7 +54,7 @@ Pode-se rescrever a equação de conservação de massa aplicando-se o \textit{T
     \int_{V_c}\left(\dfrac{\partial \rho_f}{\partial t} + \vec{\nabla}.(\rho_f \vec{v}_f) \right)d V_c = 0
     \label{cons_mass_int}
 \end{equation}
-obtendo-se a equação integral da conservação de massa, onde $\vec{\nabla}$ é o operador diferencial \textit{nabla} de componentes $\vec{\nabla}=\left(\tfrac{\partial}{\partial \hat{i}}, \tfrac{\partial}{\partial \hat{j}}, \tfrac{\partial}{\partial \hat{k}}\right)$..
+obtendo-se a equação integral da conservação de massa, onde $\vec{\nabla}$ é o operador diferencial gradiente de componentes $\vec{\nabla}=\left(\tfrac{\partial}{\partial \hat{i}}, \tfrac{\partial}{\partial \hat{j}}, \tfrac{\partial}{\partial \hat{k}}\right)$..
 
 Ao considerar a conservação do ponto de vista pontual, pode-se remover o termo integral e escrever a forma diferencial da conservação de massa:
 \begin{equation}
@@ -107,7 +107,7 @@ As forças aplicadas à superfície da fronteira do volume de controle é:
     \oint_{S}\boldsymbol{\sigma}.\vec{n} dA
     \label{result_sup_qmov}
 \end{equation}
-onde $\boldsymbol{\sigma}$ é o tensor de tensões superficiais.
+onde $\boldsymbol{\sigma}$ é o tensor de tensões.
 
 E as forças de volume são, tomada apenas a força gravitacional:
 \begin{equation}
@@ -125,13 +125,12 @@ Montando-se a equação, a conservação de quantidade de movimento é represent
     \label{cons_qmov}
 \end{equation}
 
-Novamente, aplica-se o \textit{Teorema de Gauss} nas integrais de superfície:
+Novamente, aplica-se o \textit{Teorema de Gauss} nas integrais de superfície e extrai-se a forma integral da equação da conservação de quantidade de movimento:
 \begin{equation}
     \int_{V_c}\dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) d V_c + 
     \int_{V_c}\vec{\nabla}.(\rho_f \vec{v}_f.\vec{v}_f) dV_c =
     \int_{V_c}\vec{\nabla}.\boldsymbol{\sigma} dV_c +
     \int_{V_c}\rho_f \vec{g} dV_c
-    \label{cons_qmov}
 \end{equation}
 
 Simplificando:
@@ -142,8 +141,261 @@ Simplificando:
 	    \vec{\nabla}.\boldsymbol{\sigma} -
 	    \rho_f \vec{g}
     \right) = 0
-    \label{cons_qmov}
+    \label{cons_qmov_int}
 \end{equation}
+
+Novamente, considerando-se a conservação do ponto de vista pontual, remove-se o termo integral para escrever a forma diferencial da conservação de quantidade de movimento:
+\begin{equation}
+    \dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) + 
+    \vec{\nabla}.(\rho_f \vec{v}_f.\vec{v}_f) =
+    \vec{\nabla}.\boldsymbol{\sigma} +
+    \rho_f \vec{g}
+    \label{cons_qmov_dif}
+\end{equation}
+
+Continuando a desenvolver a equação:
+\begin{equation}
+    \dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) + 
+    \vec{\nabla}(\rho_f \vec{v}_f.\vec{v}_f) =
+    \rho_f \dfrac{\partial \vec{v}_f}{\partial t} + 
+    \vec{v}_f \dfrac{\partial \rho_f}{\partial t} + 
+    \rho_f \vec{v}_f.\vec{\nabla}.\vec{v}_f +
+    \vec{v}_f.\vec{\nabla}.(\rho_f \vec{v}_f)
+    \label{cons_qmov_ini}
+\end{equation}
+\begin{equation}
+    \rho_f \left(
+    	\dfrac{\partial \vec{v}_f}{\partial t} +
+    	\vec{v}_f.\vec{\nabla}.\vec{v}_f 
+	\right) +
+	\vec{v}_f \left(
+    	\dfrac{\partial \rho_f}{\partial t} +
+    	\vec{\nabla}.(\rho_f \vec{v}_f)
+	\right)
+    \label{cons_qmov_mid}
+\end{equation}
+
+Novamente, é tomanda a hipóstese de um fluido incompressível.
+Portanto, a equação pode ser simplificada para ser escrita como:
+\begin{equation}
+    \rho_f \left(
+    	\dfrac{\partial \vec{v}_f}{\partial t} + 
+    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+	\right) =
+    \vec{\nabla}.\boldsymbol{\sigma} +
+    \rho_f \vec{g}
+    \label{cons_qmov_fin}
+\end{equation}
+
+Reescrevendo o tensor de tensões como uma soma de dois tensores, e o substituindo na equação, tem-se:
+\begin{equation}
+    \boldsymbol{\sigma} = -p\mathbf{I} + \boldsymbol{\tau}
+    \label{sigma}
+\end{equation}
+\begin{equation}
+    \rho_f \left(
+    	\dfrac{\partial \vec{v}_f}{\partial t} + 
+    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+	\right) =
+    -\vec{\nabla}p +
+    \vec{\nabla}.\boldsymbol{\tau} +
+    \rho_f \vec{g}
+    \label{cons_qmov_tensor}
+\end{equation}
+onde p é o campo de pressões no fluido, $\mathbf{I}$ é a matriz de indentidade e $\boldsymbol{\tau}$ é o tensor de tensões viscosas.
+
+Novamente é necessário fazer uma hipótese para este escoamento, para que seja possível definir as forças atuantes no fluido. 
+O tensor de tensões viscosas $\boldsymbol{\tau}$ está relacionado as propiedades do fluido, podendo ser definido matematicamente para um fluido homogêneo, isotrópico e newtoniano, como:
+\begin{equation}
+    \boldsymbol{\tau} = \mu_f\left(\vec{\nabla}.\vec{v}_f + \left(\vec{\nabla}.\vec{v}_f \right)^T \right)
+    \label{tau}
+\end{equation}
+onde $\mu_f$ é a viscosidade dinâmica do fluido.
+
+Substituindo a definição de $\boldsymbol{\tau}$ na \refeq{cons_qmov_tensor}, obtem-se:
+\begin{equation}
+    \rho_f \left(
+    	\dfrac{\partial \vec{v}_f}{\partial t} + 
+    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+	\right) =
+    -\vec{\nabla}p +
+    \vec{\nabla}.\left(\mu_f\left(\vec{\nabla}.\vec{v}_f + \left(\vec{\nabla}.\vec{v}_f \right)^T \right)\right) +
+    \rho_f \vec{g}
+\end{equation}
+
+Assumindo-se que a viscosidade dinâmica é constante para todo o fluido:
+\begin{equation}
+    \rho_f \left(
+    	\dfrac{\partial \vec{v}_f}{\partial t} + 
+    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+	\right) =
+    -\vec{\nabla}p +
+    \mu_f \vec{\nabla}.\left(\vec{\nabla}.\vec{v}_f + \left(\vec{\nabla}.\vec{v}_f \right)^T \right) +
+    \rho_f \vec{g}
+\end{equation}
+\begin{equation}
+    \rho_f \left(
+    	\dfrac{\partial \vec{v}_f}{\partial t} + 
+    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+	\right) =
+    -\vec{\nabla}p +
+    \mu_f \left(\nabla^2\vec{v}_f + \vec{\nabla}.\left(\vec{\nabla}.\vec{v}_f \right)^T \right) +
+    \rho_f \vec{g}
+    \label{tau_last}
+\end{equation}
+
+Utilizando o que foi obtido na Equação de Continuidade \refeq{continuity_final} pode-se substituir na equação \refeq{tau_last}:
+\begin{equation}
+    \rho_f \left(
+    	\dfrac{\partial \vec{v}_f}{\partial t} + 
+    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+	\right) =
+    -\vec{\nabla}p +
+    \mu_f \nabla^2\vec{v}_f +
+    \rho_f \vec{g}
+    \label{tau_simple}
+\end{equation}
+
+Dividindo-se todos os termos pela massa específica pode-se reescrever a equação \refeq{tau_simple}, obtem-se então a forma simplificada da \textit{Equação de Navier-Stoakes} para fluidos neutonianos incompressíveis e com viscosidade constante:
+\begin{equation}
+	\dfrac{\partial \vec{v}_f}{\partial t} + 
+	\vec{v}_f.\vec{\nabla}.\vec{v}_f =
+    -\dfrac{1}{\rho_f} \vec{\nabla}p +
+    \dfrac{\mu_f}{\rho_f} \nabla^2\vec{v}_f +
+    \vec{g}
+    \label{navier}
+\end{equation}
+
+%--------------------------------------------------------------
+\subsection{\textbf{Formulação Corrente-Vorticidade}}
+\label{sec_corr_vort}
+A formulação de corrente-vorticidade é um sistema de equações que providencia um método alternativo de se calcular as propiedades de um escoamento sem solucionar diretamente a equação de Navier-Stoakes \eqref{navier}.
+Isto permite simplificar a solução do problema, pois a Equação de Navier-Stoakes possui um forte acoplamento entre o campo de pressões e o campo de velocidades.
+
+Para isso, é utilizada a seguinte identidade vetorial:
+\begin{equation}
+    \vec{v}.\vec{\nabla}.\vec{v} = \vec{\nabla} \dfrac{v^2}{2} - \vec{v}\times\vec{\nabla}\times\vec{v}
+    \label{ident_vetor} 
+\end{equation}
+
+Substituindo na \refeq{navier}:
+\begin{equation}
+	\dfrac{\partial \vec{v}_f}{\partial t} + 
+	\vec{\nabla} \dfrac{v^2_f}{2} -
+	\vec{v}_f\times\vec{\nabla}\times\vec{v}_f =
+    -\dfrac{1}{\rho_f} \vec{\nabla}p +
+    \dfrac{\mu_f}{\rho_f} \nabla^2\vec{v}_f +
+    \vec{g}
+\end{equation}
+
+Em seguida, aplica-se o operador rotacional nos dois lados da equação:
+\begin{equation}
+	\vec{\nabla}\times\dfrac{\partial \vec{v}_f}{\partial t} + 
+	\vec{\nabla}\times\vec{\nabla} \dfrac{v^2_f}{2} -
+	\vec{\nabla}\times\vec{v}_f\times\vec{\nabla}\times\vec{v}_f =
+    -\vec{\nabla}\times\dfrac{1}{\rho_f} \vec{\nabla}p +
+    \vec{\nabla}\times\dfrac{\mu_f}{\rho_f} \nabla^2\vec{v}_f +
+    \vec{\nabla}\times\vec{g}
+\end{equation}
+
+Simplifica-se então a equação, pois os termos que possuem o operador gradiente são anulados, pois o rotacional do gradiente de um escalar é zero.
+O termo gravitacional também é anulado já que a derivada da constante $\vec{g}$ é zero.
+Fica-se com a seguinte equação:
+\begin{equation}
+	\dfrac{\partial}{\partial t}(\vec{\nabla}\times\vec{v}_f)-
+	\vec{\nabla}\times\vec{v}_f\times\vec{\nabla}\times\vec{v}_f =
+    \dfrac{\mu_f}{\rho_f} \nabla^2 (\vec{\nabla}\times\vec{v}_f)
+\end{equation}
+
+Define-se o vetor $\vec{\omega}$ como \textit{vorticidade}, onde $\vec{\omega}=\vec{\nabla}\times\vec{v}_f$.
+Substitui-se na equação:
+\begin{equation}
+	\dfrac{\partial \vec{\omega}}{\partial t} -
+	\vec{\nabla}\times\vec{v}_f\times\vec{\omega} =
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+\end{equation}
+
+Rearranjando-se as operações vetoriais, tem-se:
+\begin{equation}
+	\dfrac{\partial \vec{\omega}}{\partial t} +
+	\vec{v}_f.\vec{\nabla}.\vec{\omega} -
+	\vec{\omega}.\vec{\nabla}.\vec{v}_f =
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+\end{equation}
+
+Como a vorticidade é perpendicular ao vetor velocidade, para escoamentos bidimensionais pode-se anular o produto $\vec{\omega}.\vec{\nabla}.\vec{v}_f$\cite{pontes_norberto}.
+Então obtem-se a \textit{Equação da Vorticidade} para escoamentos de fluidos neutonianos incompressíveis:
+\begin{equation}
+	\dfrac{\partial \vec{\omega}}{\partial t} +
+	\vec{v}_f.\vec{\nabla}.\vec{\omega} =
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+    \label{vorticity}
+\end{equation}
+
+Para escoamentos permanentes bidimensionais de fluidos incompressíveis, a velocidade é calculada pela vazão volumétrica.
+Portanto, a velocidade pode ser substituída por um escalar $\psi$, conhecido como \textit{função corrente}.
+A relação entre a função corrente e o campo de velocidades do fluido é obtida através da manipulação da equação da continuidade \eqref{continuity}, dada como:
+\begin{equation}
+	\dfrac{\partial v_x}{\partial x} +
+	\dfrac{\partial v_y}{\partial y} =
+	0
+\end{equation}
+onde $v_x$ é a componente do campo de velocidades do fluido no eixo $x$ e $v_y$ é a componente do campo de velocidades do fluido no eixo $y$.
+
+E a relação entre elas é apresentada em seguida:
+\begin{equation}
+	v_x = \dfrac{\partial \psi}{\partial y}
+	\label{corr_x}
+\end{equation}
+\begin{equation}
+	v_y = -\dfrac{\partial \psi}{\partial x}
+	\label{corr_y}
+\end{equation}
+
+Enquanto a relação entre a função corrente e a vorticidade é:
+\begin{equation}
+	(\vec{\nabla}\times\vec{v}_f)_z =
+	\dfrac{\partial v_y}{\partial x} -
+	\dfrac{\partial v_x}{\partial y}
+\end{equation}
+
+Substituindo os termos de velocidade pelas equações \refeq{corr_x} e \refeq{corr_y}:
+\begin{equation}
+	\omega_z =
+	-\dfrac{\partial}{\partial x}\dfrac{\partial \psi}{\partial x} -
+	\dfrac{\partial}{\partial y}\dfrac{\partial \psi}{\partial y}
+\end{equation}
+\begin{equation}
+	\omega_z =
+	-\nabla^2\psi
+	\label{corrente_vorticidade}
+\end{equation}
+
+Então o sistema de corrente-vorticidade é apresentado como:
+\begin{equation}
+	\dfrac{\partial \vec{\omega}}{\partial t} +
+	\vec{v}_f.\vec{\nabla}.\vec{\omega} =
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+\end{equation}
+\begin{equation}
+	\nabla^2\psi =
+	-\omega_z
+\end{equation}
+\begin{equation}
+	\vec{v}_f = \left(\dfrac{\partial \psi}{\partial y},
+	-\dfrac{\partial \psi}{\partial x} \right)
+\end{equation}
+
+
+%--------------------------------------------------------------
+\subsection{\textbf{Forças Exercidas em Partículas}}
+\label{sec_eq_part}
+A principal equação que governa o comportamento do movimento das partículas é obtida a partir da 2ª Lei de Newton\cite{crowe}.
+\begin{equation}
+    \sum\vec{F}_{p} = \dfrac{d(m_p\vec{v}_p)}{dt}
+    \label{newton} 
+\end{equation}
+
 
 \begin{equation}
     \vec{F}_{mass} = \dfrac{\pi}{12} \rho_{f} d_{p}^3 \dfrac{d}{dt} \left(\vec{v}_{f} - \vec{v}_{p} \right) 
