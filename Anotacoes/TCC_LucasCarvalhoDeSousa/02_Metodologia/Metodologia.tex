@@ -1,6 +1,149 @@
 \chapter{METODOLOGIA}
 \label{metodologia}
 \section{\textbf{Introdução}}
+Este trabalho apresenta a modelagem de fluidos e partículas em um sistema de escoamento multifásico, portanto é preciso definir o que é um escoamento e quais as suas restrições para este trabalho.
+Um escoamento é o movimento das moléculas de um fluido em conjunto.
+As moléculas são tomadas como elementos infinitesimais, porém tratados de forma que não haja espaços vazios entre elas.
+Isto permite que as propiedades do fluido sejam tratadas pontualmente, podendo variar por exemplo sua densidade ou velocidade de ponto a ponto.
+Pode-se então modelar o comportamento destes escoamentos seguindo as equções de conservação:
+\begin{itemize}
+	\item \hyperref[cons_massa]{Conservação de Massa}
+	\item \hyperref[cons_qmov]{Conservação de Quantidade de Movimento}
+\end{itemize}
+%--------------------------------------------------------------
+\section{\textbf{Equações de Governo}}
+\label{sec_eq_governo}
+%--------------------------------------------------------------
+\subsection{\textbf{Conservação de Massa}}
+\label{sec_cons_massa}
+O princípio de conservação de massa sem geração descreve que, dentro de um volume de controle, a soma da \textbf{taxa de acúmulo de massa dentro do volume} com \textbf{o fluxo de massa que atravessa a fronteira do volume} é nula\cite{pontes_norberto}.
+
+O acúmulo de massa dentro do volume de controle é definido como:
+\begin{equation}
+    \int_{V_c}\dfrac{\partial}{\partial t} dm =  \int_{V_c}\dfrac{\partial}{\partial t} (\rho_f d V_c)
+    \label{acumulo_massa}
+\end{equation}
+\begin{equation}
+    m =  \rho_f V_c
+    \label{densidade}
+\end{equation}
+onde $V_c$ é o volume de controle, $dm$ é o elemento infinitesimal de massa e $\rho_f$ é a massa específica do fluido.
+
+Simplificando a equação de acúmulo de massa \eqref{acumulo_massa}, tomada para um volume de controle permanente, que não varia no tempo, tem-se:
+\begin{equation}
+    \int_{V_c}\dfrac{\partial}{\partial t} (\rho_f d V_c) = \int_{V_c}\dfrac{\partial \rho_f}{\partial t} d V_c + \int_{V_c} \rho_f \dfrac{\partial d V_c}{\partial t} = \int_{V_c}\dfrac{\partial \rho_f}{\partial t} d V_c
+    \label{acumulo_massa_simp}
+\end{equation}
+
+E o fluxo de massa que atravessa a fronteira é retratado como:
+\begin{equation}
+    \oint_{S}\rho_f \vec{v}_f.\vec{n} dA
+    \label{fluxo_massa}
+\end{equation}
+onde $S$ é a curva de contorno da fronteira do volume de controle, $\vec{v}_f$ é o campo de velocidades do fluido e $dA$ é o elemento infinitesimal de área da superfície de contorno do volume de controle.
+
+A conservação de massa é então representada como:
+\begin{equation}
+    \int_{V_c}\dfrac{\partial \rho_f}{\partial t} d V_c + \oint_{S}\rho_f \vec{v}_f.\vec{n} dA = 0
+    \label{cons_mass}
+\end{equation}
+
+Pode-se rescrever a equação de conservação de massa aplicando-se o \textit{Teorema de Gauss}\cite{pontes_norberto} na integral de superfície:
+\begin{equation}
+    \int_{V_c}\dfrac{\partial \rho_f}{\partial t} d V_c + \int_{V_c}\vec{\nabla}.(\rho_f \vec{v}_f) d V_c = 
+    \int_{V_c}\left(\dfrac{\partial \rho_f}{\partial t} + \vec{\nabla}.(\rho_f \vec{v}_f) \right)d V_c = 0
+    \label{cons_mass_int}
+\end{equation}
+obtendo-se a equação integral da conservação de massa, onde $\vec{\nabla}$ é o operador diferencial \textit{nabla} de componentes $\vec{\nabla}=\left(\tfrac{\partial}{\partial \hat{i}}, \tfrac{\partial}{\partial \hat{j}}, \tfrac{\partial}{\partial \hat{k}}\right)$..
+
+Ao considerar a conservação do ponto de vista pontual, pode-se remover o termo integral e escrever a forma diferencial da conservação de massa:
+\begin{equation}
+    \dfrac{\partial \rho_f}{\partial t} + \vec{\nabla}.(\rho_f \vec{v}_f) = 0
+    \label{cons_mass_dif}
+\end{equation}
+
+Esta equação é denominada \textit{Equação da Continuidade}, e pode ser reescrita como:
+\begin{equation}
+    \dfrac{\partial \rho_f}{\partial t} + \vec{v}_f.\vec{\nabla} \rho_f + \rho_f \vec{\nabla}.\vec{v}_f = 0
+    \label{continuity}
+\end{equation}
+
+Tomando-se algumas hipósteses, é possível simplificar mais a equação.
+Para um fluido incompressível, com massa específica invariante na posição e no tempo, a equação da continuidade pode ser escrita como:
+\begin{equation}
+    \rho_f \vec{\nabla}.\vec{v}_f = 0
+    \label{continuity_mid}
+\end{equation}
+
+Como a massa específica do fluido não pode ser nula, tem-se:
+\begin{equation}
+    \vec{\nabla}.\vec{v}_f = 0
+    \label{continuity_final}
+\end{equation}
+tomada para um \textbf{fluido incompressível}.
+
+
+%--------------------------------------------------------------
+\subsection{\textbf{Conservação de Quantidade de Movimento}}
+\label{sec_cons_qmov}
+A conservação de quantidade de movimento é similar a conservação de massa, porém é tomada como um termo vetorial.
+Para o caso deste trabalho, é utilizada a versão linear da conservação de quantidade de movimento.
+Portanto, tem-se que a conservação da quantidade de movimento determina que a \textbf{taxa de acúmulo de quantidade de movimento linear dentro do volume de controle} mais \textbf{o fluxo de quantidade de movimento linear que atravessa a fronteira do volume de controle} é igual a \textbf{soma das forças aplicadas à superficie da fronteira do volume de controle e as forças do volume}.
+
+A definição da taxa de acúmulo de quantidade de movimento linear dentro do volume de controle é:
+\begin{equation}
+    \int_{V_c}\dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) d V_c
+    \label{acumulo_qmov}
+\end{equation}
+
+E o fluxo de quantidade de movimento que atravessa a fronteira é retratado como:
+\begin{equation}
+    \oint_{S}\rho_f \vec{v}_f \vec{v}_f.\vec{n} dA
+    \label{fluxo_qmov}
+\end{equation}
+
+As forças aplicadas à superfície da fronteira do volume de controle é:
+\begin{equation}
+    \oint_{S}\boldsymbol{\sigma}.\vec{n} dA
+    \label{result_sup_qmov}
+\end{equation}
+onde $\boldsymbol{\sigma}$ é o tensor de tensões superficiais.
+
+E as forças de volume são, tomada apenas a força gravitacional:
+\begin{equation}
+    \int_{V_c}\rho_f \vec{g} dV_c
+    \label{result_vol_qmov}
+\end{equation}
+onde $\vec{g}$ é a aceleração gravitacional presente.
+
+Montando-se a equação, a conservação de quantidade de movimento é representada como:
+\begin{equation}
+    \int_{V_c}\dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) d V_c + 
+    \oint_{S}\rho_f \vec{v}_f \vec{v}_f.\vec{n} dA =
+    \oint_{S}\boldsymbol{\sigma}.\vec{n} dA +
+    \int_{V_c}\rho_f \vec{g} dV_c
+    \label{cons_qmov}
+\end{equation}
+
+Novamente, aplica-se o \textit{Teorema de Gauss} nas integrais de superfície:
+\begin{equation}
+    \int_{V_c}\dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) d V_c + 
+    \int_{V_c}\vec{\nabla}.(\rho_f \vec{v}_f.\vec{v}_f) dV_c =
+    \int_{V_c}\vec{\nabla}.\boldsymbol{\sigma} dV_c +
+    \int_{V_c}\rho_f \vec{g} dV_c
+    \label{cons_qmov}
+\end{equation}
+
+Simplificando:
+\begin{equation}
+    \int_{V_c} \left(
+	    \dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) + 
+	    \vec{\nabla}.(\rho_f \vec{v}_f.\vec{v}_f) -
+	    \vec{\nabla}.\boldsymbol{\sigma} -
+	    \rho_f \vec{g}
+    \right) = 0
+    \label{cons_qmov}
+\end{equation}
 
 \begin{equation}
     \vec{F}_{mass} = \dfrac{\pi}{12} \rho_{f} d_{p}^3 \dfrac{d}{dt} \left(\vec{v}_{f} - \vec{v}_{p} \right) 

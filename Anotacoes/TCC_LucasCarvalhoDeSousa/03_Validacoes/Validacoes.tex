@@ -16,7 +16,7 @@ São calculados também a média e o desvio padrão dos erros relativos pelas eq
     \label{error_mean}
 \end{equation}
 \begin{equation}
-    er_{std} = \sqrt{\frac{1}{N}\sum_{i=0}^{N} (er_i-er_{mean})^2}
+    er_{std} = \left\| \frac{1}{N}\sum_{i=0}^{N} er_i-er_{mean} \right\|_2
     \label{error_std} 
 \end{equation}
 
@@ -71,7 +71,9 @@ As condições de contorno e o dominio bidimensional utilizados na simulação s
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_boundary_conditions.pdf}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_boundary_conditions.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Condições de contorno da placa para o problema de Laplace \ref{sec_laplace_dir}.}
     \label{laplace_d_bc}
 \end{figure}
@@ -81,7 +83,9 @@ A malha foi criada pelo o software GMSH como proposto por \cite{gmsh} e importad
 A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura, e que é possível observar que o campo de temperatura possui um perfil linear variando de 0 (cor azul) a 1 (cor vermelha).
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_3d.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_3d.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Distribuição de temperaturas na placa da solução permanente da equação de Laplace \ref{sec_laplace_dir}.}
     \label{laplace_d_3d}
 \end{figure}
@@ -90,7 +94,9 @@ A comparação entre os resultados da solução analítica \eqref{laplace_d_sol}
 Essa proximidade é quantificada pelo erro relativo médio que foi de $0.1136\%$ e com desvio padrão de $0.0801\%$
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_comparison.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_comparison.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado das solução númerica e analítica do caso de transporte de temperatura em sólidos no regime permanente.}
     \label{laplace_d_perm_comp}
 \end{figure}
@@ -110,7 +116,9 @@ A \ref{laplace_d_trans_comp} apresenta a evolução do campo de temperaturas em 
 O erro relativo médio calculado para este caso foi de $0.1092\%$ e com desvio padrão de $0.0801\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_transient_comparison.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_transient_comparison.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado das soluções númericas e analítica de transporte em sólidos no regime transiente.}
     \label{laplace_d_trans_comp}
 \end{figure}
@@ -139,7 +147,9 @@ As condições de contorno e o dominio bidimensional utilizados na simulação s
 A geração de calor utilizada foi de $Q = 40W/m^3$ e a condutividade termica foi de $k=5 W/m^{\circ}C$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_boundary_conditions.pdf}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_boundary_conditions.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Condições de contorno da placa para o problema de Poisson \ref{sec_poisson_dir}.}
     \label{poisson_d_bc}
 \end{figure}
@@ -148,7 +158,9 @@ Novamente, foi utilizada uma malha triangular linear não estruturada com 768 el
 A \ref{poisson_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura, onde é possível observar que o campo de temperatura possui um perfil parabólico variando de 0 (cor azul) a 1 (cor vermelha).
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_permanent_3d.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_permanent_3d.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Distribuição de temperaturas na placa da solução do problema permanente de Poisson \ref{sec_poisson_dir}.}
     \label{poisson_d_3d}
 \end{figure}
@@ -157,7 +169,9 @@ A comparação entre os resultados da solução analítica \eqref{poisson_d_sol}
 Essa proximidade é quantificada pelo erro relativo médio que foi de $0.323\%$ e com desvio padrão de $1.0101\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_permanent_comparison.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_permanent_comparison.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado das solução númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração de calor.}
     \label{poisson_d_perm_comp}
 \end{figure}
@@ -169,7 +183,9 @@ A \ref{poisson_d_trans_comp} apresenta a evolução do campo de temperaturas em 
 O erro relativo médio calculado para este caso foi de $0.325\%$ e com desvio padrão de $1.0101\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_transient_comparison.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_transient_comparison.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado das soluções númericas e analítica do problema de trasnporte de temperatura em sólidos no regime transiente com geração de calor.}
     \label{poisson_d_trans_comp}
 \end{figure}
@@ -192,7 +208,9 @@ As condições de contorno e o dominio bidimensional utilizados na simulação s
 A geração de calor utilizada foi de $Q = -7W/m^3$, a condutividade termica foi de $k=5 W/m^{\circ}C$ e o fluxo de calor foi de $q = -5 W/m^2$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/poisson_neumann_boundary_conditions.pdf}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/poisson_neumann_boundary_conditions.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Condições de contorno da placa para o problema de Poisson \ref{sec_poisson_neu}.}
     \label{poisson_n_bc}
 \end{figure}
@@ -201,7 +219,9 @@ Novamente, foi utilizada uma malha triangular linear não estruturada com 768 el
 A \ref{poisson_n_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura variando de 0 (cor azul) a 0.35 (vermelha).
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/poisson_neumann_permanent_3d.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/poisson_neumann_permanent_3d.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Distribuição de temperaturas na placa da solução do problema permanente de Poisson \ref{sec_poisson_neu}.}
     \label{poisson_n_3d}
 \end{figure}
@@ -210,7 +230,9 @@ A comparação entre os resultados da solução analítica \eqref{poisson_n_sol}
 A semelhança entre elas é quantificada pelo erro relativo médio que foi de $0.427\%$ e com desvio padrão de $0.8414\%$:
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/poisson_neumann_permanent_comparison.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/poisson_neumann_permanent_comparison.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado das solução númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
     \label{poisson_n_perm_comp}
 \end{figure}
@@ -221,7 +243,9 @@ A \ref{poisson_n_trans_comp} apresenta a evolução do campo de temperaturas em 
 O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio padrão de $0.9205\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/poisson_neumann_transient_comparison.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/poisson_neumann_transient_comparison.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado das soluções númericas e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
     \label{poisson_n_trans_comp}
 \end{figure}
@@ -252,7 +276,9 @@ A velocidade máxima $U_{max}$ é tomada em função da velocidade de entrada $U
 Foi escolhido um valor para o número de Reynolds\eqref{reynolds} de $Re=1$ e um intervalo de tempo $dt=0.1s$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{figures/Poiseuille_boundary_conditions.pdf}
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Poiseuille_boundary_conditions.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Condições de contorno de um escoamento entre placas paralelas de Poiseuille \ref{sec_poiseuille}.}
     \label{poiseuille_bc}
 \end{figure}
@@ -263,7 +289,9 @@ Nota-se que a solução numérica converge para a solução analítica ao se apr
 O erro relativo médio calculado para este caso foi de $4.587\%$ e com desvio padrão de $5.3501\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/Poiseuille_validation.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/Poiseuille_validation.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado das soluções númericas e analítica \ref{poiseuille_sol} do problema de corrente-vorticidade no regime permanente.}
     \label{poiseuille_comp}
 \end{figure}
@@ -287,7 +315,9 @@ Para esta simulação foram usadas as condições de contorno e o dominio bidime
 Foram tomadas as velocidade superior como $U_{sup}=1m/s$ e $U_{inf}=-1m/s$ para um escoamente com número de Reynolds de $Re=1$ e um intervalo de tempo $dt=1.0s$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{figures/Couette_boundary_conditions.pdf}
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Couette_boundary_conditions.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Condições de contorno de um escoamento entre placas paralelas de Couette \ref{sec_couette}.}
     \label{couette_bc}
 \end{figure}
@@ -298,7 +328,9 @@ Pode-se observar que a solução numérica converge para a solução analítica 
 O erro relativo médio calculado para este caso foi de $1.4251\%$ e com desvio padrão de $27.934\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/Couette_validation.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/Couette_validation.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado das soluções númericas e analítica \ref{couette_sol} do problema de corrente-vorticidade no regime permanente.}
     \label{couette_comp}
 \end{figure}
@@ -317,7 +349,9 @@ Para a simulação de cada força foi utilizada uma malha triangular linear não
 Pode-se observar os parâmetros padrão, a menos que especificado o contrário, utilizados a seguir:
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/forces_boundary_conditions.pdf}
+    \stackunder{
+        \includegraphics[width=0.7\linewidth]{figures/forces_boundary_conditions.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Condições de contorno de uma partícula isolada sob efeito de uma força.}
     \label{force_bc}
 \end{figure}
@@ -345,7 +379,9 @@ Foi utilizado um campo de velocidades com valor constante de $U=2m/s$.
 O erro relativo médio calculado para este caso foi de $7.706e^{-4}\%$ e com desvio padrão de $1.753e^{-3}\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/Forces_gravitational_validation.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/Forces_gravitational_validation.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado da solução númerica e analítica \ref{grav_sol} do percurso de uma partícula em queda livre.}
     \label{grav_comp}
 \end{figure}
@@ -376,7 +412,9 @@ Pode-se observar que a partícula é acelerada até atingir a velocidade do flu�
 O erro relativo médio calculado para este caso foi de $3.083e^{-5}\%$ e com desvio padrão de $1.6723e^{-5}\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/Forces_drag_validation.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/Forces_drag_validation.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado da solução númerica e analítica \ref{drag_sol} do percurso de uma partícula em movimento de arrasto em um escoamento.}
     \label{drag_comp}
 \end{figure}
@@ -408,7 +446,9 @@ Para este caso, foi preciso utilizar a malha padrão com condições diferentes 
 As condições utilizadas são:
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\linewidth]{figures/lift_boundary_conditions.pdf}
+    \stackunder{
+        \includegraphics[width=0.7\linewidth]{figures/lift_boundary_conditions.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Condições de contorno de uma partícula isolada sob efeito da força de sustentação.}
     \label{lift_bc}
 \end{figure}
@@ -419,7 +459,9 @@ Também foi incluída uma curva que demostra a trajetória da partícula sem o e
 O erro relativo médio calculado para este caso foi de $6.162e^{-7}\%$ e com desvio padrão de $3.6111e^{-7}\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/Forces_lift_validation.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/Forces_lift_validation.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado da solução númerica e analítica \ref{lift_sol} do percurso de uma partícula em movimento de sustentação em um escoamento.}
     \label{lift_comp}
 \end{figure}
@@ -451,7 +493,9 @@ Pode-se observar que a partícula é acelerada até atingir a velocidade do flu�
 O erro relativo médio calculado para este caso foi de $6.6574e^{-3}\%$ e com desvio padrão de $1.1362e^{-3}\%$.
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.7\linewidth]{figures/Forces_added_mass_validation.png}
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/Forces_added_mass_validation.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Comparação de resultado da solução númerica e analítica \ref{mass_sol} do percurso de uma partícula em movimento de aceleração em um escoamento.}
     \label{mass_comp}
 \end{figure}
