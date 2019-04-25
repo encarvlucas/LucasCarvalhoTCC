@@ -466,3 +466,227 @@ Retira-se então os somatórios das funções interpoladoras das integrais, e co
     \right) = 0
 \end{equation}
 
+%--------------------------------------------------------------
+\subsection{\textbf{Malha Computacional}}
+A malha utilizada pode ser estruturada, com nós equidistantes entre si, ou não estruturada, nós escolhidos a critério do criador da malha.
+É comum utilizar malhas não estruturadas com zonas de maior interesse com elementos menores, para se obter informações mais precisas nestes locais.
+Em certos casos de equações com acoplamentos fortemente ligados, se torna necessário utilizar elementos com mais informações atreladas, como elementos quadráticos ou cúbicos.
+Este é o caso da solução da equação de Navier-Stoakes.
+Porém, para evitar esta restrição, este trabalho utilizou a formulação de corrente-vorticidade, que desvia deste problema.
+Podendo então utilizar elementos lineares e simplificando sua implementação.
+
+Os tipos de elementos mais comuns aplicados a aos diferentes tipos de simulações são \cite{gustavo}:
+\begin{itemize}
+    \item Dimensão do problema
+    \begin{itemize}
+        \item[-] Caso unidimensional: Retas
+        \item[-] Caso bidimensional: Triângulos ou Retângulos
+        \item[-] Caso tridimensional: Tetraedros ou Prismas
+    \end{itemize}
+    \item Ordem dos polinômios interpoladores
+    \begin{itemize}
+        \item[-] Primeiro grau: Lineares 
+        \item[-] Segundo grau: Quadráticos
+        \item[-] Terceiro grau: Cúbicos
+    \end{itemize}
+\end{itemize}
+
+Para este trabalho foi escolhido o elemento do tipo triangular com interpolação linear, pois não há restições no problema escolhido, e este é o caso mais aplicado na literatura.
+A \ref{element} mostra como são os elementos utilizados:
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=0.5\linewidth]{figures/element.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Elemento triangular linear.}
+    \label{element}
+\end{figure}
+
+Pode-se notar na \ref{element} que o elemento de índice $e_n$ é delimitado pelos nós $p_i$, $p_j$ e $p_k$.
+A função de interpolação aplicada entre os nós é uma função linear entre suas posições.
+
+Então pode-se escrever as equações do problema em sua forma matricial como:
+\begin{equation}
+    \mathbf{M}
+    \dfrac{\partial \omega}{\partial t} +
+    v_{fx}
+    \mathbf{G_x}
+    \omega +
+    v_{fy}
+    \mathbf{G_y}
+    \omega +
+    \dfrac{\mu_f}{\rho_f}
+    \left(
+    \mathbf{K_{xx}} +
+    \mathbf{K_{yy}}
+    \right)
+    \omega = 0
+    \label{last_dt}
+\end{equation}
+\begin{equation}
+    -\left(
+    \mathbf{K_{xx}} +
+    \mathbf{K_{yy}}
+    \right)
+    \psi +
+    \mathbf{M}
+    \omega = 0
+\end{equation}
+\begin{equation}
+    \mathbf{M}
+    v_{fx}
+    \omega -
+    \mathbf{G_y}
+    \psi = 0
+\end{equation}
+\begin{equation}
+    \mathbf{M}
+    v_{fy}
+    \omega +
+    \mathbf{G_x}
+    \psi = 0
+\end{equation}
+onde $\mathbf{M}$, $\mathbf{G_{x}}$, $\mathbf{G_{y}}$, $\mathbf{K_{xx}}$ e $\mathbf{K_{yy}}$ são as matrizes elementares de dimensão $n_p \times n_p$.
+
+Estas matrizes são montadas a partir da contribuição local de cada nó em um elemento e unidas na matriz geral, onde cada posição da matriz é o valor correspondente ao nó de mesmo índice.
+As matrizes locais $\mathbf{m^e}$, $\mathbf{g_{x}^e}$, $\mathbf{g_{y}^e}$, $\mathbf{k_{xx}^e}$ e $\mathbf{k_{yy}^e}$, para cada elemento $e$ são definidas como:
+\begin{align}
+    \mathbf{m^e} &=
+    \int_{\Omega^e}
+    N_i^e N_j^e
+    d\Omega^e \\
+    \mathbf{g_x^e} &=
+    \int_{\Omega^e}
+    \dfrac{\partial N_i^e}{\partial x}
+    N_j^e
+    d\Omega^e \\
+    \mathbf{g_y^e} &=
+    \int_{\Omega^e}
+    \dfrac{\partial N_i^e}{\partial y}
+    N_j^e
+    d\Omega^e \\
+    \mathbf{k_{xx}^e} &=
+    \int_{\Omega^e}
+    \dfrac{\partial N_i^e}{\partial x}
+    \dfrac{\partial N_j^e}{\partial x}
+    d\Omega^e \\
+    \mathbf{k_{yy}^e} &=
+    \int_{\Omega^e}
+    \dfrac{\partial N_i^e}{\partial y}
+    \dfrac{\partial N_j^e}{\partial y}
+    d\Omega^e
+\end{align}
+
+
+
+%--------------------------------------------------------------
+\section{\textbf{Método de Diferenças Finitas}}
+\label{mdf}
+O Método de Diferenças Finitas é um das mais antigas e simples formas de se calcular o valor de um diferencial numéricamente.
+A base do método é tomar diferenças pequenas o suficiente para replicar o valor tomado no meio contínuo.
+
+Imagina-se uma função $f(x)$ tomada no domínio $x \in \mathbb{R}$ e deseja-se obter a derivada $\tfrac{df}{dx}(x)$.
+Tomando-se definição da derivada, pode-se escrever:
+\begin{equation}
+    \dfrac{df}{dx}(x) = \lim_{h\to0} \dfrac{f(x+h)-f(x)}{h}
+    \label{derivative}
+\end{equation}
+onde $h$ é a diferença entre os pontos tomados na variável $x$.
+Ou seja, caso deseja-se obter o valor da derivada desta função numéricamente basta aplicar a diferença entre dois pontos com afastamento suficientemente pequeno.
+
+Outra forma de interpretar-se o MDF seria através da aplicação da \textit{Série de Taylor}.
+Tomando-se novamente a função $f(x)$ e a série de Taylor aplicada a ela ao redor de um ponto $x$ qualquer, tem-se:
+\begin{equation}
+    f(x + h) \approx
+    f(x) +
+    \dfrac{df(x)}{dx}(x + h - x) +
+    \dfrac{1}{2!}\dfrac{d^2f(x)}{dx^2}(x + h - x)^2 +
+    \dfrac{1}{3!}\dfrac{d^3f(x)}{dx^3}(x + h - x)^3 +
+    \ldots
+\end{equation}
+
+Como deseja-se obter o valor da derivada de primeira ordem, pode-se reorganizar a equação para extrair o termo $\tfrac{df(x)}{dx}$:
+\begin{equation}
+    \dfrac{df(x)}{dx} \approx
+    \frac{
+        f(x + h) -
+        f(x) -
+        \dfrac{1}{2!}\dfrac{d^2f(x)}{dx^2}(h)^2 -
+        \dfrac{1}{3!}\dfrac{d^3f(x)}{dx^3}(h)^3 -
+        \ldots
+    }{h}
+\end{equation}
+
+Em certos casos não se tem nenhuma informação sobre as derivadas de ordens superiores da função, portanto pode-se aproximar o valor da derivada ao remover os termos com ordens superiores e substituí-los por um termo de erro $O(h^2)$.
+\begin{equation}
+    \dfrac{df(x)}{dx} \approx
+    \frac{
+        f(x + h) -
+        f(x)
+    }{h} +
+    O(h^2)
+    \label{dif}
+\end{equation}
+onde, novamente, quanto menor for o passo $h$, mais o valor da derivada numérica se aproximará do valor contínuo.
+
+
+%--------------------------------------------------------------
+\subsection{\textbf{Discretização da Corrente-Vorticidade no Tempo}}
+A equação de governo \refeq{last_dt} do problema de corrente-vorticidade ainda possui um termo derivativo não discretizado.
+Este é o termo $\tfrac{\partial \omega}{\partial t}$, e ele é discretizado utilizando a disctretização em MDF apresentada em \refeq{dif}.
+ \begin{equation}
+    \dfrac{\partial \omega}{\partial t} \approx
+    \frac{
+        \omega(t + dt) -
+        \omega(t)
+    }{dt}
+\end{equation}
+onde $dt$ é o passo de tempo da simulação.
+
+Será utilizada a notação de índice de variáveis no tempo como sobreescrito, onde $t_n$ é o índice do passo no tempo, $\omega^{t_{n+1}} = \omega(t + dt)$ e $\omega^{t_{n}} = \omega(t)$.
+Então a discretização final do sistema corrente-vorticidade é:
+\begin{equation}
+    \left(
+        \mathbf{M}
+        v_{fx}
+        \mathbf{G_x}+
+        v_{fy}
+        \mathbf{G_y} +
+        \dfrac{\mu_f}{\rho_f}
+        \left(
+        \mathbf{K_{xx}} +
+        \mathbf{K_{yy}}
+        \right)
+    \right)
+    \omega^{t_{n+1}} = 
+    \mathbf{M}
+    \omega^{t_{n}}
+    \label{last_w}
+\end{equation}
+\begin{equation}
+    \left(
+    \mathbf{K_{xx}} +
+    \mathbf{K_{yy}}
+    \right)
+    \psi =
+    \mathbf{M}
+    \omega^{t_{n+1}}
+    \label{last_psi}
+\end{equation}
+\begin{equation}
+    \mathbf{M}
+    v_{fx}
+    \omega^{t_{n+1}} =
+    \mathbf{G_y}
+    \psi
+    \label{last_vx}
+\end{equation}
+\begin{equation}
+    \mathbf{M}
+    v_{fy}
+    \omega^{t_{n+1}} = -
+    \mathbf{G_x}
+    \psi
+    \label{last_vy}
+\end{equation}
+

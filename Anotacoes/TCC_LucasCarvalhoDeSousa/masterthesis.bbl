@@ -16,6 +16,13 @@
   Edition}. 2. ed. [S.l.]: CRC Press, 2011.
 ISBN 978-1-4398-4050-4,978-1-4398-4051-1.}
 
+\bibitem{gustavo}
+\abntrefinfo{Anjos}{ANJOS}{}
+{ANJOS, G.~R. dos.
+\emph{Hydrodynamics FIeld Solution of electrochemical Cells Through Finite
+  Element Method.}
+Tese (Doutorado) --- Federal University of Rio de Janeiro, Brazil.}
+
 \bibitem{gmsh}
 \abntrefinfo{Geuzaine e Remacle}{GEUZAINE; REMACLE}{2009}
 {GEUZAINE, C.; REMACLE, J.-F. Gmsh: A 3-d finite element mesh generator with
