@@ -1,0 +1,304 @@
+%\chapter{METODOLOGIA}
+%\label{metodologia}
+%--------------------------------------------------------------
+\chapter{\textbf{MODELAGEM NUMÉRICA}}
+\label{sec_modelagem}
+
+%--------------------------------------------------------------
+\section{\textbf{Introdução}}
+Neste trabalho foram utilizados dois tipos de modelagem numéricas para simular o comportamento do sistema multifásico.
+Na fase dos fluidos, foi utilizado o \hyperref[mef]{\textit{Método de Elementos Finitos} (MEF)} para solucionar as equações de governo, pois ele proporciona uma forma eficiente de solucionar as equações com rápida convergência.
+Enquanto para a fase sólida das partículas, e o termo temporal das equações dos fluidos, foi utilizado o \hyperref[mdf]{\textit{Método de Diferenças Finitas} (MDF)}, o qual foi escolhido por sua simplicidade de implementação tomando-se cuidado com suas restrições de convergência.
+
+
+%--------------------------------------------------------------
+\section{\textbf{Método de Elementos Finitos}}
+\label{mef}
+%--------------------------------------------------------------
+\subsection{\textbf{Formulação Forte}}
+\label{form_forte}
+A formulação forte são as equações de governo do problema na sua forma diferencial, com as condições de contorno definidas.
+As equações do fluido definidas em \refeq{fluid_eq1}, \refeq{fluid_eq2} e \refeq{fluid_eq3} são tomadas no domínio $\Omega \subset \mathbb{R}^2$ com condições de contorno definidas em:
+\begin{align}
+    \omega &= \omega_{\Gamma} \text{ em } \Gamma_1 \\
+    \psi &= \psi_{\Gamma} \text{ em } \Gamma_2 \\
+    \vec{v}_f &= \vec{v}_{f\Gamma} \text{ em } \Gamma_3 
+\end{align}
+
+%--------------------------------------------------------------
+\subsection{\textbf{Formulação Fraca}}
+A formulação fraca é o resultado da ponderação da equação da forma forte integrada sobre o domínio.
+Para o encontrar as formas fracas das equações de governo tomadas neste trabalho, inicialmente são estabelecidos resíduos $\vec{R_i}$ nas equações de forma forte:
+\begin{equation}
+    \dfrac{\partial \vec{\omega}}{\partial t} +
+    \vec{v}_f.\vec{\nabla}.\vec{\omega} -
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega} =
+    \vec{R_1}
+\end{equation}
+\begin{equation}
+    \nabla^2\psi +
+    \omega_z =
+    \vec{R_2}
+\end{equation}
+\begin{equation}
+    \vec{v}_f - \left(\dfrac{\partial \psi}{\partial y},
+    -\dfrac{\partial \psi}{\partial x} \right) =
+    \vec{R_3}
+\end{equation}
+
+Em seguida, busca-se impor o valor médio de cada resíduo como nulo, de forma que:
+\begin{align}
+    \int_{\Omega} \vec{R_1} . \vec{\delta} d\Omega = 0 \\
+    \int_{\Omega} \vec{R_2} . \vec{\phi} d\Omega = 0\\
+    \int_{\Omega} \vec{R_3} . \vec{\xi} d\Omega = 0
+\end{align}
+onde $\vec{\delta}$, $\vec{\phi}$ e $\vec{\xi}$ são as funções de peso de cada equação, respectivamente.
+As funções peso são funções arbitrárias utilizadas para obter as componentes de contribuição de cada nó.
+
+Substituindo-se os resíduos nas integrais, tem-se:
+\begin{equation}
+    \int_{\Omega} \left(
+    \dfrac{\partial \vec{\omega}}{\partial t} +
+    \vec{v}_f.\vec{\nabla}.\vec{\omega} -
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+    \right).\vec{\delta} d\Omega = 0
+\end{equation}
+\begin{equation}
+    \int_{\Omega} \left(
+    \nabla^2\psi +
+    \omega_z
+    \right).\vec{\phi} d\Omega = 0
+\end{equation}
+\begin{equation}
+    \int_{\Omega} \left(
+    \vec{v}_f - \left(\dfrac{\partial \psi}{\partial y},
+    -\dfrac{\partial \psi}{\partial x} \right)
+    \right).\vec{\xi} d\Omega = 0
+\end{equation}
+
+Reorganiza-se as integrais:
+\begin{equation}
+    \int_{\Omega}
+    \dfrac{\partial \vec{\omega}}{\partial t}
+    .\vec{\delta} d\Omega +
+    \int_{\Omega}
+    \vec{v}_f.\vec{\nabla}.\vec{\omega}
+    .\vec{\delta} d\Omega -
+    \int_{\Omega}
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+    .\vec{\delta} d\Omega = 0
+\end{equation}
+\begin{equation}
+    \int_{\Omega}
+    \nabla^2\psi
+    .\vec{\phi} d\Omega +
+    \int_{\Omega}
+    \omega_z
+    .\vec{\phi} d\Omega = 0
+\end{equation}
+\begin{equation}
+    \int_{\Omega}
+    \vec{v}_f
+    .\vec{\xi} d\Omega -
+    \int_{\Omega}
+    \left(\dfrac{\partial \psi}{\partial y},
+    -\dfrac{\partial \psi}{\partial x} \right)
+    .\vec{\xi} d\Omega = 0
+\end{equation}
+
+Aplica-se agora o Teorema de Green nos termos difusivos das equações:
+\begin{equation}
+    -\int_{\Omega}
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+    .\vec{\delta} d\Omega = 
+    \int_{\Omega}
+    \dfrac{\mu_f}{\rho_f}
+    \vec{\nabla}.\vec{\omega}.\vec{\nabla}
+    .\vec{\delta} d\Omega -
+    \int_{\Gamma}
+    \dfrac{\mu_f}{\rho_f}
+    \vec{\delta}.\vec{\nabla}.\vec{\omega}
+    .\vec{n} d\Gamma
+\end{equation}
+\begin{equation}
+    \int_{\Omega}
+    \nabla^2\psi
+    .\vec{\phi} d\Omega = -
+    \int_{\Omega}
+    \vec{\nabla}.\psi.\vec{\nabla}
+    .\vec{\phi} d\Omega +
+    \int_{\Gamma}
+    \vec{\phi}.\vec{\nabla}.\psi
+    .\vec{n} d\Gamma
+\end{equation}
+onde $\vec{n}$ é um vetor normal unitário, orientado para o exterior do contorno $\Gamma$.
+Como as condições de contorno definidas para o problema em \ref{form_forte} apontam apenas condições de Dirichlet, isto é, valores fixos no contorno, pode-se assumir como hipótese que $\delta=0$ e $\phi=0$ em todo o contorno $\Gamma$.
+Assim, a integral em $\Gamma$ é nula e os termos difusivos são anulados:
+\begin{equation}
+    -\int_{\Omega}
+    \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+    .\vec{\delta} d\Omega = 
+    \int_{\Omega}
+    \dfrac{\mu_f}{\rho_f}
+    \vec{\nabla}.\vec{\omega}.\vec{\nabla}
+    .\vec{\delta} d\Omega
+\end{equation}
+\begin{equation}
+    \int_{\Omega}
+    \nabla^2\psi
+    .\vec{\phi} d\Omega = -
+    \int_{\Omega}
+    \vec{\nabla}.\psi.\vec{\nabla}
+    .\vec{\phi} d\Omega
+\end{equation}
+
+As equações ficam então como:
+\begin{equation}
+    \int_{\Omega}
+    \dfrac{\partial \vec{\omega}}{\partial t}
+    .\vec{\delta} d\Omega +
+    \int_{\Omega}
+    \vec{v}_f.\vec{\nabla}.\vec{\omega}
+    .\vec{\delta} d\Omega +
+    \int_{\Omega}
+    \dfrac{\mu_f}{\rho_f}
+    \vec{\nabla}.\vec{\omega}.\vec{\nabla}
+    .\vec{\delta} d\Omega= 0
+\end{equation}
+\begin{equation}
+    -\int_{\Omega}
+    \vec{\nabla}.\psi.\vec{\nabla}
+    .\vec{\phi} d\Omega +
+    \int_{\Omega}
+    \omega_z
+    .\vec{\phi} d\Omega = 0
+\end{equation}
+\begin{equation}
+    \int_{\Omega}
+    \vec{v}_f
+    .\vec{\xi} d\Omega -
+    \int_{\Omega}
+    \left(\dfrac{\partial \psi}{\partial y},
+    -\dfrac{\partial \psi}{\partial x} \right)
+    .\vec{\xi} d\Omega = 0
+\end{equation}
+
+Se assumir-se que:
+\begin{equation}
+    m_1 \left(\dfrac{\partial \vec{\omega}}{\partial t}, \delta\right) =
+    \int_{\Omega}
+    \dfrac{\partial \vec{\omega}}{\partial t}
+    .\vec{\delta} d\Omega
+\end{equation}
+\begin{equation}
+    g_1 (\vec{v}_f, \vec{\delta}) =
+    \int_{\Omega}
+    \vec{v}_f.\vec{\nabla}.\vec{\omega}
+    .\vec{\delta} d\Omega
+\end{equation}
+\begin{equation}
+    k_1 (\vec{\omega}, \vec{\delta}) =
+    \int_{\Omega}
+    \vec{\nabla}.\vec{\omega}.\vec{\nabla}
+    .\vec{\delta} d\Omega
+\end{equation}
+\begin{equation}
+    k_2 (\psi, \vec{\phi}) =
+    \int_{\Omega}
+    \vec{\nabla}.\psi.\vec{\nabla}
+    .\vec{\phi} d\Omega
+\end{equation}
+\begin{equation}
+    m_2 (\omega_z, \vec{\phi}) =
+    \int_{\Omega}
+    \omega_z
+    .\vec{\phi} d\Omega
+\end{equation}
+\begin{equation}
+    m_3 (\vec{v}_f, \vec{\xi}) =
+    \int_{\Omega}
+    \vec{v}_f
+    .\vec{\xi} d\Omega
+\end{equation}
+\begin{equation}
+    g_3 (\psi, \vec{\xi}) =
+    \int_{\Omega}
+    \left(\dfrac{\partial \psi}{\partial y},
+    -\dfrac{\partial \psi}{\partial x} \right)
+    .\vec{\xi} d\Omega
+\end{equation}
+então as equações na forma fraca são:
+\begin{align}
+    m_1 \left(\dfrac{\partial \vec{\omega}}{\partial t}, \delta\right) +
+    g_1 (\vec{v}_f, \vec{\delta}) + 
+    \dfrac{\mu_f}{\rho_f} k_1 (\vec{\omega}, \vec{\delta}) &=0\\
+    -k_2 (\psi, \vec{\phi}) +
+    m_2 (\omega_z, \vec{\phi}) &= 0 \\
+    m_3 (\vec{v}_f, \vec{\xi}) - 
+    g_3 (\psi, \vec{\xi}) &=0
+\end{align}
+
+Para os seguintes conjuntos de funções bases:
+\begin{align}
+    \mathbb{W}&=\left\{\omega \in \Omega \rightarrow \mathbb{R}^2: 
+    \int_{\Omega} \omega^2 d\Omega < \infty; \omega \in \omega_{\Gamma}\right\} \\
+    \mathbb{P}&=\left\{\psi \in \Omega \rightarrow \mathbb{R}^2: 
+    \int_{\Omega} \psi^2 d\Omega < \infty; \psi \in \psi_{\Gamma}\right\} \\
+    \mathbb{V}&=\left\{v_f \in \Omega \rightarrow \mathbb{R}^2: 
+    \int_{\Omega} v_f^2 d\Omega < \infty; v_f \in v_{f\Gamma}\right\}
+\end{align}
+
+
+%--------------------------------------------------------------
+\subsection{\textbf{Discretização Espacial}}
+A escolha das funções peso pode ser realizada de várias formas, por simplicidade este trabalho utiliza a \textbf{Formulação de Galerkin}.
+Neste método, as funções peso são utilizadas com o mesmo valor da função interpoladora de cada variável. 
+Substituindo-se nas equações:
+\begin{align}
+    \int_{\Omega}
+    \dfrac{\partial \vec{\omega}}{\partial t}
+    .\vec{\delta} d\Omega &+
+    \int_{\Omega}
+    v_{fx}\dfrac{\partial \vec{\omega}}{\partial x}
+    .\vec{\delta} d\Omega +
+    \int_{\Omega}
+    v_{fy}\dfrac{\partial \vec{\omega}}{\partial y}
+    .\vec{\delta} d\Omega \nonumber\\&+
+    \int_{\Omega}
+    \dfrac{\mu_f}{\rho_f}
+    \left(
+    \dfrac{\partial \vec{\omega}}{\partial x}
+    \dfrac{\partial \vec{\delta}}{\partial x} +
+    \dfrac{\partial \vec{\omega}}{\partial y}
+    \dfrac{\partial \vec{\delta}}{\partial y}
+    \right) d\Omega= 0
+\end{align}
+\begin{equation}
+    -\int_{\Omega}
+    \left(
+    \dfrac{\partial \psi}{\partial x}
+    \dfrac{\partial \vec{\phi}}{\partial x} +
+    \dfrac{\partial \psi}{\partial y}
+    \dfrac{\partial \vec{\phi}}{\partial y}
+    \right) d\Omega +
+    \int_{\Omega}
+    \omega_z
+    .\vec{\phi} d\Omega = 0
+\end{equation}
+\begin{equation}
+    \int_{\Omega}
+    v_{fx}
+    .\vec{\xi} d\Omega -
+    \int_{\Omega}
+    \dfrac{\partial \psi}{\partial y}
+    .\vec{\xi} d\Omega = 0
+\end{equation}
+\begin{equation}
+    \int_{\Omega}
+    v_{fy}
+    .\vec{\xi} d\Omega +
+    \int_{\Omega}
+    \dfrac{\partial \psi}{\partial x}
+    .\vec{\xi} d\Omega = 0
+\end{equation}
+

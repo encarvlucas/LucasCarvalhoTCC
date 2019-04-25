@@ -8,7 +8,7 @@ Dessa forma, a quantificação do erro relativo médio se faz necessária, com o
     er_i = \frac{|(val_a)_i - (val_n)_i|}{(val_a)_i}
     \label{error_eq} 
 \end{equation}
-onde $(val_a)_i$ é o valor encontrado pela solução analítica e $(val_n)_i$ é o valor encontrado pela solução numérica, ambos encontrados no ponto $i$.
+onde $(val_a)_i$ é o valor encontrado pela solução analítica e $(val_n)_i$ é o valor encontrado pela solução numérica, ambos encontrados no nó $i$.
 
 São calculados também a média e o desvio padrão dos erros relativos pelas equações \eqref{error_mean} e \eqref{error_mean}, respectivamente:
 \begin{equation}
@@ -177,7 +177,7 @@ Essa proximidade é quantificada pelo erro relativo médio que foi de $0.323\%$ 
 \end{figure}
 
 A seguir, é apresentado o resultado com termo transiente $\dfrac{\partial T}{\partial t}$ tendendo a um estado permanente.
-As condições iniciais $t=0s$ atribuídas aos pontos sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
+As condições iniciais $t=0s$ atribuídas aos nós sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
 A \ref{poisson_d_trans_comp} apresenta a evolução do campo de temperaturas em função do tempo.
 É possível observar que a solução numérica converge para a solução analítica formando um perfil parabólico.
 O erro relativo médio calculado para este caso foi de $0.325\%$ e com desvio padrão de $1.0101\%$.
@@ -237,7 +237,7 @@ A semelhança entre elas é quantificada pelo erro relativo médio que foi de $0
     \label{poisson_n_perm_comp}
 \end{figure}
 
-As condições iniciais $t=0s$ atribuídas aos pontos sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
+As condições iniciais $t=0s$ atribuídas aos nós sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
 A \ref{poisson_n_trans_comp} apresenta a evolução do campo de temperaturas em função do tempo.
 É possível observar que a solução numérica converge para a solução analítica.
 O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio padrão de $0.9205\%$.
@@ -262,7 +262,7 @@ O escoamento de Poiseuille também é conhecido como escoamento entre placas par
 O escoamento ocorre entre duas placas paralelas de comprimento infinito com uma distância constante entre elas.
 É tomado um fluído ideal, isto é, newtoniano, imcompressível e em estado permanente com seu perfil plenamente desenvolvido.
 As condições de contorno são definidas para a função corrente e a velocidade.
-Para os valores iniciais nos pontos sem condição de contorno foram arbitrados como nulos.
+Para os valores iniciais nos nós sem condição de contorno foram arbitrados como nulos.
 
 O sistema de equações de governo deste escoamento é o sistema corrente-vorticidade \ref{todo}, e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
 \begin{equation}
@@ -302,7 +302,7 @@ O erro relativo médio calculado para este caso foi de $4.587\%$ e com desvio pa
 Similar ao escoamento de Poiseuille\ref{sec_poiseuille}, entre duas placas paralelas de comprimento infinito separadas por uma distância constante.
 Porém, neste caso, as placas possuem uma velocidade relativa entre si, ou seja, estão em movimento.
 Novamente, utiliza-se a aproximação do escoamento para um fluído newtoniano, imcompressível e em estado permanente com seu perfil plenamente desenvolvido.
-As condições de contorno são definidas para a função corrente e a velocidade, com os valores iniciais nos pontos sem condição de contorno arbitrados como nulos.
+As condições de contorno são definidas para a função corrente e a velocidade, com os valores iniciais nos nós sem condição de contorno arbitrados como nulos.
 
 Novamente trabalha-se com o sistema corrente-vorticidade \ref{todo} e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
 \begin{equation}

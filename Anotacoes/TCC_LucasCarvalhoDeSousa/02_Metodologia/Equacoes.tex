@@ -1,20 +1,22 @@
-\chapter{METODOLOGIA}
-\label{metodologia}
+% \chapter{METODOLOGIA}
+% \label{metodologia}
+%--------------------------------------------------------------
+\chapter{\textbf{EQUAÇÕES DE GOVERNO}}
+\label{sec_eq_governo}
+%--------------------------------------------------------------
 \section{\textbf{Introdução}}
 Este trabalho apresenta a modelagem de fluidos e partículas em um sistema de escoamento multifásico, portanto é preciso definir o que é um escoamento e quais as suas restrições para este trabalho.
 Um escoamento é o movimento das moléculas de um fluido em conjunto.
 As moléculas são tomadas como elementos infinitesimais, porém tratados de forma que não haja espaços vazios entre elas.
-Isto permite que as propiedades do fluido sejam tratadas pontualmente, podendo variar por exemplo sua densidade ou velocidade de ponto a ponto.
+Isto permite que as propiedades do fluido sejam tratadas pontualmente, podendo variar por exemplo sua densidade ou velocidade de nó a nó.
 Pode-se então modelar o comportamento destes escoamentos seguindo as equções de conservação:
 \begin{itemize}
 	\item \hyperref[cons_massa]{Conservação de Massa}
 	\item \hyperref[cons_qmov]{Conservação de Quantidade de Movimento}
 \end{itemize}
+
 %--------------------------------------------------------------
-\section{\textbf{Equações de Governo}}
-\label{sec_eq_governo}
-%--------------------------------------------------------------
-\subsection{\textbf{Conservação de Massa}}
+\section{\textbf{Conservação de Massa}}
 \label{sec_cons_massa}
 O princípio de conservação de massa sem geração descreve que, dentro de um volume de controle, a soma da \textbf{taxa de acúmulo de massa dentro do volume} com \textbf{o fluxo de massa que atravessa a fronteira do volume} é nula\cite{pontes_norberto}.
 
@@ -40,7 +42,7 @@ E o fluxo de massa que atravessa a fronteira é retratado como:
     \oint_{S}\rho_f \vec{v}_f.\vec{n} dA
     \label{fluxo_massa}
 \end{equation}
-onde $S$ é a curva de contorno da fronteira do volume de controle, $\vec{v}_f$ é o campo de velocidades do fluido e $dA$ é o elemento infinitesimal de área da superfície de contorno do volume de controle.
+onde $S$ é a curva de contorno da fronteira do volume de controle, $\vec{v}_f$ é o campo de velocidades do fluido, $dA$ é o elemento infinitesimal de área da superfície de contorno do volume de controle e $\vec{n}$ é um vetor normal unitário orientado para fora do contorno $S$.
 
 A conservação de massa é então representada como:
 \begin{equation}
@@ -84,7 +86,7 @@ tomada para um \textbf{fluido incompressível}.
 
 
 %--------------------------------------------------------------
-\subsection{\textbf{Conservação de Quantidade de Movimento}}
+\section{\textbf{Conservação de Quantidade de Movimento}}
 \label{sec_cons_qmov}
 A conservação de quantidade de movimento é similar a conservação de massa, porém é tomada como um termo vetorial.
 Para o caso deste trabalho, é utilizada a versão linear da conservação de quantidade de movimento.
@@ -267,7 +269,7 @@ Dividindo-se todos os termos pela massa específica pode-se reescrever a equaç�
 \end{equation}
 
 %--------------------------------------------------------------
-\subsection{\textbf{Formulação Corrente-Vorticidade}}
+\section{\textbf{Formulação Corrente-Vorticidade}}
 \label{sec_corr_vort}
 A formulação de corrente-vorticidade é um sistema de equações que providencia um método alternativo de se calcular as propiedades de um escoamento sem solucionar diretamente a equação de Navier-Stoakes \eqref{navier}.
 Isto permite simplificar a solução do problema, pois a Equação de Navier-Stoakes possui um forte acoplamento entre o campo de pressões e o campo de velocidades.
@@ -376,19 +378,22 @@ Então o sistema de corrente-vorticidade é apresentado como:
 	\dfrac{\partial \vec{\omega}}{\partial t} +
 	\vec{v}_f.\vec{\nabla}.\vec{\omega} =
     \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+    \label{fluid_eq1}
 \end{equation}
 \begin{equation}
 	\nabla^2\psi =
 	-\omega_z
+    \label{fluid_eq2}
 \end{equation}
 \begin{equation}
 	\vec{v}_f = \left(\dfrac{\partial \psi}{\partial y},
 	-\dfrac{\partial \psi}{\partial x} \right)
+    \label{fluid_eq3}
 \end{equation}
 
 
 %--------------------------------------------------------------
-\subsection{\textbf{Forças Exercidas em Partículas}}
+\section{\textbf{Forças Exercidas em Partículas}}
 \label{sec_eq_part}
 A principal equação que governa o comportamento do movimento das partículas é obtida a partir da 2ª Lei de Newton\cite{crowe}.
 \begin{equation}
