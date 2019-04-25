@@ -256,49 +256,213 @@ Neste método, as funções peso são utilizadas com o mesmo valor da função i
 Substituindo-se nas equações:
 \begin{align}
     \int_{\Omega}
-    \dfrac{\partial \vec{\omega}}{\partial t}
-    .\vec{\delta} d\Omega &+
+    \dfrac{\partial \omega}{\partial t}
+    \delta d\Omega &+
     \int_{\Omega}
-    v_{fx}\dfrac{\partial \vec{\omega}}{\partial x}
-    .\vec{\delta} d\Omega +
+    v_{fx}\dfrac{\partial \omega}{\partial x}
+    \delta d\Omega +
     \int_{\Omega}
-    v_{fy}\dfrac{\partial \vec{\omega}}{\partial y}
-    .\vec{\delta} d\Omega \nonumber\\&+
+    v_{fy}\dfrac{\partial \omega}{\partial y}
+    \delta d\Omega \nonumber\\&+
     \int_{\Omega}
     \dfrac{\mu_f}{\rho_f}
     \left(
-    \dfrac{\partial \vec{\omega}}{\partial x}
-    \dfrac{\partial \vec{\delta}}{\partial x} +
-    \dfrac{\partial \vec{\omega}}{\partial y}
-    \dfrac{\partial \vec{\delta}}{\partial y}
+    \dfrac{\partial \omega}{\partial x}
+    \dfrac{\partial \delta}{\partial x} +
+    \dfrac{\partial \omega}{\partial y}
+    \dfrac{\partial \delta}{\partial y}
     \right) d\Omega= 0
 \end{align}
 \begin{equation}
     -\int_{\Omega}
     \left(
     \dfrac{\partial \psi}{\partial x}
-    \dfrac{\partial \vec{\phi}}{\partial x} +
+    \dfrac{\partial \phi}{\partial x} +
     \dfrac{\partial \psi}{\partial y}
-    \dfrac{\partial \vec{\phi}}{\partial y}
+    \dfrac{\partial \phi}{\partial y}
     \right) d\Omega +
     \int_{\Omega}
     \omega_z
-    .\vec{\phi} d\Omega = 0
+    \phi d\Omega = 0
 \end{equation}
 \begin{equation}
     \int_{\Omega}
     v_{fx}
-    .\vec{\xi} d\Omega -
+    \xi d\Omega -
     \int_{\Omega}
     \dfrac{\partial \psi}{\partial y}
-    .\vec{\xi} d\Omega = 0
+    \xi d\Omega = 0
 \end{equation}
 \begin{equation}
     \int_{\Omega}
     v_{fy}
-    .\vec{\xi} d\Omega +
+    \xi d\Omega +
     \int_{\Omega}
     \dfrac{\partial \psi}{\partial x}
-    .\vec{\xi} d\Omega = 0
+    \xi d\Omega = 0
+\end{equation}
+
+As discretizações são aplicadas sobre um domínio com $n_e$ elementos e $n_p$ nós.
+Este domínio é determinado por uma malha computacional criada.
+As variáveis ficam então:
+
+\begin{align}
+    \omega(\vec{x}, t) &= \sum_{i=1}^{n_p} \omega_i(t) N_i(\vec{x}) \\
+    \psi(\vec{x}, t) &= \sum_{i=1}^{n_p} \psi_i(t) N_i(\vec{x}) \\
+    v_{fx}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{fxi}(t) N_i(\vec{x}) \\
+    v_{fy}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{fyi}(t) N_i(\vec{x}) 
+\end{align}
+onde os valores das funções em cada ponto $\omega_i = [\omega_1, \ldots, \omega_{n_p}]$, $\psi_i = [\psi_1, \ldots, \psi_{n_p}]$, $v_{fxi} = [v_{fx1}, \ldots, v_{fxn_p}]$ e $v_{fyi} = [v_{fy1}, \ldots, v_{fyn_p}]$ são as incógnitas desejadas.
+Como estas funções são independentes do tempo, elas são retiradas dos termos de integração sobre o domínio $\Omega$.
+Enquanto isso, as funções de aproximação $N_{i} = [N_{1}, \ldots, N_{n_p}]$, também chamadas de funções base, são escolhidas arbitrariamente.
+
+Na formulação de Galerkin, as funções de base são iguais as suas respectivas funções peso:
+\begin{align}
+    \delta(\vec{x}, t) &= \sum_{j=1}^{n_p} \delta_i(t) N_j(\vec{x}) \\
+    \phi(\vec{x}, t) &= \sum_{j=1}^{n_p} \phi_i(t) N_j(\vec{x}) \\
+    \xi(\vec{x}, t) &= \sum_{j=1}^{n_p} \xi_i(t) N_j(\vec{x})
+\end{align}
+
+Então as equações do sistema em suas formas variacionais discretizadas no espaço ficam como:
+\begin{align}
+    &\int_{\Omega}
+    \sum_{i=1}^{n_p} \dfrac{\partial \omega_i}{\partial t} N_i
+    \sum_{j=1}^{n_p} \delta_j N_j
+    d\Omega \nonumber\\&+
+    \int_{\Omega}
+    v_{fx}
+    \sum_{i=1}^{n_p} \dfrac{\partial \omega_i N_i}{\partial x}
+    \sum_{j=1}^{n_p} \delta_j N_j
+    d\Omega +
+    \int_{\Omega}
+    v_{fy}
+    \sum_{i=1}^{n_p} \dfrac{\partial \omega_i N_i}{\partial y}
+    \sum_{j=1}^{n_p} \delta_j N_j
+    d\Omega \nonumber\\&+
+    \int_{\Omega}
+    \dfrac{\mu_f}{\rho_f}
+    \left(
+    \sum_{i=1}^{n_p} \dfrac{\partial \omega_i N_i}{\partial x}
+    \sum_{j=1}^{n_p} \dfrac{\partial \delta_j N_j}{\partial x} +
+    \sum_{i=1}^{n_p} \dfrac{\partial \omega_i N_i}{\partial y}
+    \sum_{j=1}^{n_p} \dfrac{\partial \delta_j N_j}{\partial y}
+    \right) d\Omega= 0
+    \label{temp1}
+\end{align}
+\begin{align}
+    -\int_{\Omega}
+    \left(
+    \sum_{i=1}^{n_p} \dfrac{\partial \psi_i N_i}{\partial x}
+    \sum_{j=1}^{n_p} \dfrac{\partial \phi_j N_j}{\partial x} +
+    \sum_{i=1}^{n_p} \dfrac{\partial \psi_i N_i}{\partial y}
+    \sum_{j=1}^{n_p} \dfrac{\partial \phi_j N_j}{\partial y}
+    \right) d\Omega \nonumber\\+
+    \int_{\Omega}
+    \sum_{i=1}^{n_p} \omega_{zi} N_i
+    \sum_{j=1}^{n_p} \phi_j N_j
+    d\Omega = 0
+\end{align}
+\begin{equation}
+    \int_{\Omega}
+    \sum_{i=1}^{n_p} v_{fxi} N_i
+    \sum_{j=1}^{n_p} \xi_j N_j
+    d\Omega -
+    \int_{\Omega}
+    \sum_{i=1}^{n_p} \dfrac{\partial \psi_i N_i}{\partial y}
+    \sum_{j=1}^{n_p} \xi_j N_j
+    d\Omega = 0
+\end{equation}
+\begin{equation}
+    \int_{\Omega}
+    \sum_{i=1}^{n_p} v_{fyi} N_i
+    \sum_{j=1}^{n_p} \xi_j N_j
+    d\Omega +
+    \int_{\Omega}
+    \sum_{i=1}^{n_p} \dfrac{\partial \psi_i N_i}{\partial x}
+    \sum_{j=1}^{n_p} \xi_j N_j
+    d\Omega = 0
+\end{equation}
+
+Pode-se remover as componentes da velocidade do fluido $v_{fx}$ e $v_{fy}$ da equação \refeq{temp1}, pois serão utilizados os componentes da velocidade no último passo de tempo para estes valores, tornando-se a equação linear.
+
+Retira-se então os somatórios das funções interpoladoras das integrais, e como $\sum_{j=1}^{n_p} \delta_j \neq 0$, $\sum_{j=1}^{n_p} \phi_j \neq 0$ e $\sum_{j=1}^{n_p} \xi_j \neq 0$ as equações de governo serão:
+\begin{align}
+    &\sum_{j=1}^{n_p}
+    \sum_{i=1}^{n_p} \dfrac{\partial \omega_i}{\partial t}
+    \int_{\Omega}
+    N_i N_j
+    d\Omega \nonumber\\&+
+    \sum_{j=1}^{n_p}
+    \sum_{i=1}^{n_p}
+    \omega_i
+    \left(
+        v_{fx}
+        \int_{\Omega}
+        \dfrac{\partial N_i}{\partial x}
+        N_j
+        d\Omega +
+        v_{fy}
+        \int_{\Omega}
+        \dfrac{\partial N_i}{\partial y}
+        N_j
+        d\Omega \right.\nonumber\\ +& \left.
+        \dfrac{\mu_f}{\rho_f}
+        \int_{\Omega}
+        \dfrac{\partial N_i}{\partial x}
+        \dfrac{\partial N_j}{\partial x} +
+        \dfrac{\partial N_i}{\partial y}
+        \dfrac{\partial N_j}{\partial y}
+        d\Omega
+    \right) = 0
+\end{align}
+\begin{align}
+    \sum_{j=1}^{n_p}
+    \sum_{i=1}^{n_p}
+    \psi_i
+    \left(
+        -\int_{\Omega} \left(
+        \dfrac{\partial N_i}{\partial x}
+        \dfrac{\partial N_j}{\partial x} +
+        \dfrac{\partial N_i}{\partial y}
+        \dfrac{\partial N_j}{\partial y}
+        \right) d\Omega +
+        \omega_i
+        \int_{\Omega}
+        N_i
+        N_j
+        d\Omega +
+    \right) = 0
+\end{align}
+\begin{equation}
+    \sum_{j=1}^{n_p}
+    \sum_{i=1}^{n_p}
+    v_{fxi}
+    \left(
+        \int_{\Omega}
+        N_i
+        N_j
+        d\Omega -
+        \psi_i
+        \int_{\Omega}
+        \dfrac{\partial N_i}{\partial y}
+        N_j
+        d\Omega +
+    \right) = 0
+\end{equation}
+\begin{equation}
+    \sum_{j=1}^{n_p}
+    \sum_{i=1}^{n_p}
+    v_{fyi}
+    \left(
+        \int_{\Omega}
+        N_i
+        N_j
+        d\Omega +
+        \psi_i
+        \int_{\Omega}
+        \dfrac{\partial N_i}{\partial x}
+        N_j
+        d\Omega +
+    \right) = 0
 \end{equation}
 
