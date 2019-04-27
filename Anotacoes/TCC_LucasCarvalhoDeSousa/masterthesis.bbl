@@ -12,8 +12,8 @@
 
 \bibitem{crowe}
 \abntrefinfo{Crowe}{CROWE}{2011}
-{CROWE, C.~T. \emph{Multiphase Flows with Droplets and Particles, Second
-  Edition}. 2. ed. [S.l.]: CRC Press, 2011.
+{CROWE, C.~T. \emph{Multiphase Flows with Droplets and Particles}. [S.l.]: CRC
+  Press, 2011.
 ISBN 978-1-4398-4050-4,978-1-4398-4051-1.}
 
 \bibitem{gustavo}
@@ -23,11 +23,48 @@ ISBN 978-1-4398-4050-4,978-1-4398-4051-1.}
   Element Method.}
 Tese (Doutorado) --- Federal University of Rio de Janeiro, Brazil.}
 
+\bibitem{lewis}
+\abntrefinfo{Lewis, Nithiarasu e Seetharamu}{LEWIS; NITHIARASU;
+  SEETHARAMU}{2004}
+{LEWIS, R.~W.; NITHIARASU, P.; SEETHARAMU, K. \emph{Fundamentals Of The Finite
+  Element Method For Heat And Fluid Flow}. [S.l.]: Wiley, 2004.
+ISBN 9780470847886,0-470-84788-3,0-470-84789-1.}
+
+\bibitem{python}
+\abntrefinfo{Rossum}{ROSSUM}{1995--}
+{ROSSUM, G. van. \emph{Python Language Reference}.
+version 3.5. [S.l.], 1995--. Dispon{\'\i}vel em: $<$https://www.python.org$>$.}
+
+\bibitem{numpy}
+\abntrefinfo{Walt, Colbert e Varoquaux}{WALT; COLBERT; VAROQUAUX}{2011}
+{WALT, S. van~der; COLBERT, S.~C.; VAROQUAUX, G. The numpy array: A structure
+  for efficient numerical computation.
+\emph{Computing in Science \& Engineering}, AIP, 2011.
+Dispon{\'\i}vel em: $<$https://www.numpy.org/$>$.}
+
+\bibitem{scipy}
+\abntrefinfo{Jones et al.}{JONES et al.}{2001--}
+{JONES, E. et al. \emph{{SciPy}: Open source scientific tools for {Python}}.
+  2001--.
+Dispon{\'\i}vel em: $<$https://www.scipy.org/$>$.}
+
+\bibitem{matplotlib}
+\abntrefinfo{Hunter}{HUNTER}{2007}
+{HUNTER, J.~D. Matplotlib: A 2d graphics environment.
+\emph{Computing in Science \& Engineering}, AIP, 2007.
+Dispon{\'\i}vel em: $<$https://matplotlib.org/$>$.}
+
 \bibitem{gmsh}
 \abntrefinfo{Geuzaine e Remacle}{GEUZAINE; REMACLE}{2009}
 {GEUZAINE, C.; REMACLE, J.-F. Gmsh: A 3-d finite element mesh generator with
   built-in pre- and post-processing facilities.
 \emph{International Journal for Numerical Methods in Engineering}, John Wiley
   and Sons, v.~79, 2009.}
+
+\bibitem{paraview}
+\abntrefinfo{Ahrens, Geveci e Law}{AHRENS; GEVECI; LAW}{2005}
+{AHRENS, J.; GEVECI, B.; LAW, C. \emph{ParaView: An End-User Tool for Large
+  Data Visualization}. [S.l.]: Elsevier, 2005.
+ISBN 978-0123875822.}
 
 \end{thebibliography}

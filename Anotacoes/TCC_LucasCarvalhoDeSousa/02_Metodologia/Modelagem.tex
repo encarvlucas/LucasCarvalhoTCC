@@ -577,6 +577,66 @@ As matrizes locais $\mathbf{m^e}$, $\mathbf{g_{x}^e}$, $\mathbf{g_{y}^e}$, $\mat
     d\Omega^e
 \end{align}
 
+Esctritas em suas formas matriciais\cite{lewis}:
+\begin{align}
+    \mathbf{m^e} &=
+    \dfrac{A^e}{12}
+    \begin{bmatrix} 
+        2 & 1 & 1 \\
+        1 & 2 & 1 \\
+        1 & 1 & 2
+    \end{bmatrix} \\
+    \mathbf{g_x^e} &=
+    \dfrac{1}{6}
+    \begin{bmatrix} 
+        b_i & b_j & b_k \\
+        b_i & b_j & b_k \\
+        b_i & b_j & b_k
+    \end{bmatrix} \\
+    \mathbf{g_y^e} &=
+    \dfrac{1}{6}
+    \begin{bmatrix} 
+        c_i & c_j & c_k \\
+        c_i & c_j & c_k \\
+        c_i & c_j & c_k
+    \end{bmatrix} \\
+    \mathbf{k_{xx}^e} &=
+    \dfrac{t_h}{4A}
+    \begin{bmatrix} 
+        b_i b_i & b_j b_i & b_k b_i \\
+        b_i b_j & b_j b_j & b_k b_j \\
+        b_i b_k & b_j b_k & b_k b_k
+    \end{bmatrix} \\
+    \mathbf{k_{yy}^e} &=
+    \dfrac{t_h}{4A}
+    \begin{bmatrix} 
+        c_i c_i & c_j c_i & c_k c_i \\
+        c_i c_j & c_j c_j & c_k c_j \\
+        c_i c_k & c_j c_k & c_k c_k
+    \end{bmatrix}
+\end{align}
+onde $A^e$ é a área, $t_h$ a espessura e $b_i$, $b_j$, $b_k$, $c_i$, $c_j$, $c_k$ as coordenadas relativas do elemento.
+Estas coordenadas relativas são definidas para os nós $p_i$, $p_j$ e $p_k$ de um elemento qualquer como:
+\begin{align}
+    b_i &= y_j - y_k \\
+    b_j &= y_k - y_i \\
+    b_k &= y_i - y_j
+\end{align}
+\begin{align}
+    c_i &= x_k - x_j \\
+    c_j &= x_i - x_k \\
+    c_k &= x_j - x_i
+\end{align}
+onde $x_i$ e $y_i$ são as coordenadas do ponto $p_i$, $x_j$ e $y_j$ são as coordenadas do ponto $p_j$ e $x_k$ e $y_k$ são as coordenadas do ponto $p_k$.
+
+E a área $A$ pode ser calculada através das coordenadas dos pontos pela equação:
+\begin{equation}
+    A^e = \dfrac{1}{2} (
+        (x_i y_j - x_j y_i) +
+        (x_j y_k - x_k y_j) +
+        (x_k y_i - x_i y_k)
+    )
+\end{equation}
 
 
 %--------------------------------------------------------------
