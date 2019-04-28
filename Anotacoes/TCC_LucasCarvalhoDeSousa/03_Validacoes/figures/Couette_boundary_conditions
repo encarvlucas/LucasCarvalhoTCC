@@ -16,6 +16,9 @@
         \node [above left] at (-0.3,1.2) {{\huge $y$}{$(m)$}};
         \node [below right] at (3.2,-0.1) {{\huge $x$}{$(m)$}};
 
+        \draw [->, ultra thick] (1.4, 0.95) -- (1.6, 0.95);
+        \draw [->, ultra thick] (1.6, 0.05) -- (1.4, 0.05);
+
         \node [above, text width=3cm, align=center] at (1.5, 1) {$\vec{v}_f = (U_{sup}, 0)$\\$\psi = 0$};
         \node [below, text width=3cm, align=center] at (1.5, 0) {$\vec{v}_f = (U_{inf}, 0)$\\$\psi = 0$};
         \node [right, text width=3cm] at (0., 0.5) {$\dfrac{\vec{v}_f}{\partial n} = 0$\\$\dfrac{\partial \psi}{\partial n} = 0$};

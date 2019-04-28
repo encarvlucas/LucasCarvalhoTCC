@@ -573,3 +573,19 @@ class Mesh:
             animation.save("{0}_particle_movement.gif".format(self.name), dpi=80, writer='imagemagick')
 
         return plt.show()
+
+    def show_particle_course(self):
+        """
+        Displays a static image of the particles trajectories.
+        :return: Display image.
+        """
+        # Draw mesh points
+        plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
+
+        # Draw particles trajectories
+
+        for particle in self.particles:
+            position_history = np.array(particle.position_history)
+            plt.plot(position_history[:, 0], position_history[:, 1], color=particle.color)
+
+        return plt.show()

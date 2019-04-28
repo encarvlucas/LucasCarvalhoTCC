@@ -408,14 +408,14 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
         forces["drag"] = 3 * np.pi * mesh.viscosity * particle.diameter * relative_vel
 
         # -------------------- Lift Force ------------------------------------------------------------------------------
-        du_dy = (mesh.get_interpolated_value((particle.pos_x, particle.pos_y + particle.radius),
-                                             velocity_x, velocity_y)[0] -
-                 mesh.get_interpolated_value((particle.pos_x, particle.pos_y - particle.radius),
-                                             velocity_x, velocity_y)[0])
-        forces["lift"] = (0.,
-                          du_dy/abs(du_dy) * 1.61 * mesh.viscosity * particle.diameter * relative_vel[1] *
-                          np.sqrt(particle.diameter * mesh.density / mesh.viscosity * abs(du_dy))
-                          )
+        dn = np.array([-fluid_velocity[1], fluid_velocity[0]])
+        dn = dn/np.sqrt(dn.dot(dn)) * particle.radius
+        dv_dr = (np.array(mesh.get_interpolated_value((particle.pos_x + dn[0], particle.pos_y + dn[1]),
+                                                      velocity_y, velocity_x)) -
+                 np.array(mesh.get_interpolated_value((particle.pos_x - dn[0], particle.pos_y - dn[1]),
+                                                      velocity_y, velocity_x)))
+        forces["lift"] = (np.nan_to_num(dn/abs(dn)) * 1.61 * mesh.viscosity * particle.diameter * relative_vel *
+                          np.sqrt(particle.diameter * mesh.density / mesh.viscosity * abs(dv_dr)))
 
         # -------------------- Added Mass Force ------------------------------------------------------------------------
         acceleration = (0, 0) if (acceleration_x is None) or (acceleration_y is None) else \

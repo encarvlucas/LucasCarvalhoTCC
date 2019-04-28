@@ -256,7 +256,7 @@ O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio pad
 %---------------------------------------------------------------------------------------------Primeiro Exemplo
 \subsection{\textbf{Escoamento de Poiseuille}}
 \label{sec_poiseuille}
-Este é um dos primeiros exemplos dados ao estudar-se a meĉanica dos fluidos e a equação de Navier-Stoakes\eqref{todo}, pois trata-se de uma configuração geométrica muito simples.
+Este é um dos primeiros exemplos dados ao estudar-se a meĉanica dos fluidos e a equação de Navier-Stoakes\eqref{navier}, pois trata-se de uma configuração geométrica muito simples.
 O escoamento de Poiseuille também é conhecido como escoamento entre placas paralelas, já que essa é exatamente a descrição de sua forma e as placas são tomadas como estacionárias em relação ao fluido.
 
 O escoamento ocorre entre duas placas paralelas de comprimento infinito com uma distância constante entre elas.
@@ -264,7 +264,7 @@ O escoamento ocorre entre duas placas paralelas de comprimento infinito com uma 
 As condições de contorno são definidas para a função corrente e a velocidade.
 Para os valores iniciais nos nós sem condição de contorno foram arbitrados como nulos.
 
-O sistema de equações de governo deste escoamento é o sistema corrente-vorticidade \ref{todo}, e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
+O sistema de equações de governo deste escoamento é o sistema corrente-vorticidade \ref{corrente_vorticidade}, e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
 \begin{equation}
     v_x(y) = \dfrac{4U_{max}}{L^2}y(L-y)
     \label{poiseuille_sol} 
@@ -304,7 +304,7 @@ Porém, neste caso, as placas possuem uma velocidade relativa entre si, ou seja,
 Novamente, utiliza-se a aproximação do escoamento para um fluído newtoniano, imcompressível e em estado permanente com seu perfil plenamente desenvolvido.
 As condições de contorno são definidas para a função corrente e a velocidade, com os valores iniciais nos nós sem condição de contorno arbitrados como nulos.
 
-Novamente trabalha-se com o sistema corrente-vorticidade \ref{todo} e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
+Novamente trabalha-se com o sistema corrente-vorticidade \ref{corrente_vorticidade} e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
 \begin{equation}
     v_x(y) = \dfrac{U_{sup} - U_{inf}}{L}y + U_{inf}
     \label{couette_sol} 
@@ -435,12 +435,7 @@ define-se $c_l$ como:
     c_l = 1.61 \mu_f d_p \sqrt{{Re}_G}
     \label{lift_c} 
 \end{equation}
-e $Re_G$ é o número de Reynolds de cisalhamento \cite{crowe}:
-\begin{equation}
-    Re_G = \dfrac{d_p^2 \rho_f}{\mu_f} \dfrac{dv_x}{dy}
-    \label{lift_reg}
-\end{equation}
-onde $\rho_f$ é a densidade do fluido e $\tfrac{dv_x}{dy}$ é a variação da velocidade na partícula sobre o eixo perpendicular ao movimento.
+onde $Re_G$ é o número de Reynolds de cisalhamento\eqref{reg} $\rho_f$ é a densidade do fluido e $\tfrac{dv_x}{dy}$ é a variação da velocidade na partícula sobre o eixo perpendicular ao movimento.
 
 Para este caso, foi preciso utilizar a malha padrão com condições diferentes do padrão, para que fosse possível observar os efeitos da força de sustentação com mais clareza.
 As condições utilizadas são:
@@ -456,7 +451,7 @@ As condições utilizadas são:
 Demonstra-se na \ref{lift_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
 Foi utilizado um valor base para o campo de velocidades de $U=2m/s$, uma velocidade inicial $v_{y0}=-0.1m/s$, e um gradiente de velocidades no eixo $y$ de $\tfrac{dv_x}{dy}=100m/m.s$ para auxiliar a comparação.
 Também foi incluída uma curva que demostra a trajetória da partícula sem o efeito da força de sustentação, para que se possa notar que a partícula é desacelerada e não acompanha esta curva.
-O erro relativo médio calculado para este caso foi de $6.162e^{-7}\%$ e com desvio padrão de $3.6111e^{-7}\%$.
+O erro relativo médio calculado para este caso foi de $1.9241e^{-6}\%$ e com desvio padrão de $1.1167e^{-6}\%$.
 \begin{figure}[H]
     \centering
     \stackunder{

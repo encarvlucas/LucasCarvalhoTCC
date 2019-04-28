@@ -750,3 +750,47 @@ Então a discretização final do sistema corrente-vorticidade é:
     \label{last_vy}
 \end{equation}
 
+
+%--------------------------------------------------------------
+\subsection{\textbf{Discretização da Forças Aplicadas às Partículas}}
+As equações das forças aplicadas descritas em \ref{sec_eq_part} são discretizadas utilizando MDF com seus parâmetros em cada instante $t_n$.
+Suas equações discretizadas são:
+\begin{itemize}
+    \item \textbf{Força Gravitacional}:
+        \begin{equation}
+            \vec{F}_{grav}^{t_n} = m_p \vec{g}
+            \label{grav_discret}
+        \end{equation}
+
+    \item \textbf{Força de Arrasto}:
+        \begin{equation}
+            \vec{F}_{drag}^{t_n} = 3 \pi \mu_f d_p \left(\vec{v}_{f}^{\,t_n} - \vec{v}_{p}^{\,t_{n-1}} \right)
+            \label{drag_discret}
+        \end{equation}
+
+    \item \textbf{Força de Sustentação}:
+        \begin{equation}
+            \vec{F}_{lift}^{t_n} = 1.61 \mu_f d_p \left(\vec{v}_{f}^{\,t_n} - \vec{v}_{p}^{\,t_{n-1}} \right) \sqrt{{Re}_G^{t_n}}
+            \label{lift_discret}
+        \end{equation}
+        \begin{equation}
+            Re_G^{t_n} = \dfrac{d_p^2 \rho_f}{\mu_f} \left( \dfrac{d\vec{v}_f}{d\vec{r}} \right)^{t_n}
+            \label{reg_discret}
+        \end{equation}
+        onde $\tfrac{d\vec{v}_f}{d\vec{r}}$ é a variação do valor da velocidade nas extremidades da partícula, em um eixo perpendicular ao movimento do fluido que cruza o centro de massa da mesma.
+
+    \item \textbf{Força de Massa Virtual}:
+        \begin{equation}
+            \vec{F}_{mass}^{t_n} = \dfrac{1}{2} \rho_f V_p \dfrac{\left(\vec{v}_{f}^{\,t_n} - \vec{v}_{p}^{\,t_{n-1}}\right) -
+            \left(\vec{v}_{f}^{\,t_{n-1}} - \vec{v}_{p}^{\,t_{n-2}} \right)}{dt}
+            \label{mass_discret}
+        \end{equation}
+\end{itemize}
+
+Finalmente, após calcular-se as forças aplicadas, é necessário determinar a nova velocidade e posição de cada partícula:
+\begin{align}
+    \vec{v}_p^{\,t_n} &= \dfrac{dt}{m_p} \left(\vec{F}_{grav}^{t_n} + \vec{F}_{drag}^{t_n} + \vec{F}_{lift}^{t_n} +\vec{F}_{mass}^{t_n} \right)
+    \label{vel_discret} \\
+    (p_x, p_y)^{t_n} &= \vec{v}_p^{\,t_n} dt
+    \label{pos_discret}
+\end{align}

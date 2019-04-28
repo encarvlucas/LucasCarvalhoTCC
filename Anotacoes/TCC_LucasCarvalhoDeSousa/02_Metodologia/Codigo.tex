@@ -64,7 +64,7 @@ O objeto de malha \verb|TccLib.Mesh| possui um construtor que aceita como parâm
 Após a obtenção dos nós é utilizada a função \verb|scipy.spatial.Delaunay()|, que retorna uma lista com os conjuntos de índices dos nós por elemento.
 
 São cadastradas as informações da malha criada no objeto, como as coordenadas dos nós nos eixos $x$ e $y$, o número de elementos e o número de nós da malha.
-E é criado um dicionário vazio para receber as condições de contorno.
+E é criado um dicionário vazio para receber as condições de contorno, onde suas chaves são nomes fixos para cada problema.
 
 %--------------------------------------------------------------
 \subsection{\textbf{Definição das Condições de Contorno}}
@@ -148,9 +148,14 @@ No caso do problema multifásico de partículas inseridas em um fluido em movime
 Isto é devido ao fato do método de solução escolhido utilizar a implementação \textit{one-way}\cite{crowe}.
 Neste tipo de solução o movimento do fluido, meio principal,  afeta as partículas, meio secundário, porém elas não causam reflexos no fluido.
 Esta implementação foi escolhida devida a demanda computacional elevada da implementação \textit{two-way}, que requeriria solucionar o campo de velocidades (MEF) mais vezes por iteração.
+Então as partículas são simuladas percorrendo um escoamento permanente, com o valor do campo de velocidades sido calculado anteriormente.
 
 As partículas são adicionadas a malha através de um método próprio, que leva como parâmetros as propiedades físicas da partícula, sua posição e condições iniciais e um nome para registro, \verb|TccLib.Mesh.add_particle()|.
 
+Em cada chamada da função \verb|TccLib.move_particles()| são calculdadas as forças aplicadas a cada partícula presente na malha e as forças são adicionadas a um dicionário com seus respectivos nomes como chaves.
+Para se calcular as forças, são necessárias diversas informações, cujas são captadas nesta função, como a velocidade do escoamento na posição da partícula.
+E o valor do número de Reynolds \eqref{reynolds_p} é calculado em cada chamada, para verificar se a simulação respeita a restrição apresentada em \ref{sec_eq_part}.
+Em seguida é chamada uma função interna da classe \verb|TccLib.Particle| para executar o reposicionamento das partículas, esta calcula a as novas posições das partículas e as move, caso respeitem as condições de colisão.
 
 Portanto, a função de movimentação das partículas é aplicada depois da solução do sistema.
 A função de movimentação \verb|TccLib.move_particles()| não possui retorno, porém pode-se analisar seu resultado observando-se a propiedade \verb|TccLib.Particle.position_history| das partículas presentes na malha.

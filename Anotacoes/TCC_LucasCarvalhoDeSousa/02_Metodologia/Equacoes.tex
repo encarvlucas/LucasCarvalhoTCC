@@ -393,6 +393,23 @@ Então o sistema de corrente-vorticidade é apresentado como:
 
 
 %--------------------------------------------------------------
+\section{\textbf{Número de Reynolds}}
+\label{sec_reynolds}
+Para analisar as características de escoamentos com diversas variáveis, utiliza-se $Re$, uma constante adimensional conhecida como \textbf{Número de Reynolds}.
+
+O número de Reynolds permite reconhecer rapidamente as qualidades de um escoamento apenas por seu valor.
+Ele estabelece uma relação entre as forças viscosas e inerciais de um fluido.
+Pode-se delcarar então qual força possui maior componente no comportamento do escoamento.
+
+O número de Reynolds de um escoamento é calculado por:
+\begin{equation}
+    Re = \dfrac{\rho_f |\vec{v}_{f}|_{max} D}{\mu_f} 
+    \label{reynolds}
+\end{equation}
+onde $v_{fmax}$ é a maior velocidade do campo de velocidades do fluido, e $D$ é o comprimento característico de problema.
+
+
+%--------------------------------------------------------------
 \section{\textbf{Forças Exercidas em Partículas}}
 \label{sec_eq_part}
 A principal equação que governa o comportamento do movimento das partículas é obtida a partir da 2ª Lei de Newton\cite{crowe}.
@@ -400,9 +417,83 @@ A principal equação que governa o comportamento do movimento das partículas �
     \sum\vec{F}_{p} = \dfrac{d(m_p\vec{v}_p)}{dt}
     \label{newton} 
 \end{equation}
+onde $\sum\vec{F}_{p}$ é o somatório de forças aplicadas a partícula, $m_p$ é a massa e $\vec{v}_p$ a velocidade da partícula.
 
-
+As forças aplicadas às partículas foram determinadas a partir da equação de \textbf{Basset–Boussinesq–Oseen} (BBO), que descreve as forças sofridas por partículas sob efeito de escoamentos com número de Reynolds \ref{sec_reynolds} pequeno.
+Porém, o número de Reynolds utilizados é diferente do calculado para escoamentos, utiliza-se um valor específico para cada partícula.
 \begin{equation}
-    \vec{F}_{mass} = \dfrac{\pi}{12} \rho_{f} d_{p}^3 \dfrac{d}{dt} \left(\vec{v}_{f} - \vec{v}_{p} \right) 
-    \label{added_mass} 
+    Re_{p} = \dfrac{\rho_p |\left(\vec{v}_{f} - \vec{v}_{p} \right)|_{max} d_{p}}{\mu_f}
+    \label{reynolds_p}
 \end{equation}
+onde $\rho_p$ é a densidade, $d_p$ o diâmetro e $\vec{v}_{p}$ a velocidade da partícula, e $\vec{v}_{f}$ é a velocidade do escoamento na mesma posição da partícula.
+
+Como mencionado, as forças da equação de BBO representam fielmente o comportamento real de partículas para valores de Reynolds menores que $1$,  ou seja, $Re_{p} < 1$.
+
+Nem todas as forças apresentadas na equação BBO foram inseridas no código de simulação.
+Elas foram inseridas sequencialmente durante o desenvolvimento do código, seguidas de testes para verificar sua implementação.
+Foram escolhidas apenas as principais forças, apresentadas a seguir\cite{crowe}: 
+\begin{itemize}
+    \item \textbf{Força Gravitacional}:
+        Também conhecida como força Peso, criada pelo campo graviacional do planeta aplicado aos corpos com massa.
+        Seu valor é calculado através das massas dos corpos, a distância entre seus centros de massa e uma constante universal.
+        Porém, para simplificar o problema, pode-se assumir que a distância entre eles é constante e igual ao raio do planeta Terra.
+        Portanto, pode-se assumir que o valor da força será sempre constante e proporcional a uma aceleração constante aplicada a massa da partícula, o que torna esta a força mais simples de se calcular:
+        \begin{equation}
+            \vec{F}_{grav} = m_p \vec{g}
+            \label{grav}
+        \end{equation}
+        onde $\vec{g}$ é tomada como a aceleração constante da gravidade na superfície terrestre com valor definido de $\vec{g} = (0, -9.80665)m/s^2$.
+
+    \item \textbf{Força de Arrasto}:
+        Força causada pelo atrito do fluido no contorno da partícula, que cria um efeito cisalhante e tende deixar a partícula com mesma velocidade que o fluido.
+
+        Sua equação é determinada como:
+        \begin{equation}
+            \vec{F}_{drag} = 3 \pi \mu_f d_p \left(\vec{v}_{f} - \vec{v}_{p} \right)
+            \label{drag}
+        \end{equation}
+
+        Pode-se observar seu comportamento presente no termo de velocidade relativa $\left(\vec{v}_{f} - \vec{v}_{p} \right)$ da equação \refeq{drag}.
+        Este termo causa o efeito de aproximar a velocidade da partícula à velocidade do fluido já que torna a força proporcionalmente maior quanto mais afastadas elas se encontrarem.
+        E o sinal permite que caso a partícula esteja mais rápida ela seja desacelerada e o inverso se ela se encontrar mais lenta. 
+
+    \item \textbf{Força de Sustentação}:
+        A força de sustentação é uma componente que tende a mover a partícula em direções perpendiculares a seu movimento principal.
+        Ela possui várias formas de ser calculada, sendo nomeada para cada caso.
+
+        Por exemplo, a \textbf{Força de Magnus} está relacionada a rotação, ou velocidade angular, presente na partícula.
+        Neste trabalho as partículas são assumidas como corpos rígidos sem rotação, então está força não será levada em conta.
+
+        Porém outro tipo de força de sustentação é a \textbf{Força de Saffman}\cite{crowe}, que é gerada a partir do gradiente de velocidades presente no escoamento.
+        Para que haja o efeito da força de sustentação de Saffman é necessário que exista um gradiente no campo de velocidades diferente de nulo, como pode se notar na \ref{saffman}.
+        \begin{figure}[H]
+            \centering
+            \stackunder{
+                \includegraphics[width=0.5\linewidth]{figures/saffman_lift.pdf}
+            } {\raggedleft \scriptsize Fonte: Autor.}
+            \caption{Partícula em um escoamento com um gradiente de velocidade não nulo.}
+            \label{saffman}
+        \end{figure}
+
+        A força é aplicada em uma direção perpendicular ao movimento do escoamento e proporcional ao crescimento da velocidade no escoamento.
+        Ela pode ser calculada através da equação:
+        \begin{equation}
+            \vec{F}_{lift} = 1.61 \mu_f d_p \left(\vec{v}_{f} - \vec{v}_{p} \right) \sqrt{{Re}_G}
+            \label{lift}
+        \end{equation}
+        onde $Re_{G}$ é conhecido como número de Reynolds de cisalhamento, e é calculado através da equação:
+        \begin{equation}
+            Re_G = \dfrac{d_p^2 \rho_f}{\mu_f} \nabla \vec{v}_f
+            \label{reg}
+        \end{equation}
+
+    \item \textbf{Força de Massa Virtual} \textit{(Added Mass)}:
+        A força de massa virtual está relacionada ao trabalho realizado pelo fluido para acelerar um corpo submerso.
+        Isto pode ser interpretado como a energia que seria utilizada para mover uma mesma quantidade de fluido no lugar do corpo presente.
+        O valor desta força pode ser calculado através da equação:
+        \begin{equation}
+            \vec{F}_{mass} = \dfrac{1}{2} \rho_f V_p \dfrac{d}{dt}\left(\vec{v}_{f} - \vec{v}_{p} \right)
+            \label{mass}
+        \end{equation}
+        onde $V_p$ é o volume da partícula inserida no escoamento.
+\end{itemize}

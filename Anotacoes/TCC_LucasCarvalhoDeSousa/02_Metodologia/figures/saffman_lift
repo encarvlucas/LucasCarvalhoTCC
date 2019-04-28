@@ -1,0 +1,25 @@
+\documentclass[12pt]{standalone}
+\usepackage{amsmath, relsize, tikz}
+\usepackage{xcolor}
+\usepackage{pgffor} % LATEX
+\input pgffor.tex % plain TEX
+\usetikzlibrary{matrix}
+\usetikzlibrary{knots}
+\usetikzlibrary{intersections,backgrounds}
+\usetikzlibrary{patterns}
+\begin{document}
+    \begin{tikzpicture}[scale=7, >=stealth]
+        \draw [white](0.2, 0.2) rectangle (0.8, 0.8);
+        \foreach \y in {0.3, 0.4, ..., 0.7}
+        {
+            \draw [blue, ->, thick] (0.2, \y) -- ( \y, \y);
+        }
+        \draw [fill, gray] (0.5, 0.5) circle [radius=0.142];
+        \draw [<->] (0.4, 0.4) -- (0.6, 0.6);
+        \node [above left] at (0.52, 0.48) {$d_p$};
+        \node [above left] at (0.7, 0.7) {$\vec{v}_{f}=(v_{x},v_{y})$};
+        \draw [->, red] (0.31, 0.31) -- (0.31, 0.39);
+        \node [right] at (0.31, 0.33) {$\nabla \vec{v_f}$};
+    \end{tikzpicture}
+\end{document}
+
