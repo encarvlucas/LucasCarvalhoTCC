@@ -139,7 +139,8 @@ class Mesh:
         :param values: Value or vector of values of the condition in each point.
         :param type_of_boundary: Value or vector of values, defined: True for Dirichlet and False for Neumann.
         """
-        self.boundary_conditions[name] = BoundaryConditions()
+        if self.boundary_conditions.get(name) is None:
+            self.boundary_conditions[name] = BoundaryConditions()
         self.boundary_conditions[name].set_new_boundary_condition(point_index=point_index, values=values,
                                                                   type_of_boundary=type_of_boundary)
 
