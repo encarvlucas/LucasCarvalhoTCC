@@ -408,7 +408,7 @@ class Mesh:
                 plt.plot(plot_coordinates[0], plot_coordinates[1])
 
         else:
-            plt.triplot(self.x, self.y, triangles=self.ien[0])
+            plt.triplot(self.x, self.y, triangles=self.ien)
 
         if save:
             plt.savefig("{0}_mesh".format(self.name))

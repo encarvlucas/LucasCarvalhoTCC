@@ -78,7 +78,7 @@ As condições de contorno e o dominio bidimensional utilizados na simulação s
     \label{laplace_d_bc}
 \end{figure}
 
-O dominio foi discretizado utilizando uma malha triangular linear não estruturada com 768 elementos e 417 nós.
+O dominio foi discretizado utilizando uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
 A malha foi criada pelo o software GMSH como proposto por \cite{gmsh} e importada ao código numérico.
 A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura, e que é possível observar que o campo de temperatura possui um perfil linear variando de 0 (cor azul) a 1 (cor vermelha).
 \begin{figure}[H]
@@ -91,7 +91,7 @@ A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ r
 \end{figure}
 
 A comparação entre os resultados da solução analítica \eqref{laplace_d_sol} e a solução numerica, para a seção $x=0.5m$, é apresentada na \ref{laplace_d_perm_comp}, onde é possível observar que ambas possuem o mesmo perfil.
-Essa proximidade é quantificada pelo erro relativo médio que foi de $0.1136\%$ e com desvio padrão de $0.0801\%$
+Essa proximidade é quantificada pelo erro relativo médio que foi de $0.08929\%$ e com desvio padrão de $0.06698\%$
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -113,7 +113,7 @@ Porém, ao longo dos passos de tempo, a solução se aproxima de um problema per
 As condições iniciais $t=0s$ atribuídas aos nós sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
 A \ref{laplace_d_trans_comp} apresenta a evolução do campo de temperaturas em função do tempo.
 É possível observar que a solução numérica converge para a solução analítica formando um perfil linear.
-O erro relativo médio calculado para este caso foi de $0.1092\%$ e com desvio padrão de $0.0801\%$.
+O erro relativo médio calculado para este caso foi de $0.08276\%$ e com desvio padrão de $0.06340\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -154,7 +154,7 @@ A geração de calor utilizada foi de $Q = 40W/m^3$ e a condutividade termica fo
     \label{poisson_d_bc}
 \end{figure}
 
-Novamente, foi utilizada uma malha triangular linear não estruturada com 768 elementos e 417 nós.
+Novamente, foi utilizada uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
 A \ref{poisson_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura, onde é possível observar que o campo de temperatura possui um perfil parabólico variando de 0 (cor azul) a 1 (cor vermelha).
 \begin{figure}[H]
     \centering
@@ -166,7 +166,7 @@ A \ref{poisson_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ r
 \end{figure}
 
 A comparação entre os resultados da solução analítica \eqref{poisson_d_sol} e a solução numerica, para a seção $x=0.5m$, é apresentada na \ref{poisson_d_perm_comp}, onde é possível observar que ambas possuem o mesmo perfil.
-Essa proximidade é quantificada pelo erro relativo médio que foi de $0.323\%$ e com desvio padrão de $1.0101\%$.
+Essa proximidade é quantificada pelo erro relativo médio que foi de $0.21048\%$ e com desvio padrão de $0.40921\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -180,7 +180,7 @@ A seguir, é apresentado o resultado com termo transiente $\dfrac{\partial T}{\p
 As condições iniciais $t=0s$ atribuídas aos nós sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
 A \ref{poisson_d_trans_comp} apresenta a evolução do campo de temperaturas em função do tempo.
 É possível observar que a solução numérica converge para a solução analítica formando um perfil parabólico.
-O erro relativo médio calculado para este caso foi de $0.325\%$ e com desvio padrão de $1.0101\%$.
+O erro relativo médio calculado para este caso foi de $0.21101\%$ e com desvio padrão de $0.40994\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -215,7 +215,7 @@ A geração de calor utilizada foi de $Q = -7W/m^3$, a condutividade termica foi
     \label{poisson_n_bc}
 \end{figure}
 
-Novamente, foi utilizada uma malha triangular linear não estruturada com 768 elementos e 417 nós.
+Novamente, foi utilizada uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
 A \ref{poisson_n_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura variando de 0 (cor azul) a 0.35 (vermelha).
 \begin{figure}[H]
     \centering

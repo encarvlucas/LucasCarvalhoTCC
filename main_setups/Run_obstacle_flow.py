@@ -13,11 +13,12 @@ total_time = 10.
 liquid = "super_oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Channel", liquid=liquid)
+mesh = TccLib.Mesh("Obstacle", liquid=liquid)
 
 # Show mesh geometry
+print([x for x in mesh.ien if 7 in x and 62 in x])
 mesh.show_geometry(names=True, save=True)
-
+quit()
 # -------------------------------------------------- PSI ---------------------------------------------------------------
 # Define boundary conditions for psi
 boundary_conditions_values_psi = {

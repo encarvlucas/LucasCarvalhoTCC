@@ -117,6 +117,7 @@ def apply_boundary_conditions(mesh: Mesh, boundary_name: str, matrix_a, vector_b
             vector_b[_column_index, 0] = mesh.boundary_conditions[boundary_name].values_vector[_rel_index]
         else:
             # Neumann Treatment
+            # TODO: FIX NEUMANN BOUNDARY TREATMENT
             vector_b[_column_index, 0] += 0. if mesh.boundary_conditions[boundary_name].values_vector[_rel_index] == 0\
                 else (mesh.boundary_conditions[boundary_name].values_vector[_rel_index] * const * mesh.mean_side_length)
 

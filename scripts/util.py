@@ -311,16 +311,20 @@ def use_meshio(filename: str, geometry):
     # points, cells, point_data, cell_data, field_data = pygmsh.generate_mesh(geometry)
     # meshio.write_points_cells('output.vtk', points, cells, point_data, cell_data, field_data) # TODO: FIX LIBRARY
 
-    if fnmatch.fnmatch(filename, "*.msh"):
-        points = meshio.read(filename).points
-    else:
-        points = meshio.read(filename + ".msh").points
+    file_data = meshio.read(filename + ("" if fnmatch.fnmatch(filename, "*.msh") else ".msh"))
 
-    x_ = points[:, 0]
-    y_ = points[:, 1]
+    x_ = file_data.points[:, 0]
+    y_ = file_data.points[:, 1]
+    ien_ = file_data.cells["triangle"]
 
-    delauney_surfaces = sp.Delaunay(points[:, :2])
-    ien_ = delauney_surfaces.simplices
+    delauney_surfaces = sp.Delaunay(file_data.points[:, :2])
+    for i, elem in enumerate(delauney_surfaces.simplices):
+        # elem[0] = ien_[i][0]
+        # elem[1] = ien_[i][1]
+        # elem[2] = ien_[i][2]
+        elem[:] = ien_[i]
+    # TODO: REFINE BY SPLITTING IS STILL NOT WORKING
+    # ien_ = delauney_surfaces.simplices
 
     return x_, y_, ien_, delauney_surfaces
 

@@ -6,7 +6,7 @@ import numpy as np
 mesh = TccLib.Mesh("Poisson_Dirichlet")
 
 # Show mesh geometry
-mesh.show_geometry(names=True)
+mesh.show_geometry(names=False, rainbow=True, save=True)
 
 # Define parameters
 T_0 = 0.

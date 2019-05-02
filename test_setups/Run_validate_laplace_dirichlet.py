@@ -6,7 +6,7 @@ import numpy as np
 mesh = TccLib.Mesh("Laplace_Dirichlet")
 
 # Show mesh geometry
-mesh.show_geometry(names=True)
+mesh.show_geometry(names=False, save=True)
 
 # Define boundary conditions and parameters
 T_0 = 0.
