@@ -24,7 +24,9 @@ def get_dict_value(values: list, default: any, expression_input: np.ndarray = No
 
 
 def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict = None, default_value: float = 0.0,
-                              default_type: bool = False):
+                              default_type: bool = False, north: (list, np.ndarray) = None,
+                              east: (list, np.ndarray) = None, south: (list, np.ndarray) = None,
+                              west: (list, np.ndarray) = None):
     """
     Function that returns three vectors for the standard boundary condition for the Poisson temperature problem.
     Function used to create the vectors for use as boundary conditions builders. Creates the information for points
@@ -46,6 +48,12 @@ def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict =
                           Value defaults to 0.
     :param default_type: Default type for unset boundaries, will be used for any boundary not defined in the dict.
                           Type defaults to Neumann (False).
+    :param north: List of indices of the vertices that define this side.
+                  If not defined default behaviour is to find the maximum/minimum values of the rectangle that contains
+                  the mesh boundaries.
+    :param east: Same as [north].
+    :param south: Same as [north].
+    :param west: Same as [north].
     :return: [indices, values, types]. Each represents the boundary conditions information vectors of each parameter.
              Note: The boundaries are defined in clockwise order, mutual points, such as origin, are defined in order:
              north, east, south and west.
@@ -72,10 +80,10 @@ def build_boundary_conditions(mesh, values_dict: dict = None, types_dict: dict =
         types_dict["w"] = types_dict.get("all")
 
     # Finding indices of nodes in contours
-    vertex_n = np.where(mesh.y == mesh.y.max())[0]
-    vertex_e = np.where(mesh.x == mesh.x.max())[0]
-    vertex_s = np.where(mesh.y == mesh.y.min())[0]
-    vertex_w = np.where(mesh.x == mesh.x.min())[0]
+    vertex_n = np.where(mesh.y == mesh.y.max())[0] if north is None else np.array(north)
+    vertex_e = np.where(mesh.x == mesh.x.max())[0] if east is None else np.array(east)
+    vertex_s = np.where(mesh.y == mesh.y.min())[0] if south is None else np.array(south)
+    vertex_w = np.where(mesh.x == mesh.x.min())[0] if west is None else np.array(west)
 
     # Defining indices, types and values of each side, moving clockwise
     # Setting information of north side
