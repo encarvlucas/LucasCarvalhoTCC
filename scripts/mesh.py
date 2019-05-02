@@ -129,7 +129,9 @@ class Mesh:
 
         self.x, self.y, self.ien, self.delauney_surfaces = surface
 
-    def new_boundary_condition(self, name, point_index=range(0), values=0., type_of_boundary=True):
+    def new_boundary_condition(self, name, point_index: (list, np.ndarray) = None,
+                               values: (int, float, list, np.ndarray) = 0.,
+                               type_of_boundary: (bool, list, np.ndarray) = True):
         """
         Creates a new entry in the boundary conditions dictionary.
         :param name: Name of the property that has these boundary conditions.

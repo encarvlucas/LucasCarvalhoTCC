@@ -42,7 +42,7 @@ mesh.new_boundary_condition("time", point_index=xy_indices, values=xy_values,
 temperature_perm = TccLib.solve_poisson(mesh, permanent_solution=True, k_coef=k, q=Q)
 
 # Show results in 3D graph
-mesh.show_3d_solution(temperature_perm, view_from_above=False, axis_labels={"z": "T(°C)"})
+# mesh.show_3d_solution(temperature_perm, view_from_above=False, axis_labels={"z": "T(°C)"})
 
 # Define x vector of positions
 x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)

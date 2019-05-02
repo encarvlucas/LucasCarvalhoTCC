@@ -43,6 +43,10 @@ xy_indices, xy_values, xy_types = TccLib.build_boundary_conditions(mesh, boundar
 mesh.new_boundary_condition("psi", point_index=xy_indices, values=xy_values,
                             type_of_boundary=xy_types)
 
+# Set boundary conditions for obstacle
+mesh.new_boundary_condition("psi", point_index=xy_indices, values=xy_values,
+                            type_of_boundary=xy_types)
+
 # -------------------------------------------------- VEL X -------------------------------------------------------------
 # Define boundary conditions for vel_x
 boundary_conditions_values_x = {
