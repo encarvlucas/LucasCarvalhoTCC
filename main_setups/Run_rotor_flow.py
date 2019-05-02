@@ -15,15 +15,21 @@ liquid = "super_oil"
 # Import gmsh created mesh
 mesh = TccLib.Mesh("Rotor_ref", liquid=liquid)
 
-# Rotor boundary points
-north = np.array([42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61])
-east = np.array([2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 3])
-south = np.array([16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29])
-west = np.array([1, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 0])
-
 # Show mesh geometry
 # mesh.show_geometry(names=True, save=True)
-# quit()
+
+# Rotor boundary points
+# north = np.array([42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61])
+# east = np.array([2, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 3])
+# south = np.array([16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29])
+# west = np.array([1, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 0])
+# Refined mesh
+north = np.array([55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+                  80, 81, 82])
+east = np.array([2, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 3])
+south = np.array([20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38])
+west = np.array([1, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 0])
+
 # -------------------------------------------------- PSI ---------------------------------------------------------------
 # Define boundary conditions for psi
 boundary_conditions_values_psi = {

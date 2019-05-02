@@ -13,13 +13,15 @@ total_time = 5.
 liquid = "super_oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Obstacle", liquid=liquid)
-
-# Obstacle boundary points
-obstacle = np.array([6, 7, 58, 59, 60, 61, 62, 63, 64, 65])
+mesh = TccLib.Mesh("Obstacle_ref", liquid=liquid)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True, save=True)
+
+# Obstacle boundary points
+# obstacle = np.array([6, 7, 58, 59, 60, 61, 62, 63, 64, 65])
+# Refined mesh
+obstacle = np.array([6, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 7])
 
 # -------------------------------------------------- PSI ---------------------------------------------------------------
 # Define boundary conditions for psi

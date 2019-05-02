@@ -4,7 +4,7 @@ import numpy as np
 
 # Define boundary conditions and parameters
 vel = 1.
-dt = 0.1
+dt = 01.
 total_time = 5.
 
 # Set liquid parameters or declare liquid
@@ -13,22 +13,26 @@ total_time = 5.
 liquid = "super_oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Step", liquid=liquid)
+mesh = TccLib.Mesh("Step_ref", liquid=liquid)
 
 # Show mesh geometry
 # mesh.show_geometry(names=True, save=True)
 
 # Concave sides boundary points
+# sides_vertical = np.array([
+#     19, 20, 21, 22, 23, 24, 25, 26, 27,
+#     43, 44, 45, 46, 47, 48, 49, 50, 51,
+# ])
+# sides_horizontal_right = np.array([3, 28, 29, 30, 31])
+# sides_horizontal_left = np.array([8, 52, 53, 54, 55])
+# Refined mesh
 sides_vertical = np.array([
-    19, 20, 21, 22, 23, 24, 25, 26, 27,
-    43, 44, 45, 46, 47, 48, 49, 50, 51,
+    24, 25, 26, 27, 28, 29, 30, 31, 32,
+    60, 61, 62, 63, 64, 65, 66, 67, 68
 ])
-sides_horizontal_right = np.array([
-    3, 28, 29, 30, 31
-])
-sides_horizontal_left = np.array([
-    8, 52, 53, 54, 55
-])
+sides_horizontal_right = np.array([3, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 4])
+sides_horizontal_left = np.array([8, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 9])
+
 sides = np.append(sides_vertical, np.append(sides_horizontal_right, sides_horizontal_left))
 
 # -------------------------------------------------- PSI ---------------------------------------------------------------
