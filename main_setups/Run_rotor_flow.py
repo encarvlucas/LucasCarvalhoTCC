@@ -4,8 +4,8 @@ import numpy as np
 
 # Define boundary conditions and parameters
 vel = 1.
-dt = 0.5
-total_time = 5.
+dt = 0.1
+total_time = 20.
 
 # Set liquid parameters or declare liquid
 # density = 1e3
