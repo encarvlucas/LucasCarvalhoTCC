@@ -8,8 +8,6 @@ class Particle:
     Defines a moving particle.
     Particles are defined as having a spherical shape of constant diameter.
     """
-    position_history = None
-
     # Number of skipped frames between saved positions.
     frame_skips = 1000
 
@@ -131,4 +129,4 @@ class Particle:
         Returns the plot size os the particle.
         :return: Approximate plotting size.
         """
-        return self.diameter * self.resolution_multiplier
+        return self.diameter * Particle.resolution_multiplier

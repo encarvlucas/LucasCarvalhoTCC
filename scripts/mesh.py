@@ -45,8 +45,8 @@ class Mesh:
 
         try:
             if liquid is not None:
-                self.density = self.standard_liquids[liquid]["density"]
-                self.viscosity = self.standard_liquids[liquid]["viscosity"]
+                self.density = Mesh.standard_liquids[liquid]["density"]
+                self.viscosity = Mesh.standard_liquids[liquid]["viscosity"]
         except KeyError:
             print("Liquid is not in library of standard liquids. "
                   "Check Mesh.standard_liquids.keys() for a list of available liquids.")
