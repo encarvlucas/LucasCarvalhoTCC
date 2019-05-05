@@ -2,7 +2,6 @@ import scipy.sparse.linalg as linalg
 from scipy import sparse
 
 from scripts.complexPointList import *
-from scripts.meshPropertyStates import *
 from scripts.mesh import *
 
 
@@ -246,7 +245,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
 
 def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, reynolds: float = None,
-                         save_each_frame: bool = False, stop_criteria: float = None, return_history: bool = True):
+                         save_each_frame: bool = False, stop_rule: float = None, return_history: bool = True):
     """
     Solves the mesh defined 2D current-vorticity equation problem:
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -254,7 +253,7 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
     :param total_time: Length of time the calculation takes place [s].
     :param reynolds: Option to provide the value of Reynolds Number [1].
     :param save_each_frame: True if every loop saves the current velocity values.
-    :param stop_criteria: Precision used to detect if method can be stopped early.
+    :param stop_rule: Precision used to detect if method can be stopped early.
     :param return_history: Flag used to check if return is resulting array of property values in the mesh,
                            or a MeshPropertyStates object that contains the information of values in various timestamps.
     :return: Velocity vectors and pressure values for each point in the mesh.
@@ -280,21 +279,21 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
                                            "Velocity_Y": util.sparse_to_vector(velocity_y_vector)},
                         dt=dt, frame_num=0)
 
-    # Defining Reynolds number
-    re = reynolds or mesh.density * max(velocity_x_vector)[0, 0] * mesh.length_y / mesh.viscosity
-    if re > 100.:
-        print("Reynolds value is beyond defined maximum value: Re = {0} > 100".format(int(re)))
-
     # Show initial particle position
     # if save_each_frame:
-        # mesh.show_geometry()
-        # mesh.save_frame(0)
+    #     mesh.show_geometry()
+    #     mesh.save_frame(0)
 
     velocity_x_states = MeshPropertyStates(util.sparse_to_vector(velocity_x_vector))
     velocity_y_states = MeshPropertyStates(util.sparse_to_vector(velocity_y_vector))
     # --------------------------------- Solve Loop ---------------------------------------------------------------------
     for frame_index, time in enumerate(np.arange(dt, total_time, dt)):
         print("\rSolving velocity {0:.2f}%".format(100 * time / total_time), end="")
+
+        # Defining Reynolds number
+        re = reynolds or mesh.density * max(velocity_x_vector)[0, 0] * mesh.length_y / mesh.viscosity
+        if re > 100.:
+            print("Reynolds value is beyond defined maximum value: Re = {0} > 100".format(int(re)))
 
         # ------------------------ Acquire omega boundary condition ----------------------------------------------------
         #        M.w = (G_x.v_y) - (G_y.v_x)
@@ -340,8 +339,8 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
         apply_initial_boundary_conditions(mesh, "vel_x", velocity_x_vector)
         apply_initial_boundary_conditions(mesh, "vel_y", velocity_y_vector)
 
-        if stop_criteria is not None and (abs(np.mean(velocity_x_vector.toarray()-velocity_x_states.last)) < stop_criteria and
-                                          abs(np.mean(velocity_y_vector.toarray()-velocity_y_states.last)) < stop_criteria):
+        if stop_rule is not None and (abs(np.mean(velocity_x_vector.toarray() - velocity_x_states.last)) < stop_rule and
+                                      abs(np.mean(velocity_y_vector.toarray() - velocity_y_states.last)) < stop_rule):
             break
 
         # Saving frames

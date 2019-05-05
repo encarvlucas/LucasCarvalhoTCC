@@ -16,7 +16,7 @@ liquid = "super_oil"
 mesh = TccLib.Mesh("Step_ref", liquid=liquid)
 
 # Show mesh geometry
-# mesh.show_geometry(names=True, save=True)
+# mesh.show_geometry(names=False, save=True)
 
 # Concave sides boundary points
 # sides_vertical = np.array([
@@ -116,13 +116,13 @@ mesh.new_boundary_condition("vel_y", point_index=xy_indices, values=xy_values, t
 mesh.new_boundary_condition("vel_y", point_index=sides, values=0., type_of_boundary=True)
 
 # Solve for FEM velocity field solution
-velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time, save_each_frame=True,
-                                                     stop_criteria=1e-5)
-TccLib.util.save(velocity_x, "vel_x")
-TccLib.util.save(velocity_y, "vel_y")
-
-# velocity_x = TccLib.util.load("vel_x")
-# velocity_y = TccLib.util.load("vel_y")
+# velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time, save_each_frame=True,
+#                                                      stop_rule=1e-5)
+# TccLib.util.save(velocity_x, "vel_x")
+# TccLib.util.save(velocity_y, "vel_y")
+#
+velocity_x = TccLib.util.load("vel_x")
+velocity_y = TccLib.util.load("vel_y")
 
 # Show results in quiver plot
 mesh.show_velocity_quiver(velocity_x, velocity_y)

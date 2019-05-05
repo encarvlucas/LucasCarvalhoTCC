@@ -95,7 +95,7 @@ mesh.new_boundary_condition("vel_y", point_index=xy_indices, values=xy_values,
 
 # Solve for FEM velocity field solution
 velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time, save_each_frame=True,
-                                                     stop_criteria=1e-5)
+                                                     stop_rule=1e-5)
 TccLib.util.save(velocity_x, "vel_x")
 velocity_x = TccLib.util.load("vel_x")
 

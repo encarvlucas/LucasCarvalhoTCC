@@ -16,7 +16,7 @@ liquid = "super_oil"
 mesh = TccLib.Mesh("Rotor_ref", liquid=liquid)
 
 # Show mesh geometry
-# mesh.show_geometry(names=True, save=True)
+# mesh.show_geometry(names=False, save=True)
 
 # Rotor boundary points
 # north = np.array([42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61])
@@ -103,13 +103,13 @@ xy_indices, xy_values, xy_types = TccLib.build_boundary_conditions(mesh, boundar
 mesh.new_boundary_condition("vel_y", point_index=xy_indices, values=xy_values, type_of_boundary=xy_types)
 
 # Solve for FEM velocity field solution
-velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time, save_each_frame=True,
-                                                     stop_criteria=1e-5)
-TccLib.util.save(velocity_x, "vel_x")
-TccLib.util.save(velocity_y, "vel_y")
+# velocity_x, velocity_y = TccLib.solve_velocity_field(mesh, dt=dt, total_time=total_time, save_each_frame=True,
+#                                                      stop_criteria=1e-5)
+# TccLib.util.save(velocity_x, "vel_x")
+# TccLib.util.save(velocity_y, "vel_y")
 
-# velocity_x = TccLib.util.load("vel_x")
-# velocity_y = TccLib.util.load("vel_y")
+velocity_x = TccLib.util.load("vel_x")
+velocity_y = TccLib.util.load("vel_y")
 
 # Show results in quiver plot
 mesh.show_velocity_quiver(velocity_x, velocity_y)
