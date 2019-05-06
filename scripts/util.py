@@ -184,12 +184,20 @@ def check_if_instance(obj, clazz):
                         " please use a ({1}) object.".format(obj.__class__.__name__, clazz.__name__))
 
 
-def style_plot(param_x: list, param_y: list):
+def style_plot(mesh=None, param_x: list = None, param_y: list = None):
     """
     Alter the plot styling.
+    :param mesh: Mesh object that contains the points.
     :param param_x: List of x coordinates.
     :param param_y: List of y coordinates.
     """
+    if mesh is not None:
+        param_x = mesh.x
+        param_y = mesh.y
+    else:
+        check_method_call(param_x)
+        check_method_call(param_y)
+
     def max_amplitude(_list):
         return max(_list) - min(_list)
 
@@ -328,6 +336,7 @@ def use_meshio(filename: str, geometry):
     delauney_surfaces = sp.Delaunay(file_data.points[:, :2])
     # TODO: REFINE BY SPLITTING IS STILL NOT WORKING
     delauney_surfaces.simplices = ien_.astype("int32")
+    delauney_surfaces.neighbors = ien_.astype("int32")
     # ien_ = delauney_surfaces.simplices
 
     return x_, y_, ien_, delauney_surfaces

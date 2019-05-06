@@ -135,7 +135,7 @@ def apply_initial_boundary_conditions(mesh: Mesh, boundary_name, vector_v):
 
 def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = None, k_coef_x: float = 1.0,
                   k_coef_y: float = 1.0, q: [float, ComplexPointList] = None, dt: float = None,
-                  total_time: float = None, stop_criteria: float = None, return_history: bool = False):
+                  total_time: float = None, stop_rule: float = None, return_history: bool = False):
     """
     Solves the mesh defined 2D Poisson equation problem:
         DT = -∇(k*∇T) + Q   ->   (M + K).T_i^n =  M.T_i^n-1 + M.Q_i
@@ -149,7 +149,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
     :param q: Heat generation for each point.
     :param dt: Value of time between frames [s].
     :param total_time: Length of time the calculation takes place (only necessary for transient solutions) [s].
-    :param stop_criteria: Precision used to detect if method can be stopped early.
+    :param stop_rule: Precision used to detect if method can be stopped early.
     :param return_history: Flag used to check if return is resulting array of property values in the mesh,
                            or a MeshPropertyStates object that contains the information of values in various timestamps.
     :return: Temperature value for each point in the mesh [K or °C].
@@ -237,7 +237,7 @@ def solve_poisson(mesh: Mesh, permanent_solution: bool = True, k_coef: float = N
 
             #    A.x = b   ->   x = solve(A, b)
             t_vector = linalg.spsolve(a_matrix, b_vector)
-            if stop_criteria is not None and abs(np.mean(t_vector-states[-1])) < stop_criteria:
+            if stop_rule is not None and abs(np.mean(t_vector - states[-1])) < stop_rule:
                 break
             states.append(t_vector, time)
 
@@ -359,7 +359,8 @@ def solve_velocity_field(mesh: Mesh, dt: float = None, total_time: float = 1.0, 
 
 def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list, np.ndarray] = None,
                    velocity_y: [list, np.ndarray] = None, dt: float = None, single_force: str = None,
-                   acceleration_x: [list, np.ndarray] = None, acceleration_y: [list, np.ndarray] = None):
+                   acceleration_x: [list, np.ndarray] = None, acceleration_y: [list, np.ndarray] = None,
+                   no_gravity: bool = False):
     """
     Method that moves all particles currently inside the mesh domain.
     :param mesh: The Mesh object that defines the geometry of the problem and the boundary conditions associated.
@@ -370,6 +371,7 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
     :param acceleration_y: Vector of acceleration in the fluid field in the y axis [m/s²].
     :param dt: The time difference between frames [s].
     :param single_force: Parameter used for testing single forces one at a time.
+    :param no_gravity: Flag for disabling gravity influence on particles, used for simulations viewed from above.
     """
     # Contingency
     dt = dt or mesh.default_dt
@@ -400,7 +402,8 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
         particle.reynolds = (mesh.density * max(relative_vel) * particle.diameter / mesh.viscosity)
 
         # ----------------- Gravitational Force ------------------------------------------------------------------------
-        forces["gravitational"] = (0., -9.80665 * particle.mass)
+        if not no_gravity:
+            forces["gravitational"] = (0., -9.80665 * particle.mass)
 
         # ----------------- Drag Force ---------------------------------------------------------------------------------
         # if particle.reynolds > 1:

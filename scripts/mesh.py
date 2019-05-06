@@ -183,25 +183,30 @@ class Mesh:
         util.check_if_instance(particle, Particle)
 
         if self.delauney_surfaces.find_simplex((particle.pos_x, particle.pos_y)) < 0:
-            return False
-        else:
-            return True
+            if self.delauney_surfaces.find_simplex((particle.pos_x, particle.pos_y), bruteforce=True) < 0:
+                return False
+        return True
 
     def get_interpolated_value(self, position: (tuple, list), property_vector: (list, np.ndarray),
-                               optional_property_vector: (list, np.ndarray) = None):
+                               optional_property_vector: (list, np.ndarray) = None, ignore_beyond: bool = False):
         """
         Method that calculates the scalar value of the property in the fluid's coordinates using interpolation of the
         closest points known values.
         :param position: Coordinates of the point (x, y) [m].
         :param property_vector: Vector of scalar property values [varies].
         :param optional_property_vector: Vector of scalar property values [varies].
+        :param ignore_beyond: Ignore if position is outside the bounds.
         :return: The interpolated value of the property in the fluid at the coordinates.
         """
         # Determine which element contains the particle
         index = self.delauney_surfaces.find_simplex(position)
         if index < 0:
-            raise ValueError("Point position not found inside mesh.")
-
+            index = self.delauney_surfaces.find_simplex(position, bruteforce=True)
+            if index < 0:
+                if ignore_beyond:
+                    return 0.
+                else:
+                    raise ValueError("Point position not found inside mesh.")
         element = self.ien[index]
 
         total_area = util.get_area(self.x[element], self.y[element])
@@ -386,7 +391,7 @@ class Mesh:
          particle in particles if self.contains_particle(particle)]
 
         # Sets plot styling
-        util.style_plot(self.x, self.y)
+        util.style_plot(self)
 
         # Display id's of points and names of objects
         if names:
@@ -540,7 +545,7 @@ class Mesh:
         axes.quiver(self.x, self.y, velocity_x, velocity_y)
 
         # Sets plot styling
-        util.style_plot(self.x, self.y)
+        util.style_plot(self)
 
         plt.savefig("{0}_velocity_field".format(self.name))
 
@@ -582,11 +587,14 @@ class Mesh:
         """
         # Draw mesh points
         plt.plot(self.x, self.y, marker=".", color="k", linestyle="none", ms=5)
+        util.style_plot(self)
 
         # Draw particles trajectories
-
         for particle in self.particles:
             position_history = np.array(particle.position_history)
-            plt.plot(position_history[:, 0], position_history[:, 1], color=particle.color)
+            plt.plot(position_history[:, 0], position_history[:, 1], color=particle.color,
+                     label="Particle "+particle.name)
+
+        plt.legend()
 
         return plt.show()

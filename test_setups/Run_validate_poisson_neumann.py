@@ -58,7 +58,7 @@ TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_lab
                             save_file_as="{0}_permanent_validation".format(mesh.name))
 
 # Solve for transient solution
-temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, k_coef=k, stop_criteria=1e-5, q=Q,
+temperature_trans = TccLib.solve_poisson(mesh, permanent_solution=False, k_coef=k, stop_rule=1e-5, q=Q,
                                          return_history=True)
 
 # Show results in 3D graph

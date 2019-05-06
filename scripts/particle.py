@@ -12,9 +12,13 @@ class Particle:
     frame_skips = 1000
 
     # Defines size of particles when plotting
-    resolution_multiplier = 1e7
+    resolution_multiplier = 1e4
 
-    def __init__(self, name, position=(0., 0.), velocity=(0., 0.), density=1., diameter=0.1, color="r"):
+    color_wheel = ["b", "g", "r", "c", "m", "y"]
+    color_index = 0
+
+    def __init__(self, name: str, position: (list, tuple) = (0., 0.), velocity: (list, tuple) = (0., 0.),
+                 density: float = 1., diameter: float = 0.1, color: str = None):
         """
         Particle class constructor.
         :param name: Name of the particle.
@@ -45,7 +49,7 @@ class Particle:
         # Particle Reynolds
         self.reynolds = 0.
 
-        self.color = color
+        self.color = color if color is not None else Particle.get_next_color()
 
         # Number of times this particle's position has been calculated.
         self.time_count = 1
@@ -64,6 +68,14 @@ class Particle:
         :return: Particle's radius.
         """
         return self.diameter / 2.
+
+    @property
+    def position(self):
+        """
+        Particle current position coordinates.
+        :return: Particle's position.
+        """
+        return self.pos_x, self.pos_y
 
     def max_dt(self, fluid_viscosity):
         """
@@ -109,19 +121,19 @@ class Particle:
         :param mesh: Mesh object that determines the boundaries for collision.
         :param dt: The time difference between frames [s].
         """
-        # TODO: ADD GENERIC WALL COLLISIONS
+        last_position = self.position
         self.pos_x += self.velocity_x * dt
-        if not mesh.contains_particle(self):
-            self.pos_x = 0.
-
         self.pos_y += self.velocity_y * dt
         if not mesh.contains_particle(self):
-            self.pos_y = 0.7*abs(self.pos_y)
-            self.velocity_y = 0.7*abs(self.velocity_y)
+            self.pos_x = last_position[0] - 0.7*self.velocity_y * dt
+            self.pos_y = last_position[1] + 0.7*self.velocity_x * dt
+            if not mesh.contains_particle(self):
+                self.pos_x = last_position[0] + 0.7*self.velocity_y * dt
+                self.pos_y = last_position[1] - 0.7*self.velocity_x * dt
 
         self.time_count += 1
         if self.time_count % self.frame_skips == 0:
-            self.position_history.append((self.pos_x, self.pos_y))
+            self.position_history.append(self.position)
 
     @property
     def pixel_size(self):
@@ -130,3 +142,9 @@ class Particle:
         :return: Approximate plotting size.
         """
         return self.diameter * Particle.resolution_multiplier
+
+    @classmethod
+    def get_next_color(cls):
+        current = cls.color_wheel[cls.color_index]
+        cls.color_index = 0 if cls.color_index + 1 >= len(cls.color_wheel) else cls.color_index + 1
+        return current
