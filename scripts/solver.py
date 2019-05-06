@@ -414,9 +414,9 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
         dn = np.array([-fluid_velocity[1], fluid_velocity[0]])
         dn = dn/np.sqrt(dn.dot(dn)) * particle.radius
         dv_dr = (np.array(mesh.get_interpolated_value((particle.pos_x + dn[0], particle.pos_y + dn[1]),
-                                                      velocity_y, velocity_x)) -
+                                                      velocity_y, velocity_x, True)) -
                  np.array(mesh.get_interpolated_value((particle.pos_x - dn[0], particle.pos_y - dn[1]),
-                                                      velocity_y, velocity_x)))
+                                                      velocity_y, velocity_x, True)))
         forces["lift"] = (np.nan_to_num(dn/abs(dn)) * 1.61 * mesh.viscosity * particle.diameter * relative_vel *
                           np.sqrt(particle.diameter * mesh.density / mesh.viscosity * abs(dv_dr)))
 
