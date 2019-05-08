@@ -51,3 +51,5 @@ Characteristic Length {10004, 10001, 10002, 10005, 10003, 10006} = 0.2;
 Characteristic Length {10004, 10001, 10002, 10005} = 0.3;
 //+
 Characteristic Length {10006, 10003} = 0.4;
+//+
+Plane Surface(2) = {1};

@@ -116,7 +116,7 @@ velocity_y = TccLib.util.load("vel_y")
 # mesh.show_velocity_quiver(velocity_x, velocity_y)
 
 # Define Particles
-x_0 = 0.4 * mesh.length_x
+x_0 = 0.1 * mesh.length_x
 y_0 = mesh.length_y / 6
 
 particle_a = TccLib.Particle("A", (x_0, 5 * y_0), density=particle_density, diameter=particle_diameter)
@@ -126,7 +126,7 @@ particle_d = TccLib.Particle("D", (x_0, 2 * y_0), density=particle_density, diam
 particle_e = TccLib.Particle("E", (x_0, 1 * y_0), density=particle_density, diameter=particle_diameter)
 particles = [particle_a, particle_b, particle_c, particle_d, particle_e]
 
-# particles = TccLib.util.load("particles")
+particles = TccLib.util.load("particles")
 mesh.add_particle(list_of_particles=particles)
 
 # Define dt based on convergence limit
@@ -137,10 +137,10 @@ dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**1.
 x_vector = np.arange(0, total_time, dt)
 
 # Move Particles
-for time in x_vector:
-    print("\rMoving particles {0:.2f}%".format(100 * time / total_time), end="")
-    TccLib.move_particles(mesh, velocity_x=velocity_x.last, velocity_y=velocity_y.last, dt=dt)
-    TccLib.util.save(particles, "particles")
+# for time in x_vector:
+#     print("\rMoving particles {0:.2f}%".format(100 * time / total_time), end="")
+#     TccLib.move_particles(mesh, velocity_x=velocity_x.last, velocity_y=velocity_y.last, dt=dt)
+#     TccLib.util.save(particles, "particles")
 
 # Show particles trajectories
 mesh.show_particle_course()

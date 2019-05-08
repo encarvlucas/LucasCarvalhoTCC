@@ -331,13 +331,17 @@ def use_meshio(filename: str, geometry):
 
     x_ = file_data.points[:, 0]
     y_ = file_data.points[:, 1]
-    ien_ = file_data.cells["triangle"]
 
     delauney_surfaces = sp.Delaunay(file_data.points[:, :2])
-    # TODO: REFINE BY SPLITTING IS STILL NOT WORKING
-    delauney_surfaces.simplices = ien_.astype("int32")
-    delauney_surfaces.neighbors = ien_.astype("int32")
-    # ien_ = delauney_surfaces.simplices
+
+    try:
+        ien_ = file_data.cells["triangle"]
+        # TODO: REFINE BY SPLITTING IS STILL NOT WORKING
+        delauney_surfaces.simplices = ien_.astype("int32")
+        delauney_surfaces.neighbors = ien_.astype("int32")
+
+    except KeyError:
+        ien_ = delauney_surfaces.simplices
 
     return x_, y_, ien_, delauney_surfaces
 

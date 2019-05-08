@@ -597,4 +597,6 @@ class Mesh:
 
         plt.legend()
 
+        plt.savefig("{0}_particle_trajectory".format(self.name))
+
         return plt.show()

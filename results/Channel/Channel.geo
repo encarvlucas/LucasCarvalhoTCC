@@ -32,3 +32,7 @@ Characteristic Length {6, 5} = 0.2;
 Plane Surface(1) = {1};
 //+
 Characteristic Length {6, 5} = 0.1;
+//+
+Characteristic Length {6, 5} = 0.1;
+//+
+Characteristic Length {4, 1, 3, 2} = 0.2;
