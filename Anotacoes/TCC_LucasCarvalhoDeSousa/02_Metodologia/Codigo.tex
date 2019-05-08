@@ -6,13 +6,13 @@
 
 %--------------------------------------------------------------
 \section{\textbf{Introdução}}
-O código deste trabalho foi feito completamente pelo autor na linguagem \textbf{\textit{Python 3.5}}\cite{python}, com auxílio das bibliotecas: \textit{NumPy}\cite{numpy}, para manipulação de dados e matrizes, \textit{SciPy}\cite{scipy} para solução de sistemas e matrizes esparsas, \textit{Matplotlib}\cite{matplotlib} para a visualização de gráficos e \href{https://github.com/nschloe/pygmsh}{\textit{pygmsh}} para importação da malha no formato \verb|.msh|.
+O código deste trabalho foi feito completamente pelo autor na linguagem \textbf{\textit{Python 3.5}}, com auxílio das bibliotecas: \textit{NumPy}, para manipulação de dados e matrizes, \textit{SciPy} para solução de sistemas e matrizes esparsas, \textit{Matplotlib} para a visualização de gráficos e \href{https://github.com/nschloe/pygmsh}{\textit{pygmsh}} para importação da malha no formato \verb|.msh|.
 
-Para a geração de malhas foi utilizado o \textit{software open source \textbf{Gmsh}}\cite{gmsh}.
+Para a geração de malhas foi utilizado o \textit{software open source \textbf{Gmsh}}.
 Nele é possível desenhar o perfil do domínio e gerar os nós e elementos de acordo com o refino desejado.
 Também pode-se forçar diferentes tamanhos de elementos em regiões de maior interesse.
 
-Para a vizualização de resultados foi utilizado o \textit{software open source \textbf{ParaView}}\cite{paraview}, pois este permite uma vizualização da evolução dos resultados, assim como diversas ferramentas para avaliação dos dados.
+Para a vizualização de resultados foi utilizado o \textit{software open source \textbf{ParaView}}, pois este permite uma vizualização da evolução dos resultados, assim como diversas ferramentas para avaliação dos dados.
 
 Todos os softwares de terceiros foram usados com permissão e licensas apropriadas.
 
@@ -145,7 +145,7 @@ Há métodos criados para auxiliar a visualização dos resultados no objeto de 
 %--------------------------------------------------------------
 \subsection{\textbf{Movimentação das Partículas}}
 No caso do problema multifásico de partículas inseridas em um fluido em movimento, há uma etapa de movimentação das partículas separada da função de solução principal.
-Isto é devido ao fato do método de solução escolhido utilizar a implementação \textit{one-way}\cite{crowe}.
+Isto é devido ao fato do método de solução escolhido utilizar a implementação \textit{one-way} como apresentado por Crowe (2011)\cite{crowe}.
 Neste tipo de solução o movimento do fluido, meio principal,  afeta as partículas, meio secundário, porém elas não causam reflexos no fluido.
 Esta implementação foi escolhida devida a demanda computacional elevada da implementação \textit{two-way}, que requeriria solucionar o campo de velocidades (MEF) mais vezes por iteração.
 Então as partículas são simuladas percorrendo um escoamento permanente, com o valor do campo de velocidades sido calculado anteriormente.

@@ -53,6 +53,9 @@ A execução do código e a computação dos resultados foram realizados em um c
 O problema de troca de calor em uma placa é um dos exemplos clássicos utilizados para estudar as equações de transmissão de calor em sólidos. O mais simples destes é uma barra unidimensional com condutividade térmica constante e sem geração de calor onde a temperatura é conhecida nas extremidades.
 Como a malha do código foi desenvolvida para solução de problemas bidimensionais, cria-se um problema bidimensional com condições de contorno equivalentes e extrai-se uma seção para que se possa comparar os resultados.
 
+Para a solução dos problemas em sólidos e fluidos no espaço foi utilizado o Método de Elementos Finitos, apresentado na seção \ref{mef}.
+Enquanto para a aproximação da dinâmica das partículas e solução dos sólidos e fluidos no tempo utilizou-se o Método de Diferenças Finitas, explicado na seção \ref{mdf}.
+
 A equação de governo deste fenômeno é conhecida como a equação de Laplace \eqref{laplace_d_perm_eq} para sólidos em estado permanente e é apresentada a seguir:
 \begin{equation}
     \nabla^2 T = 0
@@ -79,7 +82,7 @@ As condições de contorno e o dominio bidimensional utilizados na simulação s
 \end{figure}
 
 O dominio foi discretizado utilizando uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
-A malha foi criada pelo o software GMSH como proposto por \cite{gmsh} e importada ao código numérico.
+A malha foi criada pelo o software GMSH como proposto por Geuzaine e Remacle (2009)\cite{gmsh} e importada ao código numérico.
 A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura, e que é possível observar que o campo de temperatura possui um perfil linear variando de 0 (cor azul) a 1 (cor vermelha).
 \begin{figure}[H]
     \centering
@@ -256,6 +259,8 @@ O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio pad
 %---------------------------------------------------------------------------------------------Primeiro Exemplo
 \subsection{\textbf{Escoamento de Poiseuille}}
 \label{sec_poiseuille}
+Como indicado anteriormente, foi utilizado o Método de Elementos Finitos para a solução do campo de velocidades no espaço, e o Método de Diferenças Finitas no tempo.
+
 Este é um dos primeiros exemplos dados ao estudar-se a meĉanica dos fluidos e a equação de Navier-Stoakes\eqref{navier}, pois trata-se de uma configuração geométrica muito simples.
 O escoamento de Poiseuille também é conhecido como escoamento entre placas paralelas, já que essa é exatamente a descrição de sua forma e as placas são tomadas como estacionárias em relação ao fluido.
 
@@ -264,7 +269,7 @@ O escoamento ocorre entre duas placas paralelas de comprimento infinito com uma 
 As condições de contorno são definidas para a função corrente e a velocidade.
 Para os valores iniciais nos nós sem condição de contorno foram arbitrados como nulos.
 
-O sistema de equações de governo deste escoamento é o sistema corrente-vorticidade \ref{corrente_vorticidade}, e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
+Como apresentado por Pontes e Norberto (2010)\cite{pontes_norberto}, o sistema de equações de governo deste escoamento é o sistema corrente-vorticidade \ref{corrente_vorticidade}, e a solução analítica do perfil de velocidades é dada por:
 \begin{equation}
     v_x(y) = \dfrac{4U_{max}}{L^2}y(L-y)
     \label{poiseuille_sol} 
@@ -304,7 +309,7 @@ Porém, neste caso, as placas possuem uma velocidade relativa entre si, ou seja,
 Novamente, utiliza-se a aproximação do escoamento para um fluído newtoniano, imcompressível e em estado permanente com seu perfil plenamente desenvolvido.
 As condições de contorno são definidas para a função corrente e a velocidade, com os valores iniciais nos nós sem condição de contorno arbitrados como nulos.
 
-Novamente trabalha-se com o sistema corrente-vorticidade \ref{corrente_vorticidade} e a solução analítica do perfil de velocidades é dada por\cite{pontes_norberto}:
+Novamente trabalha-se com o sistema corrente-vorticidade \ref{corrente_vorticidade} e a solução analítica do perfil de velocidades é apresentada por Pontes e Norberto (2010)\cite{pontes_norberto}:
 \begin{equation}
     v_x(y) = \dfrac{U_{sup} - U_{inf}}{L}y + U_{inf}
     \label{couette_sol} 
@@ -345,8 +350,12 @@ O erro relativo médio calculado para este caso foi de $1.4251\%$ e com desvio p
 A simulação das forças é realizada sobre uma partícula isolada inserida em um malha com um escoamento com campo de velocidades constante em função da posição da partícula no eixo $y$, para facilitar os cálculos das soluções analíticas.
 O campo de velocidades é arbitrado e não calculado como anteriormente.
 
-Para a simulação de cada força foi utilizada uma malha triangular linear não estruturada com 2304 elementos e 417 nós.
-Pode-se observar os parâmetros padrão, a menos que especificado o contrário, utilizados a seguir:
+Conforme indicado, foi utilizado o Método de Diferenças Finitas para discretização e solução da dinâmica das partículas.
+
+Na \ref{force_bc}, é apresentado o domínio utilizado para os casos de validação das forças que atuam sobre a partícula, como também o campo de velocidade do fluido e a velocidade da partícula, além da sua posição inicial.
+Para o caso da força de sustentação, foi necessário a utilização de um outro campo de velocidade conforme será apresentado mais a frente.
+Enquanto que para o caso da força virtual, foi necessário assumir que o campo de velocidade do fluido dependesse da variável temporal.
+O domínio foi discretizado utilizando uma malha triangular linear não estruturada com 2304 elementos e 417 nós.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -355,6 +364,7 @@ Pode-se observar os parâmetros padrão, a menos que especificado o contrário, 
     \caption{Condições de contorno de uma partícula isolada sob efeito de uma força.}
     \label{force_bc}
 \end{figure}
+
 A validação das forças é feita individualmente, para que se possa comparar os valores do movimento simulado da partícula com a curva da solução analítica esperada.
 Os parâmetros definidos para as simulações foram: uma partícula com diâmetro $d_p=0.001m$, densidade $\rho_p=30000Kg/m^3$, variação de tempo $dt=1.5625e^{-6}s$, tempo total $t_{max}=0.4s$, em um fluido com densidade $\rho_p=1000Kg/m^3$ e viscosidade dinâmica $0.89e^{-3}Pa.s$.
 
@@ -389,9 +399,14 @@ O erro relativo médio calculado para este caso foi de $7.706e^{-4}\%$ e com des
 %---------------------------------------------------------------------------------------------Segundo Exemplo
 \subsection{\textbf{Força de Arrasto}}
 \label{sec_drag}
-A força de arrasto é a principal fonte de movimentação da partícula.
-A partícula é movimentada pela força de cisalhamento do fluido que exerce atrito sobre sua superfície. 
-Neste caso, a validação é feita para analisar o comportamento da força em relação as propiedades da partícula e avaliar a convergência em função do valor de $dt$.
+A força de arrasto é a principal fonte de movimentação de uma partícula quando submersa em um fluido em movimento.
+A partícula é movimentada pela força de cisalhamento do fluido em transito que exerce atrito sobre sua superfície.
+Isto causa um efeito de arrasto, ou carregamento, devido a condição de não escorregamento da superfície da partícula.
+
+Como pode-se analisar pela equação da força \eqref{drag_sol}, quanto maior for a diferença entre os vetores de velocidade da partícula e do fluido maior será a força excercida sobre ela.
+E ao se aproximarem da mesma velocidade, a força é reduzida até o ponto de se tornar nula quando a partícula se encontrar com a mesma velocidade do escoamento no mesmo ponto.
+
+Neste caso, a validação é feita para analisar o comportamento da força em relação as propriedades da partícula.
 
 A solução analítica para a posição da partícula sob efeito da força de arrasto no eixo $x$ é:
 \begin{equation}
@@ -422,8 +437,11 @@ O erro relativo médio calculado para este caso foi de $3.083e^{-5}\%$ e com des
 %---------------------------------------------------------------------------------------------Terceiro Exemplo
 \subsection{\textbf{Força de Sustentação}}
 \label{sec_lift}
-A força de sustentação é a força que permite que a partícula se mantenha elevada.
-Essa força afeta a partícula quando há uma variação entre as velocidades no topo e fundo da partícula, portanto ela só ocorre quando o campo de velocidades não for constante em relação ao eixo perpendicular ao movimento da partícula.
+A força de sustentação é a força que permite que a partícula se mantenha elevada quando está sob efeito de um fluido em movimento.
+Ela é causada por um efeito de queda de pressão em uma região com maior velocidade, o que gera um gradiente de pressão e enfim a força.
+
+Portanto esta força afeta a partícula somente quando há um gradiente de velocidade ao longo dos contornos da partícula, portanto ela só ocorre quando o campo de velocidades não for constante em volta da partícula.
+Esta é a mesma força que possibilita o voo dos aviões, pois os perfis de suas asas geram o gradiente de velocidades necessário.
 
 A força de sustentação possui a seguinte solução analítica para a posição da partícula no eixo $y$ semelhante a força de arrasto \eqref{lift_sol}, porém com constantes diferentes:
 \begin{equation}
@@ -437,7 +455,7 @@ define-se $c_l$ como:
 \end{equation}
 onde $Re_G$ é o número de Reynolds de cisalhamento\eqref{reg} $\rho_f$ é a densidade do fluido e $\tfrac{dv_x}{dy}$ é a variação da velocidade na partícula sobre o eixo perpendicular ao movimento.
 
-Para este caso, foi preciso utilizar a malha padrão com condições diferentes do padrão, para que fosse possível observar os efeitos da força de sustentação com mais clareza.
+Como é apresentado na \ref{lift_bc}, foi utilizado a mesma malha que nos casos anteriores, porém o campo de velocidade do fluido foi alterado, para que fosse possível observar os efeitos da força de sustentação com mais clareza.
 As condições utilizadas são:
 \begin{figure}[H]
     \centering
@@ -464,7 +482,7 @@ O erro relativo médio calculado para este caso foi de $1.9241e^{-6}\%$ e com de
 %---------------------------------------------------------------------------------------------Terceiro Exemplo
 \subsection{\textbf{Força de Massa Virtual (\textit{Added Mass})}}
 \label{sec_mass}
-A força de massa virtual é uma força de reação do fluido presente devido ao movimento da partícula presente.
+A força de massa virtual é uma força de reação entre o fluido e a movimentação da partícula durante o escoamento.
 O valor dessa força está relacionado a massa de fluido que estaria se deslocando na posição da partícula.
 
 Para encontrar-se a solução analítica da força de massa virtual que pudesse ser observada e comparada com os resultados das simulações, ou seja não sendo nula, foi preciso assumir um campo de velocidades que variasse no tempo.
@@ -481,7 +499,7 @@ define-se $c_m$ como:
 \end{equation}
 onde $a_x$ é a aceleração, ou variação da velocidade no tempo, do campo de velocidades do fluido no eixo $x$ e $V_p$ é o volume da partícula.
 
-Novamente utilizou-se a malha padrão com condições e posição inicial apresentadas na \ref{force_bc}, com velocidade inicial $v_{x0}=0$.
+Novamente, foi utilizado a mesma malha e condições dos casos anteriores conforme apresentado na \ref{force_bc}, além disso a condição inicial da componente tangencial da velocidade foi $v_{x0}=0$.
 Revela-se na \ref{mass_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
 Foi utilizado um campo de velocidades que varia no tempo com valor constante, como explicado anteriormente, na forma de $U=2m/s+a_x t$, onde $a_x=1m/s^2$.
 Pode-se observar que a partícula é acelerada até atingir a velocidade do fluído, como se era esperado.
