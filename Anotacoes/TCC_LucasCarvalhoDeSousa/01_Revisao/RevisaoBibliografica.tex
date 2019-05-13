@@ -1,0 +1,28 @@
+\chapter{REVISÃO BIBLIOGRÁFICA}
+\label{rev_bib}
+\section{\textbf{Introdução}}
+Nesta seção é apresentada a literatura utilizada, analizando-se as partes pertinentes ao trabalho realizado. Os principais tópicos de estudo foram sobre os temas de Método de Elementos Finitos, Escoamentos Particulados e Programação Computacional. 
+
+\section{\textbf{Método de Elementos Finitos}}
+
+
+\section{\textbf{Escoamentos Multifásicos}}
+Escoamentos multifásicos são utilizados largamente na área da engenharia para diversas aplicações.
+Alguns exemplos na seção de mecânica incluem o transporte de vapor com condensado, formação de bolhas em bombas e sólidos precipitados.
+
+Um dos primeiros trabalhos sobre este tipo de escoamento foi Baker (1965)\cite{Baker-1965}, sobre o comportamento de escoamentos multifásicos em transportes verticais.
+Os estudos iniciais se interessaram na interação entre as fases líquido-líquido, com um crescimento posterior nos escoamentos gás-líquido e sólido-líquido.
+Chamados de escoamentos multifásico de superfície livre.
+
+Um dos tipos de escoamentos multifásicos é o escoamento particulado, sólido-líquido ou sólido-gás, que é o foco deste trabalho.
+Elghobashi (1991)\cite{Elghobashi-1991} estuda o comportamento de escoamentos partículados demonstrando o efeito da turbulência na simulação de escoamentos multifásicos.
+
+Como apresentado por Balachandar (2010)\cite{Balachandar-2010}, os valores da fração de volume ocupada pela fase dispersa e a razão entre a massa da fase dispersa e a massa da fase líquida servem como indicadores do nível de interação entre as fases.
+Para valores muito pequenos, o efeito dominante é do escoamento, portanto neste caso pode-se levar em conta apenas os efeitos do fluido sobre as partículas, chamado de \textit{one-way flow}.
+Para casos com valores maiores, as partículas tomam um papel mais significativo no escoamento e é preciso fazer uma ligação recíproca entre os mesmos.
+Portanto, recalcula-se o escoamento levando em conta os efeitos das partículas no fluido, conhecido como de \textit{two-way flow}.
+E, finalmente, quando estes valores forem mais elevados a fase particulada toma um papel importante no comportamento e torna-se necessário considerar até os efeitos de outras partículas sobre cada uma delas, como colisão, aglomeração e quebra, denominado por Elghobashi (1994)\cite{Elghobashi-1994} de \textit{four-way flow}.
+
+Para a modelagem das forças atuando sobre cada partícula no escoamento foi utilizada a equação \textbf{Basset–Boussinesq–Oseen} (BBO), apresentada por Shao-Lee Soo (1999)\cite{ShaoLeeSoo-1999}.
+Estas equação é subdivida em várias forças atuantes, como a gravidade, arrasto, massa virtual, entre outras.
+Estas equações possuem uma restrição para sua validade, podendo apenas serem aplicadas para casos com baixo número de Reynolds.

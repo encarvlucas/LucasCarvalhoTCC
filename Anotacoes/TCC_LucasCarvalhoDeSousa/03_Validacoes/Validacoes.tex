@@ -63,7 +63,7 @@ A equação de governo deste fenômeno é conhecida como a equação de Laplace 
 \end{equation}
 onde T é a temperatura na placa e $\nabla^2$ é o operador diferencial conhecido como laplaciano.
 
-E a solução analítica do problema unidimensional associado é:
+E a solução analítica do problema unidimensional associado foi obtida pelo método dos coeficientes a determinar e é igual a:
 \begin{equation}
     T(x) = \dfrac{T_L-T_0}{L} x + T_0
     \label{laplace_d_sol}
@@ -140,7 +140,7 @@ A equação que governa este caso é denomidada equação de Poisson \eqref{pois
 \end{equation}
 onde $Q$ é a geração de calor na placa.
 
-A solução analítica para o caso de uma barra unidimensional é apresentada embaixo:
+A solução analítica para o caso de uma barra unidimensional é apresentada embaixo, obtida novamente pelo método de coeficientes a determinar:
 \begin{equation}
     T(x) = \dfrac{Q}{2k}\left(-x^2 + L x\right) + \dfrac{T_L-T_0}{L} x + T_0
     \label{poisson_d_sol} 
@@ -200,7 +200,7 @@ Este caso foi escolhido para validar a solução de problemas com condições de
 Trata-se de uma placa com temperatura fixa em uma das paredes e no lado oposto é defido um valor para o fluxo de calor presente.
 Toma-se uma seção da placa para observar os resultados e compará-los com um problema unidimensional de uma barra com as mesmas condições presentes.
 
-A equação de governo é novamente a equação de Poisson \eqref{poisson_d_perm_eq}, e sua solução analítica para uma barra unidimensional é dada por:
+A equação de governo é novamente a equação de Poisson \eqref{poisson_d_perm_eq}, e sua solução analítica para uma barra unidimensional foi calculada pelo método de coeficientes a determinar e é dada por:
 \begin{equation}
     T(x) = \dfrac{Q}{k}\left(\dfrac{-x^2}{2} + L x\right) - \dfrac{q}{k} x + T_0
     \label{poisson_n_sol} 
@@ -375,7 +375,7 @@ A força gravitacional é a primeira e mais simples implementação de uma forç
 A partícula é acelerada pela constante de aceleração gravitacional.
 A validação deste caso permite verificar a base da estrutura de movimentação de partículas do código.
 
-Para o caso de uma partícula isolada sob efeito da força gravitacional, a solução analítica para a posição da partícula no eixo $y$ é:
+Para o caso de uma partícula isolada sob efeito da força gravitacional, a solução analítica para a posição da partícula no eixo $y$ foi encontrada pelo método de coeficientes a determinar, e está apresentada a seguir:
 \begin{equation}
     y(t) = -\dfrac{g}{2}t^2 + v_{y0}t + p_{y0}
     \label{grav_sol} 
@@ -408,7 +408,7 @@ E ao se aproximarem da mesma velocidade, a força é reduzida até o ponto de se
 
 Neste caso, a validação é feita para analisar o comportamento da força em relação as propriedades da partícula.
 
-A solução analítica para a posição da partícula sob efeito da força de arrasto no eixo $x$ é:
+A solução analítica para a posição da partícula sob efeito da força de arrasto no eixo $x$ foi obtida através do método da variação de parâmetros, com auxílio da ferramenta \textit{WolframAlpha}, mostrada a seguir:
 \begin{equation}
     x(t) = \dfrac{m_p}{c_{d}} (U - v_{x0}) \left(1 - e^{-\frac{c_{d}}{m_p}t}\right) + v_{x0}t + p_{x0}
     \label{drag_sol} 
@@ -443,7 +443,8 @@ Ela é causada por um efeito de queda de pressão em uma região com maior veloc
 Portanto esta força afeta a partícula somente quando há um gradiente de velocidade ao longo dos contornos da partícula, portanto ela só ocorre quando o campo de velocidades não for constante em volta da partícula.
 Esta é a mesma força que possibilita o voo dos aviões, pois os perfis de suas asas geram o gradiente de velocidades necessário.
 
-A força de sustentação possui a seguinte solução analítica para a posição da partícula no eixo $y$ semelhante a força de arrasto \eqref{lift_sol}, porém com constantes diferentes:
+A força de sustentação possui a seguinte solução analítica para a posição da partícula no eixo $y$ semelhante a força de arrasto \eqref{lift_sol}, porém com constantes diferentes.
+Estã solução foi obtida através do método de variação de parâmetros, realizado com a ferramenta \textit{WolframAlpha}, resultando em:
 \begin{equation}
     y(t) = \dfrac{m_p}{c_l} (0 - v_{y0}) \left(1 - e^{-\frac{c_l}{m_p}t}\right) + v_{y0}t + p_{y0}
     \label{lift_sol} 
@@ -487,7 +488,7 @@ O valor dessa força está relacionado a massa de fluido que estaria se deslocan
 
 Para encontrar-se a solução analítica da força de massa virtual que pudesse ser observada e comparada com os resultados das simulações, ou seja não sendo nula, foi preciso assumir um campo de velocidades que variasse no tempo.
 Para isso, define-se que a aceleração do campo de velocidades do escoamento é constante $\tfrac{d\vec{v}}{dt}=\vec{a}=const$.
-Portanto, obtem-se a solução analítica da força de massa virtual para a posição da partícula no eixo $x$.
+Portanto, obtem-se a solução analítica da força de massa virtual para a posição da partícula no eixo $x$, com o método de variação de parâmetros, feito com a ferramenta \textit{WolframAlpha}, com o seguinte resultado:
 \begin{equation}
     x(t) = \dfrac{a_x c_m}{2(c_m + m)}t^2 + + v_{x0}t + p_{x0}
     \label{mass_sol} 

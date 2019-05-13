@@ -5,6 +5,40 @@
 \providecommand{\abntbstabout}[1]{}
 \abntbstabout{1.42 }
 
+\bibitem{Baker-1965}
+\abntrefinfo{Baker}{BAKER}{}
+{BAKER, J. Flow-regime transitions at elevated pressures in vertical two-phase
+  flow.}
+
+\bibitem{Elghobashi-1991}
+\abntrefinfo{Elghobashi}{ELGHOBASHI}{1991}
+{ELGHOBASHI, S. Particle-laden turbulent flows: direct simulation and closure
+  models.
+\emph{Flow, Turbulence and Combustion}, Springer, v.~48, p. 301--314, 1991.
+ISSN 1386-6184,1573-1987.
+Dispon{\'\i}vel em: $<$/scimag/10.1007\%2Fbf02008202$>$.}
+
+\bibitem{Balachandar-2010}
+\abntrefinfo{Balachandar S.;~Eaton}{BALACHANDAR S.;~EATON}{2010}
+{BALACHANDAR S.;~EATON, J.~K. Turbulent dispersed multiphase flow.
+\emph{Annual Review of Fluid Mechanics}, Annual Reviews, v.~42, p. 111--133,
+  2010.
+ISSN 0066-4189,1545-4479.
+Dispon{\'\i}vel em: $<$/scimag/10.1146\%2Fannurev.fluid.010908.165243$>$.}
+
+\bibitem{Elghobashi-1994}
+\abntrefinfo{Elghobashi}{ELGHOBASHI}{1994}
+{ELGHOBASHI, S. On predicting particle-laden turbulent flows.
+\emph{Flow, Turbulence and Combustion}, Springer, v.~52, p. 309--329, 1994.
+ISSN 1386-6184,1573-1987.
+Dispon{\'\i}vel em: $<$/scimag/10.1007\%2Fbf00936835$>$.}
+
+\bibitem{ShaoLeeSoo-1999}
+\abntrefinfo{Soо}{SOо}{1999}
+{SOо, S.~L. \emph{Instrumentation for Fluid-Particle Flow}. [S.l.]: Noyes
+  Publications, 1999.
+ISBN 0-8155-1433-6.}
+
 \bibitem{pontes_norberto}
 \abntrefinfo{Pontes e Mangiavacchi}{PONTES; MANGIAVACCHI}{2010}
 {PONTES, J. da R.~M.; MANGIAVACCHI, N. \emph{Fenômenos de Transferência}.
@@ -30,10 +64,12 @@ Tese (Doutorado) --- Federal University of Rio de Janeiro, Brazil.}
   Element Method For Heat And Fluid Flow}. [S.l.]: Wiley, 2004.
 ISBN 9780470847886,0-470-84788-3,0-470-84789-1.}
 
-\bibitem{python}
-\abntrefinfo{Rossum}{ROSSUM}{1995--}
-{ROSSUM, G. van. \emph{Python Language Reference}.
-version 3.5. [S.l.], 1995--. Dispon{\'\i}vel em: $<$https://www.python.org$>$.}
+\bibitem{gmsh}
+\abntrefinfo{Geuzaine e Remacle}{GEUZAINE; REMACLE}{2009}
+{GEUZAINE, C.; REMACLE, J.-F. Gmsh: A 3-d finite element mesh generator with
+  built-in pre- and post-processing facilities.
+\emph{International Journal for Numerical Methods in Engineering}, John Wiley
+  and Sons, v.~79, 2009.}
 
 \bibitem{numpy}
 \abntrefinfo{Walt, Colbert e Varoquaux}{WALT; COLBERT; VAROQUAUX}{2011}
@@ -42,29 +78,27 @@ version 3.5. [S.l.], 1995--. Dispon{\'\i}vel em: $<$https://www.python.org$>$.}
 \emph{Computing in Science \& Engineering}, AIP, 2011.
 Dispon{\'\i}vel em: $<$https://www.numpy.org/$>$.}
 
-\bibitem{scipy}
-\abntrefinfo{Jones et al.}{JONES et al.}{2001--}
-{JONES, E. et al. \emph{{SciPy}: Open source scientific tools for {Python}}.
-  2001--.
-Dispon{\'\i}vel em: $<$https://www.scipy.org/$>$.}
-
 \bibitem{matplotlib}
 \abntrefinfo{Hunter}{HUNTER}{2007}
 {HUNTER, J.~D. Matplotlib: A 2d graphics environment.
 \emph{Computing in Science \& Engineering}, AIP, 2007.
 Dispon{\'\i}vel em: $<$https://matplotlib.org/$>$.}
 
-\bibitem{gmsh}
-\abntrefinfo{Geuzaine e Remacle}{GEUZAINE; REMACLE}{2009}
-{GEUZAINE, C.; REMACLE, J.-F. Gmsh: A 3-d finite element mesh generator with
-  built-in pre- and post-processing facilities.
-\emph{International Journal for Numerical Methods in Engineering}, John Wiley
-  and Sons, v.~79, 2009.}
-
 \bibitem{paraview}
 \abntrefinfo{Ahrens, Geveci e Law}{AHRENS; GEVECI; LAW}{2005}
 {AHRENS, J.; GEVECI, B.; LAW, C. \emph{ParaView: An End-User Tool for Large
   Data Visualization}. [S.l.]: Elsevier, 2005.
 ISBN 978-0123875822.}
+
+\bibitem{python}
+\abntrefinfo{Rossum}{ROSSUM}{1995--}
+{ROSSUM, G. van. \emph{Python Language Reference}.
+version 3.5. [S.l.], 1995--. Dispon{\'\i}vel em: $<$https://www.python.org$>$.}
+
+\bibitem{scipy}
+\abntrefinfo{Jones et al.}{JONES et al.}{2001--}
+{JONES, E. et al. \emph{{SciPy}: Open source scientific tools for {Python}}.
+  2001--.
+Dispon{\'\i}vel em: $<$https://www.scipy.org/$>$.}
 
 \end{thebibliography}
