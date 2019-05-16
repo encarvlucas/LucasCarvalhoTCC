@@ -19,9 +19,9 @@ Todos os softwares de terceiros foram usados com permissão e licensas apropriad
 %--------------------------------------------------------------
 \section{\textbf{Estrutura do Código}}
 O código foi planejado e estruturado com o paradigma de \textit{Orientação em Objeto} em mente.
-Isto é, o código é centralizado em classes que possuem propiedades e métodos referentes a modelagem física do problema estudado.
+Isto é, o código é centralizado em classes que possuem propriedades e métodos referentes a modelagem física do problema estudado.
 Por exemplo, as classes \verb|TccLib.Mesh| e \verb|TccLib.Particle| representam os conceitos físicos de malha e partícula respectivamente.
-Estas classes criam objetos que contém suas propiedades individuais, como as densidades $\rho_f$ e $\rho_p$, e permitem um melhor entendimento do fenômeno.
+Estas classes criam objetos que contém suas propriedades individuais, como as densidades $\rho_f$ e $\rho_p$, e permitem um melhor entendimento do fenômeno.
 
 Este código foi pensado em ser utilizado como uma biblioteca pública com acesso liberado a qualquer um interessado \href{https://github.com/encarvlucas/LucasCarvalhoTCC}{(link do projeto no GitHub)}.
 Por isso, as funções e métodos possuem diversas opções de chamadas.
@@ -40,7 +40,7 @@ Demonstra-se a seguir um exemplo de uso da biblioca:
     # ou mesh = TccLib.Mesh([coordenadas (x, y)]
 
     # Definição das condições de contorno
-    mesh.new_boundary_condition("nome da propiedade",
+    mesh.new_boundary_condition("nome da propriedade",
                                 [índices dos nós], 
                                 [valor da condição no nó],
                                 [1 para Dirichlet ou 0 para Neumann])
@@ -50,7 +50,7 @@ Demonstra-se a seguir um exemplo de uso da biblioca:
     v_x, v_y = TccLib.solve_velocity_field(mesh)
 
     # Adição de partículas
-    mesh.add_particle(propiedades da partícula)
+    mesh.add_particle(propriedades da partícula)
     # Loop de movimentação das partículas
     for t in time_list:
         TccLib.move_particles(mesh, (v_x, v_y))
@@ -71,7 +71,7 @@ E é criado um dicionário vazio para receber as condições de contorno, onde s
 A classe de condições de contorno \verb|TccLib.BoundaryConditions| é uma classe privada, ou seja, o usuário não interaje com ela diretamente.
 Para cadastrar novas condições de contorno é preciso utilizar o método dentro da classe \verb|TccLib.Mesh.new_boundary_condition()|.
 
-O nome da propiedade varia de acordo com a função de solução.
+O nome da propriedade varia de acordo com a função de solução.
 Para o propósito deste trabalho, a solução do sistema corrente-vorticidade, são registradas as condições de contorno com nomes: \verb|"psi"| para os valores da corrente, \verb|"vel_x"| para os valores da velocidade do fluido no eixo x e  \verb|"vel_y"| para os valores da velocidade do fluido no eixo y.
 
 Os valores da condição de contorno são passados em três listas de mesmo tamanho, onde a primeira contém os índices dos elementos, a segunda contém os valores da condição correspondentes ao índice associado e a terceira contém um valor lógico para a condição correspondentes ao índice, onde verdadeiro representa uma condição do tipo Dirichlet e falso representa o tipo Neumann.
@@ -150,7 +150,7 @@ Neste tipo de solução o movimento do fluido, meio principal,  afeta as partíc
 Esta implementação foi escolhida devida a demanda computacional elevada da implementação \textit{two-way}, que requeriria solucionar o campo de velocidades (MEF) mais vezes por iteração.
 Então as partículas são simuladas percorrendo um escoamento permanente, com o valor do campo de velocidades sido calculado anteriormente.
 
-As partículas são adicionadas a malha através de um método próprio, que leva como parâmetros as propiedades físicas da partícula, sua posição e condições iniciais e um nome para registro, \verb|TccLib.Mesh.add_particle()|.
+As partículas são adicionadas a malha através de um método próprio, que leva como parâmetros as propriedades físicas da partícula, sua posição e condições iniciais e um nome para registro, \verb|TccLib.Mesh.add_particle()|.
 
 Em cada chamada da função \verb|TccLib.move_particles()| são calculdadas as forças aplicadas a cada partícula presente na malha e as forças são adicionadas a um dicionário com seus respectivos nomes como chaves.
 Para se calcular as forças, são necessárias diversas informações, cujas são captadas nesta função, como a velocidade do escoamento na posição da partícula.
@@ -158,5 +158,5 @@ E o valor do número de Reynolds \eqref{reynolds_p} é calculado em cada chamada
 Em seguida é chamada uma função interna da classe \verb|TccLib.Particle| para executar o reposicionamento das partículas, esta calcula a as novas posições das partículas e as move, caso respeitem as condições de colisão.
 
 Portanto, a função de movimentação das partículas é aplicada depois da solução do sistema.
-A função de movimentação \verb|TccLib.move_particles()| não possui retorno, porém pode-se analisar seu resultado observando-se a propiedade \verb|TccLib.Particle.position_history| das partículas presentes na malha.
-Esta propiedade é uma lista que contém as posições percorridas pela partícula, o que permite a visualização gráfica do percurso da mesma.
+A função de movimentação \verb|TccLib.move_particles()| não possui retorno, porém pode-se analisar seu resultado observando-se a propriedade \verb|TccLib.Particle.position_history| das partículas presentes na malha.
+Esta propriedade é uma lista que contém as posições percorridas pela partícula, o que permite a visualização gráfica do percurso da mesma.

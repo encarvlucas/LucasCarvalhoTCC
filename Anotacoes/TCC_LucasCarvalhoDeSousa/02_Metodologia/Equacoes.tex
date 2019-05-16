@@ -8,7 +8,7 @@
 Este trabalho apresenta a modelagem de fluidos e partículas em um sistema de escoamento multifásico, portanto é preciso definir o que é um escoamento e quais as suas restrições para este trabalho.
 Um escoamento é o movimento das moléculas de um fluido em conjunto.
 As moléculas são tomadas como elementos infinitesimais, porém tratados de forma que não haja espaços vazios entre elas.
-Isto permite que as propiedades do fluido sejam tratadas pontualmente, podendo variar por exemplo sua densidade ou velocidade de nó a nó.
+Isto permite que as propriedades do fluido sejam tratadas pontualmente, podendo variar por exemplo sua densidade ou velocidade de nó a nó.
 Pode-se então modelar o comportamento destes escoamentos seguindo as equções de conservação:
 \begin{itemize}
 	\item \hyperref[cons_massa]{Conservação de Massa}
@@ -207,7 +207,7 @@ Reescrevendo o tensor de tensões como uma soma de dois tensores, e o substituin
 onde p é o campo de pressões no fluido, $\mathbf{I}$ é a matriz de indentidade e $\boldsymbol{\tau}$ é o tensor de tensões viscosas.
 
 Novamente é necessário fazer uma hipótese para este escoamento, para que seja possível definir as forças atuantes no fluido. 
-O tensor de tensões viscosas $\boldsymbol{\tau}$ está relacionado as propiedades do fluido, podendo ser definido matematicamente para um fluido homogêneo, isotrópico e newtoniano, como:
+O tensor de tensões viscosas $\boldsymbol{\tau}$ está relacionado as propriedades do fluido, podendo ser definido matematicamente para um fluido homogêneo, isotrópico e newtoniano, como:
 \begin{equation}
     \boldsymbol{\tau} = \mu_f\left(\vec{\nabla}.\vec{v}_f + \left(\vec{\nabla}.\vec{v}_f \right)^T \right)
     \label{tau}
@@ -271,7 +271,7 @@ Dividindo-se todos os termos pela massa específica pode-se reescrever a equaç�
 %--------------------------------------------------------------
 \section{\textbf{Formulação Corrente-Vorticidade}}
 \label{sec_corr_vort}
-A formulação de corrente-vorticidade é um sistema de equações que providencia um método alternativo de se calcular as propiedades de um escoamento sem solucionar diretamente a equação de Navier-Stoakes \eqref{navier}.
+A formulação de corrente-vorticidade é um sistema de equações que providencia um método alternativo de se calcular as propriedades de um escoamento sem solucionar diretamente a equação de Navier-Stoakes \eqref{navier}.
 Isto permite simplificar a solução do problema, pois a Equação de Navier-Stoakes possui um forte acoplamento entre o campo de pressões e o campo de velocidades.
 
 Para isso, é utilizada a seguinte identidade vetorial:
