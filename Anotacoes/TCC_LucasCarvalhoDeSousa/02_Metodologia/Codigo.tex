@@ -145,7 +145,7 @@ Há métodos criados para auxiliar a visualização dos resultados no objeto de 
 %--------------------------------------------------------------
 \subsection{\textbf{Movimentação das Partículas}}
 No caso do problema multifásico de partículas inseridas em um fluido em movimento, há uma etapa de movimentação das partículas separada da função de solução principal.
-Isto é devido ao fato do método de solução escolhido utilizar a implementação \textit{one-way} como apresentado por Crowe (2011)\cite{crowe}.
+Isto é devido ao fato do método de solução escolhido utilizar a implementação \textit{one-way} como apresentado por Crowe et al. (2011)\cite{crowe}.
 Neste tipo de solução o movimento do fluido, meio principal,  afeta as partículas, meio secundário, porém elas não causam reflexos no fluido.
 Esta implementação foi escolhida devida a demanda computacional elevada da implementação \textit{two-way}, que requeriria solucionar o campo de velocidades (MEF) mais vezes por iteração.
 Então as partículas são simuladas percorrendo um escoamento permanente, com o valor do campo de velocidades sido calculado anteriormente.

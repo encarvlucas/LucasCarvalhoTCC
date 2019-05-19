@@ -6,8 +6,8 @@ import numpy as np
 vel = 1.
 dt = 0.1
 total_time = 20.
-particle_density = 3e4
-particle_diameter = 1e-3
+particle_density = 1.6e3
+particle_diameter = 5e-4
 
 # Set liquid parameters or declare liquid
 # density = 1e3
@@ -126,7 +126,11 @@ particles = [particle_a, particle_b, particle_c, particle_d, particle_e]
 
 particles = TccLib.util.load("particles")
 mesh.add_particle(list_of_particles=particles)
-TccLib.Particle.frame_skips = 400
+# TccLib.Particle.frame_skips = 400
+del particles[1].position_history[290:]
+del particles[2].position_history[270:]
+del particles[3].position_history[300:]
+del particles[4].position_history[355:]
 
 # Define dt based on convergence limit
 total_time = 5.
@@ -138,7 +142,7 @@ x_vector = np.arange(0, total_time, dt)
 # Move Particles
 # for time in x_vector:
 #     print("\rMoving particles {0:.2f}%".format(100 * time / total_time), end="")
-#     TccLib.move_particles(mesh, velocity_x=velocity_x.last, velocity_y=velocity_y.last, dt=dt)
+#     TccLib.move_particles(mesh, velocity_x=velocity_x.last, velocity_y=velocity_y.last, dt=dt, no_gravity=True)
 #     TccLib.util.save(particles, "particles")
 
 # Show particles trajectories

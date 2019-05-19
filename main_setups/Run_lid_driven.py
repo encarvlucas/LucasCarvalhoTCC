@@ -6,6 +6,8 @@ import numpy as np
 vel_top = 1.
 dt = 01.
 total_time = 50.
+particle_density = 3e4
+particle_diameter = 1e-3
 
 # Set liquid parameters or declare liquid
 # density = 1e3
@@ -13,10 +15,10 @@ total_time = 50.
 liquid = "oil"
 
 # Import gmsh created mesh
-mesh = TccLib.Mesh("Lid_driven", liquid=liquid)
+mesh = TccLib.Mesh("Lid_driven_ref", liquid=liquid)
 
 # Show mesh geometry
-# mesh.show_geometry(names=True)
+# mesh.show_geometry(names=False, save=True)
 
 # Define analytic comparison expression
 analytic_expression = lambda y: y
@@ -89,17 +91,29 @@ velocity_y = TccLib.util.load("vel_y")
 # Show results in quiver plot
 mesh.show_velocity_quiver(velocity_x, velocity_y)
 
+# Define Particles
+particle_a = TccLib.Particle("A", (0.5, 0.95), density=particle_density, diameter=particle_diameter)
+particle_b = TccLib.Particle("B", (0.5, 0.90), density=particle_density, diameter=particle_diameter)
+particle_c = TccLib.Particle("C", (0.5, 0.85), density=particle_density, diameter=particle_diameter)
+particle_d = TccLib.Particle("D", (0.5, 0.80), density=particle_density, diameter=particle_diameter)
+particle_e = TccLib.Particle("E", (0.5, 0.75), density=particle_density, diameter=particle_diameter)
+particles = [particle_a, particle_b, particle_c, particle_d, particle_e]
+
+# particles = TccLib.util.load("particles")
+mesh.add_particle(list_of_particles=particles)
+
+# Define dt based on convergence limit
+total_time = 5.
+dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**1.
+
 # Define x vector of positions
-x_vector = np.linspace(min(mesh.y), max(mesh.y), 100)
-small_dict = velocity_x.reduced_dict_log(5)
+x_vector = np.arange(0, total_time, dt)
 
-# Find values of property in the mesh at a determined set position for every value in the vector of x
-x_position = mesh.length_x*0.6
-y_vector = {key: [mesh.get_interpolated_value([x_position, x], small_dict[key]) for x in x_vector]
-            for key in small_dict}
+# Move Particles
+for time in x_vector:
+    print("\rMoving particles {0:.2f}%".format(100 * time / total_time), end="")
+    TccLib.move_particles(mesh, velocity_x=velocity_x.last, velocity_y=velocity_y.last, dt=dt)
+    TccLib.util.save(particles, "particles")
 
-# Show comparison graph
-# TccLib.util.show_comparison(x_vector, analytic_expression, y_vector, numeric_label="Solução Numérica",
-#                             analytic_label="Solução Analítica", title="Escoamento de Cavidade",
-#                             x_label="Posição no Eixo Y(m)", y_label="Valor da Velocidade (m/s)",
-#                             save_file_as="{0}_validation".format(mesh.name))
+# Show particles trajectories
+mesh.show_particle_course()

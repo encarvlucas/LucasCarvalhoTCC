@@ -412,7 +412,7 @@ onde $v_{fmax}$ é a maior velocidade do campo de velocidades do fluido, e $D$ �
 %--------------------------------------------------------------
 \section{\textbf{Forças Exercidas em Partículas}}
 \label{sec_eq_part}
-A principal equação que governa o comportamento do movimento das partículas é obtida a partir da 2ª Lei de Newton como demonstrado por Crowe (2011)\cite{crowe}.
+A principal equação que governa o comportamento do movimento das partículas é obtida a partir da 2ª Lei de Newton como demonstrado por Crowe et al. (2011)\cite{crowe}.
 \begin{equation}
     \sum\vec{F}_{p} = \dfrac{d(m_p\vec{v}_p)}{dt}
     \label{newton} 
@@ -431,7 +431,7 @@ Como mencionado, as forças da equação de BBO representam fielmente o comporta
 
 Nem todas as forças apresentadas na equação BBO foram inseridas no código de simulação.
 Elas foram inseridas sequencialmente durante o desenvolvimento do código, seguidas de testes para verificar sua implementação.
-Foram escolhidas apenas as principais forças, apresentadas a seguir, por Crowe (2011)\cite{crowe}: 
+Foram escolhidas apenas as principais forças, apresentadas a seguir, por Crowe et al. (2011)\cite{crowe}: 
 \begin{itemize}
     \item \textbf{Força Gravitacional}:
         Também conhecida como força Peso, criada pelo campo graviacional do planeta aplicado aos corpos com massa.
@@ -464,7 +464,7 @@ Foram escolhidas apenas as principais forças, apresentadas a seguir, por Crowe 
         Por exemplo, a \textbf{Força de Magnus} está relacionada a rotação, ou velocidade angular, presente na partícula.
         Neste trabalho as partículas são assumidas como corpos rígidos sem rotação, então está força não será levada em conta.
 
-        Porém outro tipo de força de sustentação é a \textbf{Força de Saffman} explorada por Crowe (2011)\cite{crowe}, que é gerada a partir do gradiente de velocidades presente no escoamento.
+        Porém outro tipo de força de sustentação é a \textbf{Força de Saffman} explorada por Crowe et al. (2011)\cite{crowe}, que é gerada a partir do gradiente de velocidades presente no escoamento.
         Para que haja o efeito da força de sustentação de Saffman é necessário que exista um gradiente no campo de velocidades diferente de nulo, como pode se notar na \ref{saffman}.
         \begin{figure}[H]
             \centering
