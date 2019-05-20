@@ -77,7 +77,7 @@ Foram escolhidos cinco tipos de geometria para serem simulados:
 Foi utilizado o software ParaView para exibição dos gráficos de resultados.
 A escala das figuras mostra o valor da magnitude da velocidade em cada nó.
 
-Em cada simulação são inseridas cinco partículas de ouro perfeitamente rígidas, igualmente espalhadas, com $d_p=1mm=1.10^{-3}m$ de diâmetro e densidade de $\rho_p=20000kg/m^3$.
+Em cada simulação, com exceção das simulações na palheta de um rotor, são inseridas cinco partículas de ouro perfeitamente rígidas, igualmente espalhadas, com $d_p=1mm=1.10^{-3}m$ de diâmetro e densidade de $\rho_p=20000kg/m^3$.
 Estas partículas estão submersas em um fluido ideal com características: $\mu_f=50kg/m.s$ de viscosidade dinâmica e densidade de $\rho_f=50kg/m^3$, para que trabalhe em uma situação com número de Reynolds reduzido, e menor que a restrição da equação BBO\ref{sec_eq_part}.
 
 As partículas são iniciadas com velocidade nula e em posições próximas à entrada do escoamento, porém fora de sua região de transição.
@@ -239,6 +239,10 @@ Ao longo do canal, pode se observar que a partícula sofre uma aceleração ao a
 \section{\textbf{Simulação Em Uma Pá de Rotor}}
 \label{sec_rotor}
 Finalmente, a simulação em uma pá de rotor visa representar o comportamento das partículas em uma situação real de trabalho de uma turbomáquina.
+Foram feitas simulações para três tipos de partículas com diferentes materiais e diâmetros.
+Foram utilizadas partículas de ouro com $\rho_{p,Au}=20000kg/m^3$ de densidade e $d_{p,Au}=1mm=1.10^{-3}m$ de diâmetro, de ferro, com $\rho_{p,Fe}=7300kg/m^3$ de densidade e $d_{p,Fe}=1mm=1.10^{-3}m$ de diâmetro, e de areia com $\rho_{p,Areia}=1600kg/m^3$ de densidade e $d_{p,Au}=0.5mm=5.10^{-4}m$ de diâmetro.
+Com respeito ao tempo entre instantes, foram utilizados os intervalos de $dt=3.33e^{-5}s$ para a simulação com partículas de ouro, $dt=8.11e^{-6}s$, para a de ferro e $dt=4.44e^{-7}s$ para a de areia.
+Já que quanto menor forem o tamanho e densidade das partículas torna-se necessário um intervalo para garantir a convergência.
 
 A geometria pá foi extraida de um contorno de uma pá real de uma bomba exemplo, porém feitas em escala.
 Foi tomado um arco na seção de entrada gerado com raio de $R_{ent}=0.5m$, e a saída com um arco de $R_{sai}=1.0m$.
@@ -270,14 +274,37 @@ E os vetores das velocidades nos nós:
     \label{rotor_velocity}
 \end{figure}
 
-As partículas na pá do rotor seguem o trajeto exibido na \ref{rotor_trajectory}:
+O resultado da simulação com as partículas de ouro na pá do rotor resultou no trajeto exibido na \ref{rotor_trajectory_gold}:
 \begin{figure}[H]
     \centering
     \stackunder{
         \includegraphics[width=\linewidth]{figures/Rotor_particle_trajectory_gold.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Trajeto de partículas inseridas em um escoamento em uma pá de um rotor.}
-    \label{rotor_trajectory}
+    \caption{Trajeto de partículas de ouro inseridas em um escoamento em uma pá de um rotor.}
+    \label{rotor_trajectory_gold}
+\end{figure}
+
+Na simulação de partículas de ferro foi verificado o comportamento demonstrado na \ref{rotor_trajectory_iron}:
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Rotor_particle_trajectory_iron.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Trajeto de partículas de ferro inseridas em um escoamento em uma pá de um rotor.}
+    \label{rotor_trajectory_iron}
+\end{figure}
+
+E, finalmente, as partículas de areia realizaram a trajetória apresentada na \ref{rotor_trajectory_sand}:
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Rotor_particle_trajectory_sand.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Trajeto de partículas de areia inseridas em um escoamento em uma pá de um rotor.}
+    \label{rotor_trajectory_sand}
 \end{figure}
 
 Pode-se observar que as partículas seguem ao longo geometria da pá, até mesmo a partícula mais distante acompanha as demais devido a uma região de velocidade elevada presente no canto esquerdo inferior.
+
+As simulações com partículas mais leves levaram um tempo elevado para serem concluídas, devido a sua restrição no intervalo de cálculos.
+Isto causou uma variação grande no tempo de cálculo das simulações, onde a simulação com partículas de ouro demorou em torno de 2h para ser completada, e as de ferro e areia demoraram em torno de 6h e 12h horas, respectivamente.
