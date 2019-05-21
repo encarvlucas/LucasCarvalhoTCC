@@ -12,7 +12,33 @@ A solução numérica é uma aproximação do resultado real feito solucionando 
 
 Os métodos utilizados neste trabalho são conhecidos como: Método das Diferenças Finitas (\textbf{MDF}) e Método dos Elementos Finitos (\textbf{MEF}).
 
+O Método de Diferenças Finitas foi um dos primeiros métodos numéricos a serem desenvolvidos, apresentado por Courant et. al. (1928)\cite{Courant-1928}, sua metodologia é realizada a partir da discretização da equação de governo do problema em diferenças discretas, dividindo-se o domínio contínuo em regiões pontuais.
+De forma que quanto menor for o espaçamento entre as regiões do domínio mais preciso o método se tornará.
+A razão matemática deste mecanismo pode ser interpretada com a definição da derivada, que busca representar a taxa de variação contínua em um ponto tomando-se o limite da diferença entre o valor da função em dois pontos sobre a distância entre os mesmos, quando esta distância se aproxima de zero.
+As fórmulas de discretização das equações são baseadas na expansão da Série de Taylor como aplicado por George Boole (1859)\cite{Boole-1859}.
+O operador diferencial é substituido por uma soma aproximadamente equivalente, com a ordem de seu erro sendo relativo ao número de termos.
+Dentro desta substituição podem ser escolhidos vários esquemas, cada um com suas aplicações, vantagens e desvantagens.
+Os esquemas mais usuais são os de diferenças atrasadas (\textit{Backwards Differences}), diferenças adiantadas (\textit{Forward Differences}) e diferenças centradas (\textit{Central Differences}), onde, em geral, as diferenças centradas possuem melhor aproximação.
 
+Em seguida, os estudos sobre o Método de Elementos Finitos foram iniciados posteriormente e no início de seu desenvolvimento foi voltado para a solução de sistemas mais complexos, que incluíam equações diferenciais parciais.
+Seus primeiros trabalhos na área da engenharia estudavam as soluções de problemas em sólidos e estruturas em geral como estudado por Turner (1956)\cite{Turner-1956}.
+Sua metodologia funciona de forma similar, porém é uma forma mais complexa pois trata-se em dividir o domínio em regiões pontuais, chamados de nós, interligadas.
+As equações do sistema são aplicadas a cada nó e sua influência é transmitida para seus nós vizinhos.
+Um grupo de nós gera o que é chamado de elemento, estes elementos podem estar organizados com diversas formas geométricas: triângulos, quadriláteros, pentágonos, etc.;
+O espaçamento entre os nós pode ser constante ou não, estruturada e não-estruturada, respectivamente.
+E o domínio onde estes elementos são definidos é chamado de malha.
+
+A metodologia deste método, de acordo com Lewis et. al. (2004)\cite{lewis}, consiste na reformulação da equação de governo no que é chamada de forma fraca.
+Esta forma é obtida realizando-se primeiro a conversão do problema para a forma forte, que se trata da avaliação das equações com funções peso atribuídas.
+Estas funções peso são arbitrárias e são escolhidas de acordo com o método de discretização utilizado.
+Durante a conversão das equações para a forma forte, surgem as chamadas funções base, de forma ou interpoladoras, estas servem como determinadores das componentes do valor da função em cada nó dentro do elemento.
+Existem diversos esquemas para a escolha das funções de peso, os mais comuns na literatura são os esquemas de: Galerkin, Taylor-Galerkin e Petrov-Galerkin.
+Neste trabalho será utilizado o método de Galerkin, que define as funções de peso com mesmo valor das funções de base.
+Em seguida, a formulação forte é integrada sobre o domínio para se encontrar a forma fraca do problema.
+
+Após encotrar a forma fraca, ela é transformada em sua versão matricial para cada elemento, onde cada indice corresponde a um nó local presente no elemento.
+Em seguida estas matrizes são adicionadas a uma matriz global que representa a componente de cada nó presente no domínio.
+Então são aplicadas as condições de contorno e o sistema é resolvido, obtendo-se o valor da variável da equação governante em cada nó da malha.
 
 
 \section{\textbf{Escoamentos Multifásicos}}

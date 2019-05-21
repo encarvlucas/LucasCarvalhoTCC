@@ -312,7 +312,7 @@ As variáveis ficam então:
     v_{fx}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{fxi}(t) N_i(\vec{x}) \\
     v_{fy}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{fyi}(t) N_i(\vec{x}) 
 \end{align}
-onde os valores das funções em cada ponto $\omega_i = [\omega_1, \ldots, \omega_{n_p}]$, $\psi_i = [\psi_1, \ldots, \psi_{n_p}]$, $v_{fxi} = [v_{fx1}, \ldots, v_{fxn_p}]$ e $v_{fyi} = [v_{fy1}, \ldots, v_{fyn_p}]$ são as incógnitas desejadas.
+onde os valores das funções em cada nó $\omega_i = [\omega_1, \ldots, \omega_{n_p}]$, $\psi_i = [\psi_1, \ldots, \psi_{n_p}]$, $v_{fxi} = [v_{fx1}, \ldots, v_{fxn_p}]$ e $v_{fyi} = [v_{fy1}, \ldots, v_{fyn_p}]$ são as incógnitas desejadas.
 Como estas funções são independentes do tempo, elas são retiradas dos termos de integração sobre o domínio $\Omega$.
 Enquanto isso, as funções de aproximação $N_{i} = [N_{1}, \ldots, N_{n_p}]$, também chamadas de funções base, são escolhidas arbitrariamente.
 
@@ -628,9 +628,9 @@ Estas coordenadas relativas são definidas para os nós $p_i$, $p_j$ e $p_k$ de 
     c_j &= x_i - x_k \\
     c_k &= x_j - x_i
 \end{align}
-onde $x_i$ e $y_i$ são as coordenadas do ponto $p_i$, $x_j$ e $y_j$ são as coordenadas do ponto $p_j$ e $x_k$ e $y_k$ são as coordenadas do ponto $p_k$.
+onde $x_i$ e $y_i$ são as coordenadas do nó $p_i$, $x_j$ e $y_j$ são as coordenadas do nó $p_j$ e $x_k$ e $y_k$ são as coordenadas do nó $p_k$.
 
-E a área $A$ pode ser calculada através das coordenadas dos pontos pela equação:
+E a área $A$ pode ser calculada através das coordenadas dos nós pela equação:
 \begin{equation}
     A^e = \dfrac{1}{2} (
         (x_i y_j - x_j y_i) +
@@ -652,11 +652,11 @@ Tomando-se definição da derivada, pode-se escrever:
     \dfrac{df}{dx}(x) = \lim_{h\to0} \dfrac{f(x+h)-f(x)}{h}
     \label{derivative}
 \end{equation}
-onde $h$ é a diferença entre os pontos tomados na variável $x$.
-Ou seja, caso deseja-se obter o valor da derivada desta função numéricamente basta aplicar a diferença entre dois pontos com afastamento suficientemente pequeno.
+onde $h$ é a diferença entre os nós tomados na variável $x$.
+Ou seja, caso deseja-se obter o valor da derivada desta função numéricamente basta aplicar a diferença entre dois nós com afastamento suficientemente pequeno.
 
 Outra forma de interpretar-se o MDF seria através da aplicação da \textit{Série de Taylor}.
-Tomando-se novamente a função $f(x)$ e a série de Taylor aplicada a ela ao redor de um ponto $x$ qualquer, tem-se:
+Tomando-se novamente a função $f(x)$ e a série de Taylor aplicada a ela ao redor de um nó na posição $x$ qualquer, tem-se:
 \begin{equation}
     f(x + h) \approx
     f(x) +

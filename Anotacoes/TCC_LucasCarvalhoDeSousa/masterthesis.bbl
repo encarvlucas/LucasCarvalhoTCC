@@ -5,33 +5,45 @@
 \providecommand{\abntbstabout}[1]{}
 \abntbstabout{1.42 }
 
+\bibitem{Turner-1956}
+\abntrefinfo{Stiffness\ldots}{STIFFNESS\ldots}{1956}
+{STIFFNESS and Deflection Analysis of Complex Structures.
+\emph{Journal of the Aeronautical Sciences (Institute of the Aeronautical
+  Sciences)}, v.~23, p. 805--823, 1956.
+ISSN 1936-9956.}
+
+\bibitem{lewis}
+\abntrefinfo{Lewis, Nithiarasu e Seetharamu}{LEWIS; NITHIARASU;
+  SEETHARAMU}{2004}
+{LEWIS, R.~W.; NITHIARASU, P.; SEETHARAMU, K. \emph{Fundamentals Of The Finite
+  Element Method For Heat And Fluid Flow}. [S.l.]: Wiley, 2004.
+ISBN 9780470847886,0-470-84788-3,0-470-84789-1.}
+
 \bibitem{Baker-1965}
 \abntrefinfo{Baker}{BAKER}{}
 {BAKER, J. Flow-regime transitions at elevated pressures in vertical two-phase
-  flow.}
+  flow.
+Argonne National Lab., Ill. Associated Midwest Universities, Lemont, Ill.}
 
 \bibitem{Elghobashi-1991}
 \abntrefinfo{Elghobashi}{ELGHOBASHI}{1991}
 {ELGHOBASHI, S. Particle-laden turbulent flows: direct simulation and closure
   models.
 \emph{Flow, Turbulence and Combustion}, Springer, v.~48, p. 301--314, 1991.
-ISSN 1386-6184,1573-1987.
-Dispon{\'\i}vel em: $<$/scimag/10.1007\%2Fbf02008202$>$.}
+ISSN 1386-6184,1573-1987.}
 
 \bibitem{Balachandar-2010}
 \abntrefinfo{Balachandar S.;~Eaton}{BALACHANDAR S.;~EATON}{2010}
 {BALACHANDAR S.;~EATON, J.~K. Turbulent dispersed multiphase flow.
 \emph{Annual Review of Fluid Mechanics}, Annual Reviews, v.~42, p. 111--133,
   2010.
-ISSN 0066-4189,1545-4479.
-Dispon{\'\i}vel em: $<$/scimag/10.1146\%2Fannurev.fluid.010908.165243$>$.}
+ISSN 0066-4189,1545-4479.}
 
 \bibitem{Elghobashi-1994}
 \abntrefinfo{Elghobashi}{ELGHOBASHI}{1994}
 {ELGHOBASHI, S. On predicting particle-laden turbulent flows.
 \emph{Flow, Turbulence and Combustion}, Springer, v.~52, p. 309--329, 1994.
-ISSN 1386-6184,1573-1987.
-Dispon{\'\i}vel em: $<$/scimag/10.1007\%2Fbf00936835$>$.}
+ISSN 1386-6184,1573-1987.}
 
 \bibitem{ShaoLeeSoo-1999}
 \abntrefinfo{Soо}{SOо}{1999}
@@ -77,6 +89,13 @@ Acessado: 2019-05-15.
 Dispon{\'\i}vel em:
   $<$http://jacpump.files.wordpress.com/2011/04/thermalchgo-017w2.jpg$>$.}
 
+\bibitem{Blake-1987}
+\abntrefinfo{Blake e Gibson}{BLAKE; GIBSON}{1987}
+{BLAKE, J.~R.; GIBSON, D.~C. Cavitation bubbles near boundaries.
+\emph{Annual Review of Fluid Mechanics}, Annual Reviews, v.~19, p. 99--123,
+  1987.
+ISSN 0066-4189,1545-4479.}
+
 \bibitem{pontes_norberto}
 \abntrefinfo{Pontes e Mangiavacchi}{PONTES; MANGIAVACCHI}{2010}
 {PONTES, J. da R.~M.; MANGIAVACCHI, N. \emph{Fenômenos de Transferência}.
@@ -94,13 +113,6 @@ ISBN 978-1-4398-4050-4,978-1-4398-4051-1.}
 \emph{Hydrodynamics FIeld Solution of electrochemical Cells Through Finite
   Element Method.}
 Tese (Doutorado) --- Federal University of Rio de Janeiro, Brazil.}
-
-\bibitem{lewis}
-\abntrefinfo{Lewis, Nithiarasu e Seetharamu}{LEWIS; NITHIARASU;
-  SEETHARAMU}{2004}
-{LEWIS, R.~W.; NITHIARASU, P.; SEETHARAMU, K. \emph{Fundamentals Of The Finite
-  Element Method For Heat And Fluid Flow}. [S.l.]: Wiley, 2004.
-ISBN 9780470847886,0-470-84788-3,0-470-84789-1.}
 
 \bibitem{gmsh}
 \abntrefinfo{Geuzaine e Remacle}{GEUZAINE; REMACLE}{2009}
