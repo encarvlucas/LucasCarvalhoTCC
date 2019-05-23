@@ -5,6 +5,20 @@
 \providecommand{\abntbstabout}[1]{}
 \abntbstabout{1.42 }
 
+\bibitem{Courant-1928}
+\abntrefinfo{Lewy}{LEWY}{1928}
+{LEWY, R. C. K. F.~H. Über die partiellen differenzengleichungen der
+  mathematischen physik.
+\emph{Mathematische Annalen}, Springer, v.~100, p. 32--74, 1928.
+ISSN 0025-5831,1432-1807.}
+
+\bibitem{Boole-1859}
+\abntrefinfo{Boole}{BOOLE}{1859}
+{BOOLE, G. \emph{A Treatise on the Calculus of Finite Differences}. 1. ed.
+  [S.l.]: Cambridge University Press, 1859.  (Cambridge Library Collection -
+  Mathematics).
+ISBN 9781108000925.}
+
 \bibitem{Turner-1956}
 \abntrefinfo{Stiffness\ldots}{STIFFNESS\ldots}{1956}
 {STIFFNESS and Deflection Analysis of Complex Structures.
@@ -78,8 +92,7 @@ ISSN 0889-504X.}
 {GHENAIET, A.; TAN, S.~C.; ELDER, R.~L. Prediction of an axial turbomachine
   performance degradation due to sand ingestion.
 \emph{Proceedings of the Institution of Mechanical Engineers, Part A: Journal
-  of Power and Energy}, v.~219, n.~4, p. 273--287, 6 2005.
-Dispon{\'\i}vel em: $<$https://doi.org/10.1243/095765005X7592$>$.}
+  of Power and Energy}, v.~219, n.~4, p. 273--287, 6 2005.}
 
 \bibitem{JAC}
 \abntrefinfo{Centrifugal\ldots}{CENTRIFUGAL\ldots}{}
@@ -96,6 +109,19 @@ Dispon{\'\i}vel em:
   1987.
 ISSN 0066-4189,1545-4479.}
 
+\bibitem{Snyder-1986}
+\abntrefinfo{Snyder}{SNYDER}{1986}
+{SNYDER, A. Encapsulation and inheritance in object-oriented programming
+  languages.
+\emph{SIGPLAN Not.}, ACM, New York, NY, USA, v.~21, n.~11, p. 38--45, jun.
+  1986.
+ISSN 0362-1340.}
+
+\bibitem{python}
+\abntrefinfo{Rossum}{ROSSUM}{1995--}
+{ROSSUM, G. van. \emph{Python Language Reference}.
+version 3.5. [S.l.], 1995--. Dispon{\'\i}vel em: $<$https://www.python.org$>$.}
+
 \bibitem{pontes_norberto}
 \abntrefinfo{Pontes e Mangiavacchi}{PONTES; MANGIAVACCHI}{2010}
 {PONTES, J. da R.~M.; MANGIAVACCHI, N. \emph{Fenômenos de Transferência}.
@@ -110,7 +136,7 @@ ISBN 978-1-4398-4050-4,978-1-4398-4051-1.}
 \bibitem{gustavo}
 \abntrefinfo{Anjos}{ANJOS}{}
 {ANJOS, G.~R. dos.
-\emph{Hydrodynamics FIeld Solution of electrochemical Cells Through Finite
+\emph{Hydrodynamics Field Solution of electrochemical Cells Through Finite
   Element Method.}
 Tese (Doutorado) --- Federal University of Rio de Janeiro, Brazil.}
 
@@ -139,11 +165,6 @@ Dispon{\'\i}vel em: $<$https://matplotlib.org/$>$.}
 {AHRENS, J.; GEVECI, B.; LAW, C. \emph{ParaView: An End-User Tool for Large
   Data Visualization}. [S.l.]: Elsevier, 2005.
 ISBN 978-0123875822.}
-
-\bibitem{python}
-\abntrefinfo{Rossum}{ROSSUM}{1995--}
-{ROSSUM, G. van. \emph{Python Language Reference}.
-version 3.5. [S.l.], 1995--. Dispon{\'\i}vel em: $<$https://www.python.org$>$.}
 
 \bibitem{scipy}
 \abntrefinfo{Jones et al.}{JONES et al.}{2001--}

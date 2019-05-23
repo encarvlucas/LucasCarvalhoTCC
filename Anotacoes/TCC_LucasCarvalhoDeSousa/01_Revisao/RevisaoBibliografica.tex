@@ -1,9 +1,10 @@
 \chapter{REVISÃO BIBLIOGRÁFICA}
 \label{rev_bib}
 \section{\textbf{Introdução}}
-Nesta seção é apresentada a literatura utilizada, analizando-se as partes pertinentes ao trabalho realizado. Os principais tópicos de estudo foram sobre os temas de Método de Elementos Finitos, Escoamentos Multifásicos e Escoamentos Particulados em Turbomáquinas. 
+Nesta seção é apresentada a literatura utilizada, analizando-se as partes pertinentes ao trabalho realizado. Os principais tópicos de estudo foram sobre os temas de \hyperref[sec_rev_MEF]{Método de Elementos Finitos}, \hyperref[sec_rev_MF]{Escoamentos Multifásicos}, \hyperref[sec_rev_EP]{Escoamentos Particulados em Turbomáquinas} e a \hyperref[sec_rev_POO]{Programação Orientada a Objeto}.
 
 \section{\textbf{Método de Elementos Finitos}}
+\label{sec_rev_MEF}
 A representação matemática de fenômenos físicos é feita por equações, para certos casos está representação pode ser feita por uma equação linear simples, em outros casos ela é feita por equações diferenciais.
 
 Infelizmente, nem todas estas equações possuem soluções analíticas, isto é, soluções contínuas em formas de equações.
@@ -42,6 +43,7 @@ Então são aplicadas as condições de contorno e o sistema é resolvido, obten
 
 
 \section{\textbf{Escoamentos Multifásicos}}
+\label{sec_rev_MF}
 Escoamentos multifásicos são utilizados largamente na área da engenharia para uma diversidade de aplicações.
 Estes ocorrem quando há o transporte de mais de uma substância em fases não miscigenadas.
 Estas fases podem estar ou não no mesmo estado, subdividindo os tipos de escoamento multifásico no tipo de interação entre as fases, líquido-líquido, gás-líquido e sólido-líquido.
@@ -69,6 +71,7 @@ Estas equações possuem uma restrição para sua validade, podendo apenas serem
 
 
 \section{\textbf{Escoamentos Particulados em Turbomáquinas}}
+\label{sec_rev_EP}
 Dentro do ciclo de vida de uma turbomáquina, pode-se esperar um certo desgaste devido a pequenas partículas que se chocam contra as paredes durante o movimento do rotor.
 Este desgate está ligado as propriedades do escoamento assim como das partículas.
 
@@ -99,3 +102,31 @@ A \ref{JAC-Pump} mostra os efeitos do desgaste causado pelo efeito da cavitaçã
 
 Blake et al. (1987)\cite{Blake-1987} estudou o comportamento da cavitação tomando o ponto de vista das bolhas criadas como partículas no escoamento.
 Através desta interpretação, pode-se realizar simulações dos efeitos da cavitação com modelos de escoamentos particulados.
+
+
+\section{\textbf{Programação Orientada a Objetos}}
+\label{sec_rev_POO}
+A Programação Orientada a Objetos (\textbf{POO}), termo foi popularizado por Alan Kay, originou na década de 60 como forma de representar as informações interpretadas pelo sistema de maneira análoga as experiências de vida humanas.
+Ela é um paradigma, isto é, uma forma diferente de se interpretar a programação.
+
+Como apresentado por Snyder (1986)\cite{Snyder-1986}, esta metodologia de programação visa representar estruturas complexas através de classes, também conhecidas como tipos, de variáveis.
+Cada classe representa a ideia de um objeto, suas características, porém não representa o objeto em si, como uma receita de comportamentos do mesmo.
+As classes podem possuir funções que são executadas por um elemento dela, estas funções são chamadas de métodos.
+Um método especial presente em todas as classes é chamado de construtor, este método inicializa os objetos criados desta classe com valores padrões para suas propriedades ou com os valores definidos, caso tenham sido especificados.
+As representações dos objetos são chamadas de instâncias.
+
+A principal vantagem da POO é a facilidade que esta proporciona na abstração de problemas em analogias do mundo físico.
+Neste trabalho, por exemplo, são criadas classes para a malha, a partícula, as condições de contorno, entre outras.
+Dessta forma, pode-se visualizar o comportamento esperado entre as partículas e a malha apenas lendo-se o código.
+Este paradigma permite maior legibilidade de código e facilita a aplicação do mesmo como biblioteca quando importado.
+
+Outra grande otimização trazida pela POO é o grande reaproveitamento de código, pois cada instância pode chamar o mesmo método definido no mesmo lugar.
+Além disso, ela fortalece o uso da tipagem na programação.
+Linguagens tipadas, fraca ou fortemente, são linguagens onde seus métodos e funções que requerem que variáveis coincidam com os tipos declarados para que sejam executadas.
+Linguagens fortemente tipadas tendem a nem compilar caso alguma variável não corresponda ao tipo correto em algum local no código.
+
+Neste trabalho foi utilizado a linguagem \textit{Python}, criada por Rossum (1995)\cite{python}.
+Python é uma linguagem fracamente tipada, ou seja, há erros devido a tipos não correspondentes, porém ela aceita que funções chamem variáveis de qualquer tipo, até que ocorra um erro.
+Um dos motivos por ter sido escolhida é sua natureza \textit{Open Source}, de uso livre e sem restrição de licença.
+Com isso, há um grande número e variedade de bibliotecas livres para serem utilizadas.
+Desta forma, facilita-se severamente o desenvolvimento do código.

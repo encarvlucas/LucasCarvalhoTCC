@@ -108,6 +108,9 @@ Primeiramente são geradas as malhas globais do domínio da malha em uma funçã
                 gy_global[elem[i], elem[j]] += g_y[i][j]
 \end{verbatim}
 que retorna as matrizes globais na ordem apresentada.
+As matrizes globais são construídas dentro de um loop que percorre os elementos e monta as matrizes locais.
+Elas são então adicionadas a uma matriz esparsa global, que é um objeto que contém somente os elementos não nulos da matriz, referênciados por seus índices.
+Desta forma, otimiza-se o armazenamento na mémoria durante a simulação, pois permite representar uma matriz com tamanho $N\times N$ com apenas elementos existentes na mémoria, com a ordem computacional de $N$.
 
 Em seguida, são montadas as matrizes principais para a solução algébrica:
 \begin{equation}
