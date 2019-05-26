@@ -1,0 +1,29 @@
+\noindent\textbf{CONCLUSÃO}
+\\
+
+Neste trabalho foram apresentadas as equações de Navier-Stoakes, através da fórmula de corrente-vorticidade, e Basset–Boussinesq–Oseen para a simulação de escoamentos multifásicos particulados utilizando o Método de Elementos Finitos para a solução do campo de velocidades e o Método de Diferenças Finitas para a movimentação das partículas.
+Devido ao uso da formulação de corrente-vorticiadade foi possível simplificar os elementos utilizados na malha da simulação para elementos triangulares lineares na forma Euleriana, com a posição dos nós da malha estacionária.
+Isto facilitou o desenvolvimento e implementação do código numérico.
+A interação entre as partículas e o escoamento foi implementada do tipo \textit{one-way}, sem influência da presença das partículas no escoamento.
+
+O código foi criado pelo autor utilizando a linguagem de programação \textit{Python}.
+Foram importadas ferramentas de análise de dados, visualização gráfica e solução algébrica para auxiliar na otimização do código.
+O código foi construído com o paradigma de orientação a objetos em mente, e permitiu a estruturação do código em uma biblioteca de solução de escoamentos particulados de uso livre.
+A biblioteca possui uma licença de uso sem restrições e permite importações de estruturas de malha no formato \textit{.msh} ou criação de uma malha através das coordenadas dos pontos.
+
+As simulações de validação para os problemas de troca térmica em 2D das equações de Laplace e Poisson, encontrados na \ref{sec_solidos}, e para os problemas de fluidos de Poiseuille e Couette, apresentados na \ref{sec_fluidos}, demonstraram resultados próximos aos esperados em comparação com as soluções analíticas de cada caso.
+Estes casos serviram como comprovação da acurácia do Método de Elementos Finitos.
+Para o Método de Diferenças Finitas, foi validada cada força aplicada a partícula separadamente, e estas também obtiveram bons resultados.
+
+O objetivo principal deste trabalho foi estudar o comportamento das partículas inseridas em um escoamento permanente de uma turbomáquina.
+Para isto foram então simulados escoamentos com malhas de diferentes geometrias: um canal reto, um canal com um obstáculo, um canal com degrau, um canal com restição, e uma pá de rotor.
+Para este caso final, sendo o principal, foram realizadas outras simulações com diferentes características para as partículas.
+Verificou-se que o comportamento das partículas imersas nestas situações segue o esperado, com a dominação da força de arrasto no comportamento das partículas em relação as demais forças.
+
+Para trabalhos futuros, apresentam-se em seguida algumas possibilidades para linhas de desenvolvimento:
+\begin{itemize}
+	\item Adicionar efeitos da das partículas na solução do escoamento (esquema \textit{two-way}).
+	\item Adicionar efeito da cada partícula sobre as demais (esquema \textit{four-way}).
+	\item Reformulação das equações para utilizar outra formulação, como a \textbf{ALE}.
+	\item Adaptação do código para permitir solução de problemas tridimensionais (3D).
+\end{itemize}

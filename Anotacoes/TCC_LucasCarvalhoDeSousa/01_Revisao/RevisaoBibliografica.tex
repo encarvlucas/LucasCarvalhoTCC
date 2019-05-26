@@ -41,6 +41,8 @@ Após encotrar a forma fraca, ela é transformada em sua versão matricial para 
 Em seguida estas matrizes são adicionadas a uma matriz global que representa a componente de cada nó presente no domínio.
 Então são aplicadas as condições de contorno e o sistema é resolvido, obtendo-se o valor da variável da equação governante em cada nó da malha.
 
+Dentro da seleção do comportamento da malha pode-se escolher entre esquemas que consideram a malha fixa, chamada de formulação Euleriana, esquemas com a malha móvel, chamada de formulação Lagrangiana, e esquemas mistos como o chamado Lagrangiano-Euleriano Arbitrário (ALE) como explicado por Anjos et. al. (2015)\cite{ALE-2015}.
+Neste trabalho será utilizado o esquema de Euler, onde a malha é considerada estacionária e o valor das variáveis de campo de interesse são calculados na posição dos nós da malha.
 
 \section{\textbf{Escoamentos Multifásicos}}
 \label{sec_rev_MF}
