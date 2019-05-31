@@ -155,8 +155,25 @@ Então as partículas são simuladas percorrendo um escoamento permanente, com o
 
 As partículas são adicionadas a malha através de um método próprio, que leva como parâmetros as propriedades físicas da partícula, sua posição e condições iniciais e um nome para registro, \verb|TccLib.Mesh.add_particle()|.
 
-Em cada chamada da função \verb|TccLib.move_particles()| são calculdadas as forças aplicadas a cada partícula presente na malha e as forças são adicionadas a um dicionário com seus respectivos nomes como chaves.
-Para se calcular as forças, são necessárias diversas informações, cujas são captadas nesta função, como a velocidade do escoamento na posição da partícula.
+Em cada chamada da função \verb|TccLib.move_particles()| são calculdadas as forças aplicadas a cada partícula ainda presente no domínio da malha e as forças são adicionadas a um dicionário com seus respectivos nomes como chaves.
+\begin{verbatim}
+    # Iteração sobre a lista partículas,
+    # checando se cada uma está presente no domínio
+    for particle in particles if particle in mesh:
+        # Inicialização do dicionário
+        forces = dict()
+
+        # Adição das forças
+        forces["gravitational"] = ...
+        forces["drag"] = ...
+        forces["lift"] = ...
+        forces["added_mass"] = ...
+
+        # Função que altera as propiedades da partícula
+        particle.apply_forces(...)
+\end{verbatim}
+
+Para se calcular estas forças são necessárias diversas informações que são captadas nesta função, como a velocidade do escoamento na posição da partícula.
 E o valor do número de Reynolds \eqref{reynolds_p} é calculado em cada chamada, para verificar se a simulação respeita a restrição apresentada em \ref{sec_eq_part}.
 Em seguida é chamada uma função interna da classe \verb|TccLib.Particle| para executar o reposicionamento das partículas, esta calcula a as novas posições das partículas e as move, caso respeitem as condições de colisão.
 

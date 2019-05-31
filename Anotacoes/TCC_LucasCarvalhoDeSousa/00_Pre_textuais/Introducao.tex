@@ -1,13 +1,27 @@
 \noindent\textbf{INTRODUÇÃO}
 \\
 
-As turbomáquinas são equipamentos utilizados em larga escala por diversas áreas da engenharia.
+As turbomáquinas são equipamentos utilizados em larga escala por diversas áreas da engenharia para a movimentação e transporte de fluidos.
 Por isso, é de grande interesse estudar o comportamento dos escoamentos gerados por estas máquinas.
-Em especial, busca-se estudar a trajetória de partículas presentes nestes escoamentos durante seu funcionamento.
+Neste trabalho serão analisados escoamentos multifásicos que ocorrem nestes casos, do tipo de interação fluido-sólido.
+Em especial, busca-se estudar a trajetória de partículas presentes nestes escoamentos durante seu funcionamento para a previsão de possíveis efeitos ou consequências causadas.
 
-Este trabalho visa criar uma biblioteca na linguagem de programação \textit{Python} de simulação de escoamentos particulados em diversas geometrias.
-A solução dos escoamentos é calculada pela formulação da corrente-vorticidade utilizando o Método de Elementos Finitos para as variáveis espaciais e o Método de Diferenças Finitas para o termo temporal das equações.
+Com o aumento do poder de computação das máquinas atuais e a democratização das ferramentas de criação de código, tornou-se mais fácil o desenvolvimento independente de softwares de simulação por indivíduos.
+Utilizando estas ferramentas e o conhecimento de cálculo numérico, este trabalho visa criar uma biblioteca na linguagem de programação \textit{Python} de simulação de escoamentos particulados em diversas geometrias.
+A solução dos escoamentos é calculada pela formulação da corrente-vorticidade utilizando o Método de Elementos Finitos na forma Euleriana para as variáveis espaciais e o Método de Diferenças Finitas para o termo temporal das equações.
 Para a simulação do movimento das partículas também será usado o Método de Diferenças Finitas, aplicado a equação Basset–Boussinesq–Oseen para solução das forças aplicadas as partículas.
 
-Serão gerados resultados para problemas conhecidos na literatura como forma de verificação dos cálculos.
-Em seguida, serão realizadas simulações na geometria da palheta de um rotor para estudar o comportamento do escoamento e das partículas em turbomáquinas.
+Serão gerados resultados para problemas com soluções analíticas conhecidas na literatura e comparados como forma de verificação dos cálculos.
+Em seguida, serão realizadas simulações em diversas geometrias de interesse, e finalmente na geometria da palheta de um rotor, para estudar o comportamento do escoamento e das partículas em turbomáquinas.
+
+Este trabalho será apresentado da seguinte forma:
+\begin{itemize}
+	\item Introdução
+	\item Capítulo 1: Revisão bibliográfica dos temas discutidos
+	\item Capítulo 2: Desenvolvimento das equações matemáticas utilizadas
+	\item Capítulo 3: Aplicação dos método numéricos às equações do modelo
+	\item Capítulo 4: Descrição da estruturação do código e metodologia de solução
+	\item Capítulo 5: Validação do código
+	\item Capítulo 6: Resultados das simulações dos tópicos de interesse
+	\item Conclusão
+\end{itemize}

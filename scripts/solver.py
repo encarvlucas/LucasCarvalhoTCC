@@ -403,7 +403,7 @@ def move_particles(mesh: Mesh, velocity: (list, tuple) = None, velocity_x: [list
 
         # ----------------- Gravitational Force ------------------------------------------------------------------------
         if not no_gravity:
-            forces["gravitational"] = (0., -9.80665 * particle.mass)
+            forces["gravitational"] = (0., -9.80665 * (particle.density - mesh.density)*particle.volume)
 
         # ----------------- Drag Force ---------------------------------------------------------------------------------
         # if particle.reynolds > 1:
