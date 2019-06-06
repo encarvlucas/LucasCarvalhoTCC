@@ -5,11 +5,11 @@
 \label{sec_eq_governo}
 %--------------------------------------------------------------
 \section{\textbf{Introdução}}
-Este trabalho apresenta a modelagem de fluidos e partículas em um sistema de escoamento multifásico, portanto é preciso definir o que é um escoamento e quais as suas restrições para este trabalho.
+Este trabalho apresenta a modelagem de fluidos e partículas em um sistema de escoamento multifásico, portanto, é preciso definir o que é um escoamento e quais as suas restrições para esta situação.
 Um escoamento é o movimento das moléculas de um fluido em conjunto.
-As moléculas são tomadas como elementos infinitesimais, porém tratados de forma que não haja espaços vazios entre elas.
-Isto permite que as propriedades do fluido sejam tratadas pontualmente, podendo variar por exemplo sua densidade ou velocidade de nó a nó.
-Pode-se então modelar o comportamento destes escoamentos seguindo as equções de conservação:
+As moléculas são tomadas como elementos infinitesimais, porém, são tratadas de forma que não haja espaços vazios entre elas.
+Isto permite que as propriedades do fluido sejam tratadas pontualmente, podendo variar, por exemplo, sua densidade ou velocidade de nó a nó.
+Pode-se então modelar o comportamento destes escoamentos seguindo as equações de conservação:
 \begin{itemize}
 	\item \hyperref[cons_massa]{Conservação de Massa}
 	\item \hyperref[cons_qmov]{Conservação de Quantidade de Movimento}
@@ -56,7 +56,7 @@ Pode-se rescrever a equação de conservação de massa aplicando-se o \textit{T
     \int_{V_c}\left(\dfrac{\partial \rho_f}{\partial t} + \vec{\nabla}.(\rho_f \vec{v}_f) \right)d V_c = 0
     \label{cons_mass_int}
 \end{equation}
-obtendo-se a equação integral da conservação de massa, onde $\vec{\nabla}$ é o operador diferencial gradiente de componentes $\vec{\nabla}=\left(\tfrac{\partial}{\partial \hat{i}}, \tfrac{\partial}{\partial \hat{j}}, \tfrac{\partial}{\partial \hat{k}}\right)$..
+obtendo-se a equação integral da conservação de massa, onde $\vec{\nabla}$ é o operador diferencial gradiente de componentes $\vec{\nabla}=\left(\tfrac{\partial}{\partial \hat{i}}, \tfrac{\partial}{\partial \hat{j}}, \tfrac{\partial}{\partial \hat{k}}\right)$.
 
 Ao considerar a conservação do ponto de vista local, pode-se remover o termo integral e escrever a forma diferencial da conservação de massa:
 \begin{equation}
@@ -70,7 +70,7 @@ Esta equação é denominada \textit{Equação da Continuidade}, e pode ser rees
     \label{continuity}
 \end{equation}
 
-Tomando-se algumas hipósteses, é possível simplificar mais a equação.
+Tomando-se algumas hipóteses, é possível simplificar mais a equação.
 Para um fluido incompressível, com massa específica invariante na posição e no tempo, a equação da continuidade pode ser escrita como:
 \begin{equation}
     \rho_f \vec{\nabla}.\vec{v}_f = 0
@@ -88,9 +88,9 @@ tomada para um \textbf{fluido incompressível}.
 %--------------------------------------------------------------
 \section{\textbf{Conservação de Quantidade de Movimento}}
 \label{sec_cons_qmov}
-A conservação de quantidade de movimento é similar a conservação de massa, porém é tomada como um termo vetorial.
+A conservação de quantidade de movimento é similar a conservação de massa, porém, é um termo vetorial.
 Para o caso deste trabalho, é utilizada a versão linear da conservação de quantidade de movimento.
-Portanto, tem-se que a conservação da quantidade de movimento determina que a \textbf{taxa de acúmulo de quantidade de movimento linear dentro do volume de controle} mais \textbf{o fluxo de quantidade de movimento linear que atravessa a fronteira do volume de controle} é igual a \textbf{soma das forças aplicadas à superficie da fronteira do volume de controle e as forças do volume}.
+Portanto, tem-se que a conservação da quantidade de movimento determina que a \textbf{taxa de acúmulo de quantidade de movimento linear dentro do volume de controle} mais \textbf{o fluxo de quantidade de movimento linear que atravessa a fronteira do volume de controle} é igual a \textbf{soma das forças aplicadas à superfície da fronteira do volume de controle e as forças do volume}.
 
 A definição da taxa de acúmulo de quantidade de movimento linear dentro do volume de controle é:
 \begin{equation}
@@ -177,7 +177,7 @@ Continuando a desenvolver a equação:
     \label{cons_qmov_mid}
 \end{equation}
 
-Novamente, é tomanda a hipóstese de um fluido incompressível.
+Novamente, é tomada a hipótese de um fluido incompressível.
 Portanto, a equação pode ser simplificada para ser escrita como:
 \begin{equation}
     \rho_f \left(
@@ -204,7 +204,7 @@ Reescrevendo o tensor de tensões como uma soma de dois tensores, e o substituin
     \rho_f \vec{g}
     \label{cons_qmov_tensor}
 \end{equation}
-onde p é o campo de pressões no fluido, $\mathbf{I}$ é a matriz de indentidade e $\boldsymbol{\tau}$ é o tensor de tensões viscosas.
+onde p é o campo de pressões no fluido, $\mathbf{I}$ é a matriz de identidade e $\boldsymbol{\tau}$ é o tensor de tensões viscosas.
 
 Novamente é necessário fazer uma hipótese para este escoamento, para que seja possível definir as forças atuantes no fluido. 
 O tensor de tensões viscosas $\boldsymbol{\tau}$ está relacionado as propriedades do fluido, podendo ser definido matematicamente para um fluido homogêneo, isotrópico e newtoniano, como:
@@ -214,7 +214,7 @@ O tensor de tensões viscosas $\boldsymbol{\tau}$ está relacionado as proprieda
 \end{equation}
 onde $\mu_f$ é a viscosidade dinâmica do fluido.
 
-Substituindo a definição de $\boldsymbol{\tau}$ na \refeq{cons_qmov_tensor}, obtem-se:
+Substituindo a definição de $\boldsymbol{\tau}$ na \refeq{cons_qmov_tensor}, obtém-se:
 \begin{equation}
     \rho_f \left(
     	\dfrac{\partial \vec{v}_f}{\partial t} + 
@@ -258,7 +258,7 @@ Utilizando o que foi obtido na Equação de Continuidade \refeq{continuity_final
     \label{tau_simple}
 \end{equation}
 
-Dividindo-se todos os termos pela massa específica pode-se reescrever a equação \refeq{tau_simple}, obtem-se então a forma simplificada da \textit{Equação de Navier-Stoakes} para fluidos neutonianos incompressíveis e com viscosidade constante:
+Dividindo-se todos os termos pela massa específica pode-se reescrever a equação \refeq{tau_simple}, resultando-se na forma simplificada da \textit{Equação de Navier-Stoakes} para fluidos newtonianos incompressíveis e com viscosidade constante:
 \begin{equation}
 	\dfrac{\partial \vec{v}_f}{\partial t} + 
 	\vec{v}_f.\vec{\nabla}.\vec{v}_f =
@@ -300,7 +300,7 @@ Em seguida, aplica-se o operador rotacional nos dois lados da equação:
     \vec{\nabla}\times\vec{g}
 \end{equation}
 
-Simplifica-se então a equação, pois os termos que possuem o operador gradiente são anulados, pois o rotacional do gradiente de um escalar é zero.
+Simplifica-se então a equação, onde os termos que possuem o operador gradiente são anulados, pois o rotacional do gradiente de um escalar é zero.
 O termo gravitacional também é anulado já que a derivada da constante $\vec{g}$ é zero.
 Fica-se com a seguinte equação:
 \begin{equation}
@@ -326,7 +326,7 @@ Rearranjando-se as operações vetoriais, tem-se:
 \end{equation}
 
 Como a vorticidade é perpendicular ao vetor velocidade, para escoamentos bidimensionais pode-se anular o produto $\vec{\omega}.\vec{\nabla}.\vec{v}_f$ como demonstrado por Pontes e Norberto (2010)\cite{pontes_norberto}.
-Então obtem-se a \textit{Equação da Vorticidade} para escoamentos de fluidos neutonianos incompressíveis:
+Então encontra-se a \textit{Equação da Vorticidade} para escoamentos de fluidos newtonianos incompressíveis:
 \begin{equation}
 	\dfrac{\partial \vec{\omega}}{\partial t} +
 	\vec{v}_f.\vec{\nabla}.\vec{\omega} =
@@ -399,7 +399,7 @@ Para analisar as características de escoamentos com diversas variáveis, utiliz
 
 O número de Reynolds permite reconhecer rapidamente as qualidades de um escoamento apenas por seu valor.
 Ele estabelece uma relação entre as forças viscosas e inerciais de um fluido.
-Pode-se delcarar então qual força possui maior componente no comportamento do escoamento.
+Pode-se declarar então qual força possui maior componente no comportamento do escoamento.
 
 O número de Reynolds de um escoamento é calculado por:
 \begin{equation}
@@ -434,7 +434,7 @@ Elas foram inseridas sequencialmente durante o desenvolvimento do código, segui
 Foram escolhidas apenas as principais forças, apresentadas a seguir, por Crowe et al. (2011)\cite{crowe}: 
 \begin{itemize}
     \item \textbf{Força Gravitacional}:
-        Também conhecida como força Peso, criada pelo campo graviacional do planeta aplicado aos corpos com massa.
+        Também conhecida como força Peso, criada pelo campo gravitacional do planeta aplicado aos corpos com massa.
         Seu valor é calculado através das massas dos corpos, a distância entre seus centros de massa e uma constante universal.
         Porém, para simplificar o problema, pode-se assumir que a distância entre eles é constante e igual ao raio do planeta Terra.
         Portanto, pode-se assumir que o valor da força será sempre constante e proporcional a uma aceleração constante aplicada a massa da partícula, o que torna esta a força mais simples de se calcular:
@@ -445,7 +445,7 @@ Foram escolhidas apenas as principais forças, apresentadas a seguir, por Crowe 
         onde $\vec{g}$ é tomada como a aceleração constante da gravidade na superfície terrestre com valor definido de $\vec{g} = (0, -9.80665)m/s^2$.
 
     \item \textbf{Força de Arrasto}:
-        Força causada pelo atrito do fluido no contorno da partícula, que cria um efeito cisalhante e tende deixar a partícula com mesma velocidade que o fluido.
+        Força causada pelo atrito do fluido no contorno da partícula, que cria um efeito cisalhante e tende a deixar a partícula com mesma velocidade que o fluido.
 
         Sua equação é determinada como:
         \begin{equation}
@@ -462,10 +462,10 @@ Foram escolhidas apenas as principais forças, apresentadas a seguir, por Crowe 
         Ela possui várias formas de ser calculada, sendo nomeada para cada caso.
 
         Por exemplo, a \textbf{Força de Magnus} está relacionada a rotação, ou velocidade angular, presente na partícula.
-        Neste trabalho as partículas são assumidas como corpos rígidos sem rotação, então está força não será levada em conta.
+        Neste trabalho as partículas são assumidas como corpos rígidos sem rotação, então está força não será considerada.
 
-        Porém outro tipo de força de sustentação é a \textbf{Força de Saffman} explorada por Crowe et al. (2011)\cite{crowe}, que é gerada a partir do gradiente de velocidades presente no escoamento.
-        Para que haja o efeito da força de sustentação de Saffman é necessário que exista um gradiente no campo de velocidades diferente de nulo, como pode se notar na \ref{saffman}.
+        Porém, outro tipo de força de sustentação é a \textbf{Força de Saffman} explorada por Crowe et al. (2011)\cite{crowe}, que é gerada a partir do gradiente de velocidades presente no escoamento.
+        Para que haja o efeito da força de sustentação de Saffman deve existir um gradiente no campo de velocidades do fluido diferente de nulo, como pode se notar na \ref{saffman}.
         \begin{figure}[H]
             \centering
             \stackunder{

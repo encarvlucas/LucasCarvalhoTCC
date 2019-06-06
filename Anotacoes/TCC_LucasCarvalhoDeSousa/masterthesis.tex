@@ -40,7 +40,7 @@
 \usepackage{mathptmx} % Times New Roman
 
 %\usepackage{Times}
-% \usepackage[T1]{fontenc}
+\usepackage[T1]{fontenc}
 \usepackage{lmodern}
 %\setmainfont{Times}
 %\setmainfont{Arial}
@@ -82,11 +82,14 @@
 \newcommandx{\improvement}[2][1=]{\todo[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
 \newcommandx{\thiswillnotshow}[2][1=]{\todo[disable,#1]{#2}}
 \newcommandx{\authorName}{Lucas Carvalho de Sousa}
-\newcommandx{\mainTitle}{Simulação Numérica De Escoamentos Dispersos Utilizando Método De Elementos Finitos}
+\newcommandx{\mainTitle}{Simulação Numérica De Escoamentos Dispersos em Turbomáquinas Utilizando o Método De Elementos Finitos}
 \newcommandx{\curYear}{2019}
-\newcommandx{\numPages}{108 f}
+\newcommandx{\numPages}{109 f}
 \renewcommand{\refeq}[1]{Eq. \ref{#1}}
 \renewcommand{\eqref}[1]{(Eq. \ref{#1})}
+
+\usepackage[titles]{tocloft}
+\cftsetindents{figure}{0em}{5.5em}
 
 %------------------------------------------------
 %------------------------------------------------
@@ -119,7 +122,7 @@
 
 \thispagestyle{empty}\import{00_Pre_textuais/}{Capa}
 \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FolhaDeRosto}
-% \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FichaCatalog}   
+\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FichaCatalog}   
 \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FolhaDeAprovacao}
 \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Dedicatoria}
 \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Agradecimento}

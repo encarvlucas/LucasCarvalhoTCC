@@ -21,7 +21,7 @@ São calculados também a média e o desvio padrão dos erros relativos pelas eq
 \end{equation}
 
 As validações foram organizadas em três seções que representam diferentes etapas da implementação do modelo matemático, sendo assim espera-se mostrar a aplicabilidade do código numérico desenvolvido, além do histórico de aprendizado obtido.
-Na seção \ref{sec_solidos}, os problemas de transferência de calor em sólidos com condutividade termica constante são apresentados.
+Na seção \ref{sec_solidos}, os problemas de transferência de calor em sólidos com condutividade térmica constante são apresentados.
 Os casos propostos nesta seção buscam confirmar a importação correta da malha e a montagem das matrizes globais, como também a aplicação das condições de contorno de Dirichlet e de Neumann.
 
 Já na seção \ref{sec_fluidos}, os problemas com o termo convectivo presente são analisados.
@@ -30,8 +30,8 @@ A estrutura do algoritmo de solução nos casos propostos dessa seção é a mes
 Dessa forma, podemos confirmar a correta aplicação das condições de contorno da vorticidade que deve ser calculada em cada passo de tempo.
 %No final da seção, apresentamos um caso onde o número de Reynolds é aumentado até as oscilações numéricas serem visualizadas e, assim, verificar o limite de aplicabilidade do código.
 
-Finalmente, na seção \ref{sec_particulas}, é apresentado os clássicos casos de dinâmica em partículas com o intuito de validar as forças de gravidade, arrasto e sustentação isoladamente e, com isso, possibilitar uma a correção pontual no modelo quando
-necessário, alem de permitir observar com maior precisão a influência da atuação que cada uma das força faz sobre a partícula.
+Finalmente, na seção \ref{sec_particulas}, é apresentado os clássicos casos de dinâmica em partículas com o intuito de validar as forças de gravidade, arrasto e sustentação isoladamente e, com isso, possibilitar uma correção pontual no modelo quando
+necessário, além de permitir observar com maior precisão a influência de cada uma das forças sobre as partículas.
 
 Para casos com variáveis temporais, foi utilizado um critério de parada de $10^{-5}$ de variação de valores entre dois intervalos de tempo consecutivos.
 Desta maneira espera-se que o sistema já tenha entrado na situação de convergência e esteja próximo o suficiente de seus valores finais.
@@ -40,7 +40,7 @@ Isto foi feito para poupar tempo de computação, para casos que possuem um limi
 A execução do código e a computação dos resultados foram realizados em um computador de uso pessoal com as seguintes especificações:
 \begin{itemize}
     \item Dell Latitude E6410 com processador Intel® Core™ i5 CPU M 520 2.40GHz com 4 núcloes e 4Gb de memória RAM.
-          O sistema operacional ubuntu 16.04 LTS e compilador Python 3.5.
+          O sistema operacional Ubuntu 16.04 LTS e compilador Python 3.5.
 \end{itemize}
 
 
@@ -70,7 +70,7 @@ E a solução analítica do problema unidimensional associado foi obtida pelo m�
 \end{equation}
 onde $L$ é o comprimento da barra, $T_0$ e $T_L$ são, respectivamente, os valores da temperatura em $x=0$ e $x=L$.
 
-As condições de contorno e o dominio bidimensional utilizados na simulação são apresentados na \ref{laplace_d_bc}. A condição de fluxo de calor $\dfrac{\partial T}{\partial n}$ nulo significa que nenhuma condição é imposta no contorno.
+As condições de contorno e o domínio bidimensional utilizados na simulação são apresentados na \ref{laplace_d_bc}. A condição de fluxo de calor $\dfrac{\partial T}{\partial n}$ nulo significa que nenhuma condição é imposta no contorno.
 
 \begin{figure}[H]
     \centering
@@ -81,9 +81,9 @@ As condições de contorno e o dominio bidimensional utilizados na simulação s
     \label{laplace_d_bc}
 \end{figure}
 
-O dominio foi discretizado utilizando uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
+O domínio foi discretizado utilizando uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
 A malha foi criada pelo o software GMSH como proposto por Geuzaine e Remacle (2009)\cite{gmsh} e importada ao código numérico.
-A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura, e que é possível observar que o campo de temperatura possui um perfil linear variando de 0 (cor azul) a 1 (cor vermelha).
+A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o domínio e o eixo $z$ é a distribuição de temperatura, e que é possível observar que o campo de temperatura possui um perfil linear variando de 0 (cor azul) a 1 (cor vermelha).
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -93,14 +93,14 @@ A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ r
     \label{laplace_d_3d}
 \end{figure}
 
-A comparação entre os resultados da solução analítica \eqref{laplace_d_sol} e a solução numerica, para a seção $x=0.5m$, é apresentada na \ref{laplace_d_perm_comp}, onde é possível observar que ambas possuem o mesmo perfil.
+A comparação entre os resultados da solução analítica \eqref{laplace_d_sol} e a solução numérica, para a seção $x=0.5m$, é apresentada na \ref{laplace_d_perm_comp}, onde é possível observar que ambas possuem o mesmo perfil.
 Essa proximidade é quantificada pelo erro relativo médio que foi de $0.08929\%$ e com desvio padrão de $0.06698\%$
 \begin{figure}[H]
     \centering
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_permanent_comparison.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado das solução númerica e analítica do caso de transporte de temperatura em sólidos no regime permanente.}
+    \caption{Comparação de resultado das soluções numérica e analítica do caso de transporte de temperatura em sólidos no regime permanente.}
     \label{laplace_d_perm_comp}
 \end{figure}
 
@@ -112,7 +112,7 @@ Dessa forma, a equação que representa este caso é:
 \end{equation}
 onde $k$ é o coeficiente de condutividade térmica da placa e $t$ é a variável temporal.
 
-Porém, ao longo dos passos de tempo, a solução se aproxima de um problema permanente, portanto pode-se fazer a comparação dos resultados obtidos neste exemplo com os valores da solução analítica \eqref{laplace_d_sol}, tomando-se que $t\rightarrow \infty$.
+Porém, ao longo dos passos de tempo, a solução se aproxima de um problema permanente, portanto, pode-se fazer a comparação dos resultados obtidos neste exemplo com os valores da solução analítica \eqref{laplace_d_sol}, tomando-se que $t\rightarrow \infty$.
 As condições iniciais $t=0s$ atribuídas aos nós sem condição de contorno foram de um valor inicial de $0^{\circ}C$.
 A \ref{laplace_d_trans_comp} apresenta a evolução do campo de temperaturas em função do tempo.
 É possível observar que a solução numérica converge para a solução analítica formando um perfil linear.
@@ -122,7 +122,7 @@ O erro relativo médio calculado para este caso foi de $0.08276\%$ e com desvio 
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/laplace_dirichlet_transient_comparison.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado das soluções númericas e analítica de transporte em sólidos no regime transiente.}
+    \caption{Comparação de resultado das soluções numéricas e analítica de transporte em sólidos no regime transiente.}
     \label{laplace_d_trans_comp}
 \end{figure}
 
@@ -133,7 +133,7 @@ O erro relativo médio calculado para este caso foi de $0.08276\%$ e com desvio 
 Neste problema busca-se estudar o comportamento de uma placa com geração de calor em seu domínio e temperaturas fixas nas laterais.
 Novamente, para permitir a comparação de resultados, é extraída uma seção da placa para observar os resultados como um problema unidimensional.
 
-A equação que governa este caso é denomidada equação de Poisson \eqref{poisson_d_perm_eq}, tomada para um problema permanente, ou seja sem variação no tempo.
+A equação que governa este caso é denominada equação de Poisson \eqref{poisson_d_perm_eq}, tomada para um problema permanente, ou seja, sem variação no tempo.
 \begin{equation}
     -k\nabla^2 T = Q
     \label{poisson_d_perm_eq} 
@@ -146,8 +146,8 @@ A solução analítica para o caso de uma barra unidimensional é apresentada em
     \label{poisson_d_sol} 
 \end{equation}
 
-As condições de contorno e o dominio bidimensional utilizados na simulação são apresentados na \ref{poisson_d_bc}.
-A geração de calor utilizada foi de $Q = 40W/m^3$ e a condutividade termica foi de $k=5 W/m^{\circ}C$.
+As condições de contorno e o domínio bidimensional utilizados na simulação são apresentados na \ref{poisson_d_bc}.
+A geração de calor utilizada foi de $Q = 40W/m^3$ e a condutividade térmica foi de $k=5 W/m^{\circ}C$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -158,7 +158,7 @@ A geração de calor utilizada foi de $Q = 40W/m^3$ e a condutividade termica fo
 \end{figure}
 
 Novamente, foi utilizada uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
-A \ref{poisson_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura, onde é possível observar que o campo de temperatura possui um perfil parabólico variando de 0 (cor azul) a 1 (cor vermelha).
+A \ref{poisson_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o domínio e o eixo $z$ é a distribuição de temperatura, onde é possível observar que o campo de temperatura possui um perfil parabólico variando de 0 (cor azul) a 1 (cor vermelha).
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -168,14 +168,14 @@ A \ref{poisson_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ r
     \label{poisson_d_3d}
 \end{figure}
 
-A comparação entre os resultados da solução analítica \eqref{poisson_d_sol} e a solução numerica, para a seção $x=0.5m$, é apresentada na \ref{poisson_d_perm_comp}, onde é possível observar que ambas possuem o mesmo perfil.
+A comparação entre os resultados da solução analítica \eqref{poisson_d_sol} e a solução numérica, para a seção $x=0.5m$, é apresentada na \ref{poisson_d_perm_comp}, onde é possível observar que ambas possuem o mesmo perfil.
 Essa proximidade é quantificada pelo erro relativo médio que foi de $0.21048\%$ e com desvio padrão de $0.40921\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_permanent_comparison.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado das solução númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração de calor.}
+    \caption{Comparação de resultado das soluções numérica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração de calor.}
     \label{poisson_d_perm_comp}
 \end{figure}
 
@@ -189,7 +189,7 @@ O erro relativo médio calculado para este caso foi de $0.21101\%$ e com desvio 
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/poisson_dirichlet_transient_comparison.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado das soluções númericas e analítica do problema de trasnporte de temperatura em sólidos no regime transiente com geração de calor.}
+    \caption{Comparação de resultado das soluções numéricas e analítica do problema de transporte de temperatura em sólidos no regime transiente com geração de calor.}
     \label{poisson_d_trans_comp}
 \end{figure}
 
@@ -197,7 +197,7 @@ O erro relativo médio calculado para este caso foi de $0.21101\%$ e com desvio 
 \subsection{\textbf{Equação de Poisson com Condições de Contorno de Dirichlet e Neumann}}
 \label{sec_poisson_neu}
 Este caso foi escolhido para validar a solução de problemas com condições de contorno de Neumann.
-Trata-se de uma placa com temperatura fixa em uma das paredes e no lado oposto é defido um valor para o fluxo de calor presente.
+Trata-se de uma placa com temperatura fixa em uma das paredes e no lado oposto é definido um valor para o fluxo de calor presente.
 Toma-se uma seção da placa para observar os resultados e compará-los com um problema unidimensional de uma barra com as mesmas condições presentes.
 
 A equação de governo é novamente a equação de Poisson \eqref{poisson_d_perm_eq}, e sua solução analítica para uma barra unidimensional foi calculada pelo método de coeficientes a determinar e é dada por:
@@ -207,8 +207,8 @@ A equação de governo é novamente a equação de Poisson \eqref{poisson_d_perm
 \end{equation}
 onde $q$ é o fluxo de calor na extremidade $x=L$.
 
-As condições de contorno e o dominio bidimensional utilizados na simulação são apresentados na \ref{poisson_n_bc}.
-A geração de calor utilizada foi de $Q = -7W/m^3$, a condutividade termica foi de $k=5 W/m^{\circ}C$ e o fluxo de calor foi de $q = -5 W/m^2$.
+As condições de contorno e o domínio bidimensional utilizados na simulação são apresentados na \ref{poisson_n_bc}.
+A geração de calor utilizada foi de $Q = -7W/m^3$, a condutividade térmica foi de $k=5 W/m^{\circ}C$ e o fluxo de calor foi de $q = -5 W/m^2$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -219,7 +219,7 @@ A geração de calor utilizada foi de $Q = -7W/m^3$, a condutividade termica foi
 \end{figure}
 
 Novamente, foi utilizada uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
-A \ref{poisson_n_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o dominio e o eixo $z$ é a distribuição de temperatura variando de 0 (cor azul) a 0.35 (vermelha).
+A \ref{poisson_n_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o domínio e o eixo $z$ é a distribuição de temperatura variando de 0 (cor azul) a 0.35 (vermelha).
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -236,7 +236,7 @@ A semelhança entre elas é quantificada pelo erro relativo médio que foi de $0
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/poisson_neumann_permanent_comparison.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado das solução númerica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
+    \caption{Comparação de resultado das soluções numérica e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
     \label{poisson_n_perm_comp}
 \end{figure}
 
@@ -249,7 +249,7 @@ O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio pad
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/poisson_neumann_transient_comparison.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado das soluções númericas e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
+    \caption{Comparação de resultado das soluções numéricas e analítica do problema de transporte de temperatura em sólidos no regime permanente com geração e fluxo de calor.}
     \label{poisson_n_trans_comp}
 \end{figure}
 
@@ -261,11 +261,11 @@ O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio pad
 \label{sec_poiseuille}
 Como indicado anteriormente, foi utilizado o Método de Elementos Finitos para a solução do campo de velocidades no espaço, e o Método de Diferenças Finitas no tempo.
 
-Este é um dos primeiros exemplos dados ao estudar-se a meĉanica dos fluidos e a equação de Navier-Stoakes\eqref{navier}, pois trata-se de uma configuração geométrica muito simples.
+Este é um dos primeiros exemplos dados ao estudar-se a mecânica dos fluidos e a equação de Navier-Stoakes\eqref{navier}, pois trata-se de uma configuração geométrica muito simples.
 O escoamento de Poiseuille também é conhecido como escoamento entre placas paralelas, já que essa é exatamente a descrição de sua forma e as placas são tomadas como estacionárias em relação ao fluido.
 
 O escoamento ocorre entre duas placas paralelas de comprimento infinito com uma distância constante entre elas.
-É tomado um fluído ideal, isto é, newtoniano, imcompressível e em estado permanente com seu perfil plenamente desenvolvido.
+É tomado um fluido ideal, isto é, newtoniano, incompressível e em estado permanente com seu perfil plenamente desenvolvido.
 As condições de contorno são definidas para a função corrente e a velocidade.
 Para os valores iniciais nos nós sem condição de contorno foram arbitrados como nulos.
 
@@ -276,7 +276,7 @@ Como apresentado por Pontes e Norberto (2010)\cite{pontes_norberto}, o sistema d
 \end{equation}
 onde $v_x$ é velocidade do fluido na direção do eixo $x$, $L$ é o comprimento das placas e $U_{max}$ é a velocidade máxima do escoamento.
 
-Para esta simulação foram usadas as condições de contorno e o dominio bidimensional apresentados na \ref{poiseuille_bc}.
+Para esta simulação, foram usadas as condições de contorno e o domínio bidimensional apresentados na \ref{poiseuille_bc}.
 A velocidade máxima $U_{max}$ é tomada em função da velocidade de entrada $U$ na relação $U_{max}=1.5U$.
 Foi escolhido um valor para o número de Reynolds\eqref{reynolds} de $Re=1$ e um intervalo de tempo $dt=0.1s$.
 \begin{figure}[H]
@@ -297,16 +297,16 @@ O erro relativo médio calculado para este caso foi de $4.587\%$ e com desvio pa
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/Poiseuille_validation.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado das soluções númericas e analítica \ref{poiseuille_sol} do problema de corrente-vorticidade no regime permanente.}
+    \caption{Comparação de resultado das soluções numéricas e analítica \ref{poiseuille_sol} do problema de corrente-vorticidade no regime permanente.}
     \label{poiseuille_comp}
 \end{figure}
 
 %---------------------------------------------------------------------------------------------Segundo Exemplo
 \subsection{\textbf{Escoamento de Couette}}
 \label{sec_couette}
-Similar ao escoamento de Poiseuille\ref{sec_poiseuille}, entre duas placas paralelas de comprimento infinito separadas por uma distância constante.
+Similar ao escoamento de Poiseuille\ref{sec_poiseuille}, entre duas placas paralelas de comprimento infinito, separadas por uma distância constante.
 Porém, neste caso, as placas possuem uma velocidade relativa entre si, ou seja, estão em movimento.
-Novamente, utiliza-se a aproximação do escoamento para um fluído newtoniano, imcompressível e em estado permanente com seu perfil plenamente desenvolvido.
+Novamente, utiliza-se a aproximação do escoamento para um fluido newtoniano, incompressível e em estado permanente com seu perfil plenamente desenvolvido.
 As condições de contorno são definidas para a função corrente e a velocidade, com os valores iniciais nos nós sem condição de contorno arbitrados como nulos.
 
 Novamente trabalha-se com o sistema corrente-vorticidade \ref{corrente_vorticidade} e a solução analítica do perfil de velocidades é apresentada por Pontes e Norberto (2010)\cite{pontes_norberto}:
@@ -316,8 +316,8 @@ Novamente trabalha-se com o sistema corrente-vorticidade \ref{corrente_vorticida
 \end{equation}
 onde $U_{sup}$ e $U_{inf}$ são as velocidades das placas superior e inferior, respectivamente.
 
-Para esta simulação foram usadas as condições de contorno e o dominio bidimensional apresentados na \ref{couette_bc}.
-Foram tomadas as velocidade superior como $U_{sup}=1m/s$ e $U_{inf}=-1m/s$ para um escoamente com número de Reynolds de $Re=1$ e um intervalo de tempo $dt=1.0s$.
+Para esta simulação, foram usadas as condições de contorno e o domínio bidimensional apresentados na \ref{couette_bc}.
+Foram tomadas as velocidade superior como $U_{sup}=1m/s$ e $U_{inf}=-1m/s$ para um escoamento com número de Reynolds de $Re=1$ e um intervalo de tempo $dt=1.0s$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -336,7 +336,7 @@ O erro relativo médio calculado para este caso foi de $1.4251\%$ e com desvio p
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/Couette_validation.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado das soluções númericas e analítica \ref{couette_sol} do problema de corrente-vorticidade no regime permanente.}
+    \caption{Comparação de resultado das soluções numéricas e analítica \ref{couette_sol} do problema de corrente-vorticidade no regime permanente.}
     \label{couette_comp}
 \end{figure}
 
@@ -382,7 +382,7 @@ Para o caso de uma partícula isolada sob efeito da força gravitacional, a solu
 \end{equation}
 onde $g$ é a aceleração da gravidade, tomada como $g=9.80665m/s^2$, $v_{y0}$ é a velocidade e $p_{y0}$ a posição inicial da partícula no eixo $y$.
 
-Para a força gravitacional, utilizou-se uma malha com as condições e posição inicial apresentadas na \ref{force_bc}.
+Para a força gravitacional, utilizou-se uma malha com as condições de contorno e a posição inicial da partícula apresentadas na \ref{force_bc}.
 A velocidade inicial tomada foi $v_{y0}=0$.
 Na \ref{grav_comp} pode-se observar a evolução da posição da partícula no eixo $y$ em função do tempo.
 Foi utilizado um campo de velocidades com valor constante de $U=2m/s$.
@@ -392,7 +392,7 @@ O erro relativo médio calculado para este caso foi de $7.706e^{-4}\%$ e com des
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/Forces_gravitational_validation.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado da solução númerica e analítica \ref{grav_sol} do percurso de uma partícula em queda livre.}
+    \caption{Comparação de resultado da solução numérica e analítica \ref{grav_sol} do percurso de uma partícula em queda livre.}
     \label{grav_comp}
 \end{figure}
 
@@ -408,7 +408,7 @@ E ao se aproximarem da mesma velocidade, a força é reduzida até o ponto de se
 
 Neste caso, a validação é feita para analisar o comportamento da força em relação as propriedades da partícula.
 
-A solução analítica para a posição da partícula sob efeito da força de arrasto no eixo $x$ foi obtida através do método da variação de parâmetros, com auxílio da ferramenta \textit{WolframAlpha}, mostrada a seguir:
+A solução analítica para a posição da partícula sob efeito da força de arrasto no eixo $x$ foi obtida através do método da variação de parâmetros, com auxílio da ferramenta \href{https://www.wolframalpha.com}{\textit{WolframAlpha}}, mostrada a seguir:
 \begin{equation}
     x(t) = \dfrac{m_p}{c_{d}} (U - v_{x0}) \left(1 - e^{-\frac{c_{d}}{m_p}t}\right) + v_{x0}t + p_{x0}
     \label{drag_sol} 
@@ -420,7 +420,7 @@ define-se $c_{d}$ como:
 \end{equation}
 onde $m_p$ é a massa da partícula, $\mu_f$ é a viscosidade dinâmica do fluido, $d_p$ é o diâmetro da partícula, $v_{x0}$ é a velocidade e $p_{x0}$ a posição inicial da partícula no eixo $x$.
 
-Foi utilizada a malha padrão com as condições e posição inicial apresentadas na \ref{force_bc}, com velocidade inicial $v_{x0}=0$.
+Foi utilizada a malha padrão com as condições de contorno e a posição inicial da partícula apresentadas na \ref{force_bc}, com velocidade inicial $v_{x0}=0$.
 Demonstra-se na \ref{drag_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
 Foi utilizado um campo de velocidades com valor constante de $U=2m/s$.
 Pode-se observar que a partícula é acelerada até atingir a velocidade do fluído, como se era esperado.
@@ -430,7 +430,7 @@ O erro relativo médio calculado para este caso foi de $3.083e^{-5}\%$ e com des
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/Forces_drag_validation.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado da solução númerica e analítica \ref{drag_sol} do percurso de uma partícula em movimento de arrasto em um escoamento.}
+    \caption{Comparação de resultado da solução numérica e analítica \ref{drag_sol} do percurso de uma partícula em movimento de arrasto em um escoamento.}
     \label{drag_comp}
 \end{figure}
 
@@ -440,11 +440,11 @@ O erro relativo médio calculado para este caso foi de $3.083e^{-5}\%$ e com des
 A força de sustentação é a força que permite que a partícula se mantenha elevada quando está sob efeito de um fluido em movimento.
 Ela é causada por um efeito de queda de pressão em uma região com maior velocidade, o que gera um gradiente de pressão e enfim a força.
 
-Portanto esta força afeta a partícula somente quando há um gradiente de velocidade ao longo dos contornos da partícula, portanto ela só ocorre quando o campo de velocidades não for constante em volta da partícula.
+Portanto, esta força afeta a partícula somente quando há um gradiente de velocidade ao longo dos contornos da partícula, ou seja, ela só ocorre quando o campo de velocidades não for constante em volta da partícula.
 Esta é a mesma força que possibilita o voo dos aviões, pois os perfis de suas asas geram o gradiente de velocidades necessário.
 
-A força de sustentação possui a seguinte solução analítica para a posição da partícula no eixo $y$ semelhante a força de arrasto \eqref{lift_sol}, porém com constantes diferentes.
-Estã solução foi obtida através do método de variação de parâmetros, realizado com a ferramenta \textit{WolframAlpha}, resultando em:
+A força de sustentação possui a seguinte solução analítica para a posição da partícula no eixo $y$ semelhante à força de arrasto \eqref{lift_sol}, contudo, com diferentes constantes.
+Estã solução foi obtida através do método de variação de parâmetros, realizado com a ferramenta \href{https://www.wolframalpha.com}{\textit{WolframAlpha}}, resultando em:
 \begin{equation}
     y(t) = \dfrac{m_p}{c_l} (0 - v_{y0}) \left(1 - e^{-\frac{c_l}{m_p}t}\right) + v_{y0}t + p_{y0}
     \label{lift_sol} 
@@ -456,7 +456,7 @@ define-se $c_l$ como:
 \end{equation}
 onde $Re_G$ é o número de Reynolds de cisalhamento\eqref{reg} $\rho_f$ é a densidade do fluido e $\tfrac{dv_x}{dy}$ é a variação da velocidade na partícula sobre o eixo perpendicular ao movimento.
 
-Como é apresentado na \ref{lift_bc}, foi utilizado a mesma malha que nos casos anteriores, porém o campo de velocidade do fluido foi alterado, para que fosse possível observar os efeitos da força de sustentação com mais clareza.
+Como é apresentado na \ref{lift_bc}, foi utilizado a mesma malha que nos casos anteriores, porém, o campo de velocidade do fluido foi alterado, para que fosse possível observar os efeitos da força de sustentação com mais clareza.
 As condições utilizadas são:
 \begin{figure}[H]
     \centering
@@ -476,7 +476,7 @@ O erro relativo médio calculado para este caso foi de $1.9241e^{-6}\%$ e com de
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/Forces_lift_validation.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado da solução númerica e analítica \ref{lift_sol} do percurso de uma partícula em movimento de sustentação em um escoamento.}
+    \caption{Comparação de resultado da solução numérica e analítica \ref{lift_sol} do percurso de uma partícula em movimento de sustentação em um escoamento.}
     \label{lift_comp}
 \end{figure}
 
@@ -486,9 +486,9 @@ O erro relativo médio calculado para este caso foi de $1.9241e^{-6}\%$ e com de
 A força de massa virtual é uma força de reação entre o fluido e a movimentação da partícula durante o escoamento.
 O valor dessa força está relacionado a massa de fluido que estaria se deslocando na posição da partícula.
 
-Para encontrar-se a solução analítica da força de massa virtual que pudesse ser observada e comparada com os resultados das simulações, ou seja não sendo nula, foi preciso assumir um campo de velocidades que variasse no tempo.
+Para encontrar-se a solução analítica da força de massa virtual que pudesse ser observada e comparada com os resultados das simulações, sendo não nula, foi preciso assumir um campo de velocidades que variasse no tempo.
 Para isso, define-se que a aceleração do campo de velocidades do escoamento é constante $\tfrac{d\vec{v}}{dt}=\vec{a}=const$.
-Portanto, obtem-se a solução analítica da força de massa virtual para a posição da partícula no eixo $x$, com o método de variação de parâmetros, feito com a ferramenta \textit{WolframAlpha}, com o seguinte resultado:
+Portanto, obtém-se a solução analítica da força de massa virtual para a posição da partícula no eixo $x$, com o método de variação de parâmetros, feito com a ferramenta \href{https://www.wolframalpha.com}{\textit{WolframAlpha}}, com o seguinte resultado:
 \begin{equation}
     x(t) = \dfrac{a_x c_m}{2(c_m + m)}t^2 + + v_{x0}t + p_{x0}
     \label{mass_sol} 
@@ -498,18 +498,18 @@ define-se $c_m$ como:
     c_m = \dfrac{1}{2} \rho_f V_p
     \label{mass_c} 
 \end{equation}
-onde $a_x$ é a aceleração, ou variação da velocidade no tempo, do campo de velocidades do fluido no eixo $x$ e $V_p$ é o volume da partícula.
+onde $a_x$ é a aceleração, ou variação da velocidade no tempo, do campo de velocidades do escoamento no eixo $x$ e $V_p$ é o volume da partícula.
 
-Novamente, foi utilizado a mesma malha e condições dos casos anteriores conforme apresentado na \ref{force_bc}, além disso a condição inicial da componente tangencial da velocidade foi $v_{x0}=0$.
+Novamente, foi utilizado a mesma malha e condições dos casos anteriores conforme apresentado na \ref{force_bc}, além disso, a condição inicial da componente tangencial da velocidade foi $v_{x0}=0$.
 Revela-se na \ref{mass_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
 Foi utilizado um campo de velocidades que varia no tempo com valor constante, como explicado anteriormente, na forma de $U=2m/s+a_x t$, onde $a_x=1m/s^2$.
-Pode-se observar que a partícula é acelerada até atingir a velocidade do fluído, como se era esperado.
+Pode-se observar que a partícula é acelerada até atingir a velocidade do fluido, como se era esperado.
 O erro relativo médio calculado para este caso foi de $6.6574e^{-3}\%$ e com desvio padrão de $1.1362e^{-3}\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
         \includegraphics[width=.7\linewidth]{figures/Forces_added_mass_validation.png}
     } {\raggedleft \scriptsize Fonte: Autor.}
-    \caption{Comparação de resultado da solução númerica e analítica \ref{mass_sol} do percurso de uma partícula em movimento de aceleração em um escoamento.}
+    \caption{Comparação de resultado da solução numérica e analítica \ref{mass_sol} do percurso de uma partícula em movimento de aceleração em um escoamento.}
     \label{mass_comp}
 \end{figure}

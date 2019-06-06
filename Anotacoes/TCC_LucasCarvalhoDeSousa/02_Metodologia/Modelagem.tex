@@ -10,7 +10,7 @@ Neste trabalho foram utilizados dois tipos de modelagem numéricas para simular 
 Na fase dos fluidos, foi utilizado o \hyperref[mef]{\textit{Método de Elementos Finitos} (MEF)} para solucionar as equações de governo, pois ele proporciona uma forma eficiente de solucionar as equações com rápida convergência.
 Enquanto para a fase sólida das partículas, e o termo temporal das equações dos fluidos, foi utilizado o \hyperref[mdf]{\textit{Método de Diferenças Finitas} (MDF)}, o qual foi escolhido por sua simplicidade de implementação tomando-se cuidado com suas restrições de convergência.
 
-São tomadas as hipóteses do fluido como um meio contínuo, fluido imcompressível, e das partículas perfietamente rígidas.
+São tomadas as hipóteses do fluido como um meio contínuo, fluido incompressível, e das partículas perfeitamente rígidas.
 %--------------------------------------------------------------
 \section{\textbf{Método de Elementos Finitos}}
 \label{mef}
@@ -18,7 +18,7 @@ São tomadas as hipóteses do fluido como um meio contínuo, fluido imcompressí
 \subsection{\textbf{Formulação Forte}}
 \label{form_forte}
 A formulação forte são as equações de governo do problema na sua forma diferencial, com as condições de contorno definidas.
-As equações do fluido definidas em \refeq{fluid_eq1}, \refeq{fluid_eq2} e \refeq{fluid_eq3} são tomadas no domínio $\Omega \subset \mathbb{R}^2$ com condições de contorno definidas em:
+As equações do fluido, definidas em \refeq{fluid_eq1}, \refeq{fluid_eq2} e \refeq{fluid_eq3} são tomadas no domínio $\Omega \subset \mathbb{R}^2$ com condições de contorno definidas em:
 \begin{align}
     \omega &= \omega_{\Gamma} \text{ em } \Gamma_1 \\
     \psi &= \psi_{\Gamma} \text{ em } \Gamma_2 \\
@@ -76,7 +76,7 @@ Substituindo-se os resíduos nas integrais, tem-se:
     \right).\vec{\xi} d\Omega = 0
 \end{equation}
 
-Reorganiza-se as integrais:
+Reorganizam-se as integrais:
 \begin{equation}
     \int_{\Omega}
     \dfrac{\partial \vec{\omega}}{\partial t}
@@ -152,7 +152,7 @@ Assim, a integral em $\Gamma$ é nula e os termos difusivos são anulados:
     .\vec{\phi} d\Omega
 \end{equation}
 
-As equações ficam então como:
+As equações resultantes são:
 \begin{equation}
     \int_{\Omega}
     \dfrac{\partial \vec{\omega}}{\partial t}
@@ -305,7 +305,6 @@ Substituindo-se nas equações:
 As discretizações são aplicadas sobre um domínio com $n_e$ elementos e $n_p$ nós.
 Este domínio é determinado por uma malha computacional criada.
 As variáveis ficam então:
-
 \begin{align}
     \omega(\vec{x}, t) &= \sum_{i=1}^{n_p} \omega_i(t) N_i(\vec{x}) \\
     \psi(\vec{x}, t) &= \sum_{i=1}^{n_p} \psi_i(t) N_i(\vec{x}) \\
@@ -385,7 +384,7 @@ Então as equações do sistema em suas formas variacionais discretizadas no esp
 
 Pode-se remover as componentes da velocidade do fluido $v_{fx}$ e $v_{fy}$ da equação \refeq{temp1}, pois serão utilizados os componentes da velocidade no último passo de tempo para estes valores, tornando-se a equação linear.
 
-Retira-se então os somatórios das funções interpoladoras das integrais, e como $\sum_{j=1}^{n_p} \delta_j \neq 0$, $\sum_{j=1}^{n_p} \phi_j \neq 0$ e $\sum_{j=1}^{n_p} \xi_j \neq 0$ as equações de governo serão:
+Retiram-se então os somatórios das funções interpoladoras das integrais, e como $\sum_{j=1}^{n_p} \delta_j \neq 0$, $\sum_{j=1}^{n_p} \phi_j \neq 0$ e $\sum_{j=1}^{n_p} \xi_j \neq 0$ as equações de governo serão:
 \begin{align}
     &\sum_{j=1}^{n_p}
     \sum_{i=1}^{n_p} \dfrac{\partial \omega_i}{\partial t}
@@ -468,7 +467,7 @@ Retira-se então os somatórios das funções interpoladoras das integrais, e co
 
 %--------------------------------------------------------------
 \subsection{\textbf{Malha Computacional}}
-A malha utilizada pode ser estruturada, com nós equidistantes entre si, ou não estruturada, nós escolhidos a critério do criador da malha.
+A malha utilizada pode ser estruturada, com nós equidistantes, ou não estruturada, com nós posicionados a critério do criador da malha.
 É comum utilizar malhas não estruturadas com zonas de maior interesse com elementos menores, para se obter informações mais precisas nestes locais.
 Em certos casos de equações com acoplamentos fortemente ligados, se torna necessário utilizar elementos com mais informações atreladas, como elementos quadráticos ou cúbicos.
 Este é o caso da solução da equação de Navier-Stoakes.
@@ -491,7 +490,7 @@ Como apresentado por Anjos (2007)\cite{gustavo}, os tipos de elementos mais comu
     \end{itemize}
 \end{itemize}
 
-Para este trabalho foi escolhido o elemento do tipo triangular com interpolação linear, pois não há restições no problema escolhido, e este é o caso mais aplicado na literatura.
+Para este trabalho foi escolhido o elemento do tipo triangular com interpolação linear, pois não há restrições no problema escolhido, e este é o caso mais aplicado na literatura.
 A \ref{element} mostra como são os elementos utilizados:
 \begin{figure}[H]
     \centering
@@ -577,8 +576,7 @@ As matrizes locais $\mathbf{m^e}$, $\mathbf{g_{x}^e}$, $\mathbf{g_{y}^e}$, $\mat
     d\Omega^e
 \end{align}
 
-As matrizes utilizadas foram obtidas por Lewis, Nithiarasu e Seetharamu (2004)\cite{lewis}.
-Escritas em suas formas matriciais:
+As matrizes utilizadas foram obtidas por Lewis, Nithiarasu e Seetharamu (2004)\cite{lewis}, e são escritas em suas formas matriciais:
 \begin{align}
     \mathbf{m^e} &=
     \dfrac{A^e}{12}
@@ -643,7 +641,7 @@ E a área $A$ pode ser calculada através das coordenadas dos nós pela equaçã
 %--------------------------------------------------------------
 \section{\textbf{Método de Diferenças Finitas}}
 \label{mdf}
-O Método de Diferenças Finitas é um das mais antigas e simples formas de se calcular o valor de um diferencial numéricamente.
+O Método de Diferenças Finitas é um das mais antigas e simples formas de se calcular o valor de um diferencial numericamente.
 A base do método é tomar diferenças pequenas o suficiente para replicar o valor tomado no meio contínuo.
 
 Imagina-se uma função $f(x)$ tomada no domínio $x \in \mathbb{R}$ e deseja-se obter a derivada $\tfrac{df}{dx}(x)$.
@@ -653,7 +651,7 @@ Tomando-se definição da derivada, pode-se escrever:
     \label{derivative}
 \end{equation}
 onde $h$ é a diferença entre os nós tomados na variável $x$.
-Ou seja, caso deseja-se obter o valor da derivada desta função numéricamente basta aplicar a diferença entre dois nós com afastamento suficientemente pequeno.
+Ou seja, caso deseja-se obter o valor da derivada desta função numericamente basta aplicar a diferença entre dois nós com afastamento suficientemente pequeno.
 
 Outra forma de interpretar-se o MDF seria através da aplicação da \textit{Série de Taylor}.
 Tomando-se novamente a função $f(x)$ e a série de Taylor aplicada a ela ao redor de um nó na posição $x$ qualquer, tem-se:
@@ -678,7 +676,7 @@ Como deseja-se obter o valor da derivada de primeira ordem, pode-se reorganizar 
     }{h}
 \end{equation}
 
-Em certos casos não se tem nenhuma informação sobre as derivadas de ordens superiores da função, portanto pode-se aproximar o valor da derivada ao remover os termos com ordens superiores e substituí-los por um termo de erro $O(h^2)$.
+Em certos casos não se tem nenhuma informação sobre as derivadas de ordens superiores da função, portanto, pode-se aproximar o valor da derivada ao remover os termos com ordens superiores e substituí-los por um termo de erro $O(h^2)$.
 \begin{equation}
     \dfrac{df(x)}{dx} \approx
     \frac{
@@ -694,7 +692,7 @@ onde, novamente, quanto menor for o passo $h$, mais o valor da derivada numéric
 %--------------------------------------------------------------
 \subsection{\textbf{Discretização da Corrente-Vorticidade no Tempo}}
 A equação de governo \refeq{last_dt} do problema de corrente-vorticidade ainda possui um termo derivativo não discretizado.
-Este é o termo $\tfrac{\partial \omega}{\partial t}$, e ele é discretizado utilizando a disctretização em MDF apresentada em \refeq{dif}.
+Este é o termo $\tfrac{\partial \omega}{\partial t}$, e ele é formado utilizando a discretização em MDF apresentada em \refeq{dif}.
  \begin{equation}
     \dfrac{\partial \omega}{\partial t} \approx
     \frac{
@@ -704,7 +702,7 @@ Este é o termo $\tfrac{\partial \omega}{\partial t}$, e ele é discretizado uti
 \end{equation}
 onde $dt$ é o passo de tempo da simulação.
 
-Será utilizada a notação de índice de variáveis no tempo como sobreescrito, onde $t_n$ é o índice do passo no tempo, $\omega^{t_{n+1}} = \omega(t + dt)$ e $\omega^{t_{n}} = \omega(t)$.
+Será utilizada a notação de índice de variáveis no tempo como sobrescrito, onde $t_n$ é o índice do passo no tempo, $\omega^{t_{n+1}} = \omega(t + dt)$ e $\omega^{t_{n}} = \omega(t)$.
 Então a discretização final do sistema corrente-vorticidade é:
 \begin{equation}
     \left(

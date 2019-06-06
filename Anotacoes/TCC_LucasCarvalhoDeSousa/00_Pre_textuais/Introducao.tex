@@ -6,13 +6,13 @@ Por isso, é de grande interesse estudar o comportamento dos escoamentos gerados
 Neste trabalho serão analisados escoamentos multifásicos que ocorrem nestes casos, do tipo de interação fluido-sólido.
 Em especial, busca-se estudar a trajetória de partículas presentes nestes escoamentos durante seu funcionamento para a previsão de possíveis efeitos ou consequências causadas.
 
-Com o aumento do poder de computação das máquinas atuais e a democratização das ferramentas de criação de código, tornou-se mais fácil o desenvolvimento independente de softwares de simulação por indivíduos.
-Utilizando estas ferramentas e o conhecimento de cálculo numérico, este trabalho visa criar uma biblioteca na linguagem de programação \textit{Python} de simulação de escoamentos particulados em diversas geometrias.
+Com o aumento do poder de computação das máquinas atuais e a democratização das ferramentas de criação de código, tornou-se mais fácil o desenvolvimento independente de \textit{softwares} de simulação por indivíduos.
+Utilizando estas ferramentas e o conhecimento de cálculo numérico, este trabalho visa criar uma biblioteca na linguagem de programação \textit{Python} de simulação de escoamentos particulados em diversas geometrias bidimensionais.
 Esta biblioteca é estruturada utilizando os princípios do paradigma de programação orientada a objetos, para auxiliar o uso intuitivo do código. 
 A solução dos escoamentos é calculada pela formulação da corrente-vorticidade utilizando o Método de Elementos Finitos na forma Euleriana para as variáveis espaciais e o Método de Diferenças Finitas para o termo temporal das equações.
-Para a simulação do movimento das partículas também será usado o Método de Diferenças Finitas, aplicado a equação Basset–Boussinesq–Oseen para solução das forças aplicadas as partículas.
+Para a simulação do movimento das partículas também será usado o Método de Diferenças Finitas, aplicado a equação Basset–Boussinesq–Oseen para solução das forças aplicadas às mesmas.
 
-Serão gerados resultados para problemas com soluções analíticas conhecidas na literatura e comparados como forma de verificação dos cálculos.
+Serão gerados resultados para problemas com soluções analíticas conhecidas na literatura e comparados com os valores numéricos para verificação dos cálculos.
 Em seguida, serão realizadas simulações em diversas geometrias de interesse, e finalmente na geometria da palheta de um rotor, para estudar o comportamento do escoamento e das partículas em turbomáquinas.
 
 Este trabalho será apresentado da seguinte forma:
@@ -20,9 +20,9 @@ Este trabalho será apresentado da seguinte forma:
 	\item Introdução
 	\item Capítulo 1: Revisão bibliográfica dos temas discutidos
 	\item Capítulo 2: Desenvolvimento das equações matemáticas utilizadas
-	\item Capítulo 3: Aplicação dos método numéricos às equações do modelo
+	\item Capítulo 3: Aplicação dos métodos numéricos às equações do modelo
 	\item Capítulo 4: Descrição da estruturação do código e metodologia de solução
-	\item Capítulo 5: Validação do código
+	\item Capítulo 5: Validação dos resultados com soluções conhecidas
 	\item Capítulo 6: Resultados das simulações dos tópicos de interesse
 	\item Conclusão
 \end{itemize}

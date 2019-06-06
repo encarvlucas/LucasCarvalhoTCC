@@ -6,54 +6,55 @@
 
 %--------------------------------------------------------------
 \section{\textbf{Introdução}}
-O código deste trabalho foi feito completamente pelo autor na linguagem \textbf{\textit{Python 3.5}}, com auxílio das bibliotecas: \textit{NumPy}, para manipulação de dados e matrizes, \textit{SciPy} para solução de sistemas e matrizes esparsas, \textit{Matplotlib} para a visualização de gráficos e \href{https://github.com/nschloe/pygmsh}{\textit{pygmsh}} para importação da malha no formato \verb|.msh|.
+O código deste trabalho foi feito completamente pelo autor na linguagem \href{https://www.python.org}{\textbf{\textit{Python 3.5}}}, com auxílio das bibliotecas: \href{https://www.numpy.org/}{\textit{NumPy}}, para manipulação de dados e matrizes, \href{https://www.scipy.org/}{\textit{SciPy}} para solução de sistemas e matrizes esparsas, \textit{Matplotlib} para a visualização de gráficos e \href{https://github.com/nschloe/pygmsh}{\textit{pygmsh}} para importação da malha no formato \verb|.msh|.
 
-Para a geração de malhas foi utilizado o \textit{software open source \textbf{Gmsh}}.
+Para a geração de malhas foi utilizado o \textit{software open source \href{http://gmsh.info}{\textbf{Gmsh}}}, como demonstrado por Geuzaine e Remacle (2009)\cite{gmsh}.
 Nele é possível desenhar o perfil do domínio e gerar os nós e elementos de acordo com o refino desejado.
 Também pode-se forçar diferentes tamanhos de elementos em regiões de maior interesse.
 
-Para a vizualização de resultados foi utilizado o \textit{software open source \textbf{ParaView}}, pois este permite uma vizualização da evolução dos resultados, assim como diversas ferramentas para avaliação dos dados.
+Para a visualização de resultados foi utilizado o \textit{software open source \href{https://www.paraview.org/}{\textbf{ParaView}}}, pois este permite uma verificação visual da evolução dos resultados, assim como diversas ferramentas para avaliação dos dados.
 
-Todos os softwares de terceiros foram usados com permissão e licensas apropriadas.
+Todos os softwares de terceiros foram usados com permissão e licenças apropriadas.
 
 %--------------------------------------------------------------
 \section{\textbf{Estrutura do Código}}
-O código foi planejado e estruturado com o paradigma de \textit{Orientação em Objeto} em mente.
+O código foi planejado e desenvolvido com o paradigma de \textit{Orientação em Objeto} em mente.
 Isto é, o código é centralizado em classes que possuem propriedades e métodos referentes a modelagem física do problema estudado.
 Por exemplo, as classes \verb|TccLib.Mesh| e \verb|TccLib.Particle| representam os conceitos físicos de malha e partícula respectivamente.
 Estas classes criam objetos que contém suas propriedades individuais, como as densidades $\rho_f$ e $\rho_p$, e permitem um melhor entendimento do fenômeno.
 
 Este código foi pensado em ser utilizado como uma biblioteca pública com acesso liberado a qualquer um interessado \href{https://github.com/encarvlucas/LucasCarvalhoTCC}{(link do projeto no GitHub)}.
 Por isso, as funções e métodos possuem diversas opções de chamadas.
-Mais informações estão disponíveis através do comando interno: \begin{verbatim}
+Mais informações estão disponíveis através do comando interno:
+\begin{verbatim}
     help(arg)
 \end{verbatim}
 substituindo-se o argumento arg pela função desejada.
 
-Demonstra-se a seguir um exemplo de uso da biblioca:
+Demonstra-se a seguir um exemplo de uso da biblioteca:
 \begin{verbatim}
     # Importação da biblioteca
     import TccLib
 
     # Importação da malha ou coordenadas de uma nova
-    mesh = TccLib.Mesh("arquivo_da_malha.msh")
-    # ou mesh = TccLib.Mesh([coordenadas (x, y)]
+    malha = TccLib.Mesh("arquivo_da_malha.msh")
+    # ou malha = TccLib.Mesh([coordenadas (x, y)]
 
     # Definição das condições de contorno
-    mesh.new_boundary_condition("nome da propriedade",
+    malha.new_boundary_condition("nome da propriedade",
                                 [índices dos nós], 
                                 [valor da condição no nó],
                                 [1 para Dirichlet ou 0 para Neumann])
 
 
     # Chamada para a função de solução
-    v_x, v_y = TccLib.solve_velocity_field(mesh)
+    v_x, v_y = TccLib.solve_velocity_field(malha)
 
     # Adição de partículas
-    mesh.add_particle(propriedades da partícula)
+    malha.add_particle(propriedades da partícula)
     # Loop de movimentação das partículas
     for t in time_list:
-        TccLib.move_particles(mesh, (v_x, v_y))
+        TccLib.move_particles(malha, (v_x, v_y))
 \end{verbatim}
 
 Agora serão explorados cada etapa separadamente.
@@ -64,18 +65,18 @@ O objeto de malha \verb|TccLib.Mesh| possui um construtor que aceita como parâm
 Após a obtenção dos nós é utilizada a função \verb|scipy.spatial.Delaunay()|, que retorna uma lista com os conjuntos de índices dos nós por elemento.
 
 São cadastradas as informações da malha criada no objeto, como as coordenadas dos nós nos eixos $x$ e $y$, o número de elementos e o número de nós da malha.
-E é criado um dicionário vazio para receber as condições de contorno, onde suas chaves são nomes fixos para cada problema.
+É criado um dicionário vazio para receber as condições de contorno, onde suas chaves são nomes fixos para cada problema.
 
 %--------------------------------------------------------------
 \subsection{\textbf{Definição das Condições de Contorno}}
-A classe de condições de contorno \verb|TccLib.BoundaryConditions| é uma classe privada, ou seja, o usuário não interaje com ela diretamente.
+A classe de condições de contorno \verb|TccLib.BoundaryConditions| é uma classe privada, ou seja, o usuário não interage com ela diretamente.
 Para cadastrar novas condições de contorno é preciso utilizar o método dentro da classe \verb|TccLib.Mesh.new_boundary_condition()|.
 
 O nome da propriedade varia de acordo com a função de solução.
 Para o propósito deste trabalho, a solução do sistema corrente-vorticidade, são registradas as condições de contorno com nomes: \verb|"psi"| para os valores da corrente, \verb|"vel_x"| para os valores da velocidade do fluido no eixo x e  \verb|"vel_y"| para os valores da velocidade do fluido no eixo y.
 
-Os valores da condição de contorno são passados em três listas de mesmo tamanho, onde a primeira contém os índices dos elementos, a segunda contém os valores da condição correspondentes ao índice associado e a terceira contém um valor lógico para a condição correspondentes ao índice, onde verdadeiro representa uma condição do tipo Dirichlet e falso representa o tipo Neumann.
-Caso seja fornecido um valor numérico, ou booleano, ao invés da segunda e terceira lista respectivamente, será interpretado que todos os valores da lista substituida possuem este valor.
+Os valores da condição de contorno são passados em três listas de mesmo tamanho, onde a primeira contém os índices dos elementos, a segunda contém os valores da condição correspondente ao índice associado e a terceira contém um valor lógico para a condição correspondentes ao índice, onde verdadeiro representa uma condição do tipo Dirichlet e falso representa o tipo Neumann.
+Caso seja fornecido um valor numérico, ou \textit{booleano}, ao invés da segunda e terceira lista respectivamente, será interpretado que todos os valores da lista substituída possuem este valor.
 
 %--------------------------------------------------------------
 \subsection{\textbf{Funções de Solução}}
@@ -91,9 +92,9 @@ A solução dos problemas é realizada de forma semelhante.
 Primeiramente são geradas as malhas globais do domínio da malha em uma função auxiliar \verb|TccLib.get_matrices()|:
 \begin{verbatim}
     # Loop em cada elemento na lista da malha
-    for elem in mesh.ien:
-        x = mesh.x[elem] # = [x_i, x_j, x_k]
-        y = mesh.y[elem] # = [y_i, y_j, y_k]
+    for elem in malha.ien:
+        x = malha.x[elem] # = [x_i, x_j, x_k]
+        y = malha.y[elem] # = [y_i, y_j, y_k]
 
         # Criação das matrizes locais
         ...
@@ -109,8 +110,8 @@ Primeiramente são geradas as malhas globais do domínio da malha em uma funçã
 \end{verbatim}
 que retorna as matrizes globais na ordem apresentada.
 As matrizes globais são construídas dentro de um loop que percorre os elementos e monta as matrizes locais.
-Elas são então adicionadas a uma matriz esparsa global, que é um objeto que contém somente os elementos não nulos da matriz, referênciados por seus índices.
-Desta forma, otimiza-se o armazenamento na mémoria durante a simulação, pois permite representar uma matriz com tamanho $N\times N$ com apenas elementos existentes na mémoria, com a ordem computacional de $N$.
+Elas são então adicionadas a uma matriz esparsa global, que é um objeto que contém somente os elementos não nulos da matriz, referenciados por seus índices.
+Desta forma, otimiza-se o armazenamento de memória durante a simulação, pois permite representar uma matriz com tamanho $N\times N$ com apenas elementos existentes na memória, com a ordem computacional de $N$.
 
 Em seguida, são montadas as matrizes principais para a solução algébrica:
 \begin{equation}
@@ -150,27 +151,27 @@ Há métodos criados para auxiliar a visualização dos resultados no objeto de 
 No caso do problema multifásico de partículas inseridas em um fluido em movimento, há uma etapa de movimentação das partículas separada da função de solução principal.
 Isto é devido ao fato do método de solução escolhido utilizar a implementação \textit{one-way} como apresentado por Crowe et al. (2011)\cite{crowe}.
 Neste tipo de solução o movimento do fluido, meio principal,  afeta as partículas, meio secundário, porém elas não causam reflexos no fluido.
-Esta implementação foi escolhida devida a demanda computacional elevada da implementação \textit{two-way}, que requeriria solucionar o campo de velocidades (MEF) mais vezes por iteração.
+Esta implementação foi escolhida devida a demanda computacional elevada da implementação \textit{two-way}, que requereria solucionar o campo de velocidades (MEF) mais vezes por iteração.
 Então as partículas são simuladas percorrendo um escoamento permanente, com o valor do campo de velocidades sido calculado anteriormente.
 
 As partículas são adicionadas a malha através de um método próprio, que leva como parâmetros as propriedades físicas da partícula, sua posição e condições iniciais e um nome para registro, \verb|TccLib.Mesh.add_particle()|.
 
-Em cada chamada da função \verb|TccLib.move_particles()| são calculdadas as forças aplicadas a cada partícula ainda presente no domínio da malha e as forças são adicionadas a um dicionário com seus respectivos nomes como chaves.
+Em cada chamada da função \verb|TccLib.move_particles()| são calculadas as forças aplicadas a cada partícula ainda presente no domínio da malha e as forças são adicionadas a um dicionário com seus respectivos nomes como chaves.
 \begin{verbatim}
     # Iteração sobre a lista partículas,
     # checando se cada uma está presente no domínio
-    for particle in particles if particle in mesh:
+    for particula in particulas if particula in malha:
         # Inicialização do dicionário
-        forces = dict()
+        forcas = dict()
 
         # Adição das forças
-        forces["gravitational"] = ...
-        forces["drag"] = ...
-        forces["lift"] = ...
-        forces["added_mass"] = ...
+        forcas["gravitational"] = ...
+        forcas["arrasto"] = ...
+        forcas["sustentacao"] = ...
+        forcas["massa_virtual"] = ...
 
         # Função que altera as propiedades da partícula
-        particle.apply_forces(...)
+        particula.apply_forces(...)
 \end{verbatim}
 
 Para se calcular estas forças são necessárias diversas informações que são captadas nesta função, como a velocidade do escoamento na posição da partícula.
