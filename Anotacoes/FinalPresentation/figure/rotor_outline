@@ -1,0 +1,29 @@
+\documentclass[12pt]{standalone}
+\usepackage{amsmath, relsize, tikz}
+\usepackage{xcolor}
+\usepackage{pgffor} % LATEX
+\input pgffor.tex % plain TEX
+\usetikzlibrary{matrix}
+\usetikzlibrary{knots}
+\usetikzlibrary{intersections,backgrounds}
+\begin{document}
+    \begin{tikzpicture}[scale=1.5]
+        \draw (0.5+-0.475696, 0.16425) .. controls (0.5+-0.335515, 0.365799) .. (0.5+-0.170879, 0.463447);
+        \draw (0.5+-0.170879, 0.463447).. controls (0.5+-0.0306224, 0.487911) .. (0.5+0.0913384, 0.481878);
+
+        \draw (0.5+0.0913384, 0.481878) .. controls (0.5+0.194936, 0.597761) .. (0.5+0.335177, 0.658783);
+        \draw (0.5+0.335177, 0.658783) .. controls (0.5+0.524198, 0.695431) and (0.5+0.676666, 0.658877) ..
+        (0.5+0.80475, 0.591832);
+
+        \draw (0.5+0.80475, 0.591832) .. controls (0.5+0.746361, 0.698382) and (0.5+0.674591, 0.782751) ..
+        (0.5+0.590407, 0.845373);
+        \draw (0.5+0.590407, 0.845373) .. controls (0.5+0.512491, 0.886172) and (0.5+0.409811, 0.930426) ..
+        (0.5+0.274126, 0.951272);
+
+        \draw (0.5+0.274126, 0.951272) .. controls (0.5+0.127821, 0.908513) and (0.5+-0.0245825, 0.84136) ..
+        (0.5+-0.164765, 0.725434);
+        \draw (0.5+-0.164765, 0.725434) .. controls (0.5+-0.292753, 0.609514) and (0.5+-0.428851, 0.429716) ..
+        (0.5+-0.475696, 0.16425);
+    \end{tikzpicture}
+\end{document}
+
