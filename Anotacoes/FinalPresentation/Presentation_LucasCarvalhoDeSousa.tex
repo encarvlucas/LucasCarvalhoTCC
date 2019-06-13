@@ -165,7 +165,7 @@
   \frametitle{\subsecname}
   %-Este exemplo demonstra o que é um escoamento particulado e como as partículas interagem
   
-  \begin{block}{Objetivo deste trabalho:}
+  \begin{block}{Objetivos deste trabalho:}
     Desenvolver uma biblioteca de Python para a simulação de escoamentos particulados.
   \end{block}
   
@@ -174,7 +174,6 @@
       \includegraphics[width=\linewidth]{figure/dispersed_flow.pdf}
     } {\raggedleft \tiny Escoamento entre placas, Hagen-Poiseuille.}
   \end{figure}
-
 \end{frame}
 
 \subsection{Escoamentos em Turbomáquinas}
@@ -183,7 +182,7 @@
   %-Este exemplo demonstra que é apropriado assumir que o escoamento no disco de uma turbomáquina é
   % bidimensional, e sem efeito da gravidade
   
-  \begin{block}{}
+  \begin{block}{Objetivos deste trabalho:}
     Estudar como partículas se comportam dentro de uma turbomáquina em funcionamento.
   \end{block}
   
@@ -193,7 +192,6 @@
     } {\raggedleft \tiny Fonte:\href{https://commons.wikimedia.org/wiki/File:Washing_machine_agitator.JPG}
       {\textcopyright \ BrokenSphere / Wikimedia Commons.}}
   \end{figure}
-  
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
@@ -203,7 +201,7 @@
 \subsection{Formulação Corrente-Vorticidade}
 \begin{frame}
   \frametitle{\subsecname}
-  %-Esta forma e obtida pela equação de Navier-Stoakes
+  %-Primeiro falaremos sobre a equação de Naiver-Stoakes e esta forma e obtida através dela
   
   \begin{block}{Hipóteses tomadas}
     \begin{itemize}
@@ -224,7 +222,6 @@
      \item Exige elementos de ordem elevada
     \end{itemize}
   \end{block}
-
 \end{frame}
 
 
@@ -234,55 +231,61 @@
   % Desta forma, consegue-se solucionar o sistema menos complexo, pois NS exige elementos de ordem superior para garantir a converg^encia
   % Isto permite uma solução mais simples e rápida
   
-  \begin{block}{Equação da Vorticidade}
-    \centering
-    $\dfrac{\partial \vec{\omega}}{\partial t} + \vec{v}_f.\vec{\nabla}\vec{\omega} = \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}$
-  \end{block}
-  
-  \begin{block}{Equação da Corrente}
-    \centering
-    $\nabla^2\psi = -\omega_z$
-  \end{block}
-  
-  \begin{block}{Velocidade}
-    \centering
-    $\vec{v}_f = \left(\dfrac{\partial \psi}{\partial y}, -\dfrac{\partial \psi}{\partial x} \right)$
-  \end{block}
-
+  \begin{minipage}{.53\textwidth}
+    \begin{block}{Equação da Vorticidade}
+      \centering
+      $\dfrac{\partial \vec{\omega}}{\partial t} + \vec{v}_f.\vec{\nabla}\vec{\omega} = \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}$
+    \end{block}
+    
+    \begin{block}{Equação da Corrente}
+      \centering
+      $\nabla^2\psi = -\omega_z$
+    \end{block}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.41\textwidth}
+    \begin{block}{Equações Auxiliares}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \centering
+      \begin{align*}
+	\vec{v}_f &= \left(v_{f,x}\, , v_{f,y} \right)\\
+	v_{f,x} &= \partfrac2{\psi}{y} \\
+	v_{f,y} &= -\partfrac2{\psi}{x} \\
+	\omega_z &= \partfrac2{v_{f,x}}{y} - \partfrac2{v_{f,y}}{x} 
+      \end{align*}
+    \end{block}
+  \end{minipage}
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Equação de Basset–Boussinesq–Oseen (BBO)}
 \begin{frame}
   \frametitle{\subsecname}
-  %-Esta equação e restrita para apenas valores de Re < 1
+  %-Mencionar diferenças entre a equação de Reynolds da partícula e o normal
   
-  \begin{block}{}
+%   \begin{block}{}
     Equação que representa as forças exercidas sobre as partículas.
     Sua expressão é a soma das forças separadamente.
-  \end{block}
+%   \end{block}
   
   \begin{block}{Equação de Basset–Boussinesq–Oseen}
     \centering
     $\vec{F}_{p} = \sum\vec{F} = \vec{F}_{grav} + \vec{F}_{drag} + \vec{F}_{lift} + \vec{F}_{mass}$
   \end{block}
   
-  \begin{minipage}{.53\textwidth}
+  \begin{minipage}{.50\textwidth}
     \begin{block}{Restrição}
       A equação BBO é somente válida para Reynolds da partícula menores que 1.
       $Re_{p} < 1$
     \end{block}
-    
   \end{minipage}
   \hfill
-  \begin{minipage}{.41\textwidth}
+  \begin{minipage}{.46\textwidth}
     \begin{block}{Reynolds de Partícula}
       \centering
-      $Re_{p} = \dfrac{\rho_p |\left(\vec{v}_{f} - \vec{v}_{p} \right)|_{max}\, d_{p}}{\mu_f}$
+      $Re_{p} = \dfrac{\rho_p}{\mu_f} |\left(\vec{v}_{f} - \vec{v}_{p} \right)|_{max}\, d_{p}$
     \end{block}
-    
   \end{minipage}
-  
 \end{frame}
 
 
@@ -299,7 +302,6 @@
       \centering
       $\vec{F}_{drag} = 3 \pi \mu_f d_p \left(\vec{v}_{f} - \vec{v}_{p} \right)$
     \end{block}
-    
   \end{minipage}
   \hfill
   \begin{minipage}{.51\textwidth}
@@ -312,97 +314,328 @@
       \centering
       $\vec{F}_{mass} = \dfrac{1}{2} \rho_f V_p \dfrac{d}{dt}\left(\vec{v}_{f} - \vec{v}_{p} \right)$
     \end{block}
-    
   \end{minipage}
   
   \begin{block}{Reynolds de Cisalhamento}
     \centering
-    $Re_G = \dfrac{d_p^2 \rho_f}{\mu_f} \nabla \vec{v}_f$
+    $Re_G = \dfrac{\rho_f}{\mu_f} d_p^2 \nabla \vec{v}_f$
   \end{block}
-  
 \end{frame}
-%----------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Sistema de Equações}
-\begin{frame}
-  \frametitle{Modelo Matemático}
-  \begin{minipage}{.48\textwidth}
-    \begin{block}{Equação de Vorticidade}
-      \centering
-      $\partfrac2{\omega_z}{t} + \vec{v}.\nabla\omega_z = \nu \nabla^2 \omega_z$
-    \end{block}
 
-    \begin{block}{Equação de Corrente}
-      \centering
-      $\nabla^2 \psi = -\omega_z$
-    \end{block}
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Métodos Numéricos}
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+
+\subsection{Método dos Elementos Finitos}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{block}{Domínio}
+    Equações são definidas em um domínio $\Omega$ com contorno $\Gamma$.
+  \end{block}
     
-    \begin{block}{Equação BBO (\it{Basset–Boussinesq–Oseen})}
-      \centering
-      $\sum \vec{F}_p = \vec{F}_{drag} + \vec{F}_{grav} + \vec{F}_{etc}$
+  \begin{minipage}{.61\textwidth}
+    \begin{block}{Forma forte com as funções peso}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \begin{equation*}
+	\int_{\Omega} \left(
+	\dfrac{\partial \vec{\omega}}{\partial t} +
+	\vec{v}_f.\vec{\nabla}\vec{\omega} -
+	\dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
+	\right).\vec{\delta} d\Omega = 0
+      \end{equation*}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{3pt} % Fix display bug, empty header space
+      \vspace{5pt}
+      \begin{equation*}
+	\int_{\Omega} \left(
+	\nabla^2\psi +
+	\omega_z
+	\right).\vec{\phi} d\Omega = 0
+      \end{equation*}
+      \vspace{3pt}
+      \begin{equation*}
+	\int_{\Omega} \left(
+	\vec{v}_f - \left(\dfrac{\partial \psi}{\partial y},
+	-\dfrac{\partial \psi}{\partial x} \right)
+	\right).\vec{\xi} d\Omega = 0
+      \end{equation*}
     \end{block}
   \end{minipage}
   \hfill
-  \begin{minipage}{.48\textwidth}
-    \begin{block}{Equações Auxiliares}
+  \begin{minipage}{.34\textwidth}
+    \begin{block}{Condições de contorno}
       \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
-      \centering
       \begin{align*}
-	\partfrac2{\psi}{y} &= v_x \\
-	\partfrac2{\psi}{x} &= -v_y \\
-	\omega_z &= \partfrac2{v_x}{y} - \partfrac2{v_y}{x} 
+	\omega &= \omega_{\Gamma} \text{ em } \Gamma \\
+	\psi &= \psi_{\Gamma} \text{ em } \Gamma \\
+	\vec{v}_f &= \vec{v}_{f\Gamma} \text{ em } \Gamma 
       \end{align*}
     \end{block}
-    
-    \begin{block}{Força de Arrasto (\it{Stoakes})}
-      \centering
-      $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
-    \end{block}
-    
-    \begin{block}{Força Gravitacional}
-      \centering
-      $\vec{F}_{grav} = \tfrac{\pi}{6} d_p \rho_p \vec{g}$
-    \end{block}
   \end{minipage}
   
+  \vspace{5pt}
+  $\vec{\delta}$, $\vec{\phi}$ e $\vec{\xi}$ são as funções de peso de cada equação.
 \end{frame}
 
-% \begin{frame}
-%   \frametitle{Modelo Matemático}
-%   \begin{block}{Força de Arrasto (\it{Stoakes})}
-%     \centering
-%     $\vec{F}_{drag} = 3 \pi \mu d_p (\vec{v} - \vec{v}_p)$
-%   \end{block}
-%   \begin{block}{Força Gravitacional}
-%     \centering
-%     $\vec{F}_{grav} = \tfrac{\pi}{6} d_p \rho_p \vec{g}$
-%   \end{block}
-%   
-%   Onde: $\omega_z$ é o campo de vorticidade, $\psi$ é o campo de correntes, $\vec{v}$ é o campo vetorial de velocidades, 
-%   $\mu$ é a viscosidade dinâmica, $\nu$ é a viscosidade cinemática sobre o domínio da malha.
-%   E as variáveis $d_p$ são o diâmetro, $\rho_p$ é a densidade e $\vec{F}_p$ é a força resultante de uma partícula.
-% \end{frame}
 
-%----------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Equações Matriciais}
 \begin{frame}
-  \frametitle{Matrizes dos Elementos Triangulares}
-  \begin{minipage}{.25\textwidth}
-    \centering
-    \includegraphics[width=0.95\linewidth]{figure/element.pdf}
+  \frametitle{\subsecname}
+  %-Simplificação do omega_z para omega
+  
+  \begin{block}{Forma fraca}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+    \begin{align*}
+      m_1 \left(\dfrac{\partial \vec{\omega}}{\partial t}, \delta\right) +
+      g_1 (\vec{v}_f, \vec{\delta}) + 
+      \dfrac{\mu_f}{\rho_f} k_1 (\vec{\omega}, \vec{\delta}) &=0\\
+      -k_2 (\psi, \vec{\phi}) +
+      m_2 (\omega_z, \vec{\phi}) &= 0 \\
+      m_3 (\vec{v}_f, \vec{\xi}) - 
+      g_3 (\psi, \vec{\xi}) &=0
+    \end{align*}
+  \end{block}
+  
+  \fontsize{8}{7.2}\selectfont
+  \begin{minipage}{.48\textwidth}
+    \begin{block}{Onde:}
+    \begin{equation*}
+	m_1 \left(\dfrac{\partial \vec{\omega}}{\partial t}, \delta\right) =
+	\int_{\Omega}
+	\dfrac{\partial \vec{\omega}}{\partial t}
+	.\vec{\delta} d\Omega
+      \end{equation*}
+      \begin{equation*}
+	g_1 (\vec{v}_f, \vec{\delta}) =
+	\int_{\Omega}
+	\vec{v}_f.\vec{\nabla}\vec{\omega}
+	.\vec{\delta} d\Omega
+      \end{equation*}
+%       \vspace{5pt}
+      \begin{equation*}
+	k_1 (\vec{\omega}, \vec{\delta}) =
+	\int_{\Omega}
+	\vec{\nabla}\vec{\omega}.\vec{\nabla}
+	\vec{\delta} d\Omega
+      \end{equation*}
+    \end{block}
   \end{minipage}
   \hfill
-  \begin{minipage}{.7\textwidth}
+  \begin{minipage}{.48\textwidth}
+    \begin{block}{}
+      \begin{equation*}
+	k_2 (\psi, \vec{\phi}) =
+	\int_{\Omega}
+	\vec{\nabla}\psi.\vec{\nabla}
+	\vec{\phi} d\Omega
+      \end{equation*}
+      \begin{equation*}
+	m_2 (\omega_z, \vec{\phi}) =
+	\int_{\Omega}
+	\omega_z
+	.\vec{\phi} d\Omega
+      \end{equation*}
+      \begin{equation*}
+	m_3 (\vec{v}_f, \vec{\xi}) =
+	\int_{\Omega}
+	\vec{v}_f
+	.\vec{\xi} d\Omega
+      \end{equation*}
+      \begin{equation*}
+	g_3 (\psi, \vec{\xi}) =
+	\int_{\Omega}
+	\left(\dfrac{\partial \psi}{\partial y},
+	-\dfrac{\partial \psi}{\partial x} \right)
+	.\vec{\xi} d\Omega
+      \end{equation*}
+    \end{block}
+  \end{minipage}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Discretização do Modelo de Escoamentos}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{block}{Formulação de Galerkin}
+    Funções de peso são definidas com valor igual às funções interpoladoras.
+    
+    \begin{minipage}{.45\textwidth}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \begin{align*}
+	\omega(\vec{x}, t) &= \sum_{i=1}^{n_p} \omega_i(t) N_i(\vec{x}) \\
+	\psi(\vec{x}, t) &= \sum_{i=1}^{n_p} \psi_i(t) N_i(\vec{x}) \\
+	v_{f,x}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{f,x,i}(t) N_i(\vec{x}) \\
+	v_{f,y}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{f,y,i}(t) N_i(\vec{x}) 
+      \end{align*}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{.45\textwidth}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \begin{align*}
+	\delta(\vec{x}, t) &= \sum_{j=1}^{n_p} \delta_i(t) N_j(\vec{x}) \\
+	\phi(\vec{x}, t) &= \sum_{j=1}^{n_p} \phi_i(t) N_j(\vec{x}) \\
+	\xi(\vec{x}, t) &= \sum_{j=1}^{n_p} \xi_i(t) N_j(\vec{x})
+      \end{align*}
+    \end{minipage}
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{block}{Função de Aproximação}
+    $N(x)$ é a função de aproximação de cada elemento:
+    \begin{equation*}
+      N_{i}(\vec{x}) = [N_{1}(\vec{x}), \ldots, N_{n_p}(\vec{x})]
+    \end{equation*}
+  \end{block}
+  
+  \begin{block}{Matrizes locais dos elementos}
+    Surgem os termos locais, para cada elemento $e$:
+    \begin{minipage}{.45\textwidth}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \vspace{5pt}
+      \begin{align*}
+	\mathbf{m^e} &=
+	\int_{\Omega^e}
+	N_i^e N_j^e
+	d\Omega^e \\
+	\mathbf{g_x^e} &=
+	\int_{\Omega^e}
+	\dfrac{\partial N_i^e}{\partial x}
+	N_j^e
+	d\Omega^e \\
+	\mathbf{g_y^e} &=
+	\int_{\Omega^e}
+	\dfrac{\partial N_i^e}{\partial y}
+	N_j^e
+	d\Omega^e
+      \end{align*}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{.45\textwidth}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \begin{align*}
+	\mathbf{k_{xx}^e} &=
+	\int_{\Omega^e}
+	\dfrac{\partial N_i^e}{\partial x}
+	\dfrac{\partial N_j^e}{\partial x}
+	d\Omega^e \\
+	\mathbf{k_{yy}^e} &=
+	\int_{\Omega^e}
+	\dfrac{\partial N_i^e}{\partial y}
+	\dfrac{\partial N_j^e}{\partial y}
+	d\Omega^e
+      \end{align*}
+    \end{minipage}
+  \end{block}
+\end{frame}
+  
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{block}{Discretização no tempo}
+    $N(x)$ é a função de aproximação de cada elemento:
+    \begin{equation*}
+      \dfrac{\partial \omega}{\partial t} \approx
+      \frac{
+	  \omega(t + dt) -
+	  \omega(t)
+      }{dt}
+    \end{equation*}
+  \end{block}
+  
+  \begin{block}{Equações na forma global}
+    \begin{equation*}
+      \left(
+	  \mathbf{M} v_{f,x} \mathbf{G_x} + v_{f,y} \mathbf{G_y} + \dfrac{\mu_f}{\rho_f}
+	  \left( \mathbf{K_{xx}} + \mathbf{K_{yy}} \right)
+      \right)
+      \omega^{t_{n+1}} = \mathbf{M} \omega^{t_{n}}
+      \label{last_w}
+    \end{equation*}
+    \begin{equation*}
+      \left( \mathbf{K_{xx}} + \mathbf{K_{yy}} \right)
+      \psi = \mathbf{M} \omega^{t_{n+1}}
+      \label{last_psi}
+    \end{equation*}
+    \begin{equation*}
+      \mathbf{M} v_{f,x} \omega^{t_{n+1}} =
+      \mathbf{G_y} \psi
+      \label{last_vx}
+    \end{equation*}
+    \begin{equation*}
+      \mathbf{M} v_{f,y} \omega^{t_{n+1}} = 
+      -\mathbf{G_x} \psi
+      \label{last_vy}
+    \end{equation*}
+  \end{block}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Discretização do Modelo de Partículas}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-V grande e o volume da partícula
+  
+  \begin{block}{Equações das forças nas partículas}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \begin{align*}
+	\vec{F}_{grav}^{t_n} &= m_p \vec{g} \\
+	\vec{F}_{drag}^{t_n} &= 3 \pi \mu_f d_p \left(\vec{v}_{f}^{\,t_n} - \vec{v}_{p}^{\,t_{n-1}} \right) \\
+	\vec{F}_{lift}^{t_n}\ \ &= 1.61 \mu_f d_p \left(\vec{v}_{f}^{\,t_n} - \vec{v}_{p}^{\,t_{n-1}} \right) \sqrt{{Re}_G^{t_n}} \\
+	\vec{F}_{mass}^{t_n} &= \dfrac{1}{2} \rho_f V_p \dfrac{\left(\vec{v}_{f}^{\,t_n} - \vec{v}_{p}^{\,t_{n-1}}\right) -
+	\left(\vec{v}_{f}^{\,t_{n-1}} - \vec{v}_{p}^{\,t_{n-2}} \right)}{dt}
+      \end{align*}
+  \end{block}
+
+  \begin{block}{Reynolds específicos}
+    \begin{minipage}{.35\textwidth}
+      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+      \begin{equation*}
+	  Re_{p}^{t_n} = \dfrac{\rho_p}{\mu_f} d_{p} \left|\vec{v}_{f}^{\,t_n} - \vec{v}_{p}^{\,t_{n-1}} \right|_{max}
+      \end{equation*}
+    \end{minipage}
+%     \hfill
+    \hspace{5pt}
+    \begin{minipage}{.55\textwidth}
+      \begin{equation*}
+	  Re_G^{t_n} = \dfrac{d_p^2 \rho_f}{\mu_f} \left( \dfrac{d\vec{v}_f}{d\vec{r}} \right)^{t_n}
+      \end{equation*}
+    \end{minipage}
+  \end{block}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Definição das Matrizes}
+\begin{frame}
+  \frametitle{Matrizes dos Elementos Triangulares}
+  %-
+  
+  \fontsize{7.5}{7.2}\selectfont
+  \begin{minipage}{.4\textwidth}
+    \centering
+    \stackunder{
+      \includegraphics[width=\linewidth]{figure/element_detailed.pdf}
+    } {\raggedleft \tiny Elemento triangular linear.}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.56\textwidth}
     \begin{block}{Coeficientes de Forma}
       \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
       \centering
       \begin{equation*}
-      \mathbf{B} \left\{
+      \mathbf{b} \left\{
 	\begin{align*}
 	  &b_i = y_j - y_k \\
 	  &b_j = y_k - y_i \\
 	  &b_k = y_i - y_j
 	\end{align*} \right.\qquad
-      \mathbf{C} \left\{
+      \mathbf{} \left\{
 	\begin{align*}
 	  &c_i = x_k - x_j \\
 	  &c_j = x_i - x_k \\
@@ -410,54 +643,63 @@
 	\end{align*} \right.
       \end{equation*}
     \end{block}
-  \end{minipage}
-  
-  \begin{minipage}[t]{.45\textwidth}
-    \centering
-    \begin{block}{Matriz de Gradiente (eixo x)}
-      $\mathbf{G}_x = \frac{1}{6}
-	\begin{bmatrix}
+    
+    \begin{block}{Matrizes de Gradiente}
+      \begin{minipage}{.48\textwidth}
+	$\mathbf{g_x^e} =
+	\dfrac{1}{6}
+	\begin{bmatrix} 
 	  b_i & b_j & b_k \\
 	  b_i & b_j & b_k \\
 	  b_i & b_j & b_k
 	\end{bmatrix}$
-    \end{block}
-  \end{minipage}
-  \hfill
-  \begin{minipage}[t]{.45\textwidth}
-    \centering
-    \begin{block}{Matriz de Gradiente (eixo y)}
-      $\mathbf{G}_y = \frac{1}{4A}
-	\begin{bmatrix}
+      \end{minipage}
+      \hfill
+      \begin{minipage}{.48\textwidth}
+	$\mathbf{g_y^e} =
+	\dfrac{1}{6}
+	\begin{bmatrix} 
 	  c_i & c_j & c_k \\
 	  c_i & c_j & c_k \\
 	  c_i & c_j & c_k
-	\end{bmatrix}$
+	\end{bmatrix} $
+      \end{minipage}
     \end{block}
   \end{minipage}
   
-  \begin{minipage}[t]{.63\textwidth}
-    \centering
-    \begin{block}{Matriz de Rigidez}
-      \footnotesize
-      $\mathbf{K} = \frac{1}{4A}
-	\begin{bmatrix}
-	  b_i^2 + c_i^2 & b_i b_j + c_i c_j & b_i b_k + c_i c_k \\
-	  b_j b_i + c_j c_i & b_j^2 + c_j^2 & b_j b_k + c_j c_k \\
-	  b_k b_i + c_k c_i & b_k b_j + c_k c_j & b_k^2 + c_k^2
-	\end{bmatrix}$
+  \begin{minipage}{.24\textwidth}
+    \begin{block}{Matriz de Massa}
+      $\mathbf{m^e} =
+      \dfrac{A^e}{12}
+      \begin{bmatrix} 
+	  2 & 1 & 1 \\
+	  1 & 2 & 1 \\
+	  1 & 1 & 2
+      \end{bmatrix}$
     \end{block}
   \end{minipage}
   \hfill
-  \begin{minipage}[t]{.33\textwidth}
-    \centering
-    \begin{block}{Matriz de Massa}
-      $\mathbf{M} = \frac{A}{12}
-	\begin{bmatrix}
-	  2 & 1 & 1   \\
-	  1 & 2 & 1   \\
-	  1 & 1 & 2  
+  \begin{minipage}{.72\textwidth}
+    \begin{block}{Matrizes de Rigidez}
+      \begin{minipage}{.48\textwidth}
+	$\mathbf{k_{xx}^e} =
+	\dfrac{t_h}{4A}
+	\begin{bmatrix} 
+	    b_i b_i & b_j b_i & b_k b_i \\
+	    b_i b_j & b_j b_j & b_k b_j \\
+	    b_i b_k & b_j b_k & b_k b_k
+	\end{bmatrix} $
+      \end{minipage}
+      \hfill
+      \begin{minipage}{.48\textwidth}
+	$\mathbf{k_{yy}^e} =
+	\dfrac{t_h}{4A}
+	\begin{bmatrix} 
+	    c_i c_i & c_j c_i & c_k c_i \\
+	    c_i c_j & c_j c_j & c_k c_j \\
+	    c_i c_k & c_j c_k & c_k c_k
 	\end{bmatrix}$
+      \end{minipage}
     \end{block}
   \end{minipage}
 \end{frame}
