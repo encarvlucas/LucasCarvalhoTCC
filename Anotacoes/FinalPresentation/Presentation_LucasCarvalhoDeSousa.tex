@@ -149,6 +149,8 @@
 
 \begin{frame}
   \frametitle{Sumário} % Table of contents slide, comment this block out to remove it
+  
+  \fontsize{9pt}{7.2}\selectfont
   \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
 
@@ -539,12 +541,17 @@
   %-
   
   \begin{block}{Discretização no tempo}
-    $N(x)$ é a função de aproximação de cada elemento:
+    Para os termos temporais é utilizada o Método de Diferenças Finitas:
     \begin{equation*}
       \dfrac{\partial \omega}{\partial t} \approx
       \frac{
 	  \omega(t + dt) -
 	  \omega(t)
+      }{dt}
+      =
+      \frac{
+	  \omega^{t_{n+1}} -
+	  \omega^{t_{n}}
       }{dt}
     \end{equation*}
   \end{block}
@@ -552,7 +559,7 @@
   \begin{block}{Equações na forma global}
     \begin{equation*}
       \left(
-	  \mathbf{M} v_{f,x} \mathbf{G_x} + v_{f,y} \mathbf{G_y} + \dfrac{\mu_f}{\rho_f}
+	  \mathbf{M} v_{f,x}^{t_{n}} \mathbf{G_x} + v_{f,y}^{t_{n}} \mathbf{G_y} + \dfrac{\mu_f}{\rho_f}
 	  \left( \mathbf{K_{xx}} + \mathbf{K_{yy}} \right)
       \right)
       \omega^{t_{n+1}} = \mathbf{M} \omega^{t_{n}}
@@ -564,12 +571,12 @@
       \label{last_psi}
     \end{equation*}
     \begin{equation*}
-      \mathbf{M} v_{f,x} \omega^{t_{n+1}} =
+      \mathbf{M} v_{f,x}^{t_{n}} \omega^{t_{n+1}} =
       \mathbf{G_y} \psi
       \label{last_vx}
     \end{equation*}
     \begin{equation*}
-      \mathbf{M} v_{f,y} \omega^{t_{n+1}} = 
+      \mathbf{M} v_{f,y}^{t_{n}} \omega^{t_{n+1}} = 
       -\mathbf{G_x} \psi
       \label{last_vy}
     \end{equation*}
@@ -625,7 +632,7 @@
   \end{minipage}
   \hfill
   \begin{minipage}{.56\textwidth}
-    \begin{block}{Coeficientes de Forma}
+    \begin{block}{Coordenadas relativas}
       \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
       \centering
       \begin{equation*}
@@ -635,7 +642,7 @@
 	  &b_j = y_k - y_i \\
 	  &b_k = y_i - y_j
 	\end{align*} \right.\qquad
-      \mathbf{} \left\{
+      \mathbf{c} \left\{
 	\begin{align*}
 	  &c_i = x_k - x_j \\
 	  &c_j = x_i - x_k \\
@@ -704,104 +711,288 @@
   \end{minipage}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Equações Matriciais}
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Código}
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Montagem das Matrizes Globais}
+\begin{frame}[fragile]
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{block}{Algoritmo de montagem}
+  \fontsize{6pt}{7.2}\selectfont
+  \centering
+    $
+    \mathbf{m}_{e_n}
+    =
+    \begin{bmatrix}
+      m_{ii} & m_{ij} & m_{ik} \\
+      m_{ji} & m_{jj} & m_{jk} \\
+      m_{ki} & m_{kj} & m_{kk}
+    \end{bmatrix}
+    \xrightarrow[\parbox{0.7cm}{l=i,j,k q=i,j,k}]{\text{loop}}
+    \mathbf{M}
+    =
+    \begin{bmatrix}
+      M_{0,0} & M_{0,1} & \ldots & M_{0,n_p} \\
+      M_{1,0} & \ddots & & M_{1,n_p} \\
+      \vdots & & M_{l,q} + m_{l,q} & \vdots \\
+      M_{n_p, 0} & & & M_{n_p,n_p}
+    \end{bmatrix}
+    $
+    
+    \begin{verbatim}
+# Loop em cada elemento na lista da malha
+for elem in malha.ien:
+    x = malha.x[elem] # = [x_i, x_j, x_k]
+    y = malha.y[elem] # = [y_i, y_j, y_k]
+
+    # Criação das matrizes locais
+    ...
+
+    # Registro das matrizes locais nas matrizes globais
+    for i in range(3):
+        for j in range(3):
+            kx_global[elem[i], elem[j]] += k_x[i][j]
+            ky_global[elem[i], elem[j]] += k_y[i][j]
+            m_global[elem[i], elem[j]] += m[i][j]
+            gx_global[elem[i], elem[j]] += g_x[i][j]
+            gy_global[elem[i], elem[j]] += g_y[i][j]
+    \end{verbatim}
+  \end{block}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Estrutura de Uso da Biblioteca}
+\begin{frame}[fragile]
+  \frametitle{\subsecname}
+  %-Criação da malha inclue declarar as partículas
   
   \begin{figure}
     \stackunder{
-      \includegraphics[width=0.4\linewidth]{figure/rotor_mesh.pdf}
-    } {\raggedleft \tiny Malha gerada para um perfil de rotor.}
+      \includegraphics[width=\linewidth]{figure/TCC_Algorithm-Page-1.pdf}
+    } {\raggedleft \tiny Fluxograma da lógica de uso da biblioteca pelo usuário.}
   \end{figure}
   
-  \begin{minipage}{.63\textwidth}
-    \centering
-    \begin{block}{Vorticidade}
-      \centering
-      $\bigg(\dfrac{\mathbf{M}}{\Delta t} + \nu \mathbf{K} + \mathbf{v.G} \bigg)\omega_z^{n+1} = \dfrac{\mathbf{M}}{\Delta t} \omega_z^n$
-    \end{block}
-    
-    \begin{block}{Corrente}
-      \centering
-      $\mathbf{K} \psi = \mathbf{M} \omega_z$
-    \end{block}
+  
+  \fontsize{5pt}{7.2}\selectfont
+  \begin{minipage}{.48\textwidth}
+  \begin{block}{Exemplo de uso da biblioteca}
+    \begin{verbatim}
+# Importação da biblioteca
+import TccLib
+
+# Importação da malha ou coordenadas de uma nova
+malha = TccLib.Mesh("arquivo_da_malha.msh")
+# ou malha = TccLib.Mesh([coordenadas (x, y)]
+
+# Adição de partículas
+malha.add_particle(propriedades da partícula)
+    \end{verbatim}
+  \end{block}
   \end{minipage}
   \hfill
-  \begin{minipage}{.33\textwidth}
+  \begin{minipage}{.48\textwidth}
+  \begin{block}{}
+    \begin{verbatim}
+# Definição das condições de contorno
+malha.new_boundary_condition("nome da propriedade",
+                [índices dos nós],
+                [valor da condição no nó],
+                [1 para Dirichlet ou 0 para Neumann])
+
+# Chamada para a função de solução
+v_x, v_y = TccLib.solve_velocity_field(malha)
+
+# Loop de movimentação das partículas
+for t in time_list:
+    TccLib.move_particles(malha, (v_x, v_y))
+    \end{verbatim}
+  \end{block}
+  \end{minipage}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Estrutura de Solução}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{minipage}{.48\textwidth}
+%     \centering
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.7\textheight]{figure/TCC_Algorithm-Page-2.pdf}
+      } {\raggedleft \tiny Algoritmo de solução do sistema de corrente-vorticidade.}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.7\textheight]{figure/TCC_Algorithm-Page-3.pdf}
+      } {\raggedleft \tiny Algoritmo de solução da posição das partículas.}
+    \end{figure}
+  \end{minipage}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\section{Validações e Resultados}
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Validações de Problemas em Sólidos}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-Essa validação foi feita com o problema de troca térmica de laplace
+  %-essas Validações permitem testar a geração de matrizes e Aplicação das condições de contorno
+  
+  \begin{minipage}{.48\textwidth}
     \centering
-    \begin{block}{Auxiliares}
-      \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
-      \centering
-      \begin{align*}
-	\mathbf{M} v_x &= \mathbf{G}_y \psi \\
-	\mathbf{M} v_y &=-\mathbf{G}_x \psi \\
-	\mathbf{M} \omega_z &= \mathbf{G}_x v_y - \mathbf{G}_y v_x
-      \end{align*}
-    \end{block}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/laplace_dirichlet_boundary_conditions.pdf}
+      } {\raggedleft \tiny Condições de contorno em uma placa sólida.}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+%     \centering
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/laplace_dirichlet_permanent_3d.png}
+      } {\raggedleft \tiny Resultado da simulação na placa.}
+    \end{figure}
   \end{minipage}
   
-%   \ \\
-%   As demais equações de força são calculadas para cada partícula individulamente.
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/laplace_dirichlet_permanent_comparison.png}
+      } {\raggedleft \tiny Comparação do resultado permanente.}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/laplace_dirichlet_transient_comparison.png}
+      } {\raggedleft \tiny Comparação do resultado transiente.}
+    \end{figure}
+  \end{minipage}
 \end{frame}
-
-%----------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Resultados Preliminares}
-%----------------------------------------------------------------------------------------------------------------------------------------------------
 
 \begin{frame}
-  \begin{figure}
-    \stackunder{
-      \includegraphics[width=\linewidth]{figure/poiseuille_results.png}
-    } {\raggedleft \tiny Perfil de velocidades no eixo x para um escoamento entre placas.}
-  \end{figure}
+  \frametitle{\subsecname}
+  %-Essa validação foi feita com o problema de troca térmica de poisson, com geração de calor
   
-  \begin{minipage}{.49\textwidth}
+  \begin{minipage}{.48\textwidth}
+    \centering
     \begin{figure}
-      \includegraphics[width=\linewidth]{figure/particles_results_0.png}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/poisson_dirichlet_boundary_conditions.pdf}
+      } {\raggedleft \tiny Placa com geração de calor.}
     \end{figure}
   \end{minipage}
-  \begin{minipage}{.49\textwidth}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+%     \centering
     \begin{figure}
-      \includegraphics[width=\linewidth]{figure/particles_results_1.png}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/poisson_dirichlet_permanent_3d.png}
+      } {\raggedleft \tiny Resultado da simulação na placa.}
     \end{figure}
   \end{minipage}
   
-  \tiny{Demonstração de partículas em movimento}
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/poisson_dirichlet_permanent_comparison.png}
+      } {\raggedleft \tiny Comparação do resultado permanente.}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/poisson_dirichlet_transient_comparison.png}
+      } {\raggedleft \tiny Comparação do resultado transiente.}
+    \end{figure}
+  \end{minipage}
 \end{frame}
 
 
 \begin{frame}
-  \begin{figure}
-    \stackunder{
-      \includegraphics[width=\linewidth]{figure/poiseuille_results.png}
-    } {\raggedleft \tiny Perfil de velocidades no eixo x para um escoamento entre placas.}
-  \end{figure}
+  \frametitle{\subsecname}
+  %-Essa validação foi feita com o problema de troca térmica de poisson, com geração de calor e condições de contorno de Neumann
   
-  \begin{minipage}{.49\textwidth}
+  \begin{minipage}{.48\textwidth}
+    \centering
     \begin{figure}
-      \includegraphics[width=\linewidth]{figure/particles_results_2.png}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/poisson_neumann_boundary_conditions.pdf}
+      } {\raggedleft \tiny Placa com fluxo e geração de calor.}
     \end{figure}
   \end{minipage}
-  \begin{minipage}{.49\textwidth}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+%     \centering
     \begin{figure}
-      \includegraphics[width=\linewidth]{figure/particles_results_3.png}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/poisson_neumann_permanent_3d.png}
+      } {\raggedleft \tiny Resultado da simulação na placa.}
     \end{figure}
   \end{minipage}
   
-  \tiny{Demonstração de partículas em movimento}
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/poisson_neumann_permanent_comparison.png}
+      } {\raggedleft \tiny Comparação do resultado permanente.}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight]{figure/validations/poisson_neumann_transient_comparison.png}
+      } {\raggedleft \tiny Comparação do resultado transiente.}
+    \end{figure}
+  \end{minipage}
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\section{Cronograma Futuro}
-%----------------------------------------------------------------------------------------------------------------------------------------------------
-
+\subsection{Validações do Modelo Corrente-Vorticidade}
 \begin{frame}
-  \frametitle{Atividades Concluídas e Previsão}
-  \begin{figure}
-    \includegraphics[width=\linewidth]{figure/Cronograma.png}
-    \caption{Cronograma previsto atualizado.}
-  \end{figure}
+  \frametitle{\subsecname}
+  %-Essa validação foi feita com o problema de troca térmica de laplace
+  
+  \begin{minipage}{.60\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.32\textheight]{figure/validations/Poiseuille_boundary_conditions.pdf}
+      } {\raggedleft \tiny Escoamento entre placas estacionárias (Poiseuille).}
+    \end{figure}
+    \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.32\textheight]{figure/validations/Couette_boundary_conditions.pdf}
+      } {\raggedleft \tiny Escoamento entre placas em movimento (Couette).}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.36\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.32\textheight]{figure/validations/Poiseuille_validation.png}
+      } {\raggedleft \tiny Comparação com solução analítica.}
+    \end{figure}
+    \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.32\textheight]{figure/validations/Couette_validation.png}
+      } {\raggedleft \tiny Comparação com solução analítica.}
+    \end{figure}
+  \end{minipage}
 \end{frame}
-
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 % Bibliografia
