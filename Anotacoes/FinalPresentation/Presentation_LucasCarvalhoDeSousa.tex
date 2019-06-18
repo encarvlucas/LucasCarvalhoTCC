@@ -455,9 +455,9 @@
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Discretização do Modelo de Escoamentos}
+\subsection{Discretizações dos Modelos}
 \begin{frame}
-  \frametitle{\subsecname}
+  \frametitle{Discretização do Modelo de Escoamentos}
   %-
   
   \begin{block}{Formulação de Galerkin}
@@ -485,7 +485,7 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{\subsecname}
+  \frametitle{Discretização do Modelo de Escoamentos}
   %-
   
   \begin{block}{Função de Aproximação}
@@ -537,7 +537,7 @@
 \end{frame}
   
 \begin{frame}
-  \frametitle{\subsecname}
+  \frametitle{Discretização do Modelo de Escoamentos}
   %-
   
   \begin{block}{Discretização no tempo}
@@ -584,7 +584,7 @@
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Discretização do Modelo de Partículas}
+\subsection*{Discretização do Modelo de Partículas}
 \begin{frame}
   \frametitle{\subsecname}
   %-V grande e o volume da partícula
@@ -839,9 +839,9 @@ for t in time_list:
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \section{Validações e Resultados}
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Validações de Problemas em Sólidos}
+\subsection{Validações}
 \begin{frame}
-  \frametitle{\subsecname}
+  \frametitle{Validações de Problemas em Sólidos}
   %-Essa validação foi feita com o problema de troca térmica de laplace
   %-essas Validações permitem testar a geração de matrizes e Aplicação das condições de contorno
   
@@ -881,7 +881,7 @@ for t in time_list:
 \end{frame}
 
 \begin{frame}
-  \frametitle{\subsecname}
+  \frametitle{Validações de Problemas em Sólidos}
   %-Essa validação foi feita com o problema de troca térmica de poisson, com geração de calor
   
   \begin{minipage}{.48\textwidth}
@@ -921,7 +921,7 @@ for t in time_list:
 
 
 \begin{frame}
-  \frametitle{\subsecname}
+  \frametitle{Validações de Problemas em Sólidos}
   %-Essa validação foi feita com o problema de troca térmica de poisson, com geração de calor e condições de contorno de Neumann
   
   \begin{minipage}{.48\textwidth}
@@ -960,10 +960,10 @@ for t in time_list:
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Validações do Modelo Corrente-Vorticidade}
+\subsection*{Validações do Modelo Corrente-Vorticidade}
 \begin{frame}
   \frametitle{\subsecname}
-  %-Essa validação foi feita com o problema de troca térmica de laplace
+  %-
   
   \begin{minipage}{.60\textwidth}
     \begin{figure}
@@ -995,11 +995,10 @@ for t in time_list:
 \end{frame}
 
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-\subsection{Validações das Forças nas Partículas}
+\subsection*{Validações das Forças nas Partículas}
 \begin{frame}
   \frametitle{\subsecname}
-  %-Essa validação foi feita com o problema de troca térmica de laplace
-  %-essas Validações permitem testar a geração de matrizes e Aplicação das condições de contorno
+  %-
   
   \begin{minipage}{.48\textwidth}
     \centering
@@ -1038,7 +1037,7 @@ for t in time_list:
 
 \begin{frame}
   \frametitle{\subsecname}
-  %-Essa validação foi feita com o problema de troca térmica de poisson, com geração de calor
+  %-
   
   \begin{minipage}{.48\textwidth}
     \centering
@@ -1055,6 +1054,229 @@ for t in time_list:
       \stackunder{
 	\includegraphics[height=0.48\textheight]{figure/validations/Forces_lift_validation.png}
       } {\raggedleft \tiny Partícula sob efeito da força de sustentação.}
+    \end{figure}
+  \end{minipage}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection{Resultados de Simulações}
+\begin{frame}
+  \frametitle{Simulação em um Canal}
+  %-
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.38\textheight]{figure/results/Channel_boundary.pdf}
+    } {\raggedleft \tiny Diagrama da simulação.}
+  \end{figure}
+  \begin{block}{Parâmetros}
+    $L=8m$, $D=1m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=20000kg/m^3$.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Simulação em um Canal}
+  %-
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=0.98\textwidth]{figure/results/Channel_mesh.png}
+    } {\raggedleft \tiny Malha do canal utilizado.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=0.98\textwidth]{figure/results/Channel_result.png}
+    } {\raggedleft \tiny Campo de velocidades resultante.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Channel_particle_trajectory.png}
+    } {\raggedleft \tiny Percurso das partículas na simulação.}
+  \end{figure}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection*{Simulação em um Canal com Obstáculo}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.38\textheight]{figure/results/Obstacle_boundary.pdf}
+    } {\raggedleft \tiny Diagrama da simulação.}
+  \end{figure}
+  \begin{block}{Parâmetros}
+    $L=8m$, $D=1m$, $d=0.3m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=20000kg/m^3$.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=0.98\textwidth]{figure/results/Obstacle_mesh.png}
+    } {\raggedleft \tiny Malha do canal utilizado.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Obstacle_result.png}
+    } {\raggedleft \tiny Campo de velocidades resultante.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Obstacle_particle_trajectory.png}
+    } {\raggedleft \tiny Percurso das partículas na simulação.}
+  \end{figure}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection*{Simulação em um Canal em Degrau}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.38\textheight]{figure/results/Step_boundary.pdf}
+    } {\raggedleft \tiny Diagrama da simulação.}
+  \end{figure}
+  \begin{block}{Parâmetros}
+    $L_1=2m$, $L_2=2m$, $d=1m$, $D=1m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=20000kg/m^3$.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=0.98\textwidth]{figure/results/Step_mesh.png}
+    } {\raggedleft \tiny Malha do canal utilizado.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Step_particle_trajectory.png}
+    } {\raggedleft \tiny Percurso das partículas na simulação.}
+  \end{figure}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=0.98\textwidth]{figure/results/Step_result.png}
+    } {\raggedleft \tiny Campo de velocidades resultante.}
+  \end{figure}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection*{Simulação em um Canal com Restrição}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.38\textheight]{figure/results/Nozzle_boundary.pdf}
+    } {\raggedleft \tiny Diagrama da simulação.}
+  \end{figure}
+  \begin{block}{Parâmetros}
+    $L=8m$, $D=2m$, $A=0.004m$, $\lambda=0.0006m$, $\phi=0$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=20000kg/m^3$.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \begin{figure}
+    \stackunder{
+      \includegraphics[width=0.98\textwidth]{figure/results/Nozzle_mesh.png}
+    } {\raggedleft \tiny Malha do canal utilizado.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Nozzle_result.png}
+    } {\raggedleft \tiny Campo de velocidades resultante.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Nozzle_particle_trajectory.png}
+    } {\raggedleft \tiny Percurso das partículas na simulação.}
+  \end{figure}
+\end{frame}
+
+%----------------------------------------------------------------------------------------------------------------------------------------------------
+\subsection*{Simulações em um Impelidor}
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.538\textheight]{figure/results/Rotor_boundary.pdf}
+    } {\raggedleft \tiny Diagrama da simulação.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{block}{Parâmetros}
+    $L=8m$, $D=2m$, $A=0.004m$, $\lambda=0.0006m$, $\phi=0$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=$por caso.
+  \end{block}
+\end{frame}
+
+\begin{frame}
+  \frametitle{\subsecname}
+  %-
+  
+%   \begin{figure}
+%     \stackunder{
+%       \includegraphics[height=0.38\textheight]{figure/results/Rotor_mesh.png}
+%     } {\raggedleft \tiny Malha do canal utilizado.}
+%   \end{figure}
+  \begin{minipage}{.48\textwidth}
+    \centering
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight,width=\textwidth]{figure/results/Rotor_result.png}
+      } {\raggedleft \tiny Campo de velocidades resultante.}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+%     \centering
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight,width=\textwidth]{figure/results/Rotor_particle_trajectory_gold.png}
+      } {\raggedleft \tiny Trajetória de partículas de ouro, $\rho_{Au}=20000kg/m^3$.}
+    \end{figure}
+  \end{minipage}
+  
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight,width=\textwidth]{figure/results/Rotor_particle_trajectory_iron.png}
+      } {\raggedleft \tiny Trajetória de partículas de ferro, $\rho_{Fe}=7300kg/m^3$.}
+    \end{figure}
+  \end{minipage}
+  \hfill
+  \begin{minipage}{.48\textwidth}
+    \begin{figure}
+      \stackunder{
+	\includegraphics[height=0.38\textheight,width=\textwidth]{figure/results/Rotor_particle_trajectory_sand.png}
+      } {\raggedleft \tiny Trajetória de partículas de areia, $\rho_p=1600kg/m^3$.}
     \end{figure}
   \end{minipage}
 \end{frame}
@@ -1091,7 +1313,7 @@ for t in time_list:
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 % Agradecimentos
 %----------------------------------------------------------------------------------------------------------------------------------------------------
-
+\section*{}
 \begin{frame}
   \frametitle{Agradecimentos}
   \centering

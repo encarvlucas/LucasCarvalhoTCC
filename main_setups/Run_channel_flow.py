@@ -136,6 +136,13 @@ particles = [particle_a, particle_b, particle_c, particle_d, particle_e]
 particles = TccLib.util.load("particles")
 mesh.add_particle(list_of_particles=particles)
 
+for particle in particles:
+    temp = np.where(np.array(particle.position_history)[:,0] > 7.999)
+    try:
+        del particle.position_history[temp[0].min():]
+    except:
+        pass
+
 # Define dt based on convergence limit
 total_time = 6.
 dt = min(particle_a.max_dt(mesh.viscosity), 1e-4)/2**1.

@@ -205,7 +205,7 @@ def style_plot(mesh=None, param_x: list = None, param_y: list = None):
 
     fig = plt.gcf()
     fig.set_size_inches((default_size[0] * max_amplitude(param_x) / max_amplitude(param_y), 4.8))
-    fig.subplots_adjust(left=0.1 - 0.01 * max_amplitude(param_x) / max_amplitude(param_y), right=0.95)
+    fig.subplots_adjust(left=0.12 - 0.01 * max_amplitude(param_x) / max_amplitude(param_y), right=0.95)
 
 
 def show_comparison(x_coordinates: np.ndarray, analytic_expression: callable, numeric_solution: [dict, np.ndarray],
