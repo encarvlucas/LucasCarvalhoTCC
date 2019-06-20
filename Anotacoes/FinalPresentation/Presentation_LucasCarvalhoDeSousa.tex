@@ -150,7 +150,7 @@
 \begin{frame}
   \frametitle{Sumário} % Table of contents slide, comment this block out to remove it
   
-  \fontsize{9pt}{7.2}\selectfont
+  \fontsize{11pt}{7.2}\selectfont
   \tableofcontents % Throughout your presentation, if you choose to use \section{} and \subsection{} commands, these will automatically be printed on this slide as an overview of your presentation
 \end{frame}
 
@@ -220,6 +220,7 @@
   
   \begin{block}{Desvantagens}
     \begin{itemize}
+     \item Requer o uso da equação auxiliar da continuidade devido a presença da pressão
      \item Acoplamento da pressão e velocidade
      \item Exige elementos de ordem elevada
     \end{itemize}
@@ -841,6 +842,26 @@ for t in time_list:
 %----------------------------------------------------------------------------------------------------------------------------------------------------
 \subsection{Validações}
 \begin{frame}
+  \frametitle{Configurações}
+  %-
+  
+  \begin{block}{Especificação da Máquina Utilizada}
+    \begin{itemize}
+      \item Dell Latitude E6410.
+      \item Processador Intel® Core™ i5 CPU M 520 2.40GHz com 4 núcleos.
+      \item 4Gb de memória RAM.
+      \item O sistema operacional Ubuntu 16.04 LTS.
+      \item Compilador Python 3.5.
+    \end{itemize}
+  \end{block}
+  
+  \begin{block}{Especificação da Máquina Utilizada}
+    Foram inseridas 5 partículas igualmente espaçadas por simulação.\\
+    As partículas foram colocadas próximas a entrada dos escoamentos.
+  \end{block}
+\end{frame}
+
+\begin{frame}
   \frametitle{Validações de Problemas em Sólidos}
   %-Essa validação foi feita com o problema de troca térmica de laplace
   %-essas Validações permitem testar a geração de matrizes e Aplicação das condições de contorno
@@ -1070,7 +1091,7 @@ for t in time_list:
     } {\raggedleft \tiny Diagrama da simulação.}
   \end{figure}
   \begin{block}{Parâmetros}
-    $L=8m$, $D=1m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=20000kg/m^3$.
+    $L=8m$, $D=1m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_p=20000kg/m^3$.
   \end{block}
 \end{frame}
 
@@ -1081,19 +1102,19 @@ for t in time_list:
   \begin{figure}
     \stackunder{
       \includegraphics[width=0.98\textwidth]{figure/results/Channel_mesh.png}
-    } {\raggedleft \tiny Malha do canal utilizado.}
+    } {\raggedleft \tiny Malha do canal com 593 nós e 1072 elementos.}
   \end{figure}
   \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
   \begin{figure}
     \stackunder{
       \includegraphics[width=0.98\textwidth]{figure/results/Channel_result.png}
-    } {\raggedleft \tiny Campo de velocidades resultante.}
+    } {\raggedleft \tiny Campo de velocidades resultante, com $dt=0.1s$ e tempo total $t=20.0s$, realizada em torno de $1h$.}
   \end{figure}
   \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
   \begin{figure}
     \stackunder{
       \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Channel_particle_trajectory.png}
-    } {\raggedleft \tiny Percurso das partículas na simulação.}
+    } {\raggedleft \tiny Percurso das partículas na simulação, com $dt=5E^{-5}$ e tempo total de $t=6.0s$, realizada em torno de $6h$.}
   \end{figure}
 \end{frame}
 
@@ -1109,7 +1130,7 @@ for t in time_list:
     } {\raggedleft \tiny Diagrama da simulação.}
   \end{figure}
   \begin{block}{Parâmetros}
-    $L=8m$, $D=1m$, $d=0.3m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=20000kg/m^3$.
+    $L=8m$, $D=1m$, $d=0.3m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_p=20000kg/m^3$.
   \end{block}
 \end{frame}
 
@@ -1120,19 +1141,19 @@ for t in time_list:
   \begin{figure}
     \stackunder{
       \includegraphics[width=0.98\textwidth]{figure/results/Obstacle_mesh.png}
-    } {\raggedleft \tiny Malha do canal utilizado.}
+    } {\raggedleft \tiny Malha do canal com 494 nós e 868 elementos.}
   \end{figure}
   \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
   \begin{figure}
     \stackunder{
       \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Obstacle_result.png}
-    } {\raggedleft \tiny Campo de velocidades resultante.}
+    } {\raggedleft \tiny Campo de velocidades resultante, com $dt=0.1s$ e tempo total $t=20.0s$, realizada em torno de $1h$.}
   \end{figure}
   \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
   \begin{figure}
     \stackunder{
       \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Obstacle_particle_trajectory.png}
-    } {\raggedleft \tiny Percurso das partículas na simulação.}
+    } {\raggedleft \tiny Percurso das partículas na simulação, com $dt=5E^{-5}$ e tempo total de $t=5.0s$, realizada em torno de $4h$.}
   \end{figure}
 \end{frame}
 
@@ -1148,7 +1169,7 @@ for t in time_list:
     } {\raggedleft \tiny Diagrama da simulação.}
   \end{figure}
   \begin{block}{Parâmetros}
-    $L_1=2m$, $L_2=2m$, $d=1m$, $D=1m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=20000kg/m^3$.
+    $L_1=2m$, $L_2=2m$, $d=1m$, $D=1m$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_p=20000kg/m^3$.
   \end{block}
 \end{frame}
 
@@ -1159,13 +1180,13 @@ for t in time_list:
   \begin{figure}
     \stackunder{
       \includegraphics[width=0.98\textwidth]{figure/results/Step_mesh.png}
-    } {\raggedleft \tiny Malha do canal utilizado.}
+    } {\raggedleft \tiny Malha do canal com 380 nós e 676 elementos.}
   \end{figure}
   \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
   \begin{figure}
     \stackunder{
       \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Step_particle_trajectory.png}
-    } {\raggedleft \tiny Percurso das partículas na simulação.}
+    } {\raggedleft \tiny Percurso das partículas na simulação, com $dt=5E^{-5}$ e tempo total de $t=5.0s$, realizada em torno de $4h$.}
   \end{figure}
 \end{frame}
 
@@ -1176,7 +1197,7 @@ for t in time_list:
   \begin{figure}
     \stackunder{
       \includegraphics[width=0.98\textwidth]{figure/results/Step_result.png}
-    } {\raggedleft \tiny Campo de velocidades resultante.}
+    } {\raggedleft \tiny Campo de velocidades resultante, com $dt=0.1s$ e tempo total $t=20.0s$, realizada em torno de $1h$.}
   \end{figure}
 \end{frame}
 
@@ -1192,7 +1213,7 @@ for t in time_list:
     } {\raggedleft \tiny Diagrama da simulação.}
   \end{figure}
   \begin{block}{Parâmetros}
-    $L=8m$, $D=2m$, $A=0.004m$, $\lambda=0.0006m$, $\phi=0$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=20000kg/m^3$.
+    $L=8m$, $D=2m$, $A=0.004m$, $\lambda=0.0006m$, $\phi=0$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_p=20000kg/m^3$.
   \end{block}
 \end{frame}
 
@@ -1202,20 +1223,19 @@ for t in time_list:
   
   \begin{figure}
     \stackunder{
-      \includegraphics[width=0.98\textwidth]{figure/results/Nozzle_mesh.png}
-    } {\raggedleft \tiny Malha do canal utilizado.}
+      \includegraphics[height=0.15\textheight, width=0.91\textwidth]{figure/results/Nozzle_mesh.png}
+    } {\raggedleft \tiny Malha do canal com 600 nós e 1047 elementos.}
+  \end{figure}
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.28\textheight, width=0.91\textwidth]{figure/results/Nozzle_result.png}
+    } {\raggedleft \tiny Campo de velocidades resultante, com $dt=0.1s$ e tempo total $t=20.0s$, realizada em torno de $2h$.}
   \end{figure}
   \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
   \begin{figure}
     \stackunder{
-      \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Nozzle_result.png}
-    } {\raggedleft \tiny Campo de velocidades resultante.}
-  \end{figure}
-  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
-  \begin{figure}
-    \stackunder{
-      \includegraphics[height=0.28\textheight, width=0.98\textwidth]{figure/results/Nozzle_particle_trajectory.png}
-    } {\raggedleft \tiny Percurso das partículas na simulação.}
+      \includegraphics[height=0.28\textheight, width=0.91\textwidth]{figure/results/Nozzle_particle_trajectory.png}
+    } {\raggedleft \tiny Percurso das partículas na simulação, com $dt=5E^{-5}$ e tempo total de $t=15.0s$, realizada em torno de $24h$.}
   \end{figure}
 \end{frame}
 
@@ -1233,7 +1253,7 @@ for t in time_list:
   \end{figure}
   \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
   \begin{block}{Parâmetros}
-    $L=8m$, $D=2m$, $A=0.004m$, $\lambda=0.0006m$, $\phi=0$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p=0.001m$, $\rho_f=$por caso.
+    $R=1m$, $r=0.75m$, $\phi_R=34^o$, $\phi_r=80^o$, $U=1m/s$, $\mu_f=50Pa.s$, $\rho_f=50kg/m^3$, $d_p,\rho_p=$por caso.
   \end{block}
 \end{frame}
 
@@ -1241,18 +1261,28 @@ for t in time_list:
   \frametitle{\subsecname}
   %-
   
-%   \begin{figure}
-%     \stackunder{
-%       \includegraphics[height=0.38\textheight]{figure/results/Rotor_mesh.png}
-%     } {\raggedleft \tiny Malha do canal utilizado.}
-%   \end{figure}
+  \centering
+  \begin{figure}
+    \stackunder{
+      \includegraphics[height=0.28\textheight]{figure/results/Rotor_mesh.png}
+    } {\raggedleft \tiny Malha do canal com 531 nós e 1058 elementos.}
+  \end{figure}
+  \vspace*{-\baselineskip}\setlength\belowdisplayshortskip{0pt} % Fix display bug, empty header space
+  \begin{figure}
+      \includegraphics[height=0.38\textheight]{figure/results/Rotor_result.png}
+  \end{figure}
+  \raggedleft \tiny Campo de velocidades resultante, com $dt=0.1s$ e tempo total $t=20.0s$, realizada em torno de $2h$.
+\end{frame}
+  
+\begin{frame}
+  \frametitle{\subsecname}
+  \centering
   \begin{minipage}{.48\textwidth}
-    \centering
-    \begin{figure}
-      \stackunder{
-	\includegraphics[height=0.38\textheight,width=\textwidth]{figure/results/Rotor_result.png}
-      } {\raggedleft \tiny Campo de velocidades resultante.}
-    \end{figure}
+%     \centering
+    \begin{block}{}
+    \footnotesize
+      Simulações dos percursos das partículas efetuadas com $dt=5E^{-5}$ e tempo total de $t=5.0s$, realizadas em torno de $12h$.
+    \end{block}
   \end{minipage}
   \hfill
   \begin{minipage}{.48\textwidth}
@@ -1260,7 +1290,7 @@ for t in time_list:
     \begin{figure}
       \stackunder{
 	\includegraphics[height=0.38\textheight,width=\textwidth]{figure/results/Rotor_particle_trajectory_gold.png}
-      } {\raggedleft \tiny Trajetória de partículas de ouro, $\rho_{Au}=20000kg/m^3$.}
+      } {\raggedleft \tiny Partículas de ouro, $d_p=1E^{-3}m$ e $\rho_{Au}=2E^{4}kg/m^3$.}
     \end{figure}
   \end{minipage}
   
@@ -1268,7 +1298,7 @@ for t in time_list:
     \begin{figure}
       \stackunder{
 	\includegraphics[height=0.38\textheight,width=\textwidth]{figure/results/Rotor_particle_trajectory_iron.png}
-      } {\raggedleft \tiny Trajetória de partículas de ferro, $\rho_{Fe}=7300kg/m^3$.}
+      } {\raggedleft \tiny Partículas de ferro, $d_p=1E^{-3}m$ e $\rho_{Fe}=7.3E^{3}kg/m^3$.}
     \end{figure}
   \end{minipage}
   \hfill
@@ -1276,7 +1306,7 @@ for t in time_list:
     \begin{figure}
       \stackunder{
 	\includegraphics[height=0.38\textheight,width=\textwidth]{figure/results/Rotor_particle_trajectory_sand.png}
-      } {\raggedleft \tiny Trajetória de partículas de areia, $\rho_p=1600kg/m^3$.}
+      } {\raggedleft \tiny Partículas de areia, $d_p=5E^{-4}m$ e $\rho_p=1.6E^{3}kg/m^3$.}
     \end{figure}
   \end{minipage}
 \end{frame}
@@ -1285,18 +1315,23 @@ for t in time_list:
 \section*{}
 \begin{frame}
   \frametitle{Conclusão}
+  %-Plataforma de estudos de escoamento multifásico 2D em geometrias complexas através do MEF.
+  
   \centering
+  \fontsize{10pt}{7.2}\selectfont
   \begin{block}{Conclusões}
     \begin{itemize}
+      \item A linguagem Python é uma excelente ferramenta para criar simuladores, ela permite realizar cálculos complexos rapidamente.
       \item A o modelo e a biblioteca representam bem o fenômeno esperado.
-      \item Foi possível vizualizar a movimentação das partículas.
-      \item A força de arrasto possuí a maior contribuíção ao movimento.
+      \item Para os casos estudados, força de arrasto possuí a maior contribuição ao movimento.
+      \item Embora a biblioteca utilize o armazenamento de matrizes esparsas, as simulações levam bastante tempo.
     \end{itemize}
   \end{block}
   
   \begin{block}{Pontos fracos}
     \begin{itemize}
       \item O simulador requer um grande esforço computacional.
+      \item Não foi implementada a funcionalidade de \textit{multithreading} na biblioteca.
       \item Restrição de uso para valores de Reynolds $<$ 1.
     \end{itemize}
   \end{block}
