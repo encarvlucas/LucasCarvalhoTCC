@@ -90,6 +90,7 @@
 
 \usepackage[titles]{tocloft}
 \cftsetindents{figure}{0em}{5.5em}
+\usepackage[final]{pdfpages}
 
 %------------------------------------------------
 %------------------------------------------------
@@ -123,7 +124,8 @@
 \thispagestyle{empty}\import{00_Pre_textuais/}{Capa}
 \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FolhaDeRosto}
 \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FichaCatalog}   
-\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FolhaDeAprovacao}
+% \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{FolhaDeAprovacao}
+\includepdf[pages=-]{FolhaDeAssinaturas.pdf}
 \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Dedicatoria}
 \pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Agradecimento}
 %\pagebreak\thispagestyle{empty}\import{00_Pre_textuais/}{Epigrafe}    % não coloquei epígrafe no meu trabalho, mas fica aqui a chamada comentada.

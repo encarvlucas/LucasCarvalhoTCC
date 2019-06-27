@@ -77,11 +77,11 @@ Foram escolhidos cinco tipos de geometria para serem simulados:
 Foi utilizado o \textit{software ParaView} para exibição dos gráficos de resultados.
 A escala das figuras mostra o valor da magnitude da velocidade em cada nó.
 
-Em cada simulação, com exceção das simulações na palheta de um impelidor, são inseridas cinco partículas de ouro perfeitamente rígidas, igualmente espalhadas, com $d_p=1mm=1.10^{-3}m$ de diâmetro e densidade de $\rho_p=20000kg/m^3$.
+Em cada simulação, com exceção das simulações na palheta de um impelidor, são inseridas cinco partículas de ouro perfeitamente rígidas, igualmente espalhadas, com $d_p=1mm=1.0\times E^{-3}m$ de diâmetro e densidade de $\rho_p=20000kg/m^3$.
 Estas partículas estão submersas em um fluido ideal com características: $\mu_f=50kg/m.s$ de viscosidade dinâmica e densidade de $\rho_f=50kg/m^3$, para que trabalhe em uma situação com número de Reynolds reduzido, e menor que a restrição da equação BBO\eqref{sec_eq_part}.
 
 As partículas são iniciadas com velocidade nula e em posições próximas à entrada do escoamento, fora de sua região de transição.
-As simulações foram executadas para um tempo total de $5s$ com um tempo entre cálculos de $dt=3.33e^{-5}s$.
+As simulações foram executadas para um tempo total de $5s$ com um tempo entre cálculos de $dt=3.33\times E^{-5}s$.
 O trajeto de cada partícula é exibido com uma cor diferente para auxiliar a interpretação. 
 
 %------------------- Canal Reto--------------------------------------------------------------------------------------------
@@ -89,9 +89,21 @@ O trajeto de cada partícula é exibido com uma cor diferente para auxiliar a in
 \label{sec_channel}
 O escoamento em um canal reto permite visualizar o movimento livre das partículas sob efeito do fluido.
 A sua configuração é similar ao exemplo de Poiseuille \ref{sec_poiseuille}.
-As condições do escoamento são de um comprimento $L=8m$ com altura constante de $D=1m$, o fluido entra com velocidade constante pela região da esquerda com velocidade $\vec{v}_{ent}=(1, 0)m/s$.
+
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Channel_boundary.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Geometria do domínio de um canal reto.}
+    \label{channel_geometry}
+\end{figure}
+
+As condições do escoamento são de um comprimento $L=8m$ com altura constante de $D=1m$, o fluido entra com velocidade constante pela região da esquerda com velocidade $U=1m/s$. %$\vec{v}_{ent}=(1, 0)m/s$.
 Nas paredes há a condição de não escorregamento, portanto a velocidade nas paredes inferior e superior é nula, $\vec{v}_{sup}=\vec{v}_{inf}=0$.
 A corrente possui uma condição de contorno variando de $0$ a $1$ nas bordas de acordo com sua posição, equivalente a $\psi_{cc}=y$.
+O fluido foi especificado com parâmetros de viscosidade dinâmica de $\mu_f=50Pa.s$ e densidade de $\rho_f=50kg/m^3$, para garantir que a simulação respeite as restrições definidas sobre o número de Reynolds do escoamento e da partícula.
+E são inseridas cinco partículas de diâmetro $d_p=0.001m$ e densidade $\rho_p=20000kg/m^3$ próximas a entrada do escoamento.
 
 Seu campo de velocidades é apresentado na \ref{channel_result}:
 \begin{figure}[H]
@@ -121,8 +133,18 @@ Na região de saída, as partículas tendem a se espalhar devido às condições
 \label{sec_obstacle}
 Em um escoamento com obstáculo, pode-se observar o efeito do obstáculo no campo de velocidades do escoamento, assim como o comportamento das partículas ao interagir com este obstáculo.
 
-Novamente, as condições do escoamento são iguais à simulação anterior \ref{sec_channel}, porém, com as condições de contorno aplicadas também a região do obstáculo.
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Obstacle_boundary.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Geometria do domínio de um canal com obstáculo.}
+    \label{obstacle_geometry}
+\end{figure}
+
+Novamente, as condições do escoamento e das partículas são iguais à simulação anterior \ref{sec_channel}, porém, com diâmetro do obstáculo de $d=0.3m$ e as condições de contorno aplicadas também a região do obstáculo.
 Onde $\vec{v}_{obstaculo}=0$ e $\psi_{obstaculo}=y$.
+Para o fluido e as partículas, utilizam-se os mesmos parâmetros apresentados na simulação anterior.
 
 Para auxiliar na visualização do resultado, é exibido em conjunto da velocidade as linhas de corrente do campo, desenhadas com o auxílio de uma ferramenta de desenho das curvas de nível.
 Observa-se a distorção no campo de velocidades causada pelo obstáculo na \ref{obstacle_result}:
@@ -153,10 +175,21 @@ Nesta simulação pode-se observar o efeito do obstáculo que desvia o trajeto d
 No escoamento com degrau há um desvio no trajeto que tende a causar colisões das partículas devido a inércia de seu movimento.
 Dependendo de suas características, as partículas estão mais propensas a colidirem com a parede direita superior ou serão mais influenciadas pelo fluido e terão sua trajetória alterada.
 
-Para este escoamento são adaptadas as condições anteriores para a geometria de um comprimento $L=5m$ com altura de entrada e saída de $D=1m$, o fluido entra com velocidade constante pela região da esquerda com velocidade $\vec{v}_{ent}=(1, 0)m/s$.
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Step_boundary.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Geometria do domínio de um canal com degrau.}
+    \label{step_geometry}
+\end{figure}
+
+Para este escoamento são adaptadas as condições anteriores para a geometria de um comprimento total de $L=5m$, com seção de entrada $L_1=2m$, seção de saída $L_2=2m$ e espaçamento de $d=1m$.
+Sua altura de entrada e saída é de $D=1m$, o fluido entra com velocidade constante pela região da esquerda com velocidade $U=1m/s$. % $\vec{v}_{ent}=(1, 0)m/s$.
 Nas paredes há a condição de não escorregamento, portanto, a velocidade nas paredes é nula, $\vec{v}_{parede}=0$.
 A corrente possui uma condição de contorno variando de $0$ a $1$ onde ela é $0$ para as paredes inferiores e $1$ para as superiores.
 E na região vertical esquerda de entrada toma-se a corrente como $\psi_{cc}=y-1$, e $\psi_{cc}=y$ na região vertical direita de saída.
+Novamente são utilizados os mesmos parâmetros para o fluido e as partículas que os casos anteriores.
 
 Novamente, são incluídas as curvas de nível da velocidade na exibição do campo de velocidades na \ref{step_result}:
 \begin{figure}[H]
@@ -197,10 +230,20 @@ Caso as propriedades das partículas fossem alteradas poderia-se encontrar uma s
 No escoamento com restrição há um aumento de velocidade na região restringida.
 Isto ocorre devido à necessidade de aumentar o fluxo de fluido na região, de maneira a respeitar a Lei da Continuidade \eqref{continuity_final}.
 
-As condições do escoamento são de um comprimento $L=10m$ com altura de entrada de $D_{entrada}=2m$ e uma entrada de saída de $D_{saida}=1m$.
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Nozzle_boundary.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Geometria do domínio de um canal com restrição.}
+    \label{nozzle_geometry}
+\end{figure}
+
+As condições do escoamento são de um comprimento $L=10m$ com altura de entrada de $D_{entrada}=2m$ e uma entrada de saída de $D_{saida}=1m$, os parâmetros da geometria da curva de redução utilizada foram de amplitude $A=0.004m$, comprimento de onda $\lambda=0.0006m$ e fase $\phi=0$.
 O fluido entra com velocidade constante pela região da esquerda com velocidade $\vec{v}_{ent}=(1, 0)m/s$.
 Nas paredes há a condição de não escorregamento, portanto, a velocidade nas paredes inferior e superior é nula, $\vec{v}_{sup}=\vec{v}_{inf}=0$.
 Novamente a corrente possui uma condição de contorno variando de $0$ a $1$ nas bordas de acordo com sua posição, equivalente a $\psi_{cc}=y$.
+Mais uma vez, utilizaram-se as mesmas condições para os parâmetros do fluido e das partículas.
 
 Novamente, são incluídas as curvas de nível da velocidade na exibição do campo de velocidades na \ref{nozzle_result}:
 \begin{figure}[H]
@@ -239,9 +282,22 @@ Ao longo do canal, pode se observar que a partícula sofre uma aceleração ao a
 \section{\textbf{Simulação Em Uma Palheta de Impelidor}}
 \label{sec_rotor}
 Finalmente, a simulação em uma palheta de impelidor visa representar o comportamento das partículas em uma situação real de trabalho de uma turbomáquina.
+
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=\linewidth]{figures/Rotor_boundary.pdf}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Geometria do domínio em uma palheta de um impelidor.}
+    \label{rotor_geometry}
+\end{figure}
+
+Os parâmetros da geometria utilizada foram, um raio externo $R=1m$, raio interno $r=0.75m$, ângulo externo $\phi_R=34^o$, ângulo interno $\phi_r=80^o$ e a magnitude de velocidade de entrada $U=1m/s$, onde o fluido entra no domínio com o vetor de velocidade perpendicular a face de entrada.
+Novamente utilizaram-se as condições de viscosidade dinâmica do fluido $\mu_f=50Pa.s$ e densidade $\rho_f=50kg/m^3$.
+
 Foram feitas simulações para três tipos de partículas com diferentes materiais e diâmetros.
-Foram utilizadas partículas de ouro com $\rho_{p,Au}=20000kg/m^3$ de densidade e $d_{p,Au}=1mm=1.10^{-3}m$ de diâmetro, de ferro, com $\rho_{p,Fe}=7300kg/m^3$ de densidade e $d_{p,Fe}=1mm=1.10^{-3}m$ de diâmetro, e de areia com $\rho_{p,Areia}=1600kg/m^3$ de densidade e $d_{p,Au}=0.5mm=5.10^{-4}m$ de diâmetro.
-Com respeito ao tempo entre instantes, foram utilizados os intervalos de $dt=3.33e^{-5}s$ para a simulação com partículas de ouro, $dt=8.11e^{-6}s$, para a de ferro e $dt=4.44e^{-7}s$ para a de areia.
+Foram utilizadas partículas de ouro com $\rho_{p,Au}=20000kg/m^3$ de densidade e $d_{p,Au}=1mm=1.0\times E^{-3}m$ de diâmetro, de ferro, com $\rho_{p,Fe}=7300kg/m^3$ de densidade e $d_{p,Fe}=1mm=1.0\times E^{-3}m$ de diâmetro, e de areia com $\rho_{p,Areia}=1600kg/m^3$ de densidade e $d_{p,Au}=0.5mm=5.0\times E^{-4}m$ de diâmetro.
+Com respeito ao tempo entre instantes, foram utilizados os intervalos de $dt=3.33\times E^{-5}s$ para a simulação com partículas de ouro, $dt=8.11\times E^{-6}s$, para a de ferro e $dt=4.44\times E^{-7}s$ para a de areia.
 Já que quanto menor forem o tamanho e densidade das partículas torna-se necessário um intervalo para garantir a convergência.
 
 A geometria palheta foi extraída de um contorno de uma palheta real de uma bomba exemplo, porém, feita em escala.

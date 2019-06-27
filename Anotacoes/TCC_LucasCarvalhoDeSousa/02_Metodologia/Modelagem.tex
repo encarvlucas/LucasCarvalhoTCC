@@ -31,7 +31,7 @@ A formulação fraca é o resultado da ponderação da equação da forma forte 
 Para o encontrar as formas fracas das equações de governo tomadas neste trabalho, inicialmente são estabelecidos resíduos $\vec{R_i}$ nas equações de forma forte:
 \begin{equation}
     \dfrac{\partial \vec{\omega}}{\partial t} +
-    \vec{v}_f.\vec{\nabla}.\vec{\omega} -
+    \vec{v}_f.\vec{\nabla}\vec{\omega} -
     \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega} =
     \vec{R_1}
 \end{equation}
@@ -59,7 +59,7 @@ Substituindo-se os resíduos nas integrais, tem-se:
 \begin{equation}
     \int_{\Omega} \left(
     \dfrac{\partial \vec{\omega}}{\partial t} +
-    \vec{v}_f.\vec{\nabla}.\vec{\omega} -
+    \vec{v}_f.\vec{\nabla}\vec{\omega} -
     \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
     \right).\vec{\delta} d\Omega = 0
 \end{equation}
@@ -82,7 +82,7 @@ Reorganizam-se as integrais:
     \dfrac{\partial \vec{\omega}}{\partial t}
     .\vec{\delta} d\Omega +
     \int_{\Omega}
-    \vec{v}_f.\vec{\nabla}.\vec{\omega}
+    \vec{v}_f.\vec{\nabla}\vec{\omega}
     .\vec{\delta} d\Omega -
     \int_{\Omega}
     \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
@@ -113,11 +113,11 @@ Aplica-se agora o Teorema de Green nos termos difusivos das equações:
     .\vec{\delta} d\Omega = 
     \int_{\Omega}
     \dfrac{\mu_f}{\rho_f}
-    \vec{\nabla}.\vec{\omega}.\vec{\nabla}
-    .\vec{\delta} d\Omega -
+    \vec{\nabla}\vec{\omega}.\vec{\nabla}
+    \vec{\delta} d\Omega -
     \int_{\Gamma}
     \dfrac{\mu_f}{\rho_f}
-    \vec{\delta}.\vec{\nabla}.\vec{\omega}
+    \vec{\delta}.\vec{\nabla}\vec{\omega}
     .\vec{n} d\Gamma
 \end{equation}
 \begin{equation}
@@ -125,10 +125,10 @@ Aplica-se agora o Teorema de Green nos termos difusivos das equações:
     \nabla^2\psi
     .\vec{\phi} d\Omega = -
     \int_{\Omega}
-    \vec{\nabla}.\psi.\vec{\nabla}
-    .\vec{\phi} d\Omega +
+    \vec{\nabla}\psi.\vec{\nabla}
+    \vec{\phi} d\Omega +
     \int_{\Gamma}
-    \vec{\phi}.\vec{\nabla}.\psi
+    \vec{\phi}.\vec{\nabla}\psi
     .\vec{n} d\Gamma
 \end{equation}
 onde $\vec{n}$ é um vetor normal unitário, orientado para o exterior do contorno $\Gamma$.
@@ -140,16 +140,16 @@ Assim, a integral em $\Gamma$ é nula e os termos difusivos são anulados:
     .\vec{\delta} d\Omega = 
     \int_{\Omega}
     \dfrac{\mu_f}{\rho_f}
-    \vec{\nabla}.\vec{\omega}.\vec{\nabla}
-    .\vec{\delta} d\Omega
+    \vec{\nabla}\vec{\omega}.\vec{\nabla}
+    \vec{\delta} d\Omega
 \end{equation}
 \begin{equation}
     \int_{\Omega}
     \nabla^2\psi
     .\vec{\phi} d\Omega = -
     \int_{\Omega}
-    \vec{\nabla}.\psi.\vec{\nabla}
-    .\vec{\phi} d\Omega
+    \vec{\nabla}\psi.\vec{\nabla}
+    \vec{\phi} d\Omega
 \end{equation}
 
 As equações resultantes são:
@@ -158,17 +158,17 @@ As equações resultantes são:
     \dfrac{\partial \vec{\omega}}{\partial t}
     .\vec{\delta} d\Omega +
     \int_{\Omega}
-    \vec{v}_f.\vec{\nabla}.\vec{\omega}
+    \vec{v}_f.\vec{\nabla}\vec{\omega}
     .\vec{\delta} d\Omega +
     \int_{\Omega}
     \dfrac{\mu_f}{\rho_f}
-    \vec{\nabla}.\vec{\omega}.\vec{\nabla}
-    .\vec{\delta} d\Omega= 0
+    \vec{\nabla}\vec{\omega}.\vec{\nabla}
+    \vec{\delta} d\Omega= 0
 \end{equation}
 \begin{equation}
     -\int_{\Omega}
-    \vec{\nabla}.\psi.\vec{\nabla}
-    .\vec{\phi} d\Omega +
+    \vec{\nabla}\psi.\vec{\nabla}
+    \vec{\phi} d\Omega +
     \int_{\Omega}
     \omega_z
     .\vec{\phi} d\Omega = 0
@@ -193,20 +193,20 @@ Se assumir-se que:
 \begin{equation}
     g_1 (\vec{v}_f, \vec{\delta}) =
     \int_{\Omega}
-    \vec{v}_f.\vec{\nabla}.\vec{\omega}
+    \vec{v}_f.\vec{\nabla}\vec{\omega}
     .\vec{\delta} d\Omega
 \end{equation}
 \begin{equation}
     k_1 (\vec{\omega}, \vec{\delta}) =
     \int_{\Omega}
-    \vec{\nabla}.\vec{\omega}.\vec{\nabla}
-    .\vec{\delta} d\Omega
+    \vec{\nabla}\vec{\omega}.\vec{\nabla}
+    \vec{\delta} d\Omega
 \end{equation}
 \begin{equation}
     k_2 (\psi, \vec{\phi}) =
     \int_{\Omega}
-    \vec{\nabla}.\psi.\vec{\nabla}
-    .\vec{\phi} d\Omega
+    \vec{\nabla}\psi.\vec{\nabla}
+    \vec{\phi} d\Omega
 \end{equation}
 \begin{equation}
     m_2 (\omega_z, \vec{\phi}) =
@@ -259,10 +259,10 @@ Substituindo-se nas equações:
     \dfrac{\partial \omega}{\partial t}
     \delta d\Omega &+
     \int_{\Omega}
-    v_{fx}\dfrac{\partial \omega}{\partial x}
+    v_{f,x}\dfrac{\partial \omega}{\partial x}
     \delta d\Omega +
     \int_{\Omega}
-    v_{fy}\dfrac{\partial \omega}{\partial y}
+    v_{f,y}\dfrac{\partial \omega}{\partial y}
     \delta d\Omega \nonumber\\&+
     \int_{\Omega}
     \dfrac{\mu_f}{\rho_f}
@@ -287,7 +287,7 @@ Substituindo-se nas equações:
 \end{equation}
 \begin{equation}
     \int_{\Omega}
-    v_{fx}
+    v_{f,x}
     \xi d\Omega -
     \int_{\Omega}
     \dfrac{\partial \psi}{\partial y}
@@ -295,7 +295,7 @@ Substituindo-se nas equações:
 \end{equation}
 \begin{equation}
     \int_{\Omega}
-    v_{fy}
+    v_{f,y}
     \xi d\Omega +
     \int_{\Omega}
     \dfrac{\partial \psi}{\partial x}
@@ -308,12 +308,12 @@ As variáveis ficam então:
 \begin{align}
     \omega(\vec{x}, t) &= \sum_{i=1}^{n_p} \omega_i(t) N_i(\vec{x}) \\
     \psi(\vec{x}, t) &= \sum_{i=1}^{n_p} \psi_i(t) N_i(\vec{x}) \\
-    v_{fx}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{fxi}(t) N_i(\vec{x}) \\
-    v_{fy}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{fyi}(t) N_i(\vec{x}) 
+    v_{f,x}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{f,x,i}(t) N_i(\vec{x}) \\
+    v_{f,y}(\vec{x}, t) &= \sum_{i=1}^{n_p} v_{f,y,i}(t) N_i(\vec{x}) 
 \end{align}
-onde os valores das funções em cada nó $\omega_i = [\omega_1, \ldots, \omega_{n_p}]$, $\psi_i = [\psi_1, \ldots, \psi_{n_p}]$, $v_{fxi} = [v_{fx1}, \ldots, v_{fxn_p}]$ e $v_{fyi} = [v_{fy1}, \ldots, v_{fyn_p}]$ são as incógnitas desejadas.
+onde os valores das funções em cada nó $\omega_i = [\omega_1,\ \ldots,\ \omega_{n_p}]$, $\psi_i = [\psi_1,\ \ldots,\ \psi_{n_p}]$, $v_{f,x,i} = [v_{f,x,1}\ ,\ \ldots,\ v_{f,x,n_p}]$ e $v_{f,y,i} = [v_{f,y,1}\ ,\ \ldots,\ v_{f,y,n_p}]$ são as incógnitas desejadas.
 Como estas funções são independentes do tempo, elas são retiradas dos termos de integração sobre o domínio $\Omega$.
-Enquanto isso, as funções de aproximação $N_{i} = [N_{1}, \ldots, N_{n_p}]$, também chamadas de funções base, são escolhidas arbitrariamente.
+Enquanto isso, as funções de aproximação $N_{i}(\vec{x}) = [N_{1}(\vec{x}), \ldots, N_{n_p}(\vec{x})]$, também chamadas de funções base, são escolhidas arbitrariamente.
 
 Na formulação de Galerkin, as funções de base são iguais as suas respectivas funções peso:
 \begin{align}
@@ -329,12 +329,12 @@ Então as equações do sistema em suas formas variacionais discretizadas no esp
     \sum_{j=1}^{n_p} \delta_j N_j
     d\Omega \nonumber\\&+
     \int_{\Omega}
-    v_{fx}
+    v_{f,x}
     \sum_{i=1}^{n_p} \dfrac{\partial \omega_i N_i}{\partial x}
     \sum_{j=1}^{n_p} \delta_j N_j
     d\Omega +
     \int_{\Omega}
-    v_{fy}
+    v_{f,y}
     \sum_{i=1}^{n_p} \dfrac{\partial \omega_i N_i}{\partial y}
     \sum_{j=1}^{n_p} \delta_j N_j
     d\Omega \nonumber\\&+
@@ -357,13 +357,13 @@ Então as equações do sistema em suas formas variacionais discretizadas no esp
     \sum_{j=1}^{n_p} \dfrac{\partial \phi_j N_j}{\partial y}
     \right) d\Omega \nonumber\\+
     \int_{\Omega}
-    \sum_{i=1}^{n_p} \omega_{zi} N_i
+    \sum_{i=1}^{n_p} \omega_{z,i} N_i
     \sum_{j=1}^{n_p} \phi_j N_j
     d\Omega = 0
 \end{align}
 \begin{equation}
     \int_{\Omega}
-    \sum_{i=1}^{n_p} v_{fxi} N_i
+    \sum_{i=1}^{n_p} v_{f,x,i} N_i
     \sum_{j=1}^{n_p} \xi_j N_j
     d\Omega -
     \int_{\Omega}
@@ -373,7 +373,7 @@ Então as equações do sistema em suas formas variacionais discretizadas no esp
 \end{equation}
 \begin{equation}
     \int_{\Omega}
-    \sum_{i=1}^{n_p} v_{fyi} N_i
+    \sum_{i=1}^{n_p} v_{f,y,i} N_i
     \sum_{j=1}^{n_p} \xi_j N_j
     d\Omega +
     \int_{\Omega}
@@ -382,7 +382,7 @@ Então as equações do sistema em suas formas variacionais discretizadas no esp
     d\Omega = 0
 \end{equation}
 
-Pode-se remover as componentes da velocidade do fluido $v_{fx}$ e $v_{fy}$ da equação \refeq{temp1}, pois serão utilizados os componentes da velocidade no último passo de tempo para estes valores, tornando-se a equação linear.
+Pode-se remover as componentes da velocidade do fluido $v_{f,x}$ e $v_{f,y}$ da equação \refeq{temp1}, pois serão utilizados os componentes da velocidade no último passo de tempo para estes valores, tornando-se a equação linear.
 
 Retiram-se então os somatórios das funções interpoladoras das integrais, e como $\sum_{j=1}^{n_p} \delta_j \neq 0$, $\sum_{j=1}^{n_p} \phi_j \neq 0$ e $\sum_{j=1}^{n_p} \xi_j \neq 0$ as equações de governo serão:
 \begin{align}
@@ -395,12 +395,12 @@ Retiram-se então os somatórios das funções interpoladoras das integrais, e c
     \sum_{i=1}^{n_p}
     \omega_i
     \left(
-        v_{fx}
+        v_{f,x}
         \int_{\Omega}
         \dfrac{\partial N_i}{\partial x}
         N_j
         d\Omega +
-        v_{fy}
+        v_{f,y}
         \int_{\Omega}
         \dfrac{\partial N_i}{\partial y}
         N_j
@@ -435,7 +435,7 @@ Retiram-se então os somatórios das funções interpoladoras das integrais, e c
 \begin{equation}
     \sum_{j=1}^{n_p}
     \sum_{i=1}^{n_p}
-    v_{fxi}
+    v_{f,x,i}
     \left(
         \int_{\Omega}
         N_i
@@ -451,7 +451,7 @@ Retiram-se então os somatórios das funções interpoladoras das integrais, e c
 \begin{equation}
     \sum_{j=1}^{n_p}
     \sum_{i=1}^{n_p}
-    v_{fyi}
+    v_{f,y,i}
     \left(
         \int_{\Omega}
         N_i
@@ -470,7 +470,7 @@ Retiram-se então os somatórios das funções interpoladoras das integrais, e c
 A malha utilizada pode ser estruturada, com nós equidistantes, ou não estruturada, com nós posicionados a critério do criador da malha.
 É comum utilizar malhas não estruturadas com zonas de maior interesse com elementos menores, para se obter informações mais precisas nestes locais.
 Em certos casos de equações com acoplamentos fortemente ligados, se torna necessário utilizar elementos com mais informações atreladas, como elementos quadráticos ou cúbicos.
-Este é o caso da solução da equação de Navier-Stoakes.
+Este é o caso da solução da equação de Navier-Stokes.
 Porém, para evitar esta restrição, este trabalho utilizou a formulação de corrente-vorticidade, que desvia deste problema.
 Podendo então utilizar elementos lineares e simplificando sua implementação.
 
@@ -495,7 +495,7 @@ A \ref{element} mostra como são os elementos utilizados:
 \begin{figure}[H]
     \centering
     \stackunder{
-        \includegraphics[width=0.5\linewidth]{figures/element.pdf}
+        \includegraphics[width=0.5\linewidth]{figures/element_detailed.pdf}
     } {\raggedleft \scriptsize Fonte: Autor.}
     \caption{Elemento triangular linear.}
     \label{element}
@@ -508,10 +508,10 @@ Então pode-se escrever as equações do problema em sua forma matricial como:
 \begin{equation}
     \mathbf{M}
     \dfrac{\partial \omega}{\partial t} +
-    v_{fx}
+    v_{f,x}
     \mathbf{G_x}
     \omega +
-    v_{fy}
+    v_{f,y}
     \mathbf{G_y}
     \omega +
     \dfrac{\mu_f}{\rho_f}
@@ -533,19 +533,19 @@ Então pode-se escrever as equações do problema em sua forma matricial como:
 \end{equation}
 \begin{equation}
     \mathbf{M}
-    v_{fx}
+    v_{f,x}
     \omega -
     \mathbf{G_y}
     \psi = 0
 \end{equation}
 \begin{equation}
     \mathbf{M}
-    v_{fy}
+    v_{f,y}
     \omega +
     \mathbf{G_x}
     \psi = 0
 \end{equation}
-onde $\mathbf{M}$, $\mathbf{G_{x}}$, $\mathbf{G_{y}}$, $\mathbf{K_{xx}}$ e $\mathbf{K_{yy}}$ são as matrizes elementares de dimensão $n_p \times n_p$.
+onde $\mathbf{M}$, $\mathbf{G_{x}}$, $\mathbf{G_{y}}$, $\mathbf{K_{xx}}$ e $\mathbf{K_{yy}}$ são as matrizes globais de dimensão $n_p \times n_p$.
 
 Estas matrizes são montadas a partir da contribuição local de cada nó em um elemento e unidas na matriz geral, onde cada posição da matriz é o valor correspondente ao nó de mesmo índice.
 As matrizes locais $\mathbf{m^e}$, $\mathbf{g_{x}^e}$, $\mathbf{g_{y}^e}$, $\mathbf{k_{xx}^e}$ e $\mathbf{k_{yy}^e}$, para cada elemento $e$ são definidas como:
@@ -656,7 +656,7 @@ Ou seja, caso deseja-se obter o valor da derivada desta função numericamente b
 Outra forma de interpretar-se o MDF seria através da aplicação da \textit{Série de Taylor}.
 Tomando-se novamente a função $f(x)$ e a série de Taylor aplicada a ela ao redor de um nó na posição $x$ qualquer, tem-se:
 \begin{equation}
-    f(x + h) \approx
+    f(x + h) =
     f(x) +
     \dfrac{df(x)}{dx}(x + h - x) +
     \dfrac{1}{2!}\dfrac{d^2f(x)}{dx^2}(x + h - x)^2 +
@@ -666,7 +666,7 @@ Tomando-se novamente a função $f(x)$ e a série de Taylor aplicada a ela ao re
 
 Como deseja-se obter o valor da derivada de primeira ordem, pode-se reorganizar a equação para extrair o termo $\tfrac{df(x)}{dx}$:
 \begin{equation}
-    \dfrac{df(x)}{dx} \approx
+    \dfrac{df(x)}{dx} =
     \frac{
         f(x + h) -
         f(x) -
@@ -676,14 +676,14 @@ Como deseja-se obter o valor da derivada de primeira ordem, pode-se reorganizar 
     }{h}
 \end{equation}
 
-Em certos casos não se tem nenhuma informação sobre as derivadas de ordens superiores da função, portanto, pode-se aproximar o valor da derivada ao remover os termos com ordens superiores e substituí-los por um termo de erro $O(h^2)$.
+Em certos casos não se tem nenhuma informação sobre as derivadas de ordens superiores da função, portanto, pode-se aproximar o valor da derivada ao remover os termos com ordens superiores e substituí-los por um termo de erro $O(h)$.
 \begin{equation}
-    \dfrac{df(x)}{dx} \approx
+    \dfrac{df(x)}{dx} =
     \frac{
         f(x + h) -
         f(x)
     }{h} +
-    O(h^2)
+    O(h)
     \label{dif}
 \end{equation}
 onde, novamente, quanto menor for o passo $h$, mais o valor da derivada numérica se aproximará do valor contínuo.
@@ -700,16 +700,16 @@ Este é o termo $\tfrac{\partial \omega}{\partial t}$, e ele é formado utilizan
         \omega(t)
     }{dt}
 \end{equation}
-onde $dt$ é o passo de tempo da simulação.
+onde $dt$ é um passo de tempo infinitamente pequeno.
 
-Será utilizada a notação de índice de variáveis no tempo como sobrescrito, onde $t_n$ é o índice do passo no tempo, $\omega^{t_{n+1}} = \omega(t + dt)$ e $\omega^{t_{n}} = \omega(t)$.
+Será utilizada a notação de índice de variáveis no tempo como sobrescrito, onde $t_n$ é o índice do passo no tempo, $\omega^{t_{n+1}} = \omega(t_n + dt)$ e $\omega^{t_{n}} = \omega(t_n)$.
 Então a discretização final do sistema corrente-vorticidade é:
 \begin{equation}
     \left(
-        \mathbf{M}
-        v_{fx}
+        \dfrac{\mathbf{M}}{\Delta t} +
+        v_{f,x}^{t_{n}}
         \mathbf{G_x}+
-        v_{fy}
+        v_{f,y}^{t_{n}}
         \mathbf{G_y} +
         \dfrac{\mu_f}{\rho_f}
         \left(
@@ -718,7 +718,7 @@ Então a discretização final do sistema corrente-vorticidade é:
         \right)
     \right)
     \omega^{t_{n+1}} = 
-    \mathbf{M}
+    \dfrac{\mathbf{M}}{\Delta t}
     \omega^{t_{n}}
     \label{last_w}
 \end{equation}
@@ -727,28 +727,28 @@ Então a discretização final do sistema corrente-vorticidade é:
     \mathbf{K_{xx}} +
     \mathbf{K_{yy}}
     \right)
-    \psi =
+    \psi^{t_{n+1}} =
     \mathbf{M}
     \omega^{t_{n+1}}
     \label{last_psi}
 \end{equation}
 \begin{equation}
     \mathbf{M}
-    v_{fx}
+    v_{f,x}^{t_{n+1}}
     \omega^{t_{n+1}} =
     \mathbf{G_y}
-    \psi
+    \psi^{t_{n+1}}
     \label{last_vx}
 \end{equation}
 \begin{equation}
     \mathbf{M}
-    v_{fy}
+    v_{f,y}^{t_{n+1}}
     \omega^{t_{n+1}} = -
     \mathbf{G_x}
-    \psi
+    \psi^{t_{n+1}}
     \label{last_vy}
 \end{equation}
-
+onde $\Delta t$ é o passo de tempo da simulação.
 
 %--------------------------------------------------------------
 \subsection{\textbf{Discretização da Forças Aplicadas às Partículas}}
@@ -757,7 +757,7 @@ Suas equações discretizadas são:
 \begin{itemize}
     \item \textbf{Força Gravitacional}:
         \begin{equation}
-            \vec{F}_{grav}^{t_n} = m_p \vec{g}
+            \vec{F}_{grav}^{t_n} = V_p (\rho_p - \rho_f) \vec{g}
             \label{grav_discret}
         \end{equation}
 

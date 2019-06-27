@@ -1,0 +1,28 @@
+\documentclass[12pt]{standalone}
+\usepackage{amsmath, relsize, tikz}
+\usepackage{xcolor}
+\usepackage{pgffor} % LATEX
+\input pgffor.tex % plain TEX
+\usetikzlibrary{matrix}
+\usetikzlibrary{knots}
+\usetikzlibrary{intersections,backgrounds}
+\usetikzlibrary{patterns}
+\begin{document}
+    \begin{tikzpicture}[scale=3, >=stealth]
+        \draw [white, ultra thick] (-0.55, -0.55) rectangle (1.55, 1.55);
+
+        \draw [<->, thick] (-0.5,1.5) -- (-0.5,-0.5) -- (1.5,-0.5);
+        \node [above right] at (-0.5,1.5) {$y$};
+        \node [above right] at (1.5,-0.5) {$x$};
+        \draw (0, 0) -- (1, 0) -- (0.5, 0.866) -- cycle;
+
+        \draw [fill] (0, 0) circle [radius=0.025];
+        \node [below] at (0, 0) {{$p_{i}$}{\scriptsize $(x_i, y_i)$}};
+        \draw [fill] (1, 0) circle [radius=0.025];
+        \node [below right] at (1, 0) {{$p_{j}$}{\scriptsize $(x_j, y_j)$}};
+        \draw [fill] (0.5, 0.866) circle [radius=0.025];
+        \node [above] at (0.5, 0.866) {{$p_{k}$}{\scriptsize $(x_k, y_k)$}};
+
+        \node [below] at (0.5, 0.433) {\huge $e_n$};
+    \end{tikzpicture}
+\end{document}

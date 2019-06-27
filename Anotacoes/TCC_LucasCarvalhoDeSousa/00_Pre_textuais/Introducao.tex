@@ -8,8 +8,11 @@ Em especial, busca-se estudar a trajetória de partículas presentes nestes esco
 
 Com o aumento do poder de computação das máquinas atuais e a democratização das ferramentas de criação de código, tornou-se mais fácil o desenvolvimento independente de \textit{softwares} de simulação por indivíduos.
 Utilizando estas ferramentas e o conhecimento de cálculo numérico, este trabalho visa criar uma biblioteca na linguagem de programação \textit{Python} de simulação de escoamentos particulados em diversas geometrias bidimensionais.
-Esta biblioteca é estruturada utilizando os princípios do paradigma de programação orientada a objetos, para auxiliar o uso intuitivo do código. 
+Esta biblioteca é estruturada utilizando os princípios do paradigma de programação orientada a objetos, para auxiliar o uso intuitivo do código.
+Uma das finalidades deste trabalho é disponibilizar esta biblioteca para o público, com licença de uso livre, e desta maneira, incentivar o estudo futuro destes problemas.
+
 A solução dos escoamentos é calculada pela formulação da corrente-vorticidade utilizando o Método de Elementos Finitos na forma Euleriana para as variáveis espaciais e o Método de Diferenças Finitas para o termo temporal das equações.
+O escoamento é tomado em regime laminar e para o cálculo do movimento das partículas é assumido como em estado permanente.
 Para a simulação do movimento das partículas também será usado o Método de Diferenças Finitas, aplicado a equação Basset–Boussinesq–Oseen para solução das forças aplicadas às mesmas.
 
 Serão gerados resultados para problemas com soluções analíticas conhecidas na literatura e comparados com os valores numéricos para verificação dos cálculos.

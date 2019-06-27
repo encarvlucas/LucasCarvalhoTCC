@@ -52,34 +52,34 @@ A conservação de massa é então representada como:
 
 Pode-se rescrever a equação de conservação de massa aplicando-se o \textit{Teorema de Gauss}, apresentado por Pontes e Norberto (2010)\cite{pontes_norberto}, na integral de superfície:
 \begin{equation}
-    \int_{V_c}\dfrac{\partial \rho_f}{\partial t} d V_c + \int_{V_c}\vec{\nabla}.(\rho_f \vec{v}_f) d V_c = 
-    \int_{V_c}\left(\dfrac{\partial \rho_f}{\partial t} + \vec{\nabla}.(\rho_f \vec{v}_f) \right)d V_c = 0
+    \int_{V_c}\dfrac{\partial \rho_f}{\partial t} d V_c + \int_{V_c}\vec{\nabla}(\rho_f \vec{v}_f) d V_c = 
+    \int_{V_c}\left(\dfrac{\partial \rho_f}{\partial t} + \vec{\nabla}(\rho_f \vec{v}_f) \right)d V_c = 0
     \label{cons_mass_int}
 \end{equation}
 obtendo-se a equação integral da conservação de massa, onde $\vec{\nabla}$ é o operador diferencial gradiente de componentes $\vec{\nabla}=\left(\tfrac{\partial}{\partial \hat{i}}, \tfrac{\partial}{\partial \hat{j}}, \tfrac{\partial}{\partial \hat{k}}\right)$.
 
 Ao considerar a conservação do ponto de vista local, pode-se remover o termo integral e escrever a forma diferencial da conservação de massa:
 \begin{equation}
-    \dfrac{\partial \rho_f}{\partial t} + \vec{\nabla}.(\rho_f \vec{v}_f) = 0
+    \dfrac{\partial \rho_f}{\partial t} + \vec{\nabla}(\rho_f \vec{v}_f) = 0
     \label{cons_mass_dif}
 \end{equation}
 
 Esta equação é denominada \textit{Equação da Continuidade}, e pode ser reescrita como:
 \begin{equation}
-    \dfrac{\partial \rho_f}{\partial t} + \vec{v}_f.\vec{\nabla} \rho_f + \rho_f \vec{\nabla}.\vec{v}_f = 0
+    \dfrac{\partial \rho_f}{\partial t} + \vec{v}_f.\vec{\nabla} \rho_f + \rho_f \vec{\nabla}\vec{v}_f = 0
     \label{continuity}
 \end{equation}
 
 Tomando-se algumas hipóteses, é possível simplificar mais a equação.
 Para um fluido incompressível, com massa específica invariante na posição e no tempo, a equação da continuidade pode ser escrita como:
 \begin{equation}
-    \rho_f \vec{\nabla}.\vec{v}_f = 0
+    \rho_f \vec{\nabla}\vec{v}_f = 0
     \label{continuity_mid}
 \end{equation}
 
 Como a massa específica do fluido não pode ser nula, tem-se:
 \begin{equation}
-    \vec{\nabla}.\vec{v}_f = 0
+    \vec{\nabla}\vec{v}_f = 0
     \label{continuity_final}
 \end{equation}
 tomada para um \textbf{fluido incompressível}.
@@ -130,8 +130,8 @@ Montando-se a equação, a conservação de quantidade de movimento é represent
 Novamente, aplica-se o \textit{Teorema de Gauss} nas integrais de superfície e extrai-se a forma integral da equação da conservação de quantidade de movimento:
 \begin{equation}
     \int_{V_c}\dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) d V_c + 
-    \int_{V_c}\vec{\nabla}.(\rho_f \vec{v}_f.\vec{v}_f) dV_c =
-    \int_{V_c}\vec{\nabla}.\boldsymbol{\sigma} dV_c +
+    \int_{V_c}\vec{\nabla}(\rho_f \vec{v}_f.\vec{v}_f) dV_c =
+    \int_{V_c}\vec{\nabla}\boldsymbol{\sigma} dV_c +
     \int_{V_c}\rho_f \vec{g} dV_c
 \end{equation}
 
@@ -139,8 +139,8 @@ Simplificando:
 \begin{equation}
     \int_{V_c} \left(
 	    \dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) + 
-	    \vec{\nabla}.(\rho_f \vec{v}_f.\vec{v}_f) -
-	    \vec{\nabla}.\boldsymbol{\sigma} -
+	    \vec{\nabla}(\rho_f \vec{v}_f.\vec{v}_f) -
+	    \vec{\nabla}\boldsymbol{\sigma} -
 	    \rho_f \vec{g}
     \right) = 0
     \label{cons_qmov_int}
@@ -149,8 +149,8 @@ Simplificando:
 Novamente, considerando-se a conservação do ponto de vista pontual, remove-se o termo integral para escrever a forma diferencial da conservação de quantidade de movimento:
 \begin{equation}
     \dfrac{\partial}{\partial t} (\rho_f \vec{v}_f) + 
-    \vec{\nabla}.(\rho_f \vec{v}_f.\vec{v}_f) =
-    \vec{\nabla}.\boldsymbol{\sigma} +
+    \vec{\nabla}(\rho_f \vec{v}_f.\vec{v}_f) =
+    \vec{\nabla}\boldsymbol{\sigma} +
     \rho_f \vec{g}
     \label{cons_qmov_dif}
 \end{equation}
@@ -161,18 +161,18 @@ Continuando a desenvolver a equação:
     \vec{\nabla}(\rho_f \vec{v}_f.\vec{v}_f) =
     \rho_f \dfrac{\partial \vec{v}_f}{\partial t} + 
     \vec{v}_f \dfrac{\partial \rho_f}{\partial t} + 
-    \rho_f \vec{v}_f.\vec{\nabla}.\vec{v}_f +
-    \vec{v}_f.\vec{\nabla}.(\rho_f \vec{v}_f)
+    \rho_f \vec{v}_f.\vec{\nabla}\vec{v}_f +
+    \vec{v}_f.\vec{\nabla}(\rho_f \vec{v}_f)
     \label{cons_qmov_ini}
 \end{equation}
 \begin{equation}
     \rho_f \left(
     	\dfrac{\partial \vec{v}_f}{\partial t} +
-    	\vec{v}_f.\vec{\nabla}.\vec{v}_f 
+    	\vec{v}_f.\vec{\nabla}\vec{v}_f 
 	\right) +
 	\vec{v}_f \left(
     	\dfrac{\partial \rho_f}{\partial t} +
-    	\vec{\nabla}.(\rho_f \vec{v}_f)
+    	\vec{\nabla}(\rho_f \vec{v}_f)
 	\right)
     \label{cons_qmov_mid}
 \end{equation}
@@ -182,9 +182,9 @@ Portanto, a equação pode ser simplificada para ser escrita como:
 \begin{equation}
     \rho_f \left(
     	\dfrac{\partial \vec{v}_f}{\partial t} + 
-    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+    	\vec{v}_f.\vec{\nabla}\vec{v}_f
 	\right) =
-    \vec{\nabla}.\boldsymbol{\sigma} +
+    \vec{\nabla}\boldsymbol{\sigma} +
     \rho_f \vec{g}
     \label{cons_qmov_fin}
 \end{equation}
@@ -197,10 +197,10 @@ Reescrevendo o tensor de tensões como uma soma de dois tensores, e o substituin
 \begin{equation}
     \rho_f \left(
     	\dfrac{\partial \vec{v}_f}{\partial t} + 
-    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+    	\vec{v}_f.\vec{\nabla}\vec{v}_f
 	\right) =
     -\vec{\nabla}p +
-    \vec{\nabla}.\boldsymbol{\tau} +
+    \vec{\nabla}\boldsymbol{\tau} +
     \rho_f \vec{g}
     \label{cons_qmov_tensor}
 \end{equation}
@@ -209,7 +209,7 @@ onde p é o campo de pressões no fluido, $\mathbf{I}$ é a matriz de identidade
 Novamente é necessário fazer uma hipótese para este escoamento, para que seja possível definir as forças atuantes no fluido. 
 O tensor de tensões viscosas $\boldsymbol{\tau}$ está relacionado as propriedades do fluido, podendo ser definido matematicamente para um fluido homogêneo, isotrópico e newtoniano, como:
 \begin{equation}
-    \boldsymbol{\tau} = \mu_f\left(\vec{\nabla}.\vec{v}_f + \left(\vec{\nabla}.\vec{v}_f \right)^T \right)
+    \boldsymbol{\tau} = \mu_f\left(\vec{\nabla}\vec{v}_f + \left(\vec{\nabla}\vec{v}_f \right)^T \right)
     \label{tau}
 \end{equation}
 onde $\mu_f$ é a viscosidade dinâmica do fluido.
@@ -218,10 +218,10 @@ Substituindo a definição de $\boldsymbol{\tau}$ na \refeq{cons_qmov_tensor}, o
 \begin{equation}
     \rho_f \left(
     	\dfrac{\partial \vec{v}_f}{\partial t} + 
-    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+    	\vec{v}_f.\vec{\nabla}\vec{v}_f
 	\right) =
     -\vec{\nabla}p +
-    \vec{\nabla}.\left(\mu_f\left(\vec{\nabla}.\vec{v}_f + \left(\vec{\nabla}.\vec{v}_f \right)^T \right)\right) +
+    \vec{\nabla}\left(\mu_f\left(\vec{\nabla}\vec{v}_f + \left(\vec{\nabla}\vec{v}_f \right)^T \right)\right) +
     \rho_f \vec{g}
 \end{equation}
 
@@ -229,19 +229,19 @@ Assumindo-se que a viscosidade dinâmica é constante para todo o fluido:
 \begin{equation}
     \rho_f \left(
     	\dfrac{\partial \vec{v}_f}{\partial t} + 
-    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+    	\vec{v}_f.\vec{\nabla}\vec{v}_f
 	\right) =
     -\vec{\nabla}p +
-    \mu_f \vec{\nabla}.\left(\vec{\nabla}.\vec{v}_f + \left(\vec{\nabla}.\vec{v}_f \right)^T \right) +
+    \mu_f \vec{\nabla}\left(\vec{\nabla}\vec{v}_f + \left(\vec{\nabla}\vec{v}_f \right)^T \right) +
     \rho_f \vec{g}
 \end{equation}
 \begin{equation}
     \rho_f \left(
     	\dfrac{\partial \vec{v}_f}{\partial t} + 
-    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+    	\vec{v}_f.\vec{\nabla}\vec{v}_f
 	\right) =
     -\vec{\nabla}p +
-    \mu_f \left(\nabla^2\vec{v}_f + \vec{\nabla}.\left(\vec{\nabla}.\vec{v}_f \right)^T \right) +
+    \mu_f \left(\nabla^2\vec{v}_f + \vec{\nabla}\left(\vec{\nabla}\vec{v}_f \right)^T \right) +
     \rho_f \vec{g}
     \label{tau_last}
 \end{equation}
@@ -250,7 +250,7 @@ Utilizando o que foi obtido na Equação de Continuidade \refeq{continuity_final
 \begin{equation}
     \rho_f \left(
     	\dfrac{\partial \vec{v}_f}{\partial t} + 
-    	\vec{v}_f.\vec{\nabla}.\vec{v}_f
+    	\vec{v}_f.\vec{\nabla}\vec{v}_f
 	\right) =
     -\vec{\nabla}p +
     \mu_f \nabla^2\vec{v}_f +
@@ -258,10 +258,10 @@ Utilizando o que foi obtido na Equação de Continuidade \refeq{continuity_final
     \label{tau_simple}
 \end{equation}
 
-Dividindo-se todos os termos pela massa específica pode-se reescrever a equação \refeq{tau_simple}, resultando-se na forma simplificada da \textit{Equação de Navier-Stoakes} para fluidos newtonianos incompressíveis e com viscosidade constante:
+Dividindo-se todos os termos pela massa específica pode-se reescrever a equação \refeq{tau_simple}, resultando-se na forma simplificada da \textit{Equação de Navier-Stokes} para fluidos newtonianos incompressíveis e com viscosidade constante:
 \begin{equation}
 	\dfrac{\partial \vec{v}_f}{\partial t} + 
-	\vec{v}_f.\vec{\nabla}.\vec{v}_f =
+	\vec{v}_f.\vec{\nabla}\vec{v}_f =
     -\dfrac{1}{\rho_f} \vec{\nabla}p +
     \dfrac{\mu_f}{\rho_f} \nabla^2\vec{v}_f +
     \vec{g}
@@ -271,12 +271,12 @@ Dividindo-se todos os termos pela massa específica pode-se reescrever a equaç�
 %--------------------------------------------------------------
 \section{\textbf{Formulação Corrente-Vorticidade}}
 \label{sec_corr_vort}
-A formulação de corrente-vorticidade é um sistema de equações que providencia um método alternativo de se calcular as propriedades de um escoamento sem solucionar diretamente a equação de Navier-Stoakes \eqref{navier}.
-Isto permite simplificar a solução do problema, pois a Equação de Navier-Stoakes possui um forte acoplamento entre o campo de pressões e o campo de velocidades.
+A formulação de corrente-vorticidade é um sistema de equações que providencia um método alternativo de se calcular as propriedades de um escoamento sem solucionar diretamente a equação de Navier-Stokes \eqref{navier}.
+Isto permite simplificar a solução do problema, pois a Equação de Navier-Stokes possui um forte acoplamento entre o campo de pressões e o campo de velocidades.
 
 Para isso, é utilizada a seguinte identidade vetorial:
 \begin{equation}
-    \vec{v}.\vec{\nabla}.\vec{v} = \vec{\nabla} \dfrac{v^2}{2} - \vec{v}\times\vec{\nabla}\times\vec{v}
+    \vec{v}.\vec{\nabla}\vec{v} = \vec{\nabla} \dfrac{v^2}{2} - \vec{v}\times\vec{\nabla}\times\vec{v}
     \label{ident_vetor} 
 \end{equation}
 
@@ -320,16 +320,16 @@ Substitui-se na equação:
 Rearranjando-se as operações vetoriais, tem-se:
 \begin{equation}
 	\dfrac{\partial \vec{\omega}}{\partial t} +
-	\vec{v}_f.\vec{\nabla}.\vec{\omega} -
-	\vec{\omega}.\vec{\nabla}.\vec{v}_f =
+	\vec{v}_f.\vec{\nabla}\vec{\omega} -
+	\vec{\omega}.\vec{\nabla}\vec{v}_f =
     \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
 \end{equation}
 
-Como a vorticidade é perpendicular ao vetor velocidade, para escoamentos bidimensionais pode-se anular o produto $\vec{\omega}.\vec{\nabla}.\vec{v}_f$ como demonstrado por Pontes e Norberto (2010)\cite{pontes_norberto}.
+Como a vorticidade é perpendicular ao vetor velocidade, para escoamentos bidimensionais pode-se anular o produto $\vec{\omega}.\vec{\nabla}\vec{v}_f$ como demonstrado por Pontes e Norberto (2010)\cite{pontes_norberto}.
 Então encontra-se a \textit{Equação da Vorticidade} para escoamentos de fluidos newtonianos incompressíveis:
 \begin{equation}
 	\dfrac{\partial \vec{\omega}}{\partial t} +
-	\vec{v}_f.\vec{\nabla}.\vec{\omega} =
+	\vec{v}_f.\vec{\nabla}\vec{\omega} =
     \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
     \label{vorticity}
 \end{equation}
@@ -376,7 +376,7 @@ Substituindo os termos de velocidade pelas equações \refeq{corr_x} e \refeq{co
 Então o sistema de corrente-vorticidade é apresentado como:
 \begin{equation}
 	\dfrac{\partial \vec{\omega}}{\partial t} +
-	\vec{v}_f.\vec{\nabla}.\vec{\omega} =
+	\vec{v}_f.\vec{\nabla}\vec{\omega} =
     \dfrac{\mu_f}{\rho_f} \nabla^2 \vec{\omega}
     \label{fluid_eq1}
 \end{equation}
@@ -420,14 +420,14 @@ A principal equação que governa o comportamento do movimento das partículas �
 onde $\sum\vec{F}_{p}$ é o somatório de forças aplicadas a partícula, $m_p$ é a massa e $\vec{v}_p$ a velocidade da partícula.
 
 As forças aplicadas às partículas foram determinadas a partir da equação de \textbf{Basset–Boussinesq–Oseen} (BBO), que descreve as forças sofridas por partículas sob efeito de escoamentos com número de Reynolds \ref{sec_reynolds} pequeno.
-Porém, o número de Reynolds utilizados é diferente do calculado para escoamentos, utiliza-se um valor específico para cada partícula.
+Porém, o número de Reynolds utilizados é diferente do calculado para escoamentos, utiliza-se um valor específico para cada partícula, chamado de Reynolds da partícula.
 \begin{equation}
-    Re_{p} = \dfrac{\rho_p |\left(\vec{v}_{f} - \vec{v}_{p} \right)|_{max} d_{p}}{\mu_f}
+    Re_{p} = \dfrac{\rho_p}{\mu_f} d_{p} \left|\vec{v}_{f} - \vec{v}_{p} \right|_{max}
     \label{reynolds_p}
 \end{equation}
 onde $\rho_p$ é a densidade, $d_p$ o diâmetro e $\vec{v}_{p}$ a velocidade da partícula, e $\vec{v}_{f}$ é a velocidade do escoamento na mesma posição da partícula.
 
-Como mencionado, as forças da equação de BBO representam fielmente o comportamento real de partículas para valores de Reynolds menores que $1$,  ou seja, $Re_{p} < 1$.
+Como mencionado, as forças da equação de BBO representam fielmente o comportamento das partículas para valores de Reynolds da partícula menores que $1$,  ou seja, $Re_{p} < 1$.
 
 Nem todas as forças apresentadas na equação BBO foram inseridas no código de simulação.
 Elas foram inseridas sequencialmente durante o desenvolvimento do código, seguidas de testes para verificar sua implementação.
@@ -437,9 +437,10 @@ Foram escolhidas apenas as principais forças, apresentadas a seguir, por Crowe 
         Também conhecida como força Peso, criada pelo campo gravitacional do planeta aplicado aos corpos com massa.
         Seu valor é calculado através das massas dos corpos, a distância entre seus centros de massa e uma constante universal.
         Porém, para simplificar o problema, pode-se assumir que a distância entre eles é constante e igual ao raio do planeta Terra.
-        Portanto, pode-se assumir que o valor da força será sempre constante e proporcional a uma aceleração constante aplicada a massa da partícula, o que torna esta a força mais simples de se calcular:
+        Portanto, pode-se assumir que o valor da força será sempre constante e proporcional a uma aceleração constante aplicada a massa da partícula menos a massa do fluído deslocado pelo volume da mesma, a chamada força de empuxo.
+        Isto torna esta a força mais simples de se calcular:
         \begin{equation}
-            \vec{F}_{grav} = m_p \vec{g}
+            \vec{F}_{grav} = V_p (\rho_p - \rho_f) \vec{g}
             \label{grav}
         \end{equation}
         onde $\vec{g}$ é tomada como a aceleração constante da gravidade na superfície terrestre com valor definido de $\vec{g} = (0, -9.80665)m/s^2$.

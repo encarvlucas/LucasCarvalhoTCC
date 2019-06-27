@@ -23,7 +23,7 @@ Isto é, o código é centralizado em classes que possuem propriedades e método
 Por exemplo, as classes \verb|TccLib.Mesh| e \verb|TccLib.Particle| representam os conceitos físicos de malha e partícula respectivamente.
 Estas classes criam objetos que contém suas propriedades individuais, como as densidades $\rho_f$ e $\rho_p$, e permitem um melhor entendimento do fenômeno.
 
-Este código foi pensado em ser utilizado como uma biblioteca pública com acesso liberado a qualquer um interessado \href{https://github.com/encarvlucas/LucasCarvalhoTCC}{(link do projeto no GitHub)}.
+Este código foi pensado em ser utilizado como uma biblioteca pública com acesso liberado a qualquer um interessado \href{https://github.com/encarvlucas/LucasCarvalhoTCC}{(https://github.com/encarvlucas/LucasCarvalhoTCC)}.
 Por isso, as funções e métodos possuem diversas opções de chamadas.
 Mais informações estão disponíveis através do comando interno:
 \begin{verbatim}
@@ -39,6 +39,9 @@ Demonstra-se a seguir um exemplo de uso da biblioteca:
     # Importação da malha ou coordenadas de uma nova
     malha = TccLib.Mesh("arquivo_da_malha.msh")
     # ou malha = TccLib.Mesh([coordenadas (x, y)]
+    
+    # Adição de partículas
+    malha.add_particle(propriedades da partícula)
 
     # Definição das condições de contorno
     malha.new_boundary_condition("nome da propriedade",
@@ -50,8 +53,6 @@ Demonstra-se a seguir um exemplo de uso da biblioteca:
     # Chamada para a função de solução
     v_x, v_y = TccLib.solve_velocity_field(malha)
 
-    # Adição de partículas
-    malha.add_particle(propriedades da partícula)
     # Loop de movimentação das partículas
     for t in time_list:
         TccLib.move_particles(malha, (v_x, v_y))

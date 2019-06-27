@@ -41,6 +41,9 @@ Após encontrar a forma fraca, ela é transformada em sua versão matricial para
 Em seguida estas matrizes são adicionadas a uma matriz global que representa a componente de cada nó presente no domínio.
 Então são aplicadas as condições de contorno e o sistema é resolvido, obtendo-se o valor da variável da equação governante em cada nó da malha.
 
+Assim como estudado por Carnevale (2018)\cite{carnevale}, será utilizada a formulação de corrente-vorticidade como uma alternativa a equação de Navier-Stokes.
+Embora neste trabalho, há um foco maior em escoamentos multifásicos com partículas e na aplição do código como uma biblioteca livre, e portanto seu código é desenvolvido de outra maneira.
+
 Dentro da seleção do comportamento da malha pode-se escolher entre esquemas que consideram a malha fixa, chamada de formulação Euleriana, esquemas com a malha móvel, chamada de formulação Lagrangiana, e esquemas mistos como o chamado Lagrangiano-Euleriano Arbitrário (ALE) como explicado por Anjos et. al. (2015)\cite{ALE-2015}.
 Neste trabalho será utilizado o esquema de Euler, onde a malha é considerada estacionária e o valor das variáveis de campo de interesse são calculados na posição dos nós da malha.
 Para a geração dos pontos e elementos da malha será utilizado o \textit{software open source \href{http://gmsh.info}{Gmsh}}, como sugerido por Geuzaine e Remacle (2009)\cite{gmsh}.
@@ -105,6 +108,11 @@ A \ref{JAC-Pump} mostra os efeitos do desgaste causado pelo efeito da cavitaçã
 
 Blake et al. (1987)\cite{Blake-1987} estudou o comportamento da cavitação tomando o ponto de vista das bolhas criadas como partículas no escoamento.
 Através desta interpretação, pode-se realizar simulações dos efeitos da cavitação com modelos de escoamentos particulados.
+Porém neste trabalho não será realizada esta análise, visando estudar partículas sólidas e sem tratar dos critérios de geração das bolhas estudados em trabalhos sobre cavitação.
+
+A simulação de partículas em turbomáquinas já fora estudado por Silveira (2014)\cite{silveira}, cujo trabalho estudou o comportamento de partículas presentes em um escoamento dentro de uma turbomáquina utilizando o Método de Elementos Finitos.
+Contudo, neste trabalho não será introduzida uma componente de movimentação do domínio, removendo assim uma componente de força inercial de Coriolis.
+Porém, tomaram-se como referências as geometrias de impelidores utilizadas pelo mesmo.
 
 
 \section{\textbf{Programação Orientada a Objetos}}

@@ -39,7 +39,7 @@ Isto foi feito para poupar tempo de computação, para casos que possuem um limi
 
 A execução do código e a computação dos resultados foram realizados em um computador de uso pessoal com as seguintes especificações:
 \begin{itemize}
-    \item Dell Latitude E6410 com processador Intel® Core™ i5 CPU M 520 2.40GHz com 4 núcloes e 4Gb de memória RAM.
+    \item Dell Latitude E6410 com processador Intel® Core™ i5 CPU M 520 2.40GHz com 4 núcleos e 4Gb de memória RAM.
           O sistema operacional Ubuntu 16.04 LTS e compilador Python 3.5.
 \end{itemize}
 
@@ -261,7 +261,7 @@ O erro relativo médio calculado para este caso foi de $0.31\%$ e com desvio pad
 \label{sec_poiseuille}
 Como indicado anteriormente, foi utilizado o Método de Elementos Finitos para a solução do campo de velocidades no espaço, e o Método de Diferenças Finitas no tempo.
 
-Este é um dos primeiros exemplos dados ao estudar-se a mecânica dos fluidos e a equação de Navier-Stoakes\eqref{navier}, pois trata-se de uma configuração geométrica muito simples.
+Este é um dos primeiros exemplos dados ao estudar-se a mecânica dos fluidos e a equação de Navier-Stokes\eqref{navier}, pois trata-se de uma configuração geométrica muito simples.
 O escoamento de Poiseuille também é conhecido como escoamento entre placas paralelas, já que essa é exatamente a descrição de sua forma e as placas são tomadas como estacionárias em relação ao fluido.
 
 O escoamento ocorre entre duas placas paralelas de comprimento infinito com uma distância constante entre elas.
@@ -366,7 +366,7 @@ O domínio foi discretizado utilizando uma malha triangular linear não estrutur
 \end{figure}
 
 A validação das forças é feita individualmente, para que se possa comparar os valores do movimento simulado da partícula com a curva da solução analítica esperada.
-Os parâmetros definidos para as simulações foram: uma partícula com diâmetro $d_p=0.001m$, densidade $\rho_p=30000Kg/m^3$, variação de tempo $dt=1.5625e^{-6}s$, tempo total $t_{max}=0.4s$, em um fluido com densidade $\rho_p=1000Kg/m^3$ e viscosidade dinâmica $0.89e^{-3}Pa.s$.
+Os parâmetros definidos para as simulações foram: uma partícula com diâmetro $d_p=0.001m$, densidade $\rho_p=30000Kg/m^3$, variação de tempo $dt=1.5625\times E^{-6}s$, tempo total $t_{max}=0.4s$, em um fluido com densidade $\rho_p=1000Kg/m^3$ e viscosidade dinâmica $0.89\times E^{-3}Pa.s$.
 
 %---------------------------------------------------------------------------------------------Primeiro Exemplo
 \subsection{\textbf{Força Gravitacional}}
@@ -386,7 +386,7 @@ Para a força gravitacional, utilizou-se uma malha com as condições de contorn
 A velocidade inicial tomada foi $v_{y0}=0$.
 Na \ref{grav_comp} pode-se observar a evolução da posição da partícula no eixo $y$ em função do tempo.
 Foi utilizado um campo de velocidades com valor constante de $U=2m/s$.
-O erro relativo médio calculado para este caso foi de $7.706e^{-4}\%$ e com desvio padrão de $1.753e^{-3}\%$.
+O erro relativo médio calculado para este caso foi de $7.706\times E^{-4}\%$ e com desvio padrão de $1.753\times E^{-3}\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -410,7 +410,7 @@ Neste caso, a validação é feita para analisar o comportamento da força em re
 
 A solução analítica para a posição da partícula sob efeito da força de arrasto no eixo $x$ foi obtida através do método da variação de parâmetros, com auxílio da ferramenta \href{https://www.wolframalpha.com}{\textit{WolframAlpha}}, mostrada a seguir:
 \begin{equation}
-    x(t) = \dfrac{m_p}{c_{d}} (U - v_{x0}) \left(1 - e^{-\frac{c_{d}}{m_p}t}\right) + v_{x0}t + p_{x0}
+    x(t) = \dfrac{m_p}{c_{d}} (U - v_{x0}) \left(1 - \times E^{-\frac{c_{d}}{m_p}t}\right) + v_{x0}t + p_{x0}
     \label{drag_sol} 
 \end{equation}
 define-se $c_{d}$ como:
@@ -424,7 +424,7 @@ Foi utilizada a malha padrão com as condições de contorno e a posição inici
 Demonstra-se na \ref{drag_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
 Foi utilizado um campo de velocidades com valor constante de $U=2m/s$.
 Pode-se observar que a partícula é acelerada até atingir a velocidade do fluído, como se era esperado.
-O erro relativo médio calculado para este caso foi de $3.083e^{-5}\%$ e com desvio padrão de $1.6723e^{-5}\%$.
+O erro relativo médio calculado para este caso foi de $3.083\times E^{-5}\%$ e com desvio padrão de $1.6723\times E^{-5}\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -446,7 +446,7 @@ Esta é a mesma força que possibilita o voo dos aviões, pois os perfis de suas
 A força de sustentação possui a seguinte solução analítica para a posição da partícula no eixo $y$ semelhante à força de arrasto \eqref{lift_sol}, contudo, com diferentes constantes.
 Estã solução foi obtida através do método de variação de parâmetros, realizado com a ferramenta \href{https://www.wolframalpha.com}{\textit{WolframAlpha}}, resultando em:
 \begin{equation}
-    y(t) = \dfrac{m_p}{c_l} (0 - v_{y0}) \left(1 - e^{-\frac{c_l}{m_p}t}\right) + v_{y0}t + p_{y0}
+    y(t) = \dfrac{m_p}{c_l} (0 - v_{y0}) \left(1 - \times E^{-\frac{c_l}{m_p}t}\right) + v_{y0}t + p_{y0}
     \label{lift_sol} 
 \end{equation}
 define-se $c_l$ como:
@@ -470,7 +470,7 @@ As condições utilizadas são:
 Demonstra-se na \ref{lift_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
 Foi utilizado um valor base para o campo de velocidades de $U=2m/s$, uma velocidade inicial $v_{y0}=-0.1m/s$, e um gradiente de velocidades no eixo $y$ de $\tfrac{dv_x}{dy}=100m/m.s$ para auxiliar a comparação.
 Também foi incluída uma curva que demostra a trajetória da partícula sem o efeito da força de sustentação, para que se possa notar que a partícula é desacelerada e não acompanha esta curva.
-O erro relativo médio calculado para este caso foi de $1.9241e^{-6}\%$ e com desvio padrão de $1.1167e^{-6}\%$.
+O erro relativo médio calculado para este caso foi de $1.9241\times E^{-6}\%$ e com desvio padrão de $1.1167\times E^{-6}\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
@@ -504,7 +504,7 @@ Novamente, foi utilizado a mesma malha e condições dos casos anteriores confor
 Revela-se na \ref{mass_comp} a evolução da posição da partícula no eixo $x$ em função do tempo.
 Foi utilizado um campo de velocidades que varia no tempo com valor constante, como explicado anteriormente, na forma de $U=2m/s+a_x t$, onde $a_x=1m/s^2$.
 Pode-se observar que a partícula é acelerada até atingir a velocidade do fluido, como se era esperado.
-O erro relativo médio calculado para este caso foi de $6.6574e^{-3}\%$ e com desvio padrão de $1.1362e^{-3}\%$.
+O erro relativo médio calculado para este caso foi de $6.6574\times E^{-3}\%$ e com desvio padrão de $1.1362\times E^{-3}\%$.
 \begin{figure}[H]
     \centering
     \stackunder{
