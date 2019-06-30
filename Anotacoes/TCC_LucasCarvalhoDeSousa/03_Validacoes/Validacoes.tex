@@ -1,8 +1,8 @@
 \chapter{VALIDAÇÃO DO CÓDIGO NÚMERICO}
 \label{validacao}
 \section{\textbf{Introdução}}
-Neste capítulo serão apresentados as comparações realizadas entre os resultados numéricos obtidos para x casos amplamente conhecidos na literatura e a solução analítica unidimensional dos mesmos.
-Como a solução numérica é obtida para problemas bidimensionais, é preciso pegar uma seção transversal do domínio e interpolar  resultado, produzindo, assim, uma aproximação.
+Neste capítulo serão apresentadas as comparações realizadas entre os resultados numéricos obtidos para $9$ casos amplamente conhecidos na literatura e a solução analítica unidimensional dos mesmos.
+Como a solução numérica é obtida para problemas bidimensionais, é preciso pegar uma seção transversal do domínio e interpolar o resultado, produzindo, assim, uma aproximação.
 Dessa forma, a quantificação do erro relativo médio se faz necessária, com o objetivo de apresentar a acurácia do código numérico. O erro relativo entre a solução numérica e a solução analítica é calculado pela equação \eqref{error_eq}:
 \begin{equation}
     er_i = \frac{|(val_a)_i - (val_n)_i|}{(val_a)_i}
@@ -30,7 +30,7 @@ A estrutura do algoritmo de solução nos casos propostos dessa seção é a mes
 Dessa forma, podemos confirmar a correta aplicação das condições de contorno da vorticidade que deve ser calculada em cada passo de tempo.
 %No final da seção, apresentamos um caso onde o número de Reynolds é aumentado até as oscilações numéricas serem visualizadas e, assim, verificar o limite de aplicabilidade do código.
 
-Finalmente, na seção \ref{sec_particulas}, é apresentado os clássicos casos de dinâmica em partículas com o intuito de validar as forças de gravidade, arrasto e sustentação isoladamente e, com isso, possibilitar uma correção pontual no modelo quando
+Finalmente, na seção \ref{sec_particulas}, são apresentados os clássicos casos de dinâmica em partículas com o intuito de validar as forças de gravidade, arrasto e sustentação isoladamente e, com isso, possibilitar uma correção pontual no modelo quando
 necessário, além de permitir observar com maior precisão a influência de cada uma das forças sobre as partículas.
 
 Para casos com variáveis temporais, foi utilizado um critério de parada de $10^{-5}$ de variação de valores entre dois intervalos de tempo consecutivos.
@@ -82,7 +82,18 @@ As condições de contorno e o domínio bidimensional utilizados na simulação 
 \end{figure}
 
 O domínio foi discretizado utilizando uma malha triangular linear não estruturada com 3162 elementos e 568 nós.
-A malha foi criada pelo o software GMSH como proposto por Geuzaine e Remacle (2009)\cite{gmsh} e importada ao código numérico.
+A malha foi criada pelo o software GMSH como proposto por Geuzaine e Remacle (2009)\cite{gmsh} e importada ao código numérico, apresentada na \ref{laplace_mesh}.
+Esta malha foi também utilizada para os demais problemas de validação em sólidos.
+
+\begin{figure}[H]
+    \centering
+    \stackunder{
+        \includegraphics[width=.7\linewidth]{figures/Laplace_Dirichlet_mesh.png}
+    } {\raggedleft \scriptsize Fonte: Autor.}
+    \caption{Malha do domínio gerada para o problema de Laplace \ref{sec_laplace_dir}.}
+    \label{laplace_mesh}
+\end{figure}
+
 A \ref{laplace_d_3d} apresenta o campo de temperatura, onde os eixos $x$ e $y$ representam o domínio e o eixo $z$ é a distribuição de temperatura, e que é possível observar que o campo de temperatura possui um perfil linear variando de 0 (cor azul) a 1 (cor vermelha).
 \begin{figure}[H]
     \centering
@@ -353,8 +364,8 @@ O campo de velocidades é arbitrado e não calculado como anteriormente.
 Conforme indicado, foi utilizado o Método de Diferenças Finitas para discretização e solução da dinâmica das partículas.
 
 Na \ref{force_bc}, é apresentado o domínio utilizado para os casos de validação das forças que atuam sobre a partícula, como também o campo de velocidade do fluido e a velocidade da partícula, além da sua posição inicial.
-Para o caso da força de sustentação, foi necessário a utilização de um outro campo de velocidade conforme será apresentado mais a frente.
-Enquanto que para o caso da força virtual, foi necessário assumir que o campo de velocidade do fluido dependesse da variável temporal.
+Para o caso da força de sustentação, foi necessária a utilização de um outro campo de velocidade conforme será apresentado mais a frente.
+Enquanto que para o caso da força virtual, foi preciso assumir que o campo de velocidade do fluido dependesse da variável temporal.
 O domínio foi discretizado utilizando uma malha triangular linear não estruturada com 2304 elementos e 417 nós.
 \begin{figure}[H]
     \centering
@@ -400,7 +411,7 @@ O erro relativo médio calculado para este caso foi de $7.706\times E^{-4}\%$ e 
 \subsection{\textbf{Força de Arrasto}}
 \label{sec_drag}
 A força de arrasto é a principal fonte de movimentação de uma partícula quando submersa em um fluido em movimento.
-A partícula é movimentada pela força de cisalhamento do fluido em transito que exerce atrito sobre sua superfície.
+A partícula é movimentada pela força de cisalhamento do fluido em trânsito que exerce atrito sobre sua superfície.
 Isto causa um efeito de arrasto, ou carregamento, devido a condição de não escorregamento da superfície da partícula.
 
 Como pode-se analisar pela equação da força \eqref{drag_sol}, quanto maior for a diferença entre os vetores de velocidade da partícula e do fluido maior será a força excercida sobre ela.

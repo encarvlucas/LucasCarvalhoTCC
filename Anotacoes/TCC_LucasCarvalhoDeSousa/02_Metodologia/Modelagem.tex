@@ -132,7 +132,7 @@ Aplica-se agora o Teorema de Green nos termos difusivos das equações:
     .\vec{n} d\Gamma
 \end{equation}
 onde $\vec{n}$ é um vetor normal unitário, orientado para o exterior do contorno $\Gamma$.
-Como as condições de contorno definidas para o problema em \ref{form_forte} apontam apenas condições de Dirichlet, isto é, valores fixos no contorno, pode-se assumir como hipótese que $\delta=0$ e $\phi=0$ em todo o contorno $\Gamma$.
+Como as condições de contorno definidas para o problema em \ref{form_forte} apontam apenas condições de Dirichlet, isto é, valores fixos no contorno, então as funções são definidas com valores $\delta=0$ e $\phi=0$ em todo o contorno $\Gamma$.
 Assim, a integral em $\Gamma$ é nula e os termos difusivos são anulados:
 \begin{equation}
     -\int_{\Omega}
@@ -382,7 +382,8 @@ Então as equações do sistema em suas formas variacionais discretizadas no esp
     d\Omega = 0
 \end{equation}
 
-Pode-se remover as componentes da velocidade do fluido $v_{f,x}$ e $v_{f,y}$ da equação \refeq{temp1}, pois serão utilizados os componentes da velocidade no último passo de tempo para estes valores, tornando-se a equação linear.
+Pode-se remover as componentes da velocidade do fluido $v_{f,x}$ e $v_{f,y}$ da equação \refeq{temp1}, pois serão utilizados os componentes da velocidade no último passo de tempo para estes valores, tornando a equação linear.
+Esta formulação utiliza o método implícito para a discretização do problema.
 
 Retiram-se então os somatórios das funções interpoladoras das integrais, e como $\sum_{j=1}^{n_p} \delta_j \neq 0$, $\sum_{j=1}^{n_p} \phi_j \neq 0$ e $\sum_{j=1}^{n_p} \xi_j \neq 0$ as equações de governo serão:
 \begin{align}
@@ -469,8 +470,7 @@ Retiram-se então os somatórios das funções interpoladoras das integrais, e c
 \subsection{\textbf{Malha Computacional}}
 A malha utilizada pode ser estruturada, com nós equidistantes, ou não estruturada, com nós posicionados a critério do criador da malha.
 É comum utilizar malhas não estruturadas com zonas de maior interesse com elementos menores, para se obter informações mais precisas nestes locais.
-Em certos casos de equações com acoplamentos fortemente ligados, se torna necessário utilizar elementos com mais informações atreladas, como elementos quadráticos ou cúbicos.
-Este é o caso da solução da equação de Navier-Stokes.
+No caso da equação de Navier-Stokes, que possui um acoplamento fortemente ligado entre a pressão e a velocidade, se torna necessário utilizar elementos com mais informações atreladas, como elementos quadráticos ou cúbicos.
 Porém, para evitar esta restrição, este trabalho utilizou a formulação de corrente-vorticidade, que desvia deste problema.
 Podendo então utilizar elementos lineares e simplificando sua implementação.
 
@@ -504,7 +504,7 @@ A \ref{element} mostra como são os elementos utilizados:
 Pode-se notar na \ref{element} que o elemento de índice $e_n$ é delimitado pelos nós $p_i$, $p_j$ e $p_k$.
 A função de interpolação aplicada entre os nós é uma função linear entre suas posições.
 
-Então pode-se escrever as equações do problema em sua forma matricial como:
+Então podem-se escrever as equações do problema em sua forma matricial como:
 \begin{equation}
     \mathbf{M}
     \dfrac{\partial \omega}{\partial t} +
@@ -696,17 +696,18 @@ Este é o termo $\tfrac{\partial \omega}{\partial t}$, e ele é formado utilizan
  \begin{equation}
     \dfrac{\partial \omega}{\partial t} \approx
     \frac{
-        \omega(t + dt) -
+        \omega(t + \Delta t) -
         \omega(t)
-    }{dt}
+    }{\Delta t}
 \end{equation}
-onde $dt$ é um passo de tempo infinitamente pequeno.
+onde $\Delta t$ é um passo de tempo infinitamente pequeno.
 
-Será utilizada a notação de índice de variáveis no tempo como sobrescrito, onde $t_n$ é o índice do passo no tempo, $\omega^{t_{n+1}} = \omega(t_n + dt)$ e $\omega^{t_{n}} = \omega(t_n)$.
+Este trabalho utiliza o método de Euler implícito para a discretização da equação de vorticidade, este método permite que o sistema atinja a convergência com maior garantia, independente do tamanho dos elementos da malha ou do passo de tempo.
+Será utilizada a notação de índice de variáveis no tempo como sobrescrito, onde $t_n$ é o índice do passo no tempo, $\omega^{t_{n+1}} = \omega(t_n + \Delta t)$ e $\omega^{t_{n}} = \omega(t_n)$.
 Então a discretização final do sistema corrente-vorticidade é:
 \begin{equation}
     \left(
-        \dfrac{\mathbf{M}}{\Delta t} +
+        \dfrac{\mathbf{M}}{dt} +
         v_{f,x}^{t_{n}}
         \mathbf{G_x}+
         v_{f,y}^{t_{n}}
@@ -718,7 +719,7 @@ Então a discretização final do sistema corrente-vorticidade é:
         \right)
     \right)
     \omega^{t_{n+1}} = 
-    \dfrac{\mathbf{M}}{\Delta t}
+    \dfrac{\mathbf{M}}{dt}
     \omega^{t_{n}}
     \label{last_w}
 \end{equation}
@@ -748,7 +749,7 @@ Então a discretização final do sistema corrente-vorticidade é:
     \psi^{t_{n+1}}
     \label{last_vy}
 \end{equation}
-onde $\Delta t$ é o passo de tempo da simulação.
+onde $dt$ é o passo de tempo da simulação.
 
 %--------------------------------------------------------------
 \subsection{\textbf{Discretização da Forças Aplicadas às Partículas}}

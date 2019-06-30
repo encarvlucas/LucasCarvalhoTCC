@@ -88,7 +88,7 @@ tomada para um \textbf{fluido incompressível}.
 %--------------------------------------------------------------
 \section{\textbf{Conservação de Quantidade de Movimento}}
 \label{sec_cons_qmov}
-A conservação de quantidade de movimento é similar a conservação de massa, porém, é um termo vetorial.
+A conservação de quantidade de movimento é similar a conservação de massa, porém, é uma equação vetorial.
 Para o caso deste trabalho, é utilizada a versão linear da conservação de quantidade de movimento.
 Portanto, tem-se que a conservação da quantidade de movimento determina que a \textbf{taxa de acúmulo de quantidade de movimento linear dentro do volume de controle} mais \textbf{o fluxo de quantidade de movimento linear que atravessa a fronteira do volume de controle} é igual a \textbf{soma das forças aplicadas à superfície da fronteira do volume de controle e as forças do volume}.
 
@@ -412,6 +412,7 @@ onde $v_{fmax}$ é a maior velocidade do campo de velocidades do fluido, e $D$ �
 %--------------------------------------------------------------
 \section{\textbf{Forças Exercidas em Partículas}}
 \label{sec_eq_part}
+Neste trabalho as partículas são tratadas de maneira pontual, isto é, são tomadas como esferas sólidas perfeitas. 
 A principal equação que governa o comportamento do movimento das partículas é obtida a partir da 2ª Lei de Newton como demonstrado por Crowe et al. (2011)\cite{crowe}.
 \begin{equation}
     \sum\vec{F}_{p} = \dfrac{d(m_p\vec{v}_p)}{dt}
@@ -419,7 +420,7 @@ A principal equação que governa o comportamento do movimento das partículas �
 \end{equation}
 onde $\sum\vec{F}_{p}$ é o somatório de forças aplicadas a partícula, $m_p$ é a massa e $\vec{v}_p$ a velocidade da partícula.
 
-As forças aplicadas às partículas foram determinadas a partir da equação de \textbf{Basset–Boussinesq–Oseen} (BBO), que descreve as forças sofridas por partículas sob efeito de escoamentos com número de Reynolds \ref{sec_reynolds} pequeno.
+As forças aplicadas às partículas foram determinadas a partir da equação de \textbf{Basset–Boussinesq–Oseen} (BBO), que descreve as forças sofridas por partículas sob efeito de escoamentos em estado laminar.
 Porém, o número de Reynolds utilizados é diferente do calculado para escoamentos, utiliza-se um valor específico para cada partícula, chamado de Reynolds da partícula.
 \begin{equation}
     Re_{p} = \dfrac{\rho_p}{\mu_f} d_{p} \left|\vec{v}_{f} - \vec{v}_{p} \right|_{max}
@@ -455,11 +456,12 @@ Foram escolhidas apenas as principais forças, apresentadas a seguir, por Crowe 
         \end{equation}
 
         Pode-se observar seu comportamento presente no termo de velocidade relativa $\left(\vec{v}_{f} - \vec{v}_{p} \right)$ da equação \refeq{drag}.
-        Este termo causa o efeito de aproximar a velocidade da partícula à velocidade do fluido já que torna a força proporcionalmente maior quanto mais afastadas elas se encontrarem.
+        Este termo causa o efeito de trazer a velocidade da partícula à velocidade do fluido já que torna a força proporcionalmente maior quanto mais afastadas elas se encontrarem.
         E o sinal permite que caso a partícula esteja mais rápida ela seja desacelerada e o inverso se ela se encontrar mais lenta. 
 
     \item \textbf{Força de Sustentação}:
-        A força de sustentação é uma componente que tende a mover a partícula em direções perpendiculares a seu movimento principal.
+        A força de sustentação é uma componente que tende a mover um corpo quando existe um gradiente de velocidades do escoamento entre o seu contorno.
+        A geometria do corpo pode causar um diferencial entre a velocidade do fluido ao seu redor, como ocorre na asa de um avião e este efeito que causa a força exercida para elevação do avião.
         Ela possui várias formas de ser calculada, sendo nomeada para cada caso.
 
         Por exemplo, a \textbf{Força de Magnus} está relacionada a rotação, ou velocidade angular, presente na partícula.

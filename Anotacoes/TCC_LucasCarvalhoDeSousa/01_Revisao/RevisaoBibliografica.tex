@@ -5,7 +5,7 @@ Nesta seção é apresentada a literatura utilizada, analisando-se as partes per
 
 \section{\textbf{Método de Elementos Finitos}}
 \label{sec_rev_MEF}
-A representação matemática de fenômenos físicos é feita por equações, para certos casos esta representação pode ser realizada por uma equação linear simples, em outras situações ela é composta por equações diferenciais.
+A representação matemática de fenômenos físicos é feita por equações, para certos casos esta representação pode ser realizada por uma equação algébrica, em outras situações ela é composta por equações diferenciais.
 
 Infelizmente, nem todas equações possuem soluções analíticas, isto é, soluções contínuas em formas de equações.
 Nestes casos, uma forma de encontrar algo que represente bem as observações reais realizadas é a solução numérica.
@@ -29,10 +29,10 @@ Um grupo de nós gera o que é chamado de elemento, estes elementos podem estar 
 O espaçamento entre os nós pode ser constante ou não, estruturada e não-estruturada, respectivamente.
 O domínio onde estes elementos são definidos e estão contidos é chamado de malha.
 
-A metodologia deste método, de acordo com Lewis et. al. (2004)\cite{lewis}, consiste na reformulação da equação de governo no que é chamada de forma fraca.
+A execução deste método, de acordo com Lewis et. al. (2004)\cite{lewis}, consiste na reformulação da equação de governo no que é chamada de forma fraca.
 Esta forma é obtida realizando-se primeiro a conversão do problema para a forma forte, que se trata da avaliação das equações com funções peso atribuídas.
 Estas funções peso são arbitrárias e são escolhidas de acordo com o método de discretização utilizado.
-Durante a conversão das equações para a forma forte, surgem as chamadas funções base, de forma ou interpoladoras, estas servem como determinadores das componentes do valor da função em cada nó dentro do elemento.
+Durante a elaboração das equações na forma forte, surgem as chamadas funções base, de forma ou interpoladoras, estas servem como determinadores das componentes do valor da função em cada nó dentro do elemento.
 Existem diversos esquemas para a escolha das funções de peso, os mais comuns na literatura são os esquemas de: Galerkin, Taylor-Galerkin e Petrov-Galerkin.
 Neste trabalho será utilizado o método de Galerkin, que define as funções de peso com mesmo valor das funções de base.
 Em seguida, a formulação forte é integrada sobre o domínio para se encontrar a forma fraca do problema.
@@ -66,10 +66,10 @@ Estes usados bastante em trocadores de calor, para melhorar sua eficiência de t
 Elghobashi et al. (1991)\cite{Elghobashi-1991} estuda o comportamento de escoamentos particulados demonstrando o efeito da turbulência na simulação de escoamentos multifásicos.
 
 Como apresentado por Balachandar et al. (2010)\cite{Balachandar-2010}, os valores da fração de volume ocupada pela fase dispersa e a razão entre a massa da fase dispersa e a massa da fase líquida servem como indicadores do nível de interação entre as fases.
-Para valores muito pequenos, o efeito dominante é do escoamento, portanto, neste caso pode-se considerar apenas os efeitos do fluido sobre as partículas, chamado de \textit{one-way flow}.
+Para valores muito pequenos, o efeito dominante é do escoamento, portanto, neste caso pode-se considerar apenas os efeitos do fluido sobre as partículas, chamado de \textit{one-way coupling}.
 Para casos com valores maiores, as partículas tomam um papel mais significativo no escoamento e é preciso fazer uma ligação recíproca entre os mesmos.
-Portanto, recalcula-se o escoamento considerando os efeitos das partículas no fluido, conhecido como de \textit{two-way flow}.
-Finalmente, quando estes valores forem mais elevados a fase particulada toma um papel importante no comportamento e torna-se necessário considerar até os efeitos de outras partículas sobre cada uma delas, como colisão, aglomeração e quebra, denominado por Elghobashi et al. (1994)\cite{Elghobashi-1994} de \textit{four-way flow}.
+Portanto, recalcula-se o escoamento considerando os efeitos das partículas no fluido, conhecido como de \textit{two-way coupling}.
+Finalmente, quando estes valores forem mais elevados a fase particulada toma um papel importante no comportamento e torna-se necessário considerar até os efeitos de outras partículas sobre cada uma delas, como colisão, aglomeração e quebra, denominado por Elghobashi et al. (1994)\cite{Elghobashi-1994} de \textit{four-way coupling}.
 
 Para a modelagem das forças atuando sobre cada partícula no escoamento foi utilizada a equação \textbf{Basset–Boussinesq–Oseen} (BBO), apresentada por Shao-Lee Soo et al. (1999)\cite{ShaoLeeSoo-1999}.
 Esta equação é subdivida em várias forças atuantes, como a gravidade, arrasto, massa virtual, entre outras.
@@ -88,14 +88,14 @@ A sua presença causa um desgaste acelerado nas regiões radiais da turbina, com
 Estes trabalhos lidam diretamente com os efeitos da colisão das partículas, utilizando modelos que representam o comportamento delas após o choque.
 
 Entrando na área de sólido-líquido, Uzol et al. (2002)\cite{Uzol-2002} fez um estudo mostrando o escoamento de uma turbomáquina utilizando partículas inseridas e um velocímetro de imagem para acompanhar seu trajeto.
-Este trabalho não estuda o especificamente um escoamento particulado experimental, porém, utiliza alguns exemplos como ferramenta para visualizar seu comportamento para casos em geral.
+Este trabalho não estuda especificamente um escoamento particulado experimental, porém, utiliza alguns exemplos como ferramenta para visualizar seu comportamento para casos em geral.
 
-Em Ghenaiet et al. (2005)\cite{Ghenaiet-2005} é estudado com mais profundidade os efeitos dos escoamentos particulados em turbomáquinas com líquidos.
-Neste caso, é estudado os efeitos da degradação causada por partículas de areia ingeridas pelo escoamento no desempenho de uma turbomáquina axial.
+Em Ghenaiet et al. (2005)\cite{Ghenaiet-2005} são estudados com mais profundidade os efeitos dos escoamentos particulados em turbomáquinas com líquidos.
+Neste caso, são estudados os efeitos da degradação causada por partículas de areia ingeridas pelo escoamento no desempenho de uma turbomáquina axial.
 Foi criado um modelo preditivo e demonstrada uma correlação entre o tamanho das partículas e a velocidade da degradação causada.
 
 A causa mais comum de erosão em impelidores de turbomáquinas trabalhando com líquidos é a cavitação.
-A cavitação é a formação de bolhas de ar devido a uma queda local na pressão que logo após serem geradas implodem, gerando ondas de vibração e podendo danificar locais próximos.
+A cavitação é a formação de bolhas de vapor devido a uma queda local na pressão que logo após serem geradas implodem, gerando ondas de vibração e podendo danificar locais próximos.
 A \ref{JAC-Pump} mostra os efeitos do desgaste causado pelo efeito da cavitação em uma bomba.
 \begin{figure}[H]
     \centering
@@ -107,7 +107,7 @@ A \ref{JAC-Pump} mostra os efeitos do desgaste causado pelo efeito da cavitaçã
 \end{figure}
 
 Blake et al. (1987)\cite{Blake-1987} estudou o comportamento da cavitação tomando o ponto de vista das bolhas criadas como partículas no escoamento.
-Através desta interpretação, pode-se realizar simulações dos efeitos da cavitação com modelos de escoamentos particulados.
+Através desta interpretação, podem-se realizar simulações dos efeitos da cavitação com modelos de escoamentos particulados.
 Porém neste trabalho não será realizada esta análise, visando estudar partículas sólidas e sem tratar dos critérios de geração das bolhas estudados em trabalhos sobre cavitação.
 
 A simulação de partículas em turbomáquinas já fora estudado por Silveira (2014)\cite{silveira}, cujo trabalho estudou o comportamento de partículas presentes em um escoamento dentro de uma turbomáquina utilizando o Método de Elementos Finitos.
@@ -117,7 +117,7 @@ Porém, tomaram-se como referências as geometrias de impelidores utilizadas pel
 
 \section{\textbf{Programação Orientada a Objetos}}
 \label{sec_rev_POO}
-A Programação Orientada a Objetos (\textbf{POO}), termo foi popularizado por Alan Kay, originou na década de 60 como forma de representar as informações interpretadas pelo sistema de maneira análoga às experiências de vida humana.
+A Programação Orientada a Objetos (\textbf{POO}), originou na década de 60 como forma de representar as informações interpretadas pelo sistema de maneira análoga às experiências de vida humana.
 Ela é um paradigma, isto é, uma forma diferente de se interpretar a programação.
 
 Como apresentado por Snyder (1986)\cite{Snyder-1986}, esta metodologia de programação visa representar estruturas complexas através de classes, também conhecidas como tipos, de variáveis.
@@ -136,7 +136,7 @@ Além disso, ela fortalece o uso da tipagem na programação.
 Linguagens tipadas, fraca ou fortemente, são linguagens onde seus métodos e funções que requerem que variáveis coincidam com os tipos declarados para que sejam executadas.
 Linguagens fortemente tipadas tendem a nem compilar caso alguma variável não corresponda ao tipo correto em algum local no código.
 
-Neste trabalho foi utilizado a linguagem \textit{Python}, criada por Rossum (1995)\cite{python}.
+Neste trabalho foi utilizada a linguagem \textit{Python}, criada por Rossum (1995)\cite{python}.
 Python é uma linguagem fracamente tipada, ou seja, há erros devido a tipos não correspondentes, entretanto, ela aceita que funções chamem variáveis de qualquer tipo, até que ocorra um erro.
 Um dos motivos por ter sido escolhida é sua natureza \textit{Open Source}, de uso livre e sem restrição de licença.
 Com isso, há um grande número e variedade de bibliotecas livres para serem utilizadas.
